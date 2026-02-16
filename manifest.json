@@ -1,0 +1,15 @@
+{
+  "name": "生活應急保險庫",
+  "short_name": "保險庫",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ecf0f1",
+  "theme_color": "#2c3e50",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

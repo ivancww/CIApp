@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>生活應急保險庫 (資產上鎖版)</title>
+
+<!-- PWA 設定 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2c3e50">
+<link rel="apple-touch-icon" href="icon.png">
+
+<!-- QR Code Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+  :root {
+    --primary: #2c3e50;
+    --gold: #f1c40f;
+    --accent: #e74c3c;
+    
+    /* Scenarios */
+    --blue-base: #3498db; 
+    --green-base: #27ae60; 
+    --orange-base: #e67e22;
+
+    /* Bar Segments Colors */
+    --color-assets: #34495e;   /* 未達標時：深藍色 */
+    --color-assets-safe: #f1c40f; /* 達標時：金色 */
+    --color-existing: #5dade2; /* 舊單：淺藍 */
+    --color-upgrade: #e67e22;  /* 新單：深橙 */
+
+    --bg: #fdfbf7;
+    --info-bg: #e8f4f8;
+    --info-text: #2980b9;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #ecf0f1;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Read Only Mode Styling */
+  body.readonly-mode .client-manager-box,
+  body.readonly-mode .btn-confirm,
+  body.readonly-mode .btn-reset-link, 
+  body.readonly-mode .data-tools {
+    display: none !important;
+  }
+  
+  body.readonly-mode input {
+    background-color: #f9f9f9 !important;
+    color: #555 !important;
+    border-color: #ddd !important;
+    pointer-events: none; /* 禁止編輯 */
+  }
+
+  /* Welcome Banner */
+  .welcome-banner {
+    display: none; /* 預設隱藏 */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white; 
+    text-align: center;
+    padding: 20px; 
+    margin: -20px -20px 20px -20px; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  }
+  .welcome-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 5px; }
+  .welcome-subtitle { font-size: 0.9rem; opacity: 0.9; }
+
+  /* Privacy Eye Overlay */
+  .input-wrapper {
+      position: relative;
+      flex: 1; /* 跟原本 input 行為一致 */
+      display: flex;
+  }
+  .privacy-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #ecf0f1;
+      border: 1px dashed #bdc3c7;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      color: #7f8c8d;
+      font-size: 0.85rem;
+      font-weight: bold;
+      transition: opacity 0.3s;
+  }
+  .privacy-overlay:hover { background: #e0e6e8; }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    padding: 30px 20px;
+    text-align: center;
+    border-bottom: 6px solid var(--gold);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+  .header h1 { 
+    margin: 0; 
+    font-size: 2.2rem; 
+    letter-spacing: 2px; 
+    font-weight: 900; 
+    text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+  }
+  .header-date {
+    margin-top: 5px; font-size: 0.9rem; color: #bdc3c7;
+  }
+
+  /* Grid Layout */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 0;
+    border-bottom: 1px solid #eee;
+  }
+  @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+
+  .config-panel { background: #f8f9fa; padding: 20px; border-right: 1px solid #eee; }
+  
+  /* Client Manager */
+  .client-manager-box {
+    background: #fff; border: 1px solid #dcdcdc; border-radius: 8px;
+    padding: 15px; margin-bottom: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+  .cm-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .cm-row:last-child { margin-bottom: 0; }
+  .cm-input { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9rem; }
+  .cm-select { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.9rem; background: #fff; }
+  
+  .btn-save { background: #8e44ad; color: white; border:none; border-radius:4px; padding:0 12px; cursor:pointer; font-size:0.9rem;}
+  .btn-del { background: #c0392b; color: white; border:none; border-radius:4px; padding:0 12px; cursor:pointer; font-size:0.9rem;}
+  
+  .data-tools { display: flex; gap: 10px; margin-top: 10px; justify-content: flex-end; flex-wrap: wrap;}
+  .btn-data { background: #7f8c8d; color: white; border:none; border-radius:4px; padding: 6px 10px; cursor:pointer; font-size: 0.8rem; }
+  .btn-share { background: #2980b9; color: white; border:none; border-radius:4px; padding: 6px 10px; cursor:pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 4px;}
+
+  .section-title {
+    font-size: 0.9rem; color: #7f8c8d; text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 15px; font-weight: bold;
+    border-bottom: 2px solid #ddd; padding-bottom: 5px;
+    display: flex; align-items: center;
+  }
+
+  /* Tooltip */
+  .tooltip-container {
+    position: relative; display: inline-block; margin-left: 5px; vertical-align: middle; cursor: help;
+  }
+  .tooltip-icon {
+    display: inline-block; width: 18px; height: 18px; 
+    background: #95a5a6; color: white; border-radius: 50%; 
+    text-align: center; line-height: 18px; font-size: 12px; font-weight: bold;
+  }
+  .tooltip-text {
+    visibility: hidden; width: 260px; background-color: #34495e; color: #fff; 
+    text-align: left; border-radius: 6px; padding: 12px; position: absolute; z-index: 100;
+    bottom: 130%; left: 50%; margin-left: -130px; 
+    font-size: 0.85rem; line-height: 1.5; box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+    opacity: 0; transition: opacity 0.3s; text-transform: none; font-weight: normal;
+  }
+  .tooltip-container:hover .tooltip-text { visibility: visible; opacity: 1; }
+
+  /* Inputs */
+  .input-group { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .input-group label { flex: 1; color: #555; font-size: 0.9rem; }
+  .input-group input { 
+    padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; 
+    width: 110px; font-size: 1rem; text-align: right; color: #2c3e50; font-weight: bold; background: #fff; 
+  }
+  .input-sub-label { display: block; font-size: 0.75rem; color: #999; margin-top: -8px; margin-bottom: 12px; line-height: 1.3; }
+
+  .total-coverage-box {
+    background: #eafaf1; border: 1px solid #d5f5e3; border-radius: 6px;
+    padding: 10px; margin-bottom: 20px; text-align: right;
+  }
+  .total-label { font-size: 0.85rem; color: #27ae60; font-weight: bold; }
+  .total-value { font-size: 1.4rem; font-weight: bold; color: #2c3e50; }
+
+  /* Analysis */
+  .analysis-panel { background: #fff; padding: 20px; position: relative; }
+
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    background: #f0f3f4; padding: 10px 15px; border-radius: 8px; margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+  }
+  .status-item { text-align: center; }
+  .status-label { font-size: 0.8rem; color: #7f8c8d; display: block; margin-bottom: 2px; }
+  .status-value { font-size: 1.2rem; font-weight: bold; color: #2c3e50; }
+  .status-value.red { color: #e74c3c; }
+
+  /* Overlay */
+  .overlay-mask {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,0.98); z-index: 10;
+    display: flex; justify-content: center; align-items: center;
+    flex-direction: column; text-align: center; border-radius: 0 12px 0 0;
+  }
+  .overlay-content { color: #7f8c8d; font-size: 1.1rem; }
+
+  /* Scenario Box */
+  .scenario-box {
+    margin-bottom: 20px; padding: 12px; border-radius: 8px;
+    background: #fafafa; border: 1px solid #eee; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  }
+  .scenario-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .scenario-title { font-size: 0.95rem; font-weight: bold; }
+  .total-years-display { font-size: 1.1rem; font-weight: bold; color: #333; }
+
+  /* 3-Layer Progress Bar */
+  .progress-container {
+    background: #e0e0e0; height: 30px; /* Slightly taller for the lock */
+    border-radius: 15px;
+    overflow: hidden; position: relative; display: flex; 
+  }
+  .bar-segment { height: 100%; transition: width 0.6s ease, background 0.6s ease; position: relative; }
+  
+  .bar-existing { background: var(--color-existing); } 
+  .bar-upgrade { background: var(--color-upgrade); }
+  .bar-assets { background: var(--color-assets); } 
+  
+  .bar-assets.safe {
+      background: var(--color-assets-safe);
+      background-image: linear-gradient(45deg, #f1c40f 25%, #fcd64e 50%, #f1c40f 75%);
+      border-left: 2px solid #fff;
+  }
+  .bar-assets.safe::after {
+      content: '🔒';
+      position: absolute;
+      left: 50%; top: 50%; transform: translate(-50%, -50%);
+      font-size: 14px; text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+
+  /* Safety Line */
+  .safety-line {
+      position: absolute;
+      left: 60%; 
+      top: 0; bottom: 0;
+      width: 2px;
+      background: repeating-linear-gradient(to bottom, #c0392b 0, #c0392b 4px, transparent 4px, transparent 8px);
+      z-index: 10;
+      box-shadow: 1px 0 2px rgba(255,255,255,0.5);
+  }
+  .safety-label {
+      position: absolute; left: 60%; top: -18px; transform: translateX(-50%);
+      font-size: 0.65rem; color: #c0392b; font-weight: bold; white-space: nowrap;
+  }
+
+  /* Text Colors */
+  .sc-a .scenario-title { color: var(--blue-base); }
+  .sc-b .scenario-title { color: var(--green-base); }
+  .sc-c .scenario-title { color: var(--orange-base); }
+
+  .breakdown-text {
+    font-size: 0.8rem; margin-top: 8px; display: flex; flex-wrap: wrap; gap: 10px;
+    background: #fff; padding: 5px 8px; border-radius: 4px; border: 1px solid #eee;
+  }
+  .bd-item { display: flex; align-items: center; gap: 4px; }
+  .bd-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+  /* Highlight Gain */
+  .highlight-gain {
+    font-weight: bold; padding: 2px 8px; border-radius: 4px; border: 1px solid transparent;
+    color: #d35400; background: #fef5e7; border-color: #fadbd8;
+  }
+
+  /* Wealth Shield */
+  .gap-box {
+    margin-top: 8px; padding: 8px 10px; border-radius: 6px; font-size: 0.85rem; 
+    border: 1px solid #eee; background: #fff;
+  }
+  .shield-header { font-weight: bold; margin-bottom: 4px; display: block; color:#555;}
+  .shield-pass { color: #27ae60; background: #eafaf1; padding: 2px 6px; border-radius: 4px; font-weight:bold; }
+  .shield-fail { color: #d35400; background: #fef5e7; padding: 2px 6px; border-radius: 4px; font-weight:bold; }
+
+  /* Ideal Suggestion */
+  .ideal-suggestion {
+    display: block; margin-top: 8px; padding-top: 6px; border-top: 1px dashed #dcdcdc;
+    font-size: 0.9rem; color: #8e44ad; font-weight: bold;
+  }
+
+  /* Controls */
+  .controls-area { padding: 25px; background: #fff; }
+  .card { border: 1px solid #eee; border-left: 4px solid transparent; border-radius: 6px; padding: 15px; margin-bottom: 15px; background: white; transition: transform 0.2s; }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+  .card h3 { margin: 0 0 10px 0; font-size: 1rem; }
+  
+  .card.early { border-left-color: #f39c12; }
+  .card.critical { border-left-color: #c0392b; background: #fff5f5; }
+  .card.cancer { border-left-color: #e67e22; }
+  .card.heart { border-left-color: #8e44ad; }
+  .card.dementia { border-left-color: var(--green); }
+
+  .tag { font-size: 0.7em; background: #eee; padding: 2px 8px; border-radius: 12px; color: #666; font-weight: normal; float: right; }
+
+  .option-header {
+    font-size: 0.95rem; font-weight: bold; color: #555; margin: 12px 0 8px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .wait-badge {
+    background-color: #fff8e1; color: #d35400; border: 1px solid #fceecb;
+    font-size: 0.75rem; padding: 2px 8px; border-radius: 12px; font-weight: normal;
+    display: inline-flex; align-items: center;
+  }
+
+  .btn-group { display: flex; flex-direction: column; gap: 5px; margin-top: 5px; }
+  .action-row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; background: #fdfdfd; padding: 8px; border-radius: 6px; border: 1px dashed #eee; }
+
+  button { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; transition: all 0.2s; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; min-width: 150px; }
+  button:hover { opacity: 0.9; transform: scale(1.02); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; background-color: #bdc3c7; color: #7f8c8d; box-shadow: none; }
+
+  .btn-confirm { background-color: #2980b9; color: white; font-size: 1rem; padding: 12px; width: 100%; margin-top: 20px; }
+  .btn-confirm:hover { background-color: #3498db; }
+  .btn-reset-link { background: none; border: none; color: #95a5a6; text-decoration: underline; font-size: 0.8rem; cursor: pointer; margin-top: 10px; min-width: auto; display: inline-block; }
+
+  .btn-blue { background: #3498db; color: white; }
+  .btn-red { background: #e74c3c; color: white; }
+  .btn-orange { background: #d35400; color: white; }
+  .btn-purple { background: #9b59b6; color: white; }
+  .btn-green { background: #2ecc71; color: white; }
+  
+  .amount-display { font-family: 'Consolas', monospace; color: #2c3e50; font-weight: bold; font-size: 0.95em; background: #ecf0f1; padding: 4px 8px; border-radius: 4px; border-left: 3px solid #bdc3c7; }
+  .amount-label { font-size: 0.8em; color: #7f8c8d; margin-right: 5px; font-weight: normal;}
+  .age-record { font-family: 'Consolas', monospace; background: #fcf3cf; color: #d68910; padding: 4px 8px; border-radius: 4px; font-weight: bold; border: 1px solid #f9e79f; min-width: 50px; text-align: center; font-size: 0.9em; }
+  .age-label { font-size: 0.8em; color: #b7950b; margin-right: 3px; font-weight: normal; }
+  .acc-tag { background-color: var(--info-bg); color: var(--info-text); padding: 4px 10px; border-radius: 15px; font-size: 0.85em; font-weight: bold; border: 1px solid #a9cce3; display: flex; align-items: center;}
+
+  /* Bonus Styles */
+  .bonus-box {
+      margin-top: 10px; 
+      padding: 10px; 
+      border-radius: 6px; 
+      background: #f8fcfd; 
+      border: 1px solid #d1ecf1; 
+      color: #0c5460;
+      font-size: 0.85rem;
+  }
+  .bonus-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .bonus-highlight { font-weight: bold; color: #e74c3c; }
+  .bonus-active-tag { background: #2ecc71; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px;}
+  .bonus-inactive-tag { background: #95a5a6; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px;}
+
+  .log-container { background: #2c3e50; color: #ecf0f1; padding: 0; max-height: 300px; overflow-y: auto; }
+  .log-header { background: #34495e; padding: 8px 25px; position: sticky; top: 0; font-size: 0.85rem; letter-spacing: 1px; border-bottom: 1px solid #46637f; }
+  #logList { list-style: none; padding: 0; margin: 0; }
+  #logList li { padding: 10px 25px; border-bottom: 1px solid #34495e; font-family: 'Consolas', monospace; font-size: 0.85rem; display: flex; gap: 15px; }
+  .log-age { color: var(--gold); font-weight: bold; min-width: 50px; }
+  .log-content { flex: 1; }
+  .log-amount { color: #2ecc71; font-weight: bold; }
+
+  /* QR Modal */
+  .modal-overlay {
+      display: none; position: fixed; top:0; left:0; width:100%; height:100%;
+      background: rgba(0,0,0,0.8); z-index: 9999;
+      justify-content: center; align-items: center;
+  }
+  .modal-content {
+      background: white; padding: 20px; border-radius: 12px; text-align: center; max-width: 90%;
+  }
+  #qr-container {
+      margin: 15px auto; display: flex; justify-content: center;
+  }
+  #final-qr-img {
+      max-width: 100%; border: 1px solid #eee; border-radius: 8px;
+  }
+  .close-modal {
+      background: #e74c3c; color: white; border:none; padding: 8px 20px; border-radius: 6px; cursor: pointer;
+  }
+</style>
+
+<!-- Service Worker Registration -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('App 準備就緒: ', reg.scope))
+        .catch(err => console.log('App 安裝失敗: ', err));
+    });
+  }
+</script>
+</head>
+<body>
+
+<!-- Guest Welcome Banner -->
+<div id="welcomeBanner" class="welcome-banner">
+    <div class="welcome-title">親愛的 <span id="guestNamePlaceholder"></span></div>
+    <div class="welcome-subtitle">這是為你定制的生活保障總結</div>
+</div>
+
+<div class="container">
+  <div class="header">
+    <h1>生活應急保險庫</h1>
+    <div class="header-date" id="currentDateDisplay"></div>
+  </div>
+
+  <div class="main-grid">
+    <!-- Left Panel -->
+    <div class="config-panel">
+      
+      <!-- CLIENT MANAGER -->
+      <div class="section-title">📂 客戶檔案管理</div>
+      <div class="client-manager-box">
+        <div class="cm-row">
+          <input type="text" id="clientNameInput" class="cm-input" placeholder="輸入客戶姓名">
+          <button class="btn-save" onclick="saveClient()">💾 儲存</button>
+        </div>
+        <div class="cm-row">
+          <select id="clientSelect" class="cm-select" onchange="loadClient()">
+            <option value="">-- 選擇載入客戶 --</option>
+          </select>
+          <button class="btn-del" onclick="deleteClient()">🗑️</button>
+        </div>
+        <div class="data-tools">
+            <input type="file" id="importFile" style="display:none" onchange="importData(this)">
+            <button class="btn-data" onclick="document.getElementById('importFile').click()">📂 匯入</button>
+            <button class="btn-data" onclick="exportData()">💾 匯出</button>
+            <button class="btn-share" onclick="openShareModal()">🔗 分享</button>
+        </div>
+      </div>
+
+      <div class="section-title">1. 保障額度 (Review)</div>
+      
+      <div class="input-group">
+        <label>現有保障 (Existing)</label>
+        <div class="input-wrapper" id="wrap_sumExisting">
+            <input type="text" id="sumExisting" value="200,000" onkeyup="handleSumInput()">
+        </div>
+      </div>
+      <span class="input-sub-label">客人舊單賠償額。</span>
+
+      <div class="input-group">
+        <label>加強保障 (Upgrade)</label>
+        <div class="input-wrapper" id="wrap_sumUpgrade">
+            <input type="text" id="sumUpgrade" value="800,000" onkeyup="handleSumInput()" style="color:#27ae60; border-color:#27ae60;">
+        </div>
+      </div>
+      <span class="input-sub-label">建議新單額度。</span>
+
+      <div class="total-coverage-box">
+        <div class="total-label">總保障額 (Total)</div>
+        <div class="total-value" id="displayTotalSum">$1,000,000</div>
+      </div>
+
+      <div class="input-group">
+        <label>投保歲數</label>
+        <div class="input-wrapper">
+             <input type="number" id="startAge" value="30" onkeyup="formatOnly(this)">
+        </div>
+      </div>
+      
+      <div class="section-title" style="margin-top:20px;">2. 財政狀況</div>
+      <div class="input-group">
+        <label>現金資產 (Assets)</label>
+        <div class="input-wrapper" id="wrap_assets">
+            <input type="text" id="assets" value="300,000" onkeyup="formatOnly(this)">
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-top:20px;">3. 生活開支 (ABC)</div>
+      
+      <div class="input-group" style="border-left: 3px solid var(--blue-base); padding-left:5px;">
+        <label>A. 保持收入 (Income)</label>
+        <div class="input-wrapper" id="wrap_targetA">
+             <input type="text" id="targetA" value="40,000" onkeyup="formatOnly(this)">
+        </div>
+      </div>
+
+      <div class="input-group" style="border-left: 3px solid var(--green-base); padding-left:5px;">
+        <label>B. 保持質素 (Lifestyle)</label>
+        <div class="input-wrapper" id="wrap_targetB">
+             <input type="text" id="targetB" value="30,000" onkeyup="formatOnly(this)">
+        </div>
+      </div>
+
+      <div class="input-group" style="border-left: 3px solid var(--orange-base); padding-left:5px;">
+        <label>C. 基本生存 (Survival)</label>
+        <div class="input-wrapper" id="wrap_targetC">
+             <input type="text" id="targetC" value="18,000" onkeyup="formatOnly(this)">
+        </div>
+      </div>
+
+      <button class="btn-confirm" onclick="confirmAndStart()">
+        ✅ 確認資料並分析缺口
+      </button>
+      
+      <div style="text-align:center; margin-top:10px;">
+          <button class="btn-reset-link" onclick="fullReset()">全部重置</button>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="analysis-panel">
+      <div id="analysisOverlay" class="overlay-mask">
+        <div class="overlay-content">
+          <div style="font-size:3rem; margin-bottom:10px;">📊</div>
+          請輸入左側資料<br>並按下「確認」以開始分析
+        </div>
+      </div>
+
+      <div class="section-title">
+        保障缺口分析
+      </div>
+      
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <div class="status-item">
+            <span class="status-label">當前歲數</span>
+            <div style="display:flex; align-items:center;">
+                <button onclick="changeAge(-1)" style="padding:0 5px; min-width:25px;">-</button>
+                <input type="number" id="currentAge" value="30" style="width:40px; text-align:center; border:none; background:transparent; font-weight:bold; font-size:1.1rem; color:#2c3e50;" readonly>
+                <button onclick="changeAge(1)" style="padding:0 5px; min-width:25px;">+</button>
+            </div>
+        </div>
+        <div class="status-item">
+            <span class="status-label">剩餘基本保額</span>
+            <span id="displayBalance" class="status-value">$1,000,000</span>
+        </div>
+        <div class="status-item">
+            <span class="status-label">已提取總賠償</span>
+            <span id="displayTotalPaid" class="status-value red">$0</span>
+        </div>
+      </div>
+
+      <p style="font-size:0.85rem; color:#666; margin-bottom:10px;">如果現在發生事故，停工休養，資金能支撐多久？</p>
+
+      <!-- A -->
+      <div class="scenario-box sc-a">
+        <div class="scenario-header">
+          <span class="scenario-title">A. 保持收入 ($<span id="valTargetA"></span>)</span>
+          <span class="total-years-display" id="totalA">0 年</span>
+        </div>
+        <div class="progress-container">
+            <div class="safety-line"></div>
+            <div class="safety-label">3年安全線</div>
+            <!-- REORDERED: Existing -> Upgrade -> Assets -->
+            <div class="bar-segment bar-existing" id="barExistingA" style="width:0%"></div>
+            <div class="bar-segment bar-upgrade" id="barUpgradeA" style="width:0%"></div>
+            <div class="bar-segment bar-assets" id="barAssetsA" style="width:0%"></div>
+        </div>
+        <div class="breakdown-text" id="bdA"></div>
+        <div class="gap-box" id="gapA"></div>
+      </div>
+
+      <!-- B -->
+      <div class="scenario-box sc-b">
+        <div class="scenario-header">
+          <span class="scenario-title">B. 保持質素 ($<span id="valTargetB"></span>)</span>
+          <span class="total-years-display" id="totalB">0 年</span>
+        </div>
+        <div class="progress-container">
+            <div class="safety-line"></div>
+            <div class="safety-label">3年安全線</div>
+            <div class="bar-segment bar-existing" id="barExistingB" style="width:0%"></div>
+            <div class="bar-segment bar-upgrade" id="barUpgradeB" style="width:0%"></div>
+            <div class="bar-segment bar-assets" id="barAssetsB" style="width:0%"></div>
+        </div>
+        <div class="breakdown-text" id="bdB"></div>
+        <div class="gap-box" id="gapB"></div>
+      </div>
+
+      <!-- C -->
+      <div class="scenario-box sc-c">
+        <div class="scenario-header">
+          <span class="scenario-title">C. 基本生存 ($<span id="valTargetC"></span>)</span>
+          <span class="total-years-display" id="totalC">0 年</span>
+        </div>
+        <div class="progress-container">
+            <div class="safety-line"></div>
+            <div class="safety-label">3年安全線</div>
+            <div class="bar-segment bar-existing" id="barExistingC" style="width:0%"></div>
+            <div class="bar-segment bar-upgrade" id="barUpgradeC" style="width:0%"></div>
+            <div class="bar-segment bar-assets" id="barAssetsC" style="width:0%"></div>
+        </div>
+        <div class="breakdown-text" id="bdC"></div>
+        <div class="gap-box" id="gapC"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls-area">
+    <div class="section-title">模擬索償 (Stress Test)</div>
+    
+    <!-- 1. Early -->
+    <div class="card early">
+      <h3>
+          1. 早期疾病 (20%) 
+          <span class="tag">包含 44 種 | 預支</span>
+      </h3>
+      <div class="btn-group">
+        <div class="action-row">
+          <button class="btn-orange" onclick="claimEarlyStage()">⚡ 提取早期賠償</button>
+          <div class="amount-display"><span class="amount-label">款項:</span><span id="valEarlyStage">$0</span></div>
+        </div>
+        <div class="action-row" style="background:#fffcf5; border-color:#fdebd0;">
+             <div class="acc-tag"><span>累計:</span><div id="accEarlyDisplay">$0</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Critical (UPDATED) -->
+    <div class="card critical">
+      <h3>
+          2. 嚴重危疾 (100%) 
+          <span class="tag">包含 58 種 | 剩餘額度</span>
+      </h3>
+      <div class="btn-group">
+        <div class="action-row">
+          <button class="btn-red" id="btnCritical" onclick="claimCriticalIllness()">🚨 確診嚴重危疾</button>
+          <div class="amount-display"><span class="amount-label">餘額:</span><span id="valCritical">$0</span></div>
+        </div>
+      </div>
+      
+      <!-- Bonus Section -->
+      <div class="bonus-box" id="criticalBonusBox" style="display:none;">
+          <div class="bonus-row">
+             <strong>🎁 首十年免費升級 (基於加強保障):</strong>
+          </div>
+          <div class="bonus-row" id="ruleADisplay" style="display:none; color:#555;">
+             <span>A. 30歲或以下 (+50%)</span>
+             <span id="bonusAmountA" class="bonus-highlight">$0</span>
+          </div>
+          <div class="bonus-row" id="ruleBDisplay" style="display:none; color:#555;">
+             <span>B. 31歲或以上 (+35%)</span>
+             <span id="bonusAmountB" class="bonus-highlight">$0</span>
+          </div>
+          <div style="margin-top:5px; padding-top:5px; border-top:1px dashed #d1ecf1; text-align:right;">
+             <span id="bonusStatusBadge"></span>
+          </div>
+      </div>
+    </div>
+
+    <!-- 3. Cancer -->
+    <div class="card cancer">
+      <h3>3. 癌症支援庫 <span class="tag">危疾後啟動</span></h3>
+      
+      <!-- Option A -->
+      <div class="option-header">
+          選項 A：多次賠償 (Lump Sum)
+          <span class="wait-badge">⏳ 等候期 3 年</span>
+      </div>
+      <div class="btn-group">
+        <div class="action-row">
+          <button class="btn-red" id="btnCancerLump" onclick="claimCancerLumpSum()">🏥 癌症賠償 (100%)</button>
+          <div class="amount-display"><span class="amount-label">款項:</span><span id="valCancerLump">$0</span></div>
+          <div class="age-record"><span class="age-label">歲數:</span><span id="ageCancerLump">--</span></div>
+        </div>
+        <div class="action-row" style="background:#fff5f5; border-color:#fadbd8;">
+             <div class="acc-tag"><span>累計:</span><div id="accCancerLumpDisplay">$0</div></div>
+             <span id="cancerCountDisplay" style="font-size:0.9em; color:#7f8c8d;">(次數: 0/5)</span>
+        </div>
+      </div>
+
+      <!-- Option B -->
+      <div class="option-header" style="margin-top:15px;">
+          選項 B：每月支援 (Monthly)
+          <span class="wait-badge">⏳ 等候期 1 年</span>
+      </div>
+      <div class="btn-group">
+        <div class="action-row">
+          <button class="btn-orange" id="btnCancerMonthly" onclick="manualClaimCancerMonthly()">👇 發放 1 個月支援</button>
+          <div class="amount-display"><span class="amount-label">月款:</span><span id="valCancerMonthly">$0</span></div>
+          <div class="age-record"><span class="age-label">歲數:</span><span id="ageCancerMonthly">--</span></div>
+        </div>
+        <div class="action-row" style="background:#fffcf5; border-color:#fdebd0;">
+             <div class="acc-tag"><span>累計:</span><div id="accCancerMonthlyDisplay">$0</div></div>
+             <span id="cancerMonthDisplay" style="font-size:0.9em; color:#7f8c8d;">(月數: 0/100)</span>
+        </div>
+        <p style="font-size:0.8em; color:#c0392b; margin:0;">*注意：啟動B後，不可再選A。</p>
+      </div>
+    </div>
+
+    <!-- 4. Heart -->
+    <div class="card heart">
+      <h3>4. 心臟病 / 中風 <span class="tag">合共 2 次</span></h3>
+      <div class="option-header" style="margin:5px 0;">
+          <span class="wait-badge" style="margin-left:0;">⏳ 等候期 1 年</span>
+      </div>
+      <div class="btn-group">
+        <div class="action-row">
+          <button class="btn-purple" onclick="claimHeartStroke()">❤️ 心臟/中風賠償</button>
+          <div class="amount-display"><span class="amount-label">款項:</span><span id="valHeart">$0</span></div>
+          <div class="age-record"><span class="age-label">歲數:</span><span id="ageHeart">--</span></div>
+        </div>
+        <div class="action-row" style="background:#fcf5ff; border-color:#ebdef0;">
+             <div class="acc-tag"><span>累計:</span><div id="accHeartDisplay">$0</div></div>
+             <span id="heartCountDisplay" style="font-size:0.9em; color:#7f8c8d;">(次數: 0/2)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Dementia -->
+    <div class="card dementia">
+      <h3>5. 腦退化疾病 <span class="tag">終身年金</span></h3>
+      <div class="btn-group">
+        <div class="action-row">
+          <button class="btn-green" onclick="manualClaimDementia()">👇 發放 1 年年金</button>
+          <div class="amount-display"><span class="amount-label">年金:</span><span id="valDementia">$0</span></div>
+          <div class="age-record"><span class="age-label">歲數:</span><span id="ageDementia">--</span></div>
+        </div>
+        <div class="action-row" style="background:#eafaf1; border-color:#d5f5e3;">
+             <div class="acc-tag"><span>累計:</span><div id="accDementiaDisplay">$0</div></div>
+             <span id="dementiaYearDisplay" style="font-size:0.9em; color:#7f8c8d;">(年數: 0)</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="log-container">
+    <div class="log-header">交易記錄 (Transaction Log)</div>
+    <ul id="logList"></ul>
+  </div>
+</div>
+
+<!-- Modal Structure -->
+<div id="shareModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>分享您的規劃 (唯讀版)</h3>
+        <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">
+            對方掃描後將看到您目前的設定，<br>但無法修改內容。
+        </p>
+        
+        <!-- Hidden container for raw QR generation -->
+        <div id="qrcode-source" style="display:none;"></div>
+        
+        <!-- Visible Image Result -->
+        <div id="qr-container">
+            <img id="final-qr-img" src="" alt="QR Code" />
+        </div>
+        
+        <p style="font-size:0.8rem; color:#888; margin-top:10px;">
+            👆 請長按上方 QR Code 進行識別或保存
+        </p>
+        
+        <button class="close-modal" onclick="closeShareModal()">關閉</button>
+    </div>
+</div>
+
+<script>
+  // --- Date ---
+  function updateDate() {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('zh-HK', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    document.getElementById('currentDateDisplay').innerText = dateStr;
+  }
+
+  // --- Data Structure ---
+  let config = {
+    sumExisting: 200000,
+    sumUpgrade: 800000,
+    sumTotal: 1000000,
+    startAge: 30,
+    assets: 300000,
+    targetA: 40000,
+    targetB: 30000,
+    targetC: 18000
+  };
+
+  let state = {
+    isConfirmed: false,
+    balance: 1000000,
+    totalPaid: 0,
+    isCriticalClaimed: false,
+    hasStartedCancerMonthly: false,
+    cancerCount: 0,
+    heartCount: 0,
+    cancerMonthsPaid: 0,
+    dementiaYearsPaid: 0,
+    accEarly: 0,
+    accCancerLump: 0,
+    accCancerMonthly: 0,
+    accHeart: 0,
+    accDementia: 0,
+    currentAge: 30
+  };
+
+  // --- Client Management ---
+  const STORAGE_KEY = 'insurance_clients_db';
+
+  function getStoredClients() {
+    const data = localStorage.getItem(STORAGE_KEY);
+    return data ? JSON.parse(data) : [];
+  }
+
+  function saveClient() {
+    const name = document.getElementById('clientNameInput').value.trim();
+    if (!name) { alert("請輸入客戶姓名！"); return; }
+
+    const now = new Date().toLocaleString('zh-HK');
+    const currentData = {
+      name: name,
+      dateSaved: now,
+      sumExisting: document.getElementById('sumExisting').value,
+      sumUpgrade: document.getElementById('sumUpgrade').value,
+      startAge: document.getElementById('startAge').value,
+      assets: document.getElementById('assets').value,
+      targetA: document.getElementById('targetA').value,
+      targetB: document.getElementById('targetB').value,
+      targetC: document.getElementById('targetC').value
+    };
+
+    let clients = getStoredClients();
+    const idx = clients.findIndex(c => c.name === name);
+    if (idx >= 0) {
+      if(!confirm("客戶名稱已存在，是否覆蓋？")) return;
+      clients[idx] = currentData;
+    } else {
+      clients.push(currentData);
+    }
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+    updateClientList();
+    alert("客戶檔案已儲存！");
+  }
+
+  function deleteClient() {
+    const select = document.getElementById('clientSelect');
+    const name = select.value;
+    if (!name) return;
+
+    if(confirm("確定要刪除 " + name + " 的檔案嗎？")) {
+      let clients = getStoredClients();
+      clients = clients.filter(c => c.name !== name);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+      updateClientList();
+      document.getElementById('clientNameInput').value = "";
+    }
+  }
+
+  function loadClient() {
+    const name = document.getElementById('clientSelect').value;
+    if (!name) return;
+
+    const clients = getStoredClients();
+    const client = clients.find(c => c.name === name);
+    
+    if (client) {
+      document.getElementById('clientNameInput').value = client.name;
+      document.getElementById('sumExisting').value = client.sumExisting;
+      document.getElementById('sumUpgrade').value = client.sumUpgrade;
+      document.getElementById('startAge').value = client.startAge;
+      document.getElementById('assets').value = client.assets;
+      document.getElementById('targetA').value = client.targetA;
+      document.getElementById('targetB').value = client.targetB;
+      document.getElementById('targetC').value = client.targetC;
+
+      handleSumInput();
+      confirmAndStart();
+    }
+  }
+
+  function updateClientList() {
+    const clients = getStoredClients();
+    const select = document.getElementById('clientSelect');
+    const currentSel = select.value;
+    
+    select.innerHTML = '<option value="">-- 選擇載入客戶 --</option>';
+    clients.forEach(c => {
+      const option = document.createElement('option');
+      option.value = c.name;
+      option.text = `${c.name} (${c.dateSaved || 'N/A'})`;
+      select.appendChild(option);
+    });
+
+    if (currentSel) select.value = currentSel;
+  }
+
+  // --- Export / Import ---
+  function exportData() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      if(!data || data === "[]") { alert("沒有資料可匯出"); return; }
+      const blob = new Blob([data], {type: "application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "insurance_backup.json";
+      a.click();
+  }
+
+  function importData(input) {
+      const file = input.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+          try {
+              const data = JSON.parse(e.target.result);
+              if(confirm("確定匯入？這將覆蓋現有所有資料！")) {
+                  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                  updateClientList();
+                  alert("匯入成功！");
+              }
+          } catch(err) {
+              alert("檔案格式錯誤");
+          }
+      };
+      reader.readAsText(file);
+  }
+
+  // --- Helper Functions ---
+  function getNumVal(id) {
+    return parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0;
+  }
+  
+  function formatOnly(input) {
+    let value = input.value.replace(/,/g, '').replace(/[^\d]/g, '');
+    if (value) input.value = Number(value).toLocaleString('en-US');
+  }
+
+  function handleSumInput() {
+    let existingInput = document.getElementById('sumExisting');
+    let upgradeInput = document.getElementById('sumUpgrade');
+    formatOnly(existingInput);
+    formatOnly(upgradeInput);
+
+    let ex = getNumVal('sumExisting');
+    let up = getNumVal('sumUpgrade');
+    let total = ex + up;
+    
+    document.getElementById('displayTotalSum').innerText = "$" + total.toLocaleString('en-US');
+  }
+
+  function formatMoney(num) { return "$" + Math.round(num).toLocaleString(); }
+
+  // --- Core Actions ---
+  function confirmAndStart() {
+    // 1. RE-READ ALL VALUES (Force Update)
+    config.sumExisting = getNumVal('sumExisting');
+    config.sumUpgrade = getNumVal('sumUpgrade');
+    config.sumTotal = config.sumExisting + config.sumUpgrade;
+    config.startAge = parseInt(document.getElementById('startAge').value) || 30;
+    config.assets = getNumVal('assets');
+    config.targetA = getNumVal('targetA');
+    config.targetB = getNumVal('targetB');
+    config.targetC = getNumVal('targetC');
+
+    if (!state.isCriticalClaimed) {
+        state.balance = config.sumTotal - state.accEarly;
+    }
+    
+    if (!state.isConfirmed) {
+        state.currentAge = config.startAge;
+        document.getElementById('currentAge').value = state.currentAge;
+    }
+
+    state.isConfirmed = true;
+    document.getElementById('analysisOverlay').style.display = 'none';
+    
+    // Update Labels
+    document.getElementById('valTargetA').innerText = config.targetA.toLocaleString();
+    document.getElementById('valTargetB').innerText = config.targetB.toLocaleString();
+    document.getElementById('valTargetC').innerText = config.targetC.toLocaleString();
+
+    // 3. Trigger ALL Calculations
+    updateBenefitValues(); 
+    updateBonusDisplay();  
+    updateAnalysis();      
+    updateUI();            
+  }
+
+  function fullReset() {
+    state.isConfirmed = false;
+    document.getElementById('analysisOverlay').style.display = 'flex';
+    document.getElementById('criticalBonusBox').style.display = 'none';
+    
+    resetBars('A'); resetBars('B'); resetBars('C');
+
+    state.totalPaid = 0;
+    state.accEarly = 0;
+    state.accCancerLump = 0;
+    state.accCancerMonthly = 0;
+    state.accHeart = 0;
+    state.accDementia = 0;
+    state.isCriticalClaimed = false;
+    state.hasStartedCancerMonthly = false;
+    state.cancerCount = 0;
+    state.heartCount = 0;
+    state.cancerMonthsPaid = 0;
+    state.dementiaYearsPaid = 0;
+
+    document.getElementById('displayTotalPaid').innerText = "$0";
+    document.getElementById('accEarlyDisplay').innerText = "$0";
+    document.getElementById('accCancerLumpDisplay').innerText = "$0";
+    document.getElementById('accCancerMonthlyDisplay').innerText = "$0";
+    document.getElementById('accHeartDisplay').innerText = "$0";
+    document.getElementById('accDementiaDisplay').innerText = "$0";
+    
+    document.getElementById('ageCancerLump').innerText = "--";
+    document.getElementById('ageCancerMonthly').innerText = "--";
+    document.getElementById('ageHeart').innerText = "--";
+    document.getElementById('ageDementia').innerText = "--";
+
+    document.getElementById('btnCritical').disabled = false;
+    document.getElementById('btnCancerLump').disabled = false;
+    document.getElementById('btnCancerLump').innerText = "🏥 癌症賠償 (100%)";
+    document.getElementById('valCritical').innerText = formatMoney(config.sumTotal);
+
+    updateUI();
+  }
+
+  function resetBars(type) {
+      document.getElementById(`barAssets${type}`).style.width = "0%";
+      document.getElementById(`barExisting${type}`).style.width = "0%";
+      document.getElementById(`barUpgrade${type}`).style.width = "0%";
+      document.getElementById(`total${type}`).innerText = "0 個月";
+      document.getElementById(`bd${type}`).innerHTML = "";
+      document.getElementById(`gap${type}`).innerHTML = "";
+  }
+
+  // --- Analysis Logic ---
+  function updateAnalysis() {
+    if (!state.isConfirmed) return;
+
+    let ratioExisting = config.sumExisting / config.sumTotal;
+    if(isNaN(ratioExisting)) ratioExisting = 0;
+
+    runScenario('A', config.targetA, ratioExisting);
+    runScenario('B', config.targetB, ratioExisting);
+    runScenario('C', config.targetC, ratioExisting);
+  }
+
+  function formatDuration(m) {
+      if(!isFinite(m) || m <= 0.01) return "0 個月";
+      if(m < 12) return Math.floor(m) + " 個月";
+      let y = Math.floor(m/12);
+      let remM = Math.floor(m%12);
+      if(remM === 0) return y + " 年";
+      return `${y} 年 ${remM} 個月`;
+  }
+
+  function runScenario(type, expense, ratioExisting) {
+    if (expense <= 0) return;
+
+    let mAssets = config.assets / expense;
+
+    let paidExisting = state.totalPaid * ratioExisting;
+    let paidUpgrade = state.totalPaid * (1 - ratioExisting);
+
+    let mExisting = paidExisting / expense;
+    let mUpgrade = paidUpgrade / expense;
+
+    let totalMonths = mAssets + mExisting + mUpgrade;
+    let maxMonths = Math.max(totalMonths, 60); 
+
+    setBarWidth(`barAssets${type}`, mAssets, maxMonths);
+    setBarWidth(`barExisting${type}`, mExisting, maxMonths);
+    setBarWidth(`barUpgrade${type}`, mUpgrade, maxMonths);
+
+    document.getElementById(`total${type}`).innerText = formatDuration(totalMonths);
+
+    // Breakdown Text
+    let html = `<div class="bd-item"><span class="bd-dot" style="background:#5dade2"></span>舊單 ${formatDuration(mExisting)}</div>`;
+    html += `<div class="bd-item highlight-gain"><span class="bd-dot" style="background:#e67e22"></span>新單 +${formatDuration(mUpgrade)}</div>`;
+    html += `<div class="bd-item"><span class="bd-dot" style="background:#34495e"></span>積蓄 ${formatDuration(mAssets)}</div>`;
+    
+    document.getElementById(`bd${type}`).innerHTML = html;
+
+    // --- Shield (Gap) Analysis ---
+    let gapHtml = `<div class="shield-header">🛡️ 資產護盾 (3年基準)</div>`;
+    
+    let insuranceMonths = mExisting + mUpgrade;
+    let assetBar = document.getElementById(`barAssets${type}`);
+    
+    if (insuranceMonths >= 36) {
+        // SAFE
+        assetBar.classList.add('safe');
+        gapHtml += `<div class="shield-pass" style="margin-top:5px;">✅ 計劃達標 (保險足以覆蓋3年)</div>`;
+        gapHtml += `<div style="font-size:0.8rem; color:#f1c40f; font-weight:bold; margin-top:2px;">✨ 積蓄成功鎖定，無需動用！</div>`;
+    } else {
+        // NOT SAFE
+        assetBar.classList.remove('safe');
+        let totalMonths = insuranceMonths + mAssets;
+        
+        if (totalMonths >= 36) {
+             gapHtml += `<div class="shield-pass" style="margin-top:5px;">✅ 計劃達標 (需動用積蓄)</div>`;
+        } else {
+             let missing = 36 - totalMonths;
+             gapHtml += `<div class="shield-fail" style="margin-top:5px;">⚠️ 計劃缺口 (欠 ${formatDuration(missing)})</div>`;
+        }
+        
+        let targetFund = expense * 36;
+        let totalFund = config.assets + config.sumExisting + config.sumUpgrade;
+        let gap = targetFund - totalFund;
+        
+        if (gap > 0) {
+             gapHtml += `<div class="ideal-suggestion">
+                           💡 理想保額(缺口): ${formatMoney(gap)}<br>
+                           <span style="font-size:0.8em; font-weight:normal; color:#666;">(目標: 36個月 - 總資金)</span>
+                         </div>`;
+        }
+    }
+
+    document.getElementById(`gap${type}`).innerHTML = gapHtml;
+  }
+
+  function setBarWidth(id, months, max) {
+    if(!isFinite(months)) months = 0;
+    let pct = (months / max) * 100;
+    document.getElementById(id).style.width = pct + "%";
+  }
+
+  function updateBenefitValues() {
+    let currentPool = state.isConfirmed ? state.balance : config.sumTotal;
+    
+    document.getElementById('valEarlyStage').innerText = formatMoney(config.sumTotal * 0.20);
+    document.getElementById('valCritical').innerText = formatMoney(currentPool);
+    
+    document.getElementById('valCancerLump').innerText = formatMoney(config.sumTotal);
+    document.getElementById('valCancerMonthly').innerText = formatMoney(config.sumTotal * 0.05);
+    document.getElementById('valHeart').innerText = formatMoney(config.sumTotal);
+    document.getElementById('valDementia').innerText = formatMoney(config.sumTotal * 0.06);
+  }
+
+  // --- Logic for Bonus ---
+  function updateBonusDisplay() {
+      if(!state.isConfirmed) return;
+      
+      let box = document.getElementById('criticalBonusBox');
+      let ruleA = document.getElementById('ruleADisplay');
+      let ruleB = document.getElementById('ruleBDisplay');
+      let amountA = document.getElementById('bonusAmountA');
+      let amountB = document.getElementById('bonusAmountB');
+      let badge = document.getElementById('bonusStatusBadge');
+
+      box.style.display = 'block';
+
+      // Determine Rule
+      let isRuleA = config.startAge <= 30;
+      
+      if (isRuleA) {
+          ruleA.style.display = 'flex';
+          ruleB.style.display = 'none';
+          amountA.innerText = "+" + formatMoney(config.sumUpgrade * 0.50);
+          ruleA.style.fontWeight = 'bold';
+      } else {
+          ruleA.style.display = 'none';
+          ruleB.style.display = 'flex';
+          amountB.innerText = "+" + formatMoney(config.sumUpgrade * 0.35);
+          ruleB.style.fontWeight = 'bold';
+      }
+
+      // Check Expiry (First 10 years)
+      let policyYear = state.currentAge - config.startAge;
+      
+      if (policyYear < 10) {
+          badge.className = 'bonus-active-tag';
+          badge.innerText = `✅ 生效中 (第 ${policyYear+1} 年)`;
+      } else {
+          badge.className = 'bonus-inactive-tag';
+          badge.innerText = `❌ 已過期`;
+      }
+  }
+
+  // --- Actions ---
+  function changeAge(delta) {
+    if(!state.isConfirmed) return;
+    let newAge = parseInt(document.getElementById('currentAge').value) + delta;
+    if (newAge < config.startAge) newAge = config.startAge;
+    document.getElementById('currentAge').value = newAge;
+    state.currentAge = newAge;
+    updateBonusDisplay(); // Update bonus status when age changes
+  }
+  function updateCurrentAgeFromInput() {
+    state.currentAge = parseInt(document.getElementById('currentAge').value);
+    updateBonusDisplay();
+  }
+
+  function claimEarlyStage() {
+    if(!state.isConfirmed) { alert("請先確認資料"); return; }
+    if(state.balance <= 0) { alert("額度已耗盡"); return; }
+    updateCurrentAgeFromInput();
+
+    let claim = config.sumTotal * 0.20;
+    if(claim > state.balance) claim = state.balance;
+
+    state.balance -= claim;
+    state.totalPaid += claim;
+    state.accEarly += claim;
+
+    log("早期疾病", "提取 20% 預支賠償", claim);
+    updateUI();
+  }
+
+  function claimCriticalIllness() {
+    if(!state.isConfirmed) { alert("請先確認資料"); return; }
+    if(state.isCriticalClaimed) return;
+    updateCurrentAgeFromInput();
+
+    let baseClaim = state.balance;
+    let bonusClaim = 0;
+    let policyYear = state.currentAge - config.startAge;
+
+    if (policyYear < 10) {
+        if (config.startAge <= 30) {
+            bonusClaim = config.sumUpgrade * 0.50;
+        } else {
+            bonusClaim = config.sumUpgrade * 0.35;
+        }
+    }
+
+    state.balance = 0;
+    
+    let totalPayout = baseClaim + bonusClaim;
+    state.totalPaid += totalPayout;
+    state.isCriticalClaimed = true;
+
+    let logMsg = "確診 (提取餘額)";
+    if(bonusClaim > 0) {
+        logMsg += ` + 首十年贈送 $${Math.round(bonusClaim).toLocaleString()}`;
+    }
+
+    log("嚴重危疾", logMsg, totalPayout);
+    updateUI();
+  }
+
+  function claimCancerLumpSum() {
+    if(!state.isConfirmed) { alert("請先確認資料"); return; }
+    if(state.hasStartedCancerMonthly) { alert("已鎖定B選項"); return; }
+    updateCurrentAgeFromInput();
+
+    if(!state.isCriticalClaimed && state.balance > 0) {
+        if(confirm("先賠嚴重危疾？")) claimCriticalIllness();
+        return;
+    }
+    if(state.cancerCount >= 5) { alert("已達上限"); return; }
+
+    changeAge(3);
+    let claim = config.sumTotal;
+    state.totalPaid += claim;
+    state.cancerCount++;
+    state.accCancerLump += claim;
+    document.getElementById('ageCancerLump').innerText = state.currentAge;
+
+    log("癌症賠償", "多重賠償 (100%)", claim);
+    updateUI();
+  }
+
+  function manualClaimCancerMonthly() {
+    if(!state.isConfirmed) { alert("請先確認資料"); return; }
+    if(!state.isCriticalClaimed) { alert("需先啟動嚴重危疾"); return; }
+    if(state.cancerMonthsPaid >= 100) { alert("已達上限"); return; }
+    updateCurrentAgeFromInput();
+
+    if(!state.hasStartedCancerMonthly) changeAge(1);
+    state.hasStartedCancerMonthly = true;
+
+    let amt = config.sumTotal * 0.05;
+    
+    state.totalPaid += amt;
+    state.cancerMonthsPaid++;
+    state.accCancerMonthly += amt;
+    document.getElementById('ageCancerMonthly').innerText = state.currentAge;
+
+    if(state.cancerMonthsPaid > 0 && state.cancerMonthsPaid % 12 === 0) changeAge(1);
+    log("癌症支援", "每月現金 (5%)", amt);
+    updateUI();
+  }
+
+  function claimHeartStroke() {
+    if(!state.isConfirmed) { alert("請先確認資料"); return; }
+    updateCurrentAgeFromInput();
+
+    if(!state.isCriticalClaimed && state.balance > 0) {
+        if(confirm("先賠嚴重危疾？")) claimCriticalIllness();
+        return;
+    }
+    if(state.heartCount >= 2) { alert("已達上限"); return; }
+
+    changeAge(1);
+    let claim = config.sumTotal;
+    
+    state.totalPaid += claim;
+    state.heartCount++;
+    state.accHeart += claim; 
+    
+    document.getElementById('ageHeart').innerText = state.currentAge;
+
+    log("心臟/中風", "多重賠償 (100%)", claim);
+    updateUI();
+  }
+
+  function manualClaimDementia() {
+    if(!state.isConfirmed) { alert("請先確認資料"); return; }
+    updateCurrentAgeFromInput();
+
+    if(!state.isCriticalClaimed && state.balance > 0) {
+        if(confirm("先賠嚴重危疾？")) claimCriticalIllness();
+        else return;
+    }
+
+    changeAge(1);
+    let amt = config.sumTotal * 0.06;
+    state.totalPaid += amt;
+    state.dementiaYearsPaid++;
+    state.accDementia += amt;
+    document.getElementById('ageDementia').innerText = state.currentAge;
+
+    log("腦退化", "年金賠償 (6%)", amt);
+    updateUI();
+  }
+
+  function log(type, msg, amount) {
+      const list = document.getElementById('logList');
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="log-age">${state.currentAge}歲</span> 
+                      <span class="log-content"><strong>${type}</strong>: ${msg}</span>
+                      <span class="log-amount">+${formatMoney(amount)}</span>`;
+      list.prepend(li);
+  }
+
+  function updateUI() {
+    document.getElementById('displayBalance').innerText = formatMoney(state.balance);
+    document.getElementById('displayTotalPaid').innerText = formatMoney(state.totalPaid);
+    
+    let balElem = document.getElementById('displayBalance');
+    balElem.style.color = state.balance === 0 ? '#e74c3c' : '#2c3e50';
+
+    document.getElementById('accEarlyDisplay').innerText = formatMoney(state.accEarly);
+    document.getElementById('accCancerLumpDisplay').innerText = formatMoney(state.accCancerLump);
+    document.getElementById('accCancerMonthlyDisplay').innerText = formatMoney(state.accCancerMonthly);
+    document.getElementById('accHeartDisplay').innerText = formatMoney(state.accHeart);
+    document.getElementById('accDementiaDisplay').innerText = formatMoney(state.accDementia);
+
+    document.getElementById('cancerCountDisplay').innerText = `(${state.cancerCount}/5)`;
+    document.getElementById('cancerMonthDisplay').innerText = `(${state.cancerMonthsPaid}/100)`;
+    document.getElementById('heartCountDisplay').innerText = `(${state.heartCount}/2)`;
+    document.getElementById('dementiaYearDisplay').innerText = `(${state.dementiaYearsPaid})`;
+
+    document.getElementById('btnCritical').disabled = state.isCriticalClaimed;
+    
+    let btnLump = document.getElementById('btnCancerLump');
+    if(state.hasStartedCancerMonthly) {
+        btnLump.disabled = true;
+        btnLump.innerText = "已鎖定";
+    }
+
+    updateBenefitValues();
+    updateBonusDisplay(); // Ensure bonus status is correct
+    updateAnalysis();
+  }
+
+  // --- SHARE & READ-ONLY FUNCTIONALITY ---
+  
+  function openShareModal() {
+      document.getElementById('shareModal').style.display = 'flex';
+      generateShareQR();
+  }
+
+  function closeShareModal() {
+      document.getElementById('shareModal').style.display = 'none';
+  }
+
+  function generateShareQR() {
+      // 1. Get current values
+      const params = new URLSearchParams();
+      params.append('sE', document.getElementById('sumExisting').value);
+      params.append('sU', document.getElementById('sumUpgrade').value);
+      params.append('age', document.getElementById('startAge').value);
+      params.append('ast', document.getElementById('assets').value);
+      params.append('tA', document.getElementById('targetA').value);
+      params.append('tB', document.getElementById('targetB').value);
+      params.append('tC', document.getElementById('targetC').value);
+      
+      // Get Client Name
+      const name = document.getElementById('clientNameInput').value || '貴賓';
+      params.append('n', encodeURIComponent(name));
+
+      params.append('mode', 'readonly'); // Force read-only
+
+      // 2. Construct clean URL (without previous queries)
+      const baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+      const fullUrl = baseUrl + "?" + params.toString();
+
+      // 3. Generate QR to hidden div
+      const container = document.getElementById('qrcode-source');
+      container.innerHTML = "";
+      
+      new QRCode(container, {
+          text: fullUrl,
+          width: 256,
+          height: 256,
+          colorDark : "#2c3e50",
+          colorLight : "#ffffff",
+          correctLevel : QRCode.CorrectLevel.H // High error correction for logo
+      });
+
+      // 4. Wait for generation, then add Shield Logo
+      setTimeout(() => {
+          const canvas = container.querySelector('canvas');
+          if(!canvas) return;
+          
+          const ctx = canvas.getContext('2d');
+          const size = 256;
+          const center = size / 2;
+          const logoSize = 50;
+
+          // Draw white background for logo
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(center - logoSize/2, center - logoSize/2, logoSize, logoSize);
+
+          // Draw Shield Emoji
+          ctx.font = "40px Arial";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("🛡️", center, center);
+
+          // Export to Image for Long-Press capability
+          document.getElementById('final-qr-img').src = canvas.toDataURL("image/png");
+      }, 100);
+  }
+
+  // Inject Eye Overlay for Privacy
+  function initPrivacyShield() {
+      const targets = ['assets', 'targetA', 'targetB', 'targetC'];
+      targets.forEach(id => {
+          const wrapper = document.getElementById('wrap_' + id);
+          if(!wrapper) return;
+          
+          const overlay = document.createElement('div');
+          overlay.className = 'privacy-overlay';
+          overlay.innerHTML = '👁️ 點擊查看';
+          
+          overlay.onclick = function() {
+              this.style.opacity = '0';
+              setTimeout(() => { this.style.display = 'none'; }, 300);
+          };
+          
+          wrapper.appendChild(overlay);
+      });
+  }
+
+  function checkUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      if(params.has('mode') && params.get('mode') === 'readonly') {
+          // Set values
+          if(params.has('sE')) document.getElementById('sumExisting').value = params.get('sE');
+          if(params.has('sU')) document.getElementById('sumUpgrade').value = params.get('sU');
+          if(params.has('age')) document.getElementById('startAge').value = params.get('age');
+          if(params.has('ast')) document.getElementById('assets').value = params.get('ast');
+          if(params.has('tA')) document.getElementById('targetA').value = params.get('tA');
+          if(params.has('tB')) document.getElementById('targetB').value = params.get('tB');
+          if(params.has('tC')) document.getElementById('targetC').value = params.get('tC');
+          
+          // Handle Name & Banner
+          if(params.has('n')) {
+              const name = decodeURIComponent(params.get('n'));
+              document.getElementById('guestNamePlaceholder').innerText = name;
+              document.getElementById('welcomeBanner').style.display = 'block';
+          }
+
+          // Trigger Calc
+          handleSumInput();
+          confirmAndStart();
+
+          // Apply Read-Only Styles
+          document.body.classList.add('readonly-mode');
+          
+          // Apply Privacy Shields
+          initPrivacyShield();
+      }
+  }
+
+  // Init
+  updateDate();
+  handleSumInput();
+  updateClientList();
+  
+  // Check for shared link on load
+  checkUrlParams();
+
+</script>
+</body>
+</html>
