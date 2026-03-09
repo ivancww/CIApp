@@ -1,0 +1,27 @@
+{
+  "name": "生活應急保險庫 (旗艦展示版)",
+  "short_name": "應急保險庫",
+  "description": "一個用於模擬和展示客戶在面對不同生活風險時，其保險資產如何提供財務支持的互動式PWA。",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2c3e50",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "apple-mobile-web-app-capable": "yes",
+  "apple-mobile-web-app-status-bar-style": "black-translucent",
+  "apple-mobile-web-app-title": "應急保險庫",
+  "apple-touch-icon": "icon-192.png"
+}
