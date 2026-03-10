@@ -378,20 +378,125 @@
 <div id="shareModal" class="modal-overlay"><div class="modal-content"><h3>分享您的規劃 (唯讀版)</h3><p style="font-size:0.9rem; color:#666; margin-bottom:15px;">對方掃描後將看到您目前的設定，<br>但無法修改內容。</p><div id="qrcode-source" style="display:none;"></div><div id="qr-container"><img id="final-qr-img" src="" alt="QR Code" /></div><p style="font-size:0.8rem; color:#888; margin-top:10px;">👆 請長按上方 QR Code 進行識別或保存</p><button class="close-modal" onclick="closeShareModal()">關閉</button></div></div>
 
 <script>
-  // --- 基礎計算機邏輯 (完全保留原本運作) ---
+  // --- 基礎計算機邏輯 (完整保留，包含客戶存檔功能) ---
   function updateDate() { document.getElementById('currentDateDisplay').innerText = new Date().toLocaleDateString('zh-HK', { year: 'numeric', month: '2-digit', day: '2-digit' }); }
+  
   let config = { sumExisting: 200000, sumTerm: 500000, sumWhole: 500000, sumUpgradeB: 500000, sumBasicPool: 1200000, existingMulti: false, existingCancerWait: 5, startAge: 30, assets: 300000, targetA: 40000, targetB: 30000, targetC: 18000 };
   let state = { isConfirmed: false, balance: 1000000, totalPaid: 0, isCriticalClaimed: false, hasStartedCancerMonthly: false, cancerRecurCountNew: 0, cancerRecurCountOld: 0, nextClaimAge_New: Infinity, nextClaimAge_Old: Infinity, heartCount: 0, cancerMonthsPaid: 0, dementiaYearsPaid: 0, accEarly: 0, accCancerLump: 0, accCancerMonthly: 0, accHeart: 0, accDementia: 0, currentAge: 30 };
+  
   const STORAGE_KEY = 'insurance_clients_db_v7';
   
-  function getStoredClients() { return localStorage.getItem(STORAGE_KEY) ? JSON.parse(localStorage.getItem(STORAGE_KEY)) : []; }
-  function saveClient() { /* ...同前... */ } function deleteClient() { /* ...同前... */ } function loadClient() { /* ...同前... */ } function updateClientList() { /* ...同前... */ } function toggleExistingOptions() { const chk = document.getElementById('existingMultiCheck').checked; document.getElementById('existingSubOptions').style.display = chk ? 'block' : 'none'; updateUI(); } function exportData() { /* ...同前... */ } function importData(input) { /* ...同前... */ }
+  // -- 完美復原：客戶檔案管理系統 --
+  function getStoredClients() { 
+      return localStorage.getItem(STORAGE_KEY) ? JSON.parse(localStorage.getItem(STORAGE_KEY)) : []; 
+  }
+  
+  function saveClient() {
+      const name = document.getElementById('clientNameInput').value.trim();
+      if (!name) { alert("請輸入客戶姓名！"); return; }
+      const currentData = {
+          name: name, dateSaved: new Date().toLocaleString('zh-HK'),
+          sumExisting: document.getElementById('sumExisting').value,
+          sumTerm: document.getElementById('sumTerm').value,
+          sumWhole: document.getElementById('sumWhole').value,
+          startAge: document.getElementById('startAge').value,
+          assets: document.getElementById('assets').value,
+          targetA: document.getElementById('targetA').value,
+          targetB: document.getElementById('targetB').value,
+          targetC: document.getElementById('targetC').value,
+          existingMulti: document.getElementById('existingMultiCheck').checked,
+          existingCancerWait: document.getElementById('existingCancerWait').value
+      };
+      let clients = getStoredClients();
+      const idx = clients.findIndex(c => c.name === name);
+      if (idx >= 0) { 
+          if(!confirm("客戶已存在，是否覆蓋？")) return; 
+          clients[idx] = currentData; 
+      } else { 
+          clients.push(currentData); 
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+      updateClientList(); 
+      alert("客戶資料已成功儲存！");
+  }
+  
+  function deleteClient() {
+      const name = document.getElementById('clientSelect').value;
+      if (!name) return;
+      if(confirm(`確定要刪除「${name}」的資料嗎？`)) {
+          let clients = getStoredClients(); 
+          clients = clients.filter(c => c.name !== name);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+          updateClientList(); 
+          document.getElementById('clientNameInput').value = "";
+      }
+  }
+  
+  function loadClient() {
+      const name = document.getElementById('clientSelect').value; 
+      if (!name) return;
+      const client = getStoredClients().find(c => c.name === name);
+      if (client) {
+          document.getElementById('clientNameInput').value = client.name;
+          document.getElementById('sumExisting').value = client.sumExisting;
+          document.getElementById('sumTerm').value = client.sumTerm || "0";
+          document.getElementById('sumWhole').value = client.sumWhole || "0";
+          document.getElementById('startAge').value = client.startAge;
+          document.getElementById('assets').value = client.assets;
+          document.getElementById('targetA').value = client.targetA;
+          document.getElementById('targetB').value = client.targetB;
+          document.getElementById('targetC').value = client.targetC;
+          document.getElementById('existingMultiCheck').checked = client.existingMulti || false;
+          document.getElementById('existingCancerWait').value = client.existingCancerWait || 5;
+          toggleExistingOptions(); 
+          handleSumInput(); 
+          confirmAndStart();
+      }
+  }
+  
+  function updateClientList() {
+      const select = document.getElementById('clientSelect'); 
+      select.innerHTML = '<option value="">-- 選擇載入客戶 --</option>';
+      getStoredClients().forEach(c => { 
+          const o = document.createElement('option'); 
+          o.value = c.name; 
+          o.text = `${c.name}`; 
+          select.appendChild(o); 
+      });
+  }
+  
+  function exportData() {
+      const data = localStorage.getItem(STORAGE_KEY); 
+      if(!data) { alert("沒有資料可匯出"); return; }
+      const url = URL.createObjectURL(new Blob([data], {type: "application/json"}));
+      const a = document.createElement('a'); 
+      a.href = url; 
+      a.download = "insurance_backup.json"; 
+      a.click();
+  }
+  
+  function importData(input) {
+      const f = input.files[0]; 
+      if(!f) return;
+      const r = new FileReader(); 
+      r.onload = function(e) { 
+          if(confirm("這將覆蓋現有所有客戶資料，確定匯入嗎？")) { 
+              localStorage.setItem(STORAGE_KEY, e.target.result); 
+              updateClientList(); 
+              alert("資料匯入成功！"); 
+          }
+      }; 
+      r.readAsText(f);
+  }
+
+  // -- 核心算力 --
+  function toggleExistingOptions() { const chk = document.getElementById('existingMultiCheck').checked; document.getElementById('existingSubOptions').style.display = chk ? 'block' : 'none'; updateUI(); }
   function getNumVal(id) { return parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0; }
   function formatOnly(input) { let v = input.value.replace(/,/g, '').replace(/[^\d]/g, ''); if(v) input.value = Number(v).toLocaleString('en-US'); }
   function formatMoney(num) { return "$" + Math.round(num).toLocaleString(); }
   function handleSumInput() { let ex = getNumVal('sumExisting'), term = getNumVal('sumTerm'), whole = getNumVal('sumWhole'); formatOnly(document.getElementById('sumExisting')); formatOnly(document.getElementById('sumTerm')); formatOnly(document.getElementById('sumWhole')); document.getElementById('sumUpgradeB').value = whole.toLocaleString('en-US'); document.getElementById('displayTotalBasic').innerText = "$" + (ex+term+whole).toLocaleString('en-US'); document.getElementById('displayTotalMulti').innerText = "$" + whole.toLocaleString('en-US'); }
   function confirmAndStart() { config.sumExisting = getNumVal('sumExisting'); config.sumTerm = getNumVal('sumTerm'); config.sumWhole = getNumVal('sumWhole'); config.sumUpgradeB = config.sumWhole; config.sumBasicPool = config.sumExisting + config.sumTerm + config.sumWhole; config.startAge = parseInt(document.getElementById('startAge').value) || 30; config.assets = getNumVal('assets'); config.targetA = getNumVal('targetA'); config.targetB = getNumVal('targetB'); config.targetC = getNumVal('targetC'); config.existingMulti = document.getElementById('existingMultiCheck').checked; config.existingCancerWait = parseInt(document.getElementById('existingCancerWait').value); if (!state.isCriticalClaimed) state.balance = config.sumBasicPool - state.accEarly; if (!state.isConfirmed) { state.currentAge = config.startAge; document.getElementById('currentAge').value = state.currentAge; state.nextClaimAge_New = Infinity; state.nextClaimAge_Old = Infinity; } state.isConfirmed = true; document.getElementById('analysisOverlay').style.display = 'none'; document.getElementById('valTargetA').innerText = config.targetA.toLocaleString(); document.getElementById('valTargetB').innerText = config.targetB.toLocaleString(); document.getElementById('valTargetC').innerText = config.targetC.toLocaleString(); updateBenefitValues(); updateBonusDisplay(); updateAnalysis(); updateUI(); }
-  function fullReset() { state.isConfirmed = false; document.getElementById('analysisOverlay').style.display = 'flex'; document.getElementById('criticalBonusBox').style.display = 'none'; document.getElementById('cancerWaitInfo').innerText = "系統將自動對比新舊單的等候期"; resetBars('A'); resetBars('B'); resetBars('C'); state.totalPaid=0; state.accEarly=0; state.accCancerLump=0; state.accCancerMonthly=0; state.accHeart=0; state.accDementia=0; state.isCriticalClaimed=false; state.hasStartedCancerMonthly=false; state.cancerRecurCountNew = 0; state.cancerRecurCountOld = 0; state.nextClaimAge_New = Infinity; state.nextClaimAge_Old = Infinity; state.heartCount=0; state.cancerMonthsPaid=0; state.dementiaYearsPaid=0; document.getElementById('displayTotalPaid').innerText = "$0"; document.getElementById('accEarlyDisplay').innerText = "$0"; document.getElementById('accCancerLumpDisplay').innerText = "$0"; document.getElementById('accCancerMonthlyDisplay').innerText = "$0"; document.getElementById('accHeartDisplay').innerText = "$0"; document.getElementById('accDementiaDisplay').innerText = "$0"; document.getElementById('btnCritical').disabled = false; document.getElementById('btnCancerAuto').disabled = false; document.getElementById('btnCancerAuto').innerText = "⏭️ 推演下一次復發歲數"; document.getElementById('valCritical').innerText = formatMoney(config.sumBasicPool); document.getElementById('logList').innerHTML = ""; updateUI(); }
+  function fullReset() { state.isConfirmed = false; document.getElementById('analysisOverlay').style.display = 'flex'; document.getElementById('criticalBonusBox').style.display = 'none'; document.getElementById('cancerWaitInfo').innerText = "自動對比等候期"; resetBars('A'); resetBars('B'); resetBars('C'); state.totalPaid=0; state.accEarly=0; state.accCancerLump=0; state.accCancerMonthly=0; state.accHeart=0; state.accDementia=0; state.isCriticalClaimed=false; state.hasStartedCancerMonthly=false; state.cancerRecurCountNew = 0; state.cancerRecurCountOld = 0; state.nextClaimAge_New = Infinity; state.nextClaimAge_Old = Infinity; state.heartCount=0; state.cancerMonthsPaid=0; state.dementiaYearsPaid=0; document.getElementById('displayTotalPaid').innerText = "$0"; document.getElementById('accEarlyDisplay').innerText = "$0"; document.getElementById('accCancerLumpDisplay').innerText = "$0"; document.getElementById('accCancerMonthlyDisplay').innerText = "$0"; document.getElementById('accHeartDisplay').innerText = "$0"; document.getElementById('accDementiaDisplay').innerText = "$0"; document.getElementById('btnCritical').disabled = false; document.getElementById('btnCancerAuto').disabled = false; document.getElementById('btnCancerAuto').innerText = "⏭️ 推演下一次復發歲數"; document.getElementById('valCritical').innerText = formatMoney(config.sumBasicPool); document.getElementById('logList').innerHTML = ""; updateUI(); }
   function resetBars(type) { document.getElementById(`barAssets${type}`).style.width = "0%"; document.getElementById(`barExisting${type}`).style.width = "0%"; document.getElementById(`barUpgrade${type}`).style.width = "0%"; document.getElementById(`barTerm${type}`).style.width = "0%"; document.getElementById(`total${type}`).innerText = "0 個月"; document.getElementById(`bd${type}`).innerHTML = ""; document.getElementById(`gap${type}`).innerHTML = ""; }
   function updateAnalysis() { if (!state.isConfirmed) return; let totalProtection = config.sumBasicPool + config.sumUpgradeB || 1; runScenario('A', config.targetA, config.sumExisting/totalProtection, config.sumTerm/totalProtection); runScenario('B', config.targetB, config.sumExisting/totalProtection, config.sumTerm/totalProtection); runScenario('C', config.targetC, config.sumExisting/totalProtection, config.sumTerm/totalProtection); }
   function formatDuration(m) { if(!isFinite(m) || m <= 0.01) return "0 個月"; if(m < 12) return Math.floor(m) + " 個月"; let y = Math.floor(m/12); let remM = Math.floor(m%12); if(remM === 0) return y + " 年"; return `${y} 年 ${remM} 個月`; }
@@ -401,6 +506,7 @@
   function updateBonusDisplay() { if(!state.isConfirmed) return; document.getElementById('criticalBonusBox').style.display = 'block'; let rA = document.getElementById('ruleADisplay'), rB = document.getElementById('ruleBDisplay'); let base = config.sumWhole; if (config.startAge <= 30) { rA.style.display='flex'; rB.style.display='none'; document.getElementById('bonusAmountA').innerText = "+" + formatMoney(base*0.50); } else { rA.style.display='none'; rB.style.display='flex'; document.getElementById('bonusAmountB').innerText = "+" + formatMoney(base*0.35); } let badge = document.getElementById('bonusStatusBadge'); let py = state.currentAge - config.startAge; if (state.isCriticalClaimed) { badge.className = 'bonus-inactive-tag'; badge.innerText = `❌ 已隨首次確診結束`; } else if (py < 10) { badge.className = 'bonus-active-tag'; badge.innerText = `✅ 生效中 (第 ${py+1} 年)`; } else { badge.className = 'bonus-inactive-tag'; badge.innerText = `❌ 已過期`; } }
   function changeAge(targetAge) { if(!state.isConfirmed) return; if (targetAge > state.currentAge) { state.currentAge = targetAge; document.getElementById('currentAge').value = state.currentAge; updateBonusDisplay(); } }
   function triggerHighlight() { const val = document.getElementById('displayTotalPaid'); const bar = document.getElementById('mainStatusBar'); val.classList.remove('text-flash'); bar.classList.remove('flash-bg'); void val.offsetWidth; void bar.offsetWidth; val.classList.add('text-flash'); bar.classList.add('flash-bg'); }
+  
   function claimEarlyStage() { if(!state.isConfirmed) { alert("請先確認"); return; } if(state.balance <= 0) { alert("額度耗盡"); return; } state.currentAge = parseInt(document.getElementById('currentAge').value); let claim = Math.min(config.sumBasicPool * 0.20, state.balance); state.balance -= claim; state.totalPaid += claim; state.accEarly += claim; log("早期疾病", "從基寶提取", claim); updateUI(); }
   function claimCriticalIllness() { if(!state.isConfirmed) { alert("請先確認"); return; } if(state.isCriticalClaimed) return; state.currentAge = parseInt(document.getElementById('currentAge').value); if (config.existingMulti) { state.nextClaimAge_Old = state.currentAge + config.existingCancerWait; } else { state.nextClaimAge_Old = Infinity; } state.nextClaimAge_New = state.currentAge + 3; let claim = state.balance; let bonus = 0; if ((state.currentAge - config.startAge) < 10) { bonus = config.sumWhole * (config.startAge <= 30 ? 0.50 : 0.35); } state.balance = 0; state.totalPaid += (claim+bonus); state.isCriticalClaimed = true; log("確診癌症/危疾", `基寶全賠${bonus>0 ? " (+Bonus)" : ""}`, claim+bonus); updateUI(); }
   function claimCancerAuto() { if(!state.isConfirmed) { alert("請先確認"); return; } if(state.hasStartedCancerMonthly) { alert("已啟動每月支援，鎖定一筆過賠償"); return; } if(!state.isCriticalClaimed) { if(confirm("需先啟動嚴重危疾？")) claimCriticalIllness(); return; } let targetAge = Math.min(state.nextClaimAge_New, state.nextClaimAge_Old); if (targetAge === Infinity) { alert("所有多次賠償額度已耗盡！"); return; } changeAge(targetAge); let actualClaim = 0; let msgParts = []; if (targetAge === state.nextClaimAge_New && state.cancerRecurCountNew < 5) { actualClaim += config.sumUpgradeB; msgParts.push("新單B"); state.cancerRecurCountNew++; state.nextClaimAge_New = (state.cancerRecurCountNew < 5) ? targetAge + 3 : Infinity; } if (targetAge === state.nextClaimAge_Old && state.cancerRecurCountOld < 2 && config.existingMulti) { actualClaim += config.sumExisting; msgParts.push("舊單"); state.cancerRecurCountOld++; state.nextClaimAge_Old = (state.cancerRecurCountOld < 2) ? targetAge + config.existingCancerWait : Infinity; } if (actualClaim > 0) { state.totalPaid += actualClaim; state.accCancerLump += actualClaim; log("癌症復發", msgParts.join(" + "), actualClaim); } updateUI(); }
