@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.2 尊享版)</title>
+<title>生活應急保險庫 (v2.3 尊享版)</title>
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2c3e50">
@@ -30,10 +30,6 @@
   body.readonly-mode input, body.readonly-mode select { background-color: #f9f9f9 !important; color: #555 !important; border-color: #ddd !important; pointer-events: none; }
 
   /* UI Components */
-  .welcome-banner { display: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; padding: 20px; margin: -20px -20px 20px -20px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-  .welcome-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 5px; }
-  .welcome-subtitle { font-size: 0.9rem; opacity: 0.9; }
-  
   .input-wrapper { position: relative; flex: 1; display: flex; }
   
   .container { max-width: 1200px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); overflow: hidden; }
@@ -42,6 +38,7 @@
   .version-badge { font-size: 0.75rem; background: var(--gold); color: #2c3e50; padding: 4px 10px; border-radius: 20px; font-weight: bold; letter-spacing: 1px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); vertical-align: middle; }
   .header-date { margin-top: 8px; font-size: 0.85rem; color: #bdc3c7; }
 
+  /* Grid Layout: Left Panel & Right Sticky Panel */
   .main-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 0; align-items: flex-start; }
   @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; align-items: stretch; } }
   
@@ -107,36 +104,39 @@
   .bonus-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; } .bonus-highlight { font-weight: bold; color: #e74c3c; }
   .bonus-active-tag { background: #2ecc71; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px;} .bonus-inactive-tag { background: #95a5a6; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px;}
 
-  .log-container { flex: 1; background: #2c3e50; color: #ecf0f1; border-radius: 8px; overflow-y: auto; margin-top: 20px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.2); }
-  .log-header { background: #34495e; padding: 8px 15px; position: sticky; top: 0; font-size: 0.85rem; letter-spacing: 1px; border-bottom: 1px solid #46637f; z-index: 5;}
-  #logList { list-style: none; padding: 0; margin: 0; }
-  #logList li { padding: 10px 15px; border-bottom: 1px solid #34495e; font-family: 'Consolas', monospace; font-size: 0.85rem; display: flex; gap: 10px; }
-  .log-age { color: var(--gold); font-weight: bold; min-width: 45px; } .log-content { flex: 1; } .log-amount { color: #2ecc71; font-weight: bold; }
-
-  @keyframes drop-in { 0% { transform: translateY(-10px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
-
-  /* 隱藏式提示 Tooltip CSS */
+  /* Tooltip CSS */
   .tooltip { position: relative; display: inline-block; cursor: help; border-bottom: 1px dotted #7f8c8d; }
   .tooltip .tooltiptext { visibility: hidden; width: 220px; background-color: #34495e; color: #fff; text-align: left; border-radius: 6px; padding: 10px; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -110px; opacity: 0; transition: opacity 0.3s; font-size: 0.75rem; font-weight: normal; line-height: 1.5; box-shadow: 0 4px 6px rgba(0,0,0,0.15); }
   .tooltip .tooltiptext::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #34495e transparent transparent transparent; }
   .tooltip:hover .tooltiptext, .tooltip:active .tooltiptext { visibility: visible; opacity: 1; }
 
-  /* 多重賠償時間線 Card */
-  .payout-item { display: flex; align-items: center; background: white; border-radius: 8px; padding: 10px; margin-top: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-  .payout-icon { font-size: 1.5rem; margin-right: 12px; }
-  .payout-info { flex: 1; text-align: left; }
-  .payout-age { font-size: 0.85rem; font-weight: bold; }
-  .payout-amt { font-size: 1.2rem; color: #2c3e50; font-weight: 900; }
+  /* 右側：多重賠償時間線卡片動畫 */
+  .timeline-card {
+      display: flex; align-items: center; background: white; border-radius: 10px;
+      padding: 15px 20px; margin-bottom: 12px; border: 1px solid #eee; border-left: 6px solid #e74c3c;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.06); 
+      animation: slide-down 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      opacity: 0; transform: translateY(-20px);
+  }
+  @keyframes slide-down {
+      to { opacity: 1; transform: translateY(0); }
+  }
+  .timeline-icon { font-size: 2rem; margin-right: 18px; }
+  .timeline-info { flex: 1; display: flex; justify-content: space-between; align-items: center; }
+  .timeline-age { font-size: 1.1rem; color: #7f8c8d; font-weight: bold; }
+  .timeline-amt { font-size: 1.6rem; color: #2c3e50; font-weight: 900; letter-spacing: 1px; }
+
 </style>
 </head>
 <body>
 
 <div class="container">
   <div class="header">
-      <h1>生活應急保險庫 <span class="version-badge">v2.2 尊享版</span></h1>
+      <h1>生活應急保險庫 <span class="version-badge">v2.3 尊享版</span></h1>
       <div class="header-date" id="currentDateDisplay"></div>
   </div>
   <div class="main-grid">
+    
     <div class="config-panel">
       <div class="section-title">1. 保障額度 (Review)</div>
       <div class="input-group"><label>舊單 (Existing)</label><div class="input-wrapper" id="wrap_sumExisting"><input type="text" id="sumExisting" value="200,000" onkeyup="handleSumInput()"></div></div>
@@ -147,7 +147,6 @@
       <div class="total-coverage-box"><div class="total-label">總危疾保額 (舊+補強A+補強B)</div><div class="total-value" id="displayTotalBasic">$1,200,000</div><div style="font-size:0.8rem; color:#7f8c8d; margin-top:5px;">含多重支援 (B1): <span id="displayTotalMulti" style="font-weight:bold; color:#e67e22;">$500,000</span></div></div>
       <div class="input-group"><label>投保歲數</label><div class="input-wrapper"><input type="number" id="startAge" value="30" onkeyup="formatOnly(this)"></div></div>
       
-      <!-- 優化：極簡化生活與財務設定 -->
       <div class="section-title" style="margin-top:20px;">2. 財政與收入狀況</div>
       <div class="input-group" style="border-left: 4px solid var(--blue-base); padding-left: 8px;">
         <label style="color:var(--blue-base);">現有銀行存款</label>
@@ -163,6 +162,7 @@
       
       <div class="controls-area">
         <div class="section-title" style="color:#c0392b; border-color:#fadbd8;">🏥 模擬索償操作區</div>
+        
         <div class="card early"><h3>1. 早期疾病 (20%) <span class="tag">扣除危疾保額</span></h3><div class="btn-group"><div class="action-row"><button class="btn-orange" onclick="claimEarlyStage()">⚡ 提取早期賠償</button><div class="amount-display"><span class="amount-label">款項:</span><span id="valEarlyStage">$0</span></div></div><div class="action-row" style="background:#fffcf5; border-color:#fdebd0;"><div class="acc-tag"><span>累計:</span><div id="accEarlyDisplay">$0</div></div></div></div></div>
         
         <div class="card critical"><h3>2. 嚴重危疾 (100%) <span class="tag">危疾全賠 + 啟動B1</span><div style="font-size:0.75rem; color:#95a5a6; font-weight:normal; margin-top:4px;">* 加分紅（如有）</div></h3><div class="btn-group"><div class="action-row"><button class="btn-red" id="btnCritical" onclick="claimCriticalIllness()">🚨 確診嚴重危疾</button><div class="amount-display"><span class="amount-label">餘額:</span><span id="valCritical">$0</span></div></div></div><div class="bonus-box" id="criticalBonusBox" style="display:none;"><div class="bonus-row"><strong>🎁 首十年免費升級 (只計補強B):</strong></div><div class="bonus-row" id="ruleADisplay" style="display:none; color:#555;"><span>A. 30歲或以下 (+50%)</span><span id="bonusAmountA" class="bonus-highlight">$0</span></div><div class="bonus-row" id="ruleBDisplay" style="display:none; color:#555;"><span>B. 31歲或以上 (+35%)</span><span id="bonusAmountB" class="bonus-highlight">$0</span></div><div style="margin-top:5px; padding-top:5px; border-top:1px dashed #d1ecf1; text-align:right;"><span id="bonusStatusBadge"></span></div></div></div>
@@ -181,11 +181,7 @@
                     <span id="cancerCountDisplayNew" style="font-size:0.85em; color:#27ae60; font-weight:bold;">(新: 0/6)</span>
                 </div>
                 <p id="cancerWaitInfo" style="font-size:0.8em; color:#7f8c8d; margin:5px 0 0 0; text-align:center;">自動對比等候期</p>
-                
-                <!-- 優化：動態多重賠償時間線 -->
-                <div id="cancerTimeline" style="display: flex; flex-direction: column;"></div>
             </div>
-            
             <div class="option-header" style="margin-top:15px;">選項 B：每月支援 (Monthly)<span class="wait-badge">⏳ 等1年</span></div>
             <div class="btn-group"><div class="action-row"><button class="btn-orange" id="btnCancerMonthly" onclick="manualClaimCancerMonthly()">👇 發放 1 個月</button><div class="amount-display"><span class="amount-label">月:</span><span id="valCancerMonthly">$0</span></div><div class="age-record"><span class="age-label">歲:</span><span id="ageCancerMonthly">--</span></div></div><div class="action-row" style="background:#fffcf5; border-color:#fdebd0;"><div class="acc-tag"><span>累計:</span><div id="accCancerMonthlyDisplay">$0</div></div><span id="cancerMonthDisplay" style="font-size:0.9em; color:#7f8c8d;">(0/100)</span></div></div>
         </div>
@@ -205,8 +201,7 @@
           <div class="status-item"><span class="status-label" style="color:#c0392b; font-weight:bold;">已提取總賠償</span><span id="displayTotalPaid" class="status-value red" style="font-size:1.6rem;">$0</span></div>
       </div>
       
-      <!-- 優化：極致清晰的保險 vs 存款對比面板 -->
-      <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--blue-base); margin-bottom: 20px;">
+      <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--blue-base); margin-bottom: 25px;">
           <h4 style="margin: 0 0 15px 0; color: #2c3e50; text-align: center;">
             🛡️ <span class="tooltip" style="border-bottom: 2px dotted #3498db; cursor: pointer;">3年大病休養期<span class="tooltiptext">嚴重疾病（如癌症）的平均治療及休養期約為2至3年。此設定確保在養病無法工作期間，家庭生活質素依然得到保障，避免消耗原有積蓄。</span></span> - 資金流向推演
           </h4>
@@ -234,7 +229,13 @@
           </div>
       </div>
       
-      <div class="log-container"><div class="log-header">💰 賠償資金戶口簿</div><ul id="logList"></ul></div>
+      <div class="section-title" style="border-color:#bdc3c7;">⏳ 多重賠償時間線</div>
+      <div id="rightTimeline" style="display: flex; flex-direction: column;">
+          <div style="text-align:center; color:#bdc3c7; font-size:0.95rem; padding: 30px; border: 2px dashed #eee; border-radius: 8px;">
+              等待啟動模擬索償...
+          </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -243,7 +244,6 @@
   // --- 基礎計算機邏輯 ---
   function updateDate() { document.getElementById('currentDateDisplay').innerText = new Date().toLocaleDateString('zh-HK', { year: 'numeric', month: '2-digit', day: '2-digit' }); }
   
-  // 更新 Config 變數
   let config = { sumExisting: 200000, sumTerm: 500000, sumWhole: 500000, sumUpgradeB: 500000, sumBasicPool: 1200000, existingMulti: false, existingCancerWait: 5, startAge: 30, assets: 500000, expense: 30000 };
   let state = { isConfirmed: false, balance: 1000000, totalPaid: 0, isCriticalClaimed: false, hasStartedCancerMonthly: false, cancerRecurCountNew: 0, cancerRecurCountOld: 0, nextClaimAge_New: Infinity, nextClaimAge_Old: Infinity, heartCount: 0, cancerMonthsPaid: 0, dementiaYearsPaid: 0, accEarly: 0, accCancerLump: 0, accCancerMonthly: 0, accHeart: 0, accDementia: 0, currentAge: 30 };
   
@@ -312,18 +312,18 @@
       document.getElementById('btnCancerAuto').disabled = false; 
       document.getElementById('btnCancerAuto').innerText = "⏭️ 推演下一次復發歲數"; 
       document.getElementById('valCritical').innerText = formatMoney(config.sumBasicPool); 
-      document.getElementById('logList').innerHTML = ""; 
-      document.getElementById('cancerTimeline').innerHTML = ""; // 清空瀑布流
+      
+      // 清空右側時間線
+      document.getElementById('rightTimeline').innerHTML = '<div style="text-align:center; color:#bdc3c7; font-size:0.95rem; padding: 30px; border: 2px dashed #eee; border-radius: 8px;">等待啟動模擬索償...</div>'; 
       updateUI(); 
   }
   
-  // 優化：極簡化核心計算 - 保險 vs 存款對比
   function updateAnalysis() { 
       if (!state.isConfirmed) return; 
       let expense = config.expense;
       let totalNeeds3Y = expense * 36;
       
-      // 基本假設：首次大病用基本保額池抵銷生活費 (若不夠則扣積蓄)
+      // 基本假設：首次大病用基本保額池抵銷生活費
       let insCoversAmount = Math.min(totalNeeds3Y, config.sumBasicPool);
       let savingsNeeded = Math.max(0, totalNeeds3Y - insCoversAmount);
       let finalSavings = config.assets - savingsNeeded;
@@ -357,7 +357,48 @@
   function userChangeAge(val) { if(!state.isConfirmed) return; let newAge = parseInt(val); if(newAge < config.startAge) { newAge = config.startAge; document.getElementById('currentAge').value = newAge; alert("目前歲數不能小於投保歲數！"); } state.currentAge = newAge; updateBonusDisplay(); updateUI(); }
   function changeAge(targetAge) { if(!state.isConfirmed) return; if (targetAge > state.currentAge) { state.currentAge = targetAge; document.getElementById('currentAge').value = state.currentAge; updateBonusDisplay(); } }
   function triggerHighlight() { const val = document.getElementById('displayTotalPaid'); const bar = document.getElementById('mainStatusBar'); val.classList.remove('text-flash'); bar.classList.remove('flash-bg'); void val.offsetWidth; void bar.offsetWidth; val.classList.add('text-flash'); bar.classList.add('flash-bg'); }
-  function claimEarlyStage() { if(!state.isConfirmed) { alert("請先確認"); return; } if(state.balance <= 0) { alert("額度耗盡"); return; } state.currentAge = parseInt(document.getElementById('currentAge').value); let claim = Math.min(config.sumBasicPool * 0.20, state.balance); state.balance -= claim; state.totalPaid += claim; state.accEarly += claim; log("早期疾病", "從危疾池提取", claim); updateUI(); }
+  
+  // 動態添加卡片到右側瀑布流
+  function addTimelineCard(age, amount, color, icon) {
+      const container = document.getElementById('rightTimeline');
+      // 清除預設字句
+      if (container.innerHTML.includes("等待啟動模擬索償")) {
+          container.innerHTML = "";
+      }
+      
+      // 極簡卡片設計：只顯示年齡 + 賠償金額
+      let cardHtml = `
+      <div class="timeline-card" style="border-left-color: ${color};">
+          <div class="timeline-icon">${icon}</div>
+          <div class="timeline-info">
+              <div class="timeline-age">${age}歲</div>
+              <div class="timeline-amt">+$${amount.toLocaleString('en-US')}</div>
+          </div>
+      </div>`;
+      
+      // 在最底向下加插 (瀑布流效果)
+      container.insertAdjacentHTML('beforeend', cardHtml);
+      
+      // 確保畫面自動捲動到底部，方便展示
+      const panel = document.querySelector('.analysis-panel');
+      setTimeout(() => {
+          panel.scrollTo({ top: panel.scrollHeight, behavior: 'smooth' });
+      }, 100);
+      
+      triggerHighlight();
+  }
+
+  function claimEarlyStage() { 
+      if(!state.isConfirmed) { alert("請先確認"); return; } 
+      if(state.balance <= 0) { alert("額度耗盡"); return; } 
+      state.currentAge = parseInt(document.getElementById('currentAge').value); 
+      let claim = Math.min(config.sumBasicPool * 0.20, state.balance); 
+      state.balance -= claim; state.totalPaid += claim; state.accEarly += claim; 
+      
+      // 加入時間線卡片
+      addTimelineCard(state.currentAge, claim, "#f39c12", "⚡");
+      updateUI(); 
+  }
   
   function claimCriticalIllness() { 
       if(!state.isConfirmed) { alert("請先確認"); return; } 
@@ -371,11 +412,12 @@
       state.balance = 0; 
       state.totalPaid += (claim+bonus); 
       state.isCriticalClaimed = true; 
-      log("確診癌症/危疾", `危疾保額全賠${bonus>0 ? " (+Bonus)" : ""}`, claim+bonus); 
+      
+      // 加入時間線卡片 (首次確診)
+      addTimelineCard(state.currentAge, claim+bonus, "#e74c3c", "🚨");
       updateUI(); 
   }
 
-  // 優化：多重賠償瀑布流顯示
   function claimCancerAuto() { 
       if(!state.isConfirmed) { alert("請先確認"); return; } 
       if(state.hasStartedCancerMonthly) { alert("已啟動每月支援，鎖定一筆過賠償"); return; } 
@@ -386,15 +428,14 @@
       changeAge(targetAge); 
       
       let actualClaim = 0; 
-      let msgParts = []; 
       
       if (targetAge === state.nextClaimAge_New && state.cancerRecurCountNew < 5) { 
-          actualClaim += config.sumUpgradeB; msgParts.push("新單B1"); 
+          actualClaim += config.sumUpgradeB; 
           state.cancerRecurCountNew++; 
           state.nextClaimAge_New = (state.cancerRecurCountNew < 5) ? targetAge + 3 : Infinity; 
       } 
       if (targetAge === state.nextClaimAge_Old && state.cancerRecurCountOld < 2 && config.existingMulti) { 
-          actualClaim += config.sumExisting; msgParts.push("舊單"); 
+          actualClaim += config.sumExisting; 
           state.cancerRecurCountOld++; 
           state.nextClaimAge_Old = (state.cancerRecurCountOld < 2) ? targetAge + config.existingCancerWait : Infinity; 
       } 
@@ -402,31 +443,45 @@
       if (actualClaim > 0) { 
           state.totalPaid += actualClaim; 
           state.accCancerLump += actualClaim; 
-          log("癌症復發", msgParts.join(" + "), actualClaim); 
           
-          // 新增：在癌症選項下面加入 Card 視覺化展示
-          let timeline = document.getElementById('cancerTimeline');
-          let recurNum = state.cancerRecurCountNew + state.cancerRecurCountOld;
-          let cardHtml = `
-              <div class="payout-item" style="animation: drop-in 0.3s ease-out; border-left: 4px solid #e74c3c;">
-                  <div class="payout-icon">🛡️</div>
-                  <div class="payout-info">
-                      <div class="payout-age" style="color:#c0392b;">${targetAge}歲 - 第${recurNum}次復發</div>
-                      <div class="payout-amt">+$${actualClaim.toLocaleString('en-US')} 
-                          <span style="font-size:0.75rem; color:#7f8c8d; font-weight:normal;">(${msgParts.join(' + ')})</span>
-                      </div>
-                  </div>
-              </div>`;
-          timeline.insertAdjacentHTML('beforeend', cardHtml);
+          // 加插新卡片 (多重賠償)
+          addTimelineCard(targetAge, actualClaim, "#e67e22", "🛡️");
       } 
       updateUI(); 
   }
   
-  function manualClaimCancerMonthly() { if(!state.isCriticalClaimed) { alert("需先啟動嚴重危疾"); return; } if(!state.hasStartedCancerMonthly) changeAge(state.currentAge + 1); state.hasStartedCancerMonthly = true; let amt = config.sumUpgradeB * 0.05; state.totalPaid += amt; state.cancerMonthsPaid++; state.accCancerMonthly += amt; if(state.cancerMonthsPaid % 12 === 0) changeAge(state.currentAge + 1); log("癌症支援", "每月現金", amt); updateUI(); }
-  function claimHeartStroke() { if(!state.isCriticalClaimed) { if(confirm("需先啟動嚴重危疾？")) claimCriticalIllness(); return; } if(state.heartCount >= 2) return; changeAge(state.currentAge + 1); let amt = config.sumUpgradeB; if(config.existingMulti) amt += config.sumExisting; state.totalPaid += amt; state.heartCount++; state.accHeart += amt; log("心臟/中風", "復發賠償", amt); updateUI(); }
-  function manualClaimDementia() { if(!state.isCriticalClaimed) { if(confirm("需先啟動嚴重危疾？")) claimCriticalIllness(); else return; } changeAge(state.currentAge + 1); let amt = config.sumUpgradeB * 0.06; state.totalPaid += amt; state.dementiaYearsPaid++; state.accDementia += amt; log("腦退化", "年金", amt); updateUI(); }
+  function manualClaimCancerMonthly() { 
+      if(!state.isCriticalClaimed) { alert("需先啟動嚴重危疾"); return; } 
+      if(!state.hasStartedCancerMonthly) changeAge(state.currentAge + 1); 
+      state.hasStartedCancerMonthly = true; 
+      let amt = config.sumUpgradeB * 0.05; 
+      state.totalPaid += amt; state.cancerMonthsPaid++; state.accCancerMonthly += amt; 
+      if(state.cancerMonthsPaid % 12 === 0) changeAge(state.currentAge + 1); 
+      
+      addTimelineCard(state.currentAge, amt, "#f39c12", "💸");
+      updateUI(); 
+  }
   
-  function log(type, msg, amount) { const list = document.getElementById('logList'); const li = document.createElement('li'); li.innerHTML = `<span class="log-age">${state.currentAge}歲</span><span class="log-content"><strong>${type}</strong>: ${msg}</span><span class="log-amount">+${formatMoney(amount)}</span>`; li.style.animation = "flash-bg 5s ease-out"; list.prepend(li); triggerHighlight(); }
+  function claimHeartStroke() { 
+      if(!state.isCriticalClaimed) { if(confirm("需先啟動嚴重危疾？")) claimCriticalIllness(); return; } 
+      if(state.heartCount >= 2) return; 
+      changeAge(state.currentAge + 1); 
+      let amt = config.sumUpgradeB; if(config.existingMulti) amt += config.sumExisting; 
+      state.totalPaid += amt; state.heartCount++; state.accHeart += amt; 
+      
+      addTimelineCard(state.currentAge, amt, "#8e44ad", "❤️");
+      updateUI(); 
+  }
+  
+  function manualClaimDementia() { 
+      if(!state.isCriticalClaimed) { if(confirm("需先啟動嚴重危疾？")) claimCriticalIllness(); else return; } 
+      changeAge(state.currentAge + 1); 
+      let amt = config.sumUpgradeB * 0.06; 
+      state.totalPaid += amt; state.dementiaYearsPaid++; state.accDementia += amt; 
+      
+      addTimelineCard(state.currentAge, amt, "#27ae60", "🧠");
+      updateUI(); 
+  }
   
   function updateUI() { 
       document.getElementById('displayBalance').innerText = formatMoney(state.balance); 
