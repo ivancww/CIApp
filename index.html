@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.3 尊享版)</title>
+<title>生活應急保險庫 (v2.4 尊享版)</title>
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2c3e50">
@@ -32,19 +32,22 @@
   /* UI Components */
   .input-wrapper { position: relative; flex: 1; display: flex; }
   
-  .container { max-width: 1200px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); overflow: hidden; }
-  .header { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; padding: 25px 20px; text-align: center; border-bottom: 6px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+  /* 修正：移除了 overflow: hidden; 確保 right panel 可以 sticky 移動 */
+  .container { max-width: 1200px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+  
+  .header { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; padding: 25px 20px; text-align: center; border-bottom: 6px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 12px 12px 0 0; }
   .header h1 { margin: 0; font-size: 2rem; letter-spacing: 2px; font-weight: 900; text-shadow: 0 3px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; gap: 10px; }
   .version-badge { font-size: 0.75rem; background: var(--gold); color: #2c3e50; padding: 4px 10px; border-radius: 20px; font-weight: bold; letter-spacing: 1px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); vertical-align: middle; }
   .header-date { margin-top: 8px; font-size: 0.85rem; color: #bdc3c7; }
 
   /* Grid Layout: Left Panel & Right Sticky Panel */
-  .main-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 0; align-items: flex-start; }
+  .main-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 0; align-items: flex-start; border-radius: 0 0 12px 12px; }
   @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; align-items: stretch; } }
   
-  .config-panel { background: #f8f9fa; padding: 20px; border-right: 1px solid #eee; }
+  .config-panel { background: #f8f9fa; padding: 20px; border-right: 1px solid #eee; border-radius: 0 0 0 12px; }
   
-  .analysis-panel { background: #fff; padding: 20px; position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; display: flex; flex-direction: column; }
+  /* 這裡的 position: sticky 再次生效 */
+  .analysis-panel { background: #fff; padding: 20px; position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; display: flex; flex-direction: column; border-radius: 0 0 12px 0; }
   @media (max-width: 900px) { .analysis-panel { position: static; max-height: none; overflow-y: visible; } }
 
   @keyframes flash-bg { 0% { background-color: rgba(46, 204, 113, 0.4); box-shadow: 0 0 15px rgba(46, 204, 113, 0.8); } 10% { background-color: rgba(46, 204, 113, 0.6); box-shadow: 0 0 20px rgba(46, 204, 113, 1); } 100% { background-color: #f0f3f4; box-shadow: none; } }
@@ -71,7 +74,7 @@
   .editable-age { width: 60px !important; text-align: center; padding: 5px; border: 1px solid #bdc3c7; background: #fff; font-weight: bold; font-size: 1.4rem; color: #2c3e50; border-radius: 6px; cursor: pointer; }
   .editable-age:focus { outline: 2px solid var(--blue-base); border-color: transparent; }
 
-  .overlay-mask { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.98); z-index: 10; display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center; }
+  .overlay-mask { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.98); z-index: 10; display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center; border-radius: 0 0 12px 0; }
   .overlay-content { color: #7f8c8d; font-size: 1.1rem; }
 
   .controls-area { padding-top: 25px; margin-top: 25px; border-top: 2px solid #ddd; }
@@ -132,7 +135,7 @@
 
 <div class="container">
   <div class="header">
-      <h1>生活應急保險庫 <span class="version-badge">v2.3 尊享版</span></h1>
+      <h1>生活應急保險庫 <span class="version-badge">v2.4 尊享版</span></h1>
       <div class="header-date" id="currentDateDisplay"></div>
   </div>
   <div class="main-grid">
@@ -323,7 +326,6 @@
       let expense = config.expense;
       let totalNeeds3Y = expense * 36;
       
-      // 基本假設：首次大病用基本保額池抵銷生活費
       let insCoversAmount = Math.min(totalNeeds3Y, config.sumBasicPool);
       let savingsNeeded = Math.max(0, totalNeeds3Y - insCoversAmount);
       let finalSavings = config.assets - savingsNeeded;
@@ -361,12 +363,10 @@
   // 動態添加卡片到右側瀑布流
   function addTimelineCard(age, amount, color, icon) {
       const container = document.getElementById('rightTimeline');
-      // 清除預設字句
       if (container.innerHTML.includes("等待啟動模擬索償")) {
           container.innerHTML = "";
       }
       
-      // 極簡卡片設計：只顯示年齡 + 賠償金額
       let cardHtml = `
       <div class="timeline-card" style="border-left-color: ${color};">
           <div class="timeline-icon">${icon}</div>
@@ -376,10 +376,8 @@
           </div>
       </div>`;
       
-      // 在最底向下加插 (瀑布流效果)
       container.insertAdjacentHTML('beforeend', cardHtml);
       
-      // 確保畫面自動捲動到底部，方便展示
       const panel = document.querySelector('.analysis-panel');
       setTimeout(() => {
           panel.scrollTo({ top: panel.scrollHeight, behavior: 'smooth' });
@@ -395,7 +393,6 @@
       let claim = Math.min(config.sumBasicPool * 0.20, state.balance); 
       state.balance -= claim; state.totalPaid += claim; state.accEarly += claim; 
       
-      // 加入時間線卡片
       addTimelineCard(state.currentAge, claim, "#f39c12", "⚡");
       updateUI(); 
   }
@@ -413,7 +410,6 @@
       state.totalPaid += (claim+bonus); 
       state.isCriticalClaimed = true; 
       
-      // 加入時間線卡片 (首次確診)
       addTimelineCard(state.currentAge, claim+bonus, "#e74c3c", "🚨");
       updateUI(); 
   }
@@ -444,7 +440,6 @@
           state.totalPaid += actualClaim; 
           state.accCancerLump += actualClaim; 
           
-          // 加插新卡片 (多重賠償)
           addTimelineCard(targetAge, actualClaim, "#e67e22", "🛡️");
       } 
       updateUI(); 
