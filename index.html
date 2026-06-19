@@ -341,8 +341,7 @@
       
       if (finalSavings < 0) {
           savingsEl.style.color = "#ff7675"; 
-          statusEl.innerText = "(⚠️ 嚴重負債，破產邊緣)";
-          statusEl.style.color = "#ff7675";
+          statusEl.innerText = "";//
       } else if (savingsNeeded > 0) {
           savingsEl.style.color = "#ffeaa7"; 
           statusEl.innerText = "(⚠️ 財富受損，復原困難)";
