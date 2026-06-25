@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.6 尊享導航版)</title>
+<title>生活應急保險庫 (v2.7 雙語導航版)</title>
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2c3e50">
@@ -13,46 +13,28 @@
 
 <style>
   :root {
-    --primary: #2c3e50;
-    --gold: #f1c40f; 
-    --accent: #e74c3c;
-    --blue-base: #3498db; 
-    --green-base: #27ae60; 
-    --orange-base: #e67e22;
-    --color-assets: #34495e; 
-    --color-assets-safe: #f1c40f;
-    --color-existing: #5dade2; 
-    --color-term: #bdc3c7; 
-    --color-upgrade: #e67e22;
-    --bg: #fdfbf7; 
-    --info-bg: #e8f4f8; 
-    --info-text: #2980b9;
+    --primary: #2c3e50; --gold: #f1c40f; --accent: #e74c3c;
+    --blue-base: #3498db; --green-base: #27ae60; --orange-base: #e67e22;
+    --color-assets: #34495e; --color-assets-safe: #f1c40f;
+    --color-existing: #5dade2; --color-term: #bdc3c7; --color-upgrade: #e67e22;
+    --bg: #fdfbf7; --info-bg: #e8f4f8; --info-text: #2980b9;
   }
   
-  body { 
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #ecf0f1; 
-    color: #333; 
-    margin: 0; 
-    padding: 20px; 
-    -webkit-tap-highlight-color: transparent;
-  }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #ecf0f1; color: #333; margin: 0; padding: 20px; -webkit-tap-highlight-color: transparent; }
   
-  /* Read Only */
   body.readonly-mode .btn-confirm, body.readonly-mode .btn-reset-link, body.readonly-mode .data-tools { display: none !important; }
   body.readonly-mode input, body.readonly-mode select { background-color: #f9f9f9 !important; color: #555 !important; border-color: #ddd !important; pointer-events: none; }
 
-  /* UI Components */
   .input-wrapper { position: relative; flex: 1; display: flex; }
-  
   .container { max-width: 1200px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
   
-  .header { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; padding: 25px 20px; text-align: center; border-bottom: 6px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 12px 12px 0 0; }
-  .header h1 { margin: 0; font-size: 2rem; letter-spacing: 2px; font-weight: 900; text-shadow: 0 3px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .header { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; padding: 25px 20px; text-align: center; border-bottom: 6px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 12px 12px 0 0; position: relative; }
+  .header h1 { margin: 0; font-size: 2rem; letter-spacing: 2px; font-weight: 900; text-shadow: 0 3px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
   .version-badge { font-size: 0.75rem; background: var(--gold); color: #2c3e50; padding: 4px 10px; border-radius: 20px; font-weight: bold; letter-spacing: 1px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); vertical-align: middle; }
+  .lang-btn { font-size: 0.8rem; background: #ecf0f1; color: #2c3e50; border: none; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-weight: bold; margin-left: 10px; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+  .lang-btn:hover { background: #bdc3c7; }
   .header-date { margin-top: 8px; font-size: 0.85rem; color: #bdc3c7; }
 
-  /* Tab Navigation System */
   .tab-navigation { display: flex; background: #34495e; border-bottom: 3px solid var(--gold); }
   .nav-tab { flex: 1; padding: 15px 10px; text-align: center; color: #bdc3c7; font-weight: bold; cursor: pointer; transition: all 0.2s; border: none; background: none; font-size: 1rem; }
   .nav-tab:hover { background: #2c3e50; color: #fff; }
@@ -60,7 +42,6 @@
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 
-  /* Grid Layout: Left Panel & Right Sticky Panel */
   .main-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 0; align-items: flex-start; border-radius: 0 0 12px 12px; }
   @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; align-items: stretch; } }
   
@@ -156,8 +137,8 @@
   .timeline-meta-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
   .timeline-age { font-size: 1.1rem; color: #7f8c8d; font-weight: bold; }
   .timeline-amt { font-size: 1.6rem; color: #2c3e50; font-weight: 900; letter-spacing: 1px; }
-  .timeline-desc { font-size: 0.85rem; color: #555; margin-top: 4px; line-height: 1.5; font-weight: normal; }
-  .timeline-small-note { font-size: 0.75rem; color: #7f8c8d; margin-top: 4px; font-weight: normal; block-size: auto; }
+  .timeline-desc { font-size: 0.85rem; color: #555; margin-top: 4px; line-height: 1.6; font-weight: normal; }
+  .timeline-small-note { font-size: 0.75rem; color: #7f8c8d; margin-top: 6px; font-weight: normal; block-size: auto; }
 
 </style>
 </head>
@@ -165,16 +146,21 @@
 
 <div class="container">
   <div class="header">
-      <h1>生活應急保險庫 <span class="version-badge">v2.6 尊享導航版</span></h1>
+      <h1>
+          生活應急保險庫 <span class="version-badge">v2.7 雙語導航版</span>
+          <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
+      </h1>
       <div class="header-date" id="currentDateDisplay"></div>
   </div>
 
+  <!-- 全局導航欄 -->
   <div class="tab-navigation">
       <button class="nav-tab active" onclick="switchPage('main')">📊 模擬賠償儀表板</button>
       <button class="nav-tab" onclick="switchPage('child')">👶 兒童疾病保障專頁</button>
       <button class="nav-tab" onclick="switchPage('diseases')">📜 102種危疾/輕疾明細</button>
   </div>
   
+  <!-- 分頁 1: 主頁儀表板 -->
   <div id="page-main" class="tab-content active">
     <div class="main-grid">
       <div class="config-panel">
@@ -294,6 +280,7 @@
     </div>
   </div>
 
+  <!-- 分頁 2: 兒童疾病保障專頁 -->
   <div id="page-child" class="tab-content info-page-container">
       <div class="info-section">
           <h2 class="dark-title" style="font-size: 1.6rem; color: #2980b9;">👶 「愛伴航」兒童疾病及家長身故豁免保障全覽</h2>
@@ -364,6 +351,7 @@
       </div>
   </div>
 
+  <!-- 分頁 3: 危疾/輕疾明細 -->
   <div id="page-diseases" class="tab-content info-page-container">
       <div class="info-section">
           <h2 class="dark-title" style="font-size: 1.6rem; color: #2c3e50;">📜 「愛伴航」102種受保疾病分類與賠償額度明細</h2>
@@ -463,17 +451,72 @@
 </div>
 
 <script>
+  // --- 繁簡轉換字典與引擎 ---
+  const t2sMap = [
+      ['生活應急保險庫', '生活应急保险库'], ['尊享導航版', '尊享导航版'], ['模擬賠償儀表板', '模拟理赔仪表板'], 
+      ['兒童疾病保障專頁', '儿童疾病保障专页'], ['危疾/輕疾明細', '重疾/轻症明细'], 
+      ['多重賠償', '多次理赔'], ['危疾', '重疾'], ['早期疾病', '轻症'], ['輕疾', '轻症'], 
+      ['賠償', '理赔'], ['供款', '缴费'], ['免供款', '豁免保费'], ['歲數', '年龄'], 
+      ['戶口', '账户'], ['舊單', '旧单'], ['補強', '补强'], ['儲蓄', '储蓄'], 
+      ['腦退化', '脑退化'], ['嚴重疾病', '重度疾病'], ['確診', '确诊'],
+      ['確','确'],['診','诊'],['歲','岁'],['額','额'],['舊','旧'],['單','单'],['補','补'],['強','强'],['儲','储'],['蓄','蓄'],['總','总'],['資','资'],['產','产'],['網','网'],['頁','页'],['導','导'],['航','航'],['庫','库'],['儀','仪'],['表','表'],['板','板'],['兒','儿'],['童','童'],['專','专'],['輕','轻'],['細','细'],['條','条'],['款','款'],['間','间'],['線','线'],['無','无'],['紅','红'],['贈','赠'],['動','动'],['隨','随'],['財','财'],['與','与'],['狀','状'],['況','况'],['現','现'],['銀','银'],['費','费'],['認','认'],['啟','启'],['區','区'],['預','预'],['發','发'],['護','护'],['積','积'],['過','过'],['躍','跃'],['腦','脑'],['癇','痫'],['黃','黄'],['疸','疸'],['貼','贴'],['繳','缴'],['臍','脐'],['帶','带'],['幹','干'],['胞','胞'],['險','险'],['應','应'],['急','急'],['僅','仅'],['項','项'],['為','为'],['復','复'],['遲','迟'],['緩','缓'],['實','实'],['離','离'],['從','从'],['講','讲'],['這','这'],['會','会'],['點','点'],['圖','图'],['結','结'],['說','说'],['明','明'],['邊','边'],['個','个'],['隱','隐'],['臟','脏'],['移','移'],['種','种'],['類','类'],['框','框'],['註','注'],['退','退'],['終','终'],['流','流'],['程','程'],['檢','检'],['查','查'],['報','报'],['告','告'],['醫','医'],['並','并'],['該','该'],['義','义'],['慮','虑'],['覆','复'],['問','问'],['題','题'],['層','层'],['創','创'],['將','将'],['當','当']
+  ];
+  let currentLang = 'hk';
+
+  function T(str) {
+      if(currentLang === 'hk') return str;
+      let out = str;
+      t2sMap.forEach(pair => { out = out.split(pair[0]).join(pair[1]); });
+      return out;
+  }
+
+  function toggleLang() {
+      currentLang = currentLang === 'hk' ? 'cn' : 'hk';
+      document.getElementById('langToggleBtn').innerText = currentLang === 'hk' ? '简' : '繁';
+      translateStatic();
+      updateUI(); 
+  }
+
+  function translateStatic() {
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+      let node;
+      while(node = walker.nextNode()) {
+          if (node.parentNode.tagName === 'SCRIPT' || node.parentNode.tagName === 'STYLE') continue;
+          if (!node.originalText) {
+              if(node.nodeValue.trim() === "") continue;
+              node.originalText = node.nodeValue;
+          }
+          let txt = node.originalText;
+          if (currentLang === 'cn') {
+              t2sMap.forEach(pair => { txt = txt.split(pair[0]).join(pair[1]); });
+          }
+          node.nodeValue = txt;
+      }
+      
+      const inputs = document.querySelectorAll('input, button');
+      inputs.forEach(input => {
+          if(input.type === 'button' || input.type === 'submit' || input.tagName === 'BUTTON') {
+              if(input.id === 'langToggleBtn') return; 
+              if(!input.originalValue) input.originalValue = input.value || input.innerText;
+              let txt = input.originalValue;
+              if (currentLang === 'cn') {
+                  t2sMap.forEach(pair => { txt = txt.split(pair[0]).join(pair[1]); });
+              }
+              if (input.tagName === 'INPUT') input.value = txt;
+          }
+      });
+  }
+
   // --- 基礎計算機邏輯 ---
   function updateDate() { document.getElementById('currentDateDisplay').innerText = new Date().toLocaleDateString('zh-HK', { year: 'numeric', month: '2-digit', day: '2-digit' }); }
   
-  let config = { sumExisting: 200000, sumTerm: 500000, sumWhole: 500000, sumUpgradeB: 500000, sumBasicPool: 1200000, existingMulti: false, existingCancerWait: 5, startAge: 30, assets: 500000, expense: 30000 };
-  let state = { isConfirmed: false, balance: 1000000, totalPaid: 0, isCriticalClaimed: false, hasStartedCancerMonthly: false, cancerRecurCountNew: 0, cancerRecurCountOld: 0, nextClaimAge_New: Infinity, nextClaimAge_Old: Infinity, heartCount: 0, cancerMonthsPaid: 0, dementiaYearsPaid: 0, accEarly: 0, accCancerLump: 0, accCancerMonthly: 0, accHeart: 0, accDementia: 0, accChild: 0, currentAge: 30, claimCount: 0 };
+  let config = { sumExisting: 200000, sumTerm: 500000, sumWhole: 500000, sumUpgradeB: 500000, sumBasicPool: 1200000, existingMulti: false, existingCancerWait: 5, startAge: 0, assets: 500000, expense: 30000 };
+  let state = { isConfirmed: false, balance: 1000000, totalPaid: 0, isCriticalClaimed: false, hasStartedCancerMonthly: false, cancerRecurCountNew: 0, cancerRecurCountOld: 0, nextClaimAge_New: Infinity, nextClaimAge_Old: Infinity, heartCount: 0, cancerMonthsPaid: 0, dementiaYearsPaid: 0, accEarly: 0, accCancerLump: 0, accCancerMonthly: 0, accHeart: 0, accDementia: 0, accChild: 0, currentAge: 30, claimCount: 0, bonusPaid: 0 };
   
   // -- 導航分頁切換邏輯 --
   function switchPage(pageId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
-      
       document.getElementById('page-' + pageId).classList.add('active');
       event.currentTarget.classList.add('active');
   }
@@ -501,7 +544,6 @@
       config.sumUpgradeB = config.sumWhole; 
       config.sumBasicPool = config.sumExisting + config.sumTerm + config.sumWhole; 
       
-      // 修正邏輯：若未輸入或是文字，則預設為 0
       let ageInput = parseInt(document.getElementById('startAge').value);
       config.startAge = isNaN(ageInput) ? 0 : ageInput; 
       
@@ -529,9 +571,9 @@
       state.isConfirmed = false; 
       document.getElementById('analysisOverlay').style.display = 'flex';
       document.getElementById('criticalBonusBox').style.display = 'none'; 
-      document.getElementById('cancerWaitInfo').innerText = "自動對比等候期"; 
+      document.getElementById('cancerWaitInfo').innerText = T("自動對比等候期"); 
       
-      state.totalPaid=0; state.accEarly=0; state.accCancerLump=0; state.accCancerMonthly=0; state.accHeart=0; state.accDementia=0; state.accChild=0; state.claimCount = 0;
+      state.totalPaid=0; state.accEarly=0; state.accCancerLump=0; state.accCancerMonthly=0; state.accHeart=0; state.accDementia=0; state.accChild=0; state.claimCount = 0; state.bonusPaid = 0;
       state.isCriticalClaimed=false; state.hasStartedCancerMonthly=false; 
       state.cancerRecurCountNew = 0; state.cancerRecurCountOld = 0;
       state.nextClaimAge_New = Infinity; state.nextClaimAge_Old = Infinity; 
@@ -546,10 +588,10 @@
       document.getElementById('accChildDisplay').innerText = "$0";
       document.getElementById('btnCritical').disabled = false; 
       document.getElementById('btnCancerAuto').disabled = false; 
-      document.getElementById('btnCancerAuto').innerText = "⏭️ 推演下一次復發歲數";
+      document.getElementById('btnCancerAuto').innerText = T("⏭️ 推演下一次復發歲數");
       document.getElementById('valCritical').innerText = formatMoney(config.sumBasicPool); 
       
-      document.getElementById('rightTimeline').innerHTML = '<div style="text-align:center; color:#bdc3c7; font-size:0.95rem; padding: 30px; border: 2px dashed #eee; border-radius: 8px;">等待啟動模擬賠償...</div>';
+      document.getElementById('rightTimeline').innerHTML = `<div style="text-align:center; color:#bdc3c7; font-size:0.95rem; padding: 30px; border: 2px dashed #eee; border-radius: 8px;">${T('等待啟動模擬賠償...')}</div>`;
       updateUI(); 
   }
   
@@ -557,7 +599,6 @@
       if (!state.isConfirmed) return;
       let expense = config.expense;
       let totalNeeds3Y = expense * 36;
-      
       let insCoversAmount = Math.min(totalNeeds3Y, config.sumBasicPool);
       let savingsNeeded = Math.max(0, totalNeeds3Y - insCoversAmount);
       let finalSavings = config.assets - savingsNeeded;
@@ -571,29 +612,23 @@
       
       savingsEl.innerText = formatMoney(finalSavings);
       if (finalSavings < 0) {
-          savingsEl.style.color = "#ff7675";
-          statusEl.innerText = "";
+          savingsEl.style.color = "#ff7675"; statusEl.innerText = "";
       } else if (savingsNeeded > 0) {
-          savingsEl.style.color = "#ffeaa7";
-          statusEl.innerText = "(⚠️ 財富受損，復原困難)";
-          statusEl.style.color = "#ffeaa7";
+          savingsEl.style.color = "#ffeaa7"; statusEl.innerText = T("(⚠️ 財富受損，復原困難)"); statusEl.style.color = "#ffeaa7";
       } else {
-          savingsEl.style.color = "#55efc4";
-          statusEl.innerText = "(✅ 成功保護銀行累積的財富！)";
-          statusEl.style.color = "#55efc4";
+          savingsEl.style.color = "#55efc4"; statusEl.innerText = T("(✅ 成功保護銀行累積的財富！)"); statusEl.style.color = "#55efc4";
       }
   }
   
   function updateBenefitValues() { let curr = state.isConfirmed ? state.balance : config.sumBasicPool; document.getElementById('valEarlyStage').innerText = formatMoney(config.sumBasicPool * 0.20); document.getElementById('valCritical').innerText = formatMoney(curr); }
-  function updateBonusDisplay() { if(!state.isConfirmed) return; document.getElementById('criticalBonusBox').style.display = 'block'; let rA = document.getElementById('ruleADisplay'), rB = document.getElementById('ruleBDisplay'); let base = config.sumWhole; if (config.startAge <= 30) { rA.style.display='flex'; rB.style.display='none'; document.getElementById('bonusAmountA').innerText = "+" + formatMoney(base*0.50); } else { rA.style.display='none'; rB.style.display='flex'; document.getElementById('bonusAmountB').innerText = "+" + formatMoney(base*0.35); } let badge = document.getElementById('bonusStatusBadge'); let py = state.currentAge - config.startAge; if (state.isCriticalClaimed) { badge.className = 'bonus-inactive-tag'; badge.innerText = `❌ 已隨首次確診結束`; } else if (py < 10) { badge.className = 'bonus-active-tag'; badge.innerText = `✅ 生效中 (第 ${py+1} 年)`; } else { badge.className = 'bonus-inactive-tag'; badge.innerText = `❌ 已過期`; } }
-  function userChangeAge(val) { if(!state.isConfirmed) return; let newAge = parseInt(val); if(newAge < config.startAge) { newAge = config.startAge; document.getElementById('currentAge').value = newAge; alert("確診歲數不能小於投保歲數！"); } state.currentAge = newAge; updateBonusDisplay(); updateUI(); }
+  function updateBonusDisplay() { if(!state.isConfirmed) return; document.getElementById('criticalBonusBox').style.display = 'block'; let rA = document.getElementById('ruleADisplay'), rB = document.getElementById('ruleBDisplay'); let base = config.sumWhole; if (config.startAge <= 30) { rA.style.display='flex'; rB.style.display='none'; document.getElementById('bonusAmountA').innerText = "+" + formatMoney(base*0.50); } else { rA.style.display='none'; rB.style.display='flex'; document.getElementById('bonusAmountB').innerText = "+" + formatMoney(base*0.35); } let badge = document.getElementById('bonusStatusBadge'); let py = state.currentAge - config.startAge; if (state.isCriticalClaimed) { badge.className = 'bonus-inactive-tag'; badge.innerText = T(`❌ 已隨首次確診結束`); } else if (py < 10) { badge.className = 'bonus-active-tag'; badge.innerText = T(`✅ 生效中 (第 ${py+1} 年)`); } else { badge.className = 'bonus-inactive-tag'; badge.innerText = T(`❌ 已過期`); } }
+  function userChangeAge(val) { if(!state.isConfirmed) return; let newAge = parseInt(val); if(newAge < config.startAge) { newAge = config.startAge; document.getElementById('currentAge').value = newAge; alert(T("確診歲數不能小於投保歲數！")); } state.currentAge = newAge; updateBonusDisplay(); updateUI(); }
   function changeAge(targetAge) { if(!state.isConfirmed) return; if (targetAge > state.currentAge) { state.currentAge = targetAge; document.getElementById('currentAge').value = state.currentAge; updateBonusDisplay(); } }
   function triggerHighlight() { const val = document.getElementById('displayTotalPaid'); const bar = document.getElementById('mainStatusBar'); val.classList.remove('text-flash'); bar.classList.remove('flash-bg'); void val.offsetWidth; void bar.offsetWidth; val.classList.add('text-flash'); bar.classList.add('flash-bg'); }
   
-  // 動態添加卡片到右側瀑布流
   function addTimelineCard(age, amount, color, icon, title, desc, smallNote = "") {
       const container = document.getElementById('rightTimeline');
-      if (container.innerHTML.includes("等待啟動模擬賠償")) { container.innerHTML = ""; }
+      if (container.innerHTML.includes(T("等待啟動模擬賠償"))) { container.innerHTML = ""; }
       
       let smallNoteHtml = smallNote ? `<div class="timeline-small-note">${smallNote}</div>` : "";
       
@@ -602,7 +637,7 @@
           <div class="timeline-icon">${icon}</div>
           <div class="timeline-info">
               <div class="timeline-meta-row">
-                  <div class="timeline-age">${age}歲</div>
+                  <div class="timeline-age">${age}${T("歲")}</div>
                   <div class="timeline-amt">+$${amount.toLocaleString('en-US')}</div>
               </div>
               <div class="timeline-desc">${title}</div>
@@ -618,54 +653,76 @@
   }
 
   function claimEarlyStage() { 
-      if(!state.isConfirmed) { alert("請先確認"); return; } 
-      if(state.balance <= 0) { alert("額度耗盡"); return; } 
+      if(!state.isConfirmed) { alert(T("請先確認")); return; } 
+      if(state.balance <= 0) { alert(T("額度耗盡")); return; } 
       state.currentAge = parseInt(document.getElementById('currentAge').value); 
+      
       let claim = Math.min(config.sumBasicPool * 0.20, state.balance); 
+      let bonusClaim = 0;
+      let hasBonus = false;
+      
+      // 按比例發放早期額外升級保障 (例如 50% 額外保障，早期發放 10%)
+      if ((state.currentAge - config.startAge) < 10) { 
+          bonusClaim = config.sumWhole * (config.startAge <= 30 ? 0.50 : 0.35) * 0.20; 
+          hasBonus = true; 
+      }
+      
       state.balance -= claim;
-      state.totalPaid += claim; state.accEarly += claim; 
+      state.bonusPaid += bonusClaim;
+      state.totalPaid += (claim + bonusClaim); 
+      state.accEarly += (claim + bonusClaim); 
       state.claimCount++;
       
-      let titleStr = (state.claimCount === 1) ? "【第一次賠償】⚡ 早期疾病預支" : "⚡ 早期疾病預支賠償";
-      let descStr = "來源池：從基礎危疾池（舊單 + 補強A + 補強B）中直接按比例扣除減免。";
+      let titleStr = T((state.claimCount === 1) ? "【第一次賠償】⚡ 早期疾病預支" : "⚡ 早期疾病預支賠償");
+      let descStr = T("來源池：從基礎危疾池（舊單 + 補強A + 補強B）中直接按比例扣除減免。");
+      let smallStr = hasBonus ? T(`<br>細字註明：符合首10年免費升級保障，已按 20% 比例同步加贈補強B額度 $${bonusClaim.toLocaleString()}`) : "";
       
-      addTimelineCard(state.currentAge, claim, "#f39c12", "⚡", titleStr, descStr);
+      addTimelineCard(state.currentAge, claim + bonusClaim, "#f39c12", "⚡", titleStr, descStr, smallStr);
       updateUI();
   }
   
   function claimCriticalIllness() { 
-      if(!state.isConfirmed) { alert("請先確認"); return; } 
+      if(!state.isConfirmed) { alert(T("請先確認")); return; } 
       if(state.isCriticalClaimed) return; 
       state.currentAge = parseInt(document.getElementById('currentAge').value); 
       if (config.existingMulti) { state.nextClaimAge_Old = state.currentAge + config.existingCancerWait; } else { state.nextClaimAge_Old = Infinity; } 
       state.nextClaimAge_New = state.currentAge + 3;
+      
       let claim = state.balance; 
-      let bonus = 0; 
+      let bonusClaim = 0; 
       let hasBonus = false;
+      
       if ((state.currentAge - config.startAge) < 10) { 
-          bonus = config.sumWhole * (config.startAge <= 30 ? 0.50 : 0.35);
+          let totalBonus = config.sumWhole * (config.startAge <= 30 ? 0.50 : 0.35);
+          bonusClaim = totalBonus - state.bonusPaid; // 餘下 80% 升級保障發放
           hasBonus = true;
       } 
+      
       state.balance = 0; 
-      state.totalPaid += (claim+bonus); 
+      state.bonusPaid += bonusClaim;
+      state.totalPaid += (claim + bonusClaim); 
       state.isCriticalClaimed = true; 
       state.claimCount++;
       
-      let titleStr = (state.claimCount === 1) ? "【第一次嚴重危疾賠償】🚨 全額基礎池清空" : "🚨 嚴重危疾賠償核發";
-      let descStr = `精細拆分來源：舊單 [$${config.sumExisting.toLocaleString()}] + 補強A定期 [$${config.sumTerm.toLocaleString()}] + 補強B儲蓄 [$${config.sumWhole.toLocaleString()}]。<br><br><b>💡 豁免保費啟動：</b><br>從客人角度出發，確診後最擔心供款壓力。此筆 100% 賠償一經批核，餘下未繳的保費將全數豁免！<br><i>例子：假設原定 25 年繳費期，若在第 5 年確診，其後 20 年的保費無需再繳交，但原有保障繼續生效。</i>`;
-      let smallStr = hasBonus ? `<br>細字註明：符合首10年免費升級保障，額外獲贈補強B保額之額度 $${bonus.toLocaleString()}` : "";
+      let policyYear = state.currentAge - config.startAge;
+      if (policyYear < 1) policyYear = 1;
+      let remainingYears = Math.max(0, 25 - policyYear);
       
-      addTimelineCard(state.currentAge, claim+bonus, "#e74c3c", "🚨", titleStr, descStr, smallStr);
+      let titleStr = T((state.claimCount === 1) ? "【第一次嚴重危疾賠償】🚨 全額基礎池清空" : "🚨 嚴重危疾賠償核發");
+      let descStr = T(`精細拆分來源：餘下舊單及定期危疾額度 + 補強B儲蓄餘下額度。<br><br><b>💡 豁免保費啟動：</b><br>此筆 100% 賠償一經批核，餘下未繳的保費將全數豁免！<br><i>例子：假設原定 25 年繳費期，若在第 ${policyYear} 年確診，其後 ${remainingYears} 年的保費無需再繳交，<span style="color:#000; font-weight:900; font-size:1.05em;">多重賠償持續生效。</span></i>`);
+      let smallStr = hasBonus ? T(`<br>細字註明：符合首10年免費升級保障，已結算並發放餘下的加贈額度 $${bonusClaim.toLocaleString()}`) : "";
+      
+      addTimelineCard(state.currentAge, claim+bonusClaim, "#e74c3c", "🚨", titleStr, descStr, smallStr);
       updateUI(); 
   }
 
   function claimCancerAuto() { 
-      if(!state.isConfirmed) { alert("請先確認"); return; } 
-      if(state.hasStartedCancerMonthly) { alert("已啟動每月支援，鎖定一筆過賠償"); return; } 
-      if(!state.isCriticalClaimed) { if(confirm("需先啟動嚴重危疾？")) claimCriticalIllness(); return; } 
+      if(!state.isConfirmed) { alert(T("請先確認")); return; } 
+      if(state.hasStartedCancerMonthly) { alert(T("已啟動每月支援，鎖定一筆過賠償")); return; } 
+      if(!state.isCriticalClaimed) { if(confirm(T("需先啟動嚴重危疾？"))) claimCriticalIllness(); return; } 
       
       let targetAge = Math.min(state.nextClaimAge_New, state.nextClaimAge_Old);
-      if (targetAge === Infinity) { alert("所有多次賠償額度已耗盡！"); return; } 
+      if (targetAge === Infinity) { alert(T("所有多次賠償額度已耗盡！")); return; } 
       changeAge(targetAge); 
       
       let actualClaim = 0;
@@ -674,13 +731,13 @@
           actualClaim += config.sumUpgradeB;
           state.cancerRecurCountNew++; 
           state.nextClaimAge_New = (state.cancerRecurCountNew < 5) ? targetAge + 3 : Infinity;
-          breakdownParts.push(`補強B1多重支援 [$${config.sumUpgradeB.toLocaleString()}]`);
+          breakdownParts.push(T(`補強B1多重支援 [$${config.sumUpgradeB.toLocaleString()}]`));
       } 
       if (targetAge === state.nextClaimAge_Old && state.cancerRecurCountOld < 2 && config.existingMulti) { 
           actualClaim += config.sumExisting;
           state.cancerRecurCountOld++; 
           state.nextClaimAge_Old = (state.cancerRecurCountOld < 2) ? targetAge + config.existingCancerWait : Infinity;
-          breakdownParts.push(`舊單多重條款 [$${config.sumExisting.toLocaleString()}]`);
+          breakdownParts.push(T(`舊單多重條款 [$${config.sumExisting.toLocaleString()}]`));
       } 
       
       if (actualClaim > 0) { 
@@ -688,8 +745,8 @@
           state.accCancerLump += actualClaim; 
           state.claimCount++;
           
-          let titleStr = `🎗️ 癌症復發/持續多次賠償 (新單第${state.cancerRecurCountNew}次/舊單第${state.cancerRecurCountOld}次)`;
-          let descStr = `精細拆分來源：${breakdownParts.join(" + ")}`;
+          let titleStr = T(`🎗️ 癌症復發/持續多次賠償 (新單第${state.cancerRecurCountNew}次/舊單第${state.cancerRecurCountOld}次)`);
+          let descStr = T(`精細拆分來源：`) + breakdownParts.join(" + ");
           
           addTimelineCard(targetAge, actualClaim, "#e67e22", "🎗️", titleStr, descStr);
       } 
@@ -697,7 +754,7 @@
   }
   
   function manualClaimCancerMonthly() { 
-      if(!state.isCriticalClaimed) { alert("需先啟動嚴重危疾"); return; } 
+      if(!state.isCriticalClaimed) { alert(T("需先啟動嚴重危疾")); return; } 
       if(!state.hasStartedCancerMonthly) changeAge(state.currentAge + 1); 
       state.hasStartedCancerMonthly = true; 
       let amt = config.sumUpgradeB * 0.05;
@@ -705,52 +762,52 @@
       if(state.cancerMonthsPaid % 12 === 0) changeAge(state.currentAge + 1); 
       state.claimCount++;
       
-      let titleStr = `🎗️ 癌症每月支援現金津貼 (第 ${state.cancerMonthsPaid} 個月)`;
-      let descStr = "精細拆分來源：全數由【補強B1（多重支援：持續癌症現金選項）】每月核發5%原有保額。";
+      let titleStr = T(`🎗️ 癌症每月支援現金津貼 (第 ${state.cancerMonthsPaid} 個月)`);
+      let descStr = T("精細拆分來源：全數由【補強B1（多重支援：持續癌症現金選項）】每月核發5%原有保額。");
       
       addTimelineCard(state.currentAge, amt, "#f39c12", "🎗️", titleStr, descStr);
       updateUI();
   }
   
   function claimHeartStroke() { 
-      if(!state.isCriticalClaimed) { if(confirm("需先啟動嚴重危疾？")) claimCriticalIllness(); return; } 
+      if(!state.isCriticalClaimed) { if(confirm(T("需先啟動嚴重危疾？"))) claimCriticalIllness(); return; } 
       if(state.heartCount >= 2) return; 
       changeAge(state.currentAge + 1); 
       let amt = config.sumUpgradeB;
-      let breakdownParts = [`補強B1多重支援 [$${config.sumUpgradeB.toLocaleString()}]`];
+      let breakdownParts = [T(`補強B1多重支援 [$${config.sumUpgradeB.toLocaleString()}]`)];
       
       if(config.existingMulti) {
           amt += config.sumExisting; 
-          breakdownParts.push(`舊單多重保障 [$${config.sumExisting.toLocaleString()}]`);
+          breakdownParts.push(T(`舊單多重保障 [$${config.sumExisting.toLocaleString()}]`));
       }
       state.totalPaid += amt; state.heartCount++; state.accHeart += amt; 
       state.claimCount++;
       
-      let titleStr = `❤️ 心臟病/中風多次復發賠償 (第 ${state.heartCount} 次復發)`;
-      let descStr = `精細拆分來源：${breakdownParts.join(" + ")}`;
+      let titleStr = T(`❤️ 心臟病/中風多次復發賠償 (第 ${state.heartCount} 次復發)`);
+      let descStr = T(`精細拆分來源：`) + breakdownParts.join(" + ");
       
       addTimelineCard(state.currentAge, amt, "#8e44ad", "❤️", titleStr, descStr);
       updateUI();
   }
   
   function manualClaimDementia() { 
-      if(!state.isCriticalClaimed) { if(confirm("需先啟動嚴重危疾？")) claimCriticalIllness(); else return; } 
+      if(!state.isCriticalClaimed) { if(confirm(T("需先啟動嚴重危疾？"))) claimCriticalIllness(); else return; } 
       changeAge(state.currentAge + 1); 
       let amt = config.sumUpgradeB * 0.06; 
       state.totalPaid += amt; state.dementiaYearsPaid++; state.accDementia += amt; 
       state.claimCount++;
       
-      let titleStr = `🧠 嚴重腦退化/柏金遜症終身年金 (第 ${state.dementiaYearsPaid} 年發放)`;
-      let descStr = "精細拆分來源：全數由【補強B1（多重支援：腦退化終身年金條款）】每年發放原有保額之6%。";
+      let titleStr = T(`🧠 嚴重腦退化/柏金遜症終身年金 (第 ${state.dementiaYearsPaid} 年發放)`);
+      let descStr = T("精細拆分來源：全數由【補強B1（多重支援：腦退化終身年金條款）】每年發放原有保額之6%。");
       
       addTimelineCard(state.currentAge, amt, "#27ae60", "🧠", titleStr, descStr);
       updateUI(); 
   }
 
   function claimChildDisease(type) {
-      if(!state.isConfirmed) { alert("請先確認左側基本資料並啟動儀表板"); return; }
+      if(!state.isConfirmed) { alert(T("請先確認左側基本資料並啟動儀表板")); return; }
       state.currentAge = parseInt(document.getElementById('currentAge').value);
-      if(state.currentAge >= 18) { alert("💡 系統提示：目前確診歲數大於或等於18歲，已不屬於兒童疾病理賠年齡上限範圍！"); return; }
+      if(state.currentAge >= 18) { alert(T("💡 系統提示：目前確診歲數大於或等於18歲，已不屬於兒童疾病理賠年齡上限範圍！")); return; }
       
       let amt = 0;
       let diseaseTitle = "";
@@ -758,25 +815,25 @@
       
       if(type === 'growth_major') {
           amt = config.sumWhole * 0.20;
-          diseaseTitle = "👶 兒童成長保障：專注力不足(ADHD) / 妥瑞症";
-          descStr = "精細拆分來源：由【補強B儲蓄危疾】之兒童成長權益獨立預支 20% 理賠。";
+          diseaseTitle = T("👶 兒童成長保障：專注力不足(ADHD) / 妥瑞症");
+          descStr = T("精細拆分來源：由【補強B儲蓄危疾】之兒童成長權益獨立預支 20% 理賠。");
       } else if (type === 'growth_minor') {
           amt = config.sumWhole * 0.05;
-          diseaseTitle = "🍼 兒童成長保障：天使綜合症 / 大理石骨病 / 嚴重腦癇症";
-          descStr = "精細拆分來源：由【補強B儲蓄危疾】之兒童成長權益獨立預支 5% 理賠。";
+          diseaseTitle = T("🍼 兒童成長保障：天使綜合症 / 大理石骨病 / 嚴重腦癇症");
+          descStr = T("精細拆分來源：由【補強B儲蓄危疾】之兒童成長權益獨立預支 5% 理賠。");
       } else if (type === 'severe_child') {
           amt = config.sumWhole * 0.20;
-          diseaseTitle = "🚨 嚴重兒童疾病：自閉症 / 嚴重哮喘 / 川崎病等";
-          descStr = "精細拆分來源：由【補強B儲蓄危疾】內含的13種兒童嚴重疾病權益預支 20% 理賠。";
+          diseaseTitle = T("🚨 嚴重兒童疾病：自閉症 / 嚴重哮喘 / 川崎病等");
+          descStr = T("精細拆分來源：由【補強B儲蓄危疾】內含的13種兒童嚴重疾病權益預支 20% 理賠。");
       }
       
       state.totalPaid += amt;
       state.accChild += amt;
       state.claimCount++;
       
-      let timelineTitle = (state.claimCount === 1) ? `【第一次賠償】${diseaseTitle}` : diseaseTitle;
+      let timelineTitle = (state.claimCount === 1) ? T(`【第一次賠償】`) + diseaseTitle : diseaseTitle;
       
-      addTimelineCard(state.currentAge, amt, "#3498db", "👶", timelineTitle, descStr, "<br>注意：此預支理賠會等額調低補強B儲蓄保單之現時保額與身故理賠金額。");
+      addTimelineCard(state.currentAge, amt, "#3498db", "👶", timelineTitle, descStr, T("<br>注意：此預支理賠會等額調低補強B儲蓄保單之現時保額與身故理賠金額。"));
       updateUI();
   }
   
@@ -794,23 +851,23 @@
       let oldMax = config.existingMulti ? 3 : 1;
       let oldCurrent = state.isCriticalClaimed ? 1 + state.cancerRecurCountOld : 0; 
       if(!config.existingMulti) oldCurrent = state.isCriticalClaimed ? 1 : 0;
-      let oldStr = oldCurrent >= oldMax ? "耗盡" : `${oldCurrent}/${oldMax}`; 
+      let oldStr = oldCurrent >= oldMax ? T("耗盡") : `${oldCurrent}/${oldMax}`; 
       let newCurrent = state.isCriticalClaimed ? 1 + state.cancerRecurCountNew : 0;
-      let newStr = newCurrent >= 6 ? "耗盡" : `${newCurrent}/6`; 
+      let newStr = newCurrent >= 6 ? T("耗盡") : `${newCurrent}/6`; 
       
-      document.getElementById('cancerCountDisplayOld').innerText = `(舊單: ${oldStr})`; 
-      document.getElementById('cancerCountDisplayNew').innerText = `(新單: ${newStr})`;
+      document.getElementById('cancerCountDisplayOld').innerText = `(${T("舊單")}: ${oldStr})`; 
+      document.getElementById('cancerCountDisplayNew').innerText = `(${T("新單")}: ${newStr})`;
       if (state.nextClaimAge_New === Infinity && state.nextClaimAge_Old === Infinity && state.isCriticalClaimed) { 
           document.getElementById('btnCancerAuto').disabled = true;
-          document.getElementById('btnCancerAuto').innerText = "已達賠償上限"; 
+          document.getElementById('btnCancerAuto').innerText = T("已達賠償上限"); 
       } else if (state.isCriticalClaimed) { 
-          document.getElementById('btnCancerAuto').innerText = "⏭️ 推演下一次復發歲數";
+          document.getElementById('btnCancerAuto').innerText = T("⏭️ 推演下一次復發歲數");
       } 
       if (state.isCriticalClaimed && (state.nextClaimAge_New !== Infinity || state.nextClaimAge_Old !== Infinity)) { 
           let nxt = Math.min(state.nextClaimAge_New, state.nextClaimAge_Old);
-          document.getElementById('cancerWaitInfo').innerText = `系統提示：預計下一次 ${nxt} 歲`; 
+          document.getElementById('cancerWaitInfo').innerText = T(`系統提示：預計下一次 ${nxt} 歲`); 
       } else if (!state.isCriticalClaimed) { 
-          document.getElementById('cancerWaitInfo').innerText = "自動對比等候期";
+          document.getElementById('cancerWaitInfo').innerText = T("自動對比等候期");
       } 
       document.getElementById('cancerMonthDisplay').innerText = `(${state.cancerMonthsPaid}/100)`; 
       document.getElementById('heartCountDisplay').innerText = `(${state.heartCount}/2)`; 
@@ -823,29 +880,8 @@
       updateAnalysis();
   }
 
-  updateDate(); handleSumInput(); toggleExistingOptions();
+  updateDate(); handleSumInput(); toggleExistingOptions(); translateStatic();
 
-  // --- PWA 強制更新機制 ---
-  let refreshing = false;
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').then(reg => {
-      reg.addEventListener('updatefound', () => {
-        const newWorker = reg.installing;
-        newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            newWorker.postMessage('SKIP_WAITING');
-          }
-        });
-      });
-    }).catch(err => console.error('[SW ERROR]', err));
-
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!refreshing) {
-        refreshing = true;
-        window.location.reload();
-      }
-    });
-  }
 </script>
 </body>
 </html>
