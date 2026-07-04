@@ -58,9 +58,9 @@
   .hypno-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out; background: #fff; padding: 0 15px; }
   .hypno-card.active .hypno-content { max-height: 600px; padding: 15px; border-top: 1px solid #f1f2f6; }
   .hypno-card.active .hypno-arrow { transform: rotate(180deg); }
-  .hypno-img { width: 100%; height: 140px; object-fit: cover; border-radius: 6px; margin-bottom: 12px; opacity: 0.95; }
+  .hypno-img { width: 100%; height: 160px; object-fit: cover; border-radius: 6px; margin-bottom: 12px; opacity: 0.95; }
   .hypno-text { font-size: 0.95rem; color: #444; line-height: 1.6; margin: 0; }
-  .hypno-highlight { color: #c0392b; font-weight: bold; }
+  .hypno-highlight { color: #2980b9; font-weight: bold; }
 
   @keyframes flash-bg { 0% { background-color: rgba(46, 204, 113, 0.4); box-shadow: 0 0 15px rgba(46, 204, 113, 0.8); } 10% { background-color: rgba(46, 204, 113, 0.6); box-shadow: 0 0 20px rgba(46, 204, 113, 1); } 100% { background-color: #f0f3f4; box-shadow: none; } }
   @keyframes flash-text { 0% { color: #27ae60; transform: scale(1.1); text-shadow: 0 0 10px rgba(39, 174, 96, 0.5); } 10% { color: #e74c3c; transform: scale(1.2); text-shadow: 0 0 15px rgba(231, 76, 60, 0.8); } 100% { color: #e74c3c; transform: scale(1); text-shadow: none;} }
@@ -185,11 +185,11 @@
                 <div class="hypno-arrow">▼</div>
             </div>
             <div class="hypno-content">
-                <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80" alt="Consultation" class="hypno-img">
+                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80" alt="Consultation" class="hypno-img">
                 <p class="hypno-text">
-                    想請教一下，就算目前有冇危疾保障都好，萬一聽日健康真係出現變數... 
+                    喺你現在的規劃下，萬一聽日健康真係出現變數... 
                     <br><br>
-                    你心目中嘅<span class="hypno-highlight">『後備方案』</span>係咩呢？係靠積蓄、賣樓，定係有其他準備？
+                    你心目中嘅<span class="hypno-highlight">『後備方案』</span>會有邊方面的安排呢？
                 </p>
             </div>
         </div>
@@ -281,9 +281,9 @@
             <div class="hypno-content">
                 <img src="https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=800&q=80" alt="Family Future" class="hypno-img">
                 <p class="hypno-text">
-                    如果你一早規劃好嘅退休生活、仔女學費、每個月嘅供樓同生活費，突然被一場突如其來嘅大病『睇中咗』...
+                    如果你一早規劃好嘅退休生活、仔女學費的計劃，以及每個月嘅供樓同生活費，突然被一場突如其來嘅大病<span style="color:#c0392b; font-weight:bold;">『睇中咗』</span>而被中斷...
                     <br><br>
-                    你真係想動用自己<span class="hypno-highlight">辛辛苦苦儲落嘅積蓄</span>去填補呢個缺口？
+                    你會想用辛辛苦苦儲落嘅積蓄去填補呢個缺口呀？定係想即時有筆錢比你去解決呢個缺口？
                 </p>
             </div>
         </div>
@@ -322,11 +322,11 @@
                     <div class="hypno-arrow">▼</div>
                 </div>
                 <div class="hypno-content">
-                    <img src="https://images.unsplash.com/photo-1607863680198-23d4b2565df0?auto=format&fit=crop&w=800&q=80" alt="Lost Savings" class="hypno-img">
+                    <img src="https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?auto=format&fit=crop&w=800&q=80" alt="Lost Savings" class="hypno-img">
                     <p class="hypno-text">
-                        其實我好明白你嘅感受，睇住辛辛苦苦建立嘅心血，因為一場病就白費，變成醫院嘅帳單... 
+                        其實我都明白，有血有汗的積儲如果因一場大病可能失去大部份，係好唔甘心... 
                         <br><br>
-                        我相信，無論係邊個，都<span class="hypno-highlight">絕對唔甘心</span>面對呢種代價，你話係咪？
+                        但除左唔甘心外，最重要係<span class="hypno-highlight">影響埋家人生活，仔女學費</span>，呢樣先更緊要，你話係唔係？
                     </p>
                 </div>
             </div>
@@ -522,13 +522,15 @@
       ['賠償', '理赔'], ['供款', '缴费'], ['免供款', '豁免保费'], ['歲數', '年龄'], 
       ['戶口', '账户'], ['舊單', '旧单'], ['補強', '补强'], ['儲蓄', '储蓄'], 
       ['腦退化', '脑退化'], ['嚴重疾病', '重度疾病'], ['確診', '确诊'],
-      ['想請教一下，就算目前有冇危疾保障都好，萬一聽日健康真係出現變數...', '想请教一下，就算目前有没有重疾保障都好，万一明天健康真的出现变数...'],
-      ['你心目中嘅『後備方案』係咩呢？係靠積蓄、賣樓，定係有其他準備？', '您心目中的『后备方案』是什么呢？是靠积蓄、卖房，还是有其他准备？'],
+      ['喺你現在的規劃下', '在您现在的规划下'],
+      ['你心目中嘅『後備方案』會有邊方面的安排呢？', '您心目中的『后备方案』会有哪方面的安排呢？'],
       ['不如我哋一齊想像一下...', '不如我们一起想像一下...'],
-      ['如果你一早規劃好嘅退休生活、仔女學費、每個月嘅供樓同生活費，突然被一場突如其來嘅大病『睇中咗』...', '如果您一早规划好的退休生活、子女学费、每个月的房贷和生活费，突然被一场突如其来的大病『看中了』...'],
-      ['你真係想動用自己辛辛苦苦儲落嘅積蓄去填補呢個缺口？', '您真的想动用自己辛辛苦苦攒下的积蓄去填补这个缺口？'],
-      ['其實我好明白你嘅感受，睇住辛辛苦苦建立嘅心血，因為一場病就白費，變成醫院嘅帳單...', '其实我非常明白您的感受，看着辛辛苦苦建立的心血，因为一场病就白费，变成医院的账单...'],
-      ['我相信，無論係邊個，都絕對唔甘心面對呢種代價，你話係咪？', '我相信，无论是谁，都绝对不甘心面对这种代价，您说是不是？'],
+      ['如果你一早規劃好嘅退休生活、仔女學費的計劃，以及每個月嘅供樓同生活費，突然被一場突如其來嘅大病', '如果您一早规划好的退休生活、子女学费的计划，以及每个月的房贷和生活费，突然被一场突如其来的大病'],
+      ['『睇中咗』', '『看中了』'],
+      ['而被中斷...', '而被中断...'],
+      ['你會想用辛辛苦苦儲落嘅積蓄去填補呢個缺口呀？定係想即時有筆錢比你去解決呢個缺口？', '您会想用辛辛苦苦攒下的积蓄去填补这个缺口呀？还是想即时有笔钱让您去解决这个缺口？'],
+      ['其實我都明白，有血有汗的積儲如果因一場大病可能失去大部份，係好唔甘心...', '其实我都明白，有血有汗的积蓄如果因一场大病可能失去大部份，是非常不甘心...'],
+      ['但除左唔甘心外，最重要係影響埋家人生活，仔女學費，呢樣先更緊要，你話係唔係？', '但除了不甘心外，最重要是影响了家人生活，子女学费，这样才更要紧，您说是不是？'],
       ['確','确'],['診','诊'],['歲','岁'],['額','额'],['舊','旧'],['單','单'],['補','补'],['強','强'],['儲','储'],['蓄','蓄'],['總','总'],['資','资'],['產','产'],['網','网'],['頁','页'],['導','导'],['航','航'],['庫','库'],['儀','仪'],['表','表'],['板','板'],['兒','儿'],['童','童'],['專','专'],['輕','轻'],['細','细'],['條','条'],['款','款'],['間','间'],['線','线'],['無','无'],['紅','红'],['贈','赠'],['動','动'],['隨','随'],['財','财'],['與','与'],['狀','状'],['況','况'],['現','现'],['銀','银'],['費','费'],['認','认'],['啟','启'],['區','区'],['預','预'],['發','发'],['護','护'],['積','积'],['過','过'],['躍','跃'],['腦','脑'],['癇','痫'],['黃','黄'],['疸','疸'],['貼','贴'],['繳','缴'],['臍','脐'],['帶','带'],['幹','干'],['胞','胞'],['險','险'],['應','应'],['急','急'],['僅','仅'],['項','项'],['為','为'],['復','复'],['遲','迟'],['緩','缓'],['實','实'],['離','离'],['從','从'],['講','讲'],['這','这'],['會','会'],['點','点'],['圖','图'],['結','结'],['說','说'],['明','明'],['邊','边'],['個','个'],['隱','隐'],['臟','脏'],['移','移'],['種','种'],['類','类'],['框','框'],['註','注'],['退','退'],['終','终'],['流','流'],['程','程'],['檢','检'],['查','查'],['報','报'],['告','告'],['醫','医'],['並','并'],['該','该'],['義','义'],['慮','虑'],['覆','复'],['問','问'],['題','题'],['層','层'],['創','创'],['將','将'],['當','当'],['嘅','的'],['咗','了'],['哋','们'],['係','是'],['唔','不']
   ];
   let currentLang = 'hk';
@@ -734,8 +736,6 @@
       </div>`;
       container.insertAdjacentHTML('beforeend', cardHtml);
       
-      const panel = document.querySelector('.analysis-panel');
-      setTimeout(() => { panel.scrollTo({ top: panel.scrollHeight, behavior: 'smooth' }); }, 100);
       triggerHighlight();
   }
 
