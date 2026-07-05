@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.10 雙語導航版)</title>
+<title>生活應急保險庫 (v2.11 雙語導航版)</title>
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2c3e50">
@@ -161,7 +161,7 @@
 <div class="container">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v2.10 雙語導航版</span>
+          生活應急保險庫 <span class="version-badge">v2.11 雙語導航版</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
       <div class="header-date" id="currentDateDisplay"></div>
@@ -187,20 +187,15 @@
             </div>
             <div class="hypno-content">
                 <div class="hypno-visual" style="background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); border: 1px solid #ddd;">
-                    <div style="flex: 1; border-right: 2px dashed #bdc3c7;">
-                        <div style="font-size: 2.5rem; margin-bottom: 5px;">💸</div>
-                        <div style="font-weight: bold; color: #c0392b; font-size: 0.9rem;">Plan A<br>動用自身積蓄</div>
-                    </div>
-                    <div style="font-weight: 900; font-size: 1.2rem; color: #95a5a6; width: 40px;">VS</div>
-                    <div style="flex: 1; border-left: 2px dashed #bdc3c7;">
+                    <div style="flex: 1;">
                         <div style="font-size: 2.5rem; margin-bottom: 5px;">🛡️</div>
-                        <div style="font-weight: bold; color: #2c3e50; font-size: 0.9rem;">Plan B<br>保險理賠後備庫</div>
+                        <div style="font-weight: bold; color: #2c3e50; font-size: 1.1rem;">Plan B / 後備方案</div>
                     </div>
                 </div>
                 <p class="hypno-text">
-                    喺你現在的規劃下，萬一聽日健康真係出現變數... 
+                    喺你現在的規劃下，萬一聽日健康真係出現變數，<span class="hypno-danger">要停工休養</span>... 
                     <br><br>
-                    你心目中嘅<span class="hypno-highlight">『後備方案』</span>會有邊方面的安排呢？
+                    你心目中嘅<span class="hypno-highlight">『Plan B』</span>會有邊方面的安排呢？你的安排會係...？
                 </p>
             </div>
         </div>
@@ -283,31 +278,15 @@
             <div class="status-item"><span class="status-label" style="color:#c0392b; font-weight:bold;">已提取總賠償</span><span id="displayTotalPaid" class="status-value red" style="font-size:1.6rem;">$0</span></div>
         </div>
         
-        <!-- 催眠式引導 2: 想像一下 -->
-        <div class="hypno-card" id="hypno2">
-            <div class="hypno-header" onclick="toggleHypno('hypno2')">
-                <div class="hypno-title"><span>💭</span> 不如我哋一齊想像一下...</div>
-                <div class="hypno-arrow">▼</div>
-            </div>
-            <div class="hypno-content">
-                <div class="hypno-visual" style="background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); color: #fff;">
-                    <div><div style="font-size: 2.2rem;">🏖️</div><div style="font-size: 0.8rem; font-weight: bold; margin-top: 5px;">退休</div></div>
-                    <div><div style="font-size: 2.2rem;">🎓</div><div style="font-size: 0.8rem; font-weight: bold; margin-top: 5px;">學費</div></div>
-                    <div><div style="font-size: 2.2rem;">🏠</div><div style="font-size: 0.8rem; font-weight: bold; margin-top: 5px;">供樓</div></div>
-                    <div><div style="font-size: 2.2rem;">🍽️</div><div style="font-size: 0.8rem; font-weight: bold; margin-top: 5px;">生活質素</div></div>
-                </div>
-                <p class="hypno-text">
-                    如果你一早規劃好嘅退休生活、仔女學費的計劃，以及每個月嘅供樓同生活費，突然被一場突如其來嘅大病<span class="hypno-danger">『睇中咗』</span>而被中斷...
-                    <br><br>
-                    你會想用辛辛苦苦儲落嘅積蓄去填補呢個缺口呀？定係想即時有筆錢比你去解決呢個缺口？
-                </p>
-            </div>
-        </div>
-
         <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--blue-base); margin-bottom: 25px;">
-            <h4 style="margin: 0 0 15px 0; color: #2c3e50; text-align: center;">
-              🛡️ <span class="tooltip" style="border-bottom: 2px dotted #3498db; cursor: pointer;">3年大病休養期<span class="tooltiptext">嚴重疾病（如癌症）的平均治療及休養期約為2至3年。此設定確保在養病無法工作期間，家庭生活質素依然得到保障，避免消耗原有積蓄。</span></span> - 資金流向推演
+            <h4 style="margin: 0 0 12px 0; color: #2c3e50; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              🛡️ <span class="tooltip" style="border-bottom: 2px dotted #3498db; cursor: pointer;">3年大病休養期<span class="tooltiptext">嚴重疾病（如癌症）的平均治療及休養期約為2至3年。此設定確保在養病無法工作期間，家庭生活質素依然得到保障，避免消耗原有積蓄。</span></span> - 資金流向推演 <span style="font-size: 1.3rem;">🏖️🎓🏠🍽️</span>
             </h4>
+            
+            <div style="background: #f4f9fc; padding: 12px 15px; border-radius: 8px; font-size: 0.9rem; color: #34495e; margin-bottom: 18px; line-height: 1.6; border-left: 4px solid var(--blue-base);">
+                <strong>💭 想像一下：</strong>如果你一早規劃好嘅退休生活、仔女學費的計劃，以及每個月嘅供樓同生活費，突然被一場突如其來嘅大病<span style="color:#c0392b; font-weight:bold;">『睇中咗』</span>而被中斷...<br>
+                你會想用辛辛苦苦儲落嘅積蓄去填補呢個缺口呀？定係想即時有筆錢比你去解決呢個缺口？
+            </div>
             
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px;">
                 <span style="color: #7f8c8d; font-weight: bold;">休養期所需總生活費 (36個月):</span>
@@ -325,31 +304,15 @@
                 </div>
             </div>
 
-            <div style="text-align: center; padding: 18px; background: #2c3e50; color: white; border-radius: 8px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); margin-bottom: 15px;">
-                <div style="font-size: 0.95rem; margin-bottom: 5px; opacity: 0.9;">大病後存款最終結餘：</div>
-                <div style="font-size: 1.6rem; font-weight: bold; margin-bottom: 4px;" id="valFinalSavings">$0</div>
-                <div id="valSavingsStatus" style="font-size: 0.9rem; font-weight: bold;"></div>
-            </div>
-            
-            <!-- 催眠式引導 3: 唔行動的代價 (改為預設可見) -->
-            <div class="hypno-card" id="hypno3" style="border-color:#e74c3c; margin-bottom: 0;">
-                <div class="hypno-header" onclick="toggleHypno('hypno3')" style="background:#fff5f5; color:#c0392b;">
-                    <div class="hypno-title"><span>⚠️</span> 唔行動的代價...</div>
-                    <div class="hypno-arrow">▼</div>
+            <div style="text-align: center; padding: 18px; background: #2c3e50; color: white; border-radius: 8px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); margin-bottom: 15px; position: relative;">
+                <div style="font-size: 0.95rem; margin-bottom: 5px; opacity: 0.9; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                    大病後存款最終結餘 <span style="font-size: 1.1rem;">🏦➡️💸➡️🏥📉👨‍👩‍👧‍👦</span>
                 </div>
-                <div class="hypno-content">
-                    <div class="hypno-visual" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: #c0392b;">
-                        <div><div style="font-size: 2.2rem;">🏦</div><div style="font-size: 0.75rem; font-weight: bold; margin-top: 5px;">辛苦積蓄</div></div>
-                        <div style="font-size: 1.5rem; animation: flash-text 2s infinite;">➡️💸➡️</div>
-                        <div><div style="font-size: 2.2rem;">🏥</div><div style="font-size: 0.75rem; font-weight: bold; margin-top: 5px;">變作醫療開支</div></div>
-                        <div style="font-size: 1.5rem;">➡️📉</div>
-                        <div><div style="font-size: 2.2rem;">👨‍👩‍👧‍👦</div><div style="font-size: 0.75rem; font-weight: bold; margin-top: 5px;">拖累家人生活</div></div>
-                    </div>
-                    <p class="hypno-text">
-                        其實我都明白，有血有汗的積儲如果因一場大病可能失去大部份，係好唔甘心... 
-                        <br><br>
-                        但除左唔甘心外，最重要係<span class="hypno-highlight">影響埋家人生活，仔女學費</span>，呢樣先更緊要，你話係唔係？
-                    </p>
+                <div style="font-size: 1.6rem; font-weight: bold; margin-bottom: 4px;" id="valFinalSavings">$0</div>
+                <div id="valSavingsStatus" style="font-size: 0.9rem; font-weight: bold; margin-bottom: 12px;"></div>
+                
+                <div style="text-align: left; padding-top: 12px; border-top: 1px dashed rgba(255,255,255,0.3); font-size: 0.85rem; line-height: 1.6; color: #ecf0f1;">
+                    <strong style="color: #ff9a9e;">⚠️ 唔行動的代價：</strong>其實我都明白，有血有汗的積儲如果因一場大病可能失去大部份，係好唔甘心... 但除左唔甘心外，最重要係<span style="color: #f1c40f; font-weight: bold;">影響埋家人生活，仔女學費</span>，呢樣先更緊要，你話係唔係？
                 </div>
             </div>
 
@@ -545,17 +508,16 @@
       ['戶口', '账户'], ['舊單', '旧单'], ['補強', '补强'], ['儲蓄', '储蓄'], 
       ['腦退化', '脑退化'], ['嚴重疾病', '重度疾病'], ['確診', '确诊'],
       ['喺你現在的規劃下', '在您现在的规划下'],
-      ['動用自身積蓄', '动用自身积蓄'], ['保險理賠後備庫', '保险理赔后备库'],
-      ['你心目中嘅『後備方案』會有邊方面的安排呢？', '您心目中的『后备方案』会有哪方面的安排呢？'],
-      ['不如我哋一齊想像一下...', '不如我们一起想像一下...'],
+      ['要停工休養', '要停工休养'], ['後備方案', '后备方案'], ['你的安排會係...？', '您的安排会是...？'],
+      ['你心目中嘅『Plan B』會有邊方面的安排呢？', '您心目中的『Plan B』会有哪方面的安排呢？'],
+      ['💭 想像一下：', '💭 想像一下：'],
       ['如果你一早規劃好嘅退休生活、仔女學費的計劃，以及每個月嘅供樓同生活費，突然被一場突如其來嘅大病', '如果您一早规划好的退休生活、子女学费的计划，以及每个月的房贷和生活费，突然被一场突如其来的大病'],
       ['『睇中咗』', '『看中了』'],
       ['而被中斷...', '而被中断...'],
       ['你會想用辛辛苦苦儲落嘅積蓄去填補呢個缺口呀？定係想即時有筆錢比你去解決呢個缺口？', '您会想用辛辛苦苦攒下的积蓄去填补这个缺口呀？还是想即时有笔钱让您去解决这个缺口？'],
+      ['⚠️ 唔行動的代價：', '⚠️ 不行动的代价：'],
       ['其實我都明白，有血有汗的積儲如果因一場大病可能失去大部份，係好唔甘心...', '其实我都明白，有血有汗的积蓄如果因一场大病可能失去大部份，是非常不甘心...'],
       ['但除左唔甘心外，最重要係影響埋家人生活，仔女學費，呢樣先更緊要，你話係唔係？', '但除了不甘心外，最重要的是影响了家人生活，子女学费，这样才更要紧，您说是不是？'],
-      ['完善防護網', '完善防护网'], ['消耗自身積蓄', '消耗自身积蓄'], ['無憂退休', '无忧退休'], ['仔女學費', '子女学费'], 
-      ['安穩供樓', '安稳房贷'], ['生活質素', '生活质素'], ['辛苦積蓄', '辛苦积蓄'], ['變作醫療開支', '变作医疗开支'], ['拖累家人生活', '拖累家人生活'],
       ['確','确'],['診','诊'],['歲','岁'],['額','额'],['舊','旧'],['單','单'],['補','补'],['強','强'],['儲','储'],['蓄','蓄'],['總','总'],['資','资'],['產','产'],['網','网'],['頁','页'],['導','导'],['航','航'],['庫','库'],['儀','仪'],['表','表'],['板','板'],['兒','儿'],['童','童'],['專','专'],['輕','轻'],['細','细'],['條','条'],['款','款'],['間','间'],['線','线'],['無','无'],['紅','红'],['贈','赠'],['動','动'],['隨','随'],['財','财'],['與','与'],['狀','状'],['況','况'],['現','现'],['銀','银'],['費','费'],['認','认'],['啟','启'],['區','区'],['預','预'],['發','发'],['護','护'],['積','积'],['過','过'],['躍','跃'],['腦','脑'],['癇','痫'],['黃','黄'],['疸','疸'],['貼','贴'],['繳','缴'],['臍','脐'],['帶','带'],['幹','干'],['胞','胞'],['險','险'],['應','应'],['急','急'],['僅','仅'],['項','项'],['為','为'],['復','复'],['遲','迟'],['緩','缓'],['實','实'],['離','离'],['從','从'],['講','讲'],['這','这'],['會','会'],['點','点'],['圖','图'],['結','结'],['說','说'],['明','明'],['邊','边'],['個','个'],['隱','隐'],['臟','脏'],['移','移'],['種','种'],['類','类'],['框','框'],['註','注'],['退','退'],['終','终'],['流','流'],['程','程'],['檢','检'],['查','查'],['報','报'],['告','告'],['醫','医'],['並','并'],['該','该'],['義','义'],['慮','虑'],['覆','复'],['問','问'],['題','题'],['層','层'],['創','创'],['將','将'],['當','当'],['嘅','的'],['咗','了'],['哋','们'],['係','是'],['唔','不']
   ];
   let currentLang = 'hk';
@@ -605,19 +567,16 @@
       });
   }
 
-  // --- 催眠式引導展開邏輯 ---
   function toggleHypno(id) {
       const el = document.getElementById(id);
       el.classList.toggle('active');
   }
 
-  // --- 基礎計算機邏輯 ---
   function updateDate() { document.getElementById('currentDateDisplay').innerText = new Date().toLocaleDateString('zh-HK', { year: 'numeric', month: '2-digit', day: '2-digit' }); }
   
   let config = { sumExisting: 200000, sumTerm: 500000, sumWhole: 500000, sumUpgradeB: 500000, sumBasicPool: 1200000, existingMulti: false, existingCancerWait: 5, startAge: 0, assets: 500000, expense: 30000 };
   let state = { isConfirmed: false, balance: 1000000, totalPaid: 0, isCriticalClaimed: false, hasStartedCancerMonthly: false, cancerRecurCountNew: 0, cancerRecurCountOld: 0, nextClaimAge_New: Infinity, nextClaimAge_Old: Infinity, heartCount: 0, cancerMonthsPaid: 0, dementiaYearsPaid: 0, accEarly: 0, accCancerLump: 0, accCancerMonthly: 0, accHeart: 0, accDementia: 0, accChild: 0, currentAge: 30, claimCount: 0, bonusPaid: 0 };
   
-  // -- 導航分頁切換邏輯 --
   function switchPage(pageId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
@@ -625,7 +584,6 @@
       event.currentTarget.classList.add('active');
   }
 
-  // -- 核心算力 --
   function toggleExistingOptions() { const chk = document.getElementById('existingMultiCheck').checked; document.getElementById('existingSubOptions').style.display = chk ? 'block' : 'none'; updateUI(); }
   function getNumVal(id) { return parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0; }
   function formatOnly(input) { let v = input.value.replace(/,/g, '').replace(/[^\d]/g, ''); if(v) input.value = Number(v).toLocaleString('en-US'); }
@@ -665,10 +623,7 @@
       } 
       state.isConfirmed = true; 
       document.getElementById('analysisOverlay').style.display = 'none'; 
-      
-      // 確認資料後，收起問題1，自動展開問題2
       document.getElementById('hypno1').classList.remove('active');
-      document.getElementById('hypno2').classList.add('active');
 
       updateBenefitValues();
       updateBonusDisplay(); 
