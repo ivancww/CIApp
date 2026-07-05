@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.9 感性引導版)</title>
+<title>生活應急保險庫 (v2.9 雙語導航版)</title>
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2c3e50">
@@ -58,9 +58,10 @@
   .hypno-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out; background: #fff; padding: 0 15px; }
   .hypno-card.active .hypno-content { max-height: 600px; padding: 15px; border-top: 1px solid #f1f2f6; }
   .hypno-card.active .hypno-arrow { transform: rotate(180deg); }
-  .hypno-img { width: 100%; height: 160px; object-fit: cover; border-radius: 6px; margin-bottom: 12px; opacity: 0.95; }
+  .hypno-visual { width: 100%; border-radius: 8px; margin-bottom: 15px; padding: 15px; box-sizing: border-box; display: flex; justify-content: space-around; align-items: center; text-align: center; }
   .hypno-text { font-size: 0.95rem; color: #444; line-height: 1.6; margin: 0; }
   .hypno-highlight { color: #2980b9; font-weight: bold; }
+  .hypno-danger { color: #c0392b; font-weight: bold; }
 
   @keyframes flash-bg { 0% { background-color: rgba(46, 204, 113, 0.4); box-shadow: 0 0 15px rgba(46, 204, 113, 0.8); } 10% { background-color: rgba(46, 204, 113, 0.6); box-shadow: 0 0 20px rgba(46, 204, 113, 1); } 100% { background-color: #f0f3f4; box-shadow: none; } }
   @keyframes flash-text { 0% { color: #27ae60; transform: scale(1.1); text-shadow: 0 0 10px rgba(39, 174, 96, 0.5); } 10% { color: #e74c3c; transform: scale(1.2); text-shadow: 0 0 15px rgba(231, 76, 60, 0.8); } 100% { color: #e74c3c; transform: scale(1); text-shadow: none;} }
@@ -160,7 +161,7 @@
 <div class="container">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v2.8 感性引導版</span>
+          生活應急保險庫 <span class="version-badge">v2.9 雙語導航版</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
       <div class="header-date" id="currentDateDisplay"></div>
@@ -185,7 +186,18 @@
                 <div class="hypno-arrow">▼</div>
             </div>
             <div class="hypno-content">
-                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80" alt="Consultation" class="hypno-img">
+                <!-- 改用 Emoji 設計代替圖片 -->
+                <div class="hypno-visual" style="background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); border: 1px solid #ddd;">
+                    <div style="flex: 1; border-right: 2px dashed #bdc3c7;">
+                        <div style="font-size: 2.5rem; margin-bottom: 5px;">🛡️</div>
+                        <div style="font-weight: bold; color: #2c3e50; font-size: 0.9rem;">Plan A<br>保險公司理賠庫</div>
+                    </div>
+                    <div style="font-weight: 900; font-size: 1.2rem; color: #95a5a6; width: 40px;">VS</div>
+                    <div style="flex: 1; border-left: 2px dashed #bdc3c7;">
+                        <div style="font-size: 2.5rem; margin-bottom: 5px;">💸</div>
+                        <div style="font-weight: bold; color: #c0392b; font-size: 0.9rem;">Plan B<br>消耗自身積蓄</div>
+                    </div>
+                </div>
                 <p class="hypno-text">
                     喺你現在的規劃下，萬一聽日健康真係出現變數... 
                     <br><br>
@@ -279,9 +291,15 @@
                 <div class="hypno-arrow">▼</div>
             </div>
             <div class="hypno-content">
-                <img src="https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=800&q=80" alt="Family Future" class="hypno-img">
+                <!-- 改用 Emoji 設計代替圖片 -->
+                <div class="hypno-visual" style="background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); color: #fff;">
+                    <div><div style="font-size: 2.2rem;">🏖️</div><div style="font-size: 0.8rem; font-weight: bold; margin-top: 5px;">退休</div></div>
+                    <div><div style="font-size: 2.2rem;">🎓</div><div style="font-size: 0.8rem; font-weight: bold; margin-top: 5px;">學費</div></div>
+                    <div><div style="font-size: 2.2rem;">🏠</div><div style="font-size: 0.8rem; font-weight: bold; margin-top: 5px;">供樓</div></div>
+                    <div><div style="font-size: 2.2rem;">🍽️</div><div style="font-size: 0.8rem; font-weight: bold; margin-top: 5px;">生活質素</div></div>
+                </div>
                 <p class="hypno-text">
-                    如果你一早規劃好嘅退休生活、仔女學費的計劃，以及每個月嘅供樓同生活費，突然被一場突如其來嘅大病<span style="color:#c0392b; font-weight:bold;">『睇中咗』</span>而被中斷...
+                    如果你一早規劃好嘅退休生活、仔女學費的計劃，以及每個月嘅供樓同生活費，突然被一場突如其來嘅大病<span class="hypno-danger">『睇中咗』</span>而被中斷...
                     <br><br>
                     你會想用辛辛苦苦儲落嘅積蓄去填補呢個缺口呀？定係想即時有筆錢比你去解決呢個缺口？
                 </p>
@@ -309,20 +327,27 @@
                 </div>
             </div>
 
-            <div style="text-align: center; padding: 18px; background: #2c3e50; color: white; border-radius: 8px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);">
+            <div style="text-align: center; padding: 18px; background: #2c3e50; color: white; border-radius: 8px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); margin-bottom: 15px;">
                 <div style="font-size: 0.95rem; margin-bottom: 5px; opacity: 0.9;">大病後存款最終結餘：</div>
                 <div style="font-size: 1.6rem; font-weight: bold; margin-bottom: 4px;" id="valFinalSavings">$0</div>
                 <div id="valSavingsStatus" style="font-size: 0.9rem; font-weight: bold;"></div>
             </div>
             
-            <!-- 催眠式引導 3: 唔行動的代價 (動態顯示) -->
-            <div class="hypno-card" id="hypno3" style="display:none; margin-top:15px; border-color:#e74c3c;">
+            <!-- 催眠式引導 3: 唔行動的代價 (改為預設可見) -->
+            <div class="hypno-card" id="hypno3" style="border-color:#e74c3c; margin-bottom: 0;">
                 <div class="hypno-header" onclick="toggleHypno('hypno3')" style="background:#fff5f5; color:#c0392b;">
                     <div class="hypno-title"><span>⚠️</span> 唔行動的代價...</div>
                     <div class="hypno-arrow">▼</div>
                 </div>
                 <div class="hypno-content">
-                    <img src="https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?auto=format&fit=crop&w=800&q=80" alt="Lost Savings" class="hypno-img">
+                    <!-- 改用 Emoji 設計代替圖片 -->
+                    <div class="hypno-visual" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: #c0392b;">
+                        <div><div style="font-size: 2.2rem;">🏦</div><div style="font-size: 0.75rem; font-weight: bold; margin-top: 5px;">辛苦積蓄</div></div>
+                        <div style="font-size: 1.5rem; animation: flash-text 2s infinite;">➡️💸➡️</div>
+                        <div><div style="font-size: 2.2rem;">🏥</div><div style="font-size: 0.75rem; font-weight: bold; margin-top: 5px;">變作醫療開支</div></div>
+                        <div style="font-size: 1.5rem;">➡️📉</div>
+                        <div><div style="font-size: 2.2rem;">👨‍👩‍👧‍👦</div><div style="font-size: 0.75rem; font-weight: bold; margin-top: 5px;">拖累家人生活</div></div>
+                    </div>
                     <p class="hypno-text">
                         其實我都明白，有血有汗的積儲如果因一場大病可能失去大部份，係好唔甘心... 
                         <br><br>
@@ -516,7 +541,7 @@
 <script>
   // --- 繁簡轉換字典與引擎 ---
   const t2sMap = [
-      ['生活應急保險庫', '生活应急保险库'], ['感性引導版', '感性引导版'], ['模擬賠償儀表板', '模拟理赔仪表板'], 
+      ['生活應急保險庫', '生活应急保险库'], ['雙語導航版', '双语导航版'], ['模擬賠償儀表板', '模拟理赔仪表板'], 
       ['兒童疾病保障專頁', '儿童疾病保障专页'], ['危疾/輕疾明細', '重疾/轻症明细'], 
       ['多重賠償', '多次理赔'], ['危疾', '重疾'], ['早期疾病', '轻症'], ['輕疾', '轻症'], 
       ['賠償', '理赔'], ['供款', '缴费'], ['免供款', '豁免保费'], ['歲數', '年龄'], 
@@ -530,7 +555,9 @@
       ['而被中斷...', '而被中断...'],
       ['你會想用辛辛苦苦儲落嘅積蓄去填補呢個缺口呀？定係想即時有筆錢比你去解決呢個缺口？', '您会想用辛辛苦苦攒下的积蓄去填补这个缺口呀？还是想即时有笔钱让您去解决这个缺口？'],
       ['其實我都明白，有血有汗的積儲如果因一場大病可能失去大部份，係好唔甘心...', '其实我都明白，有血有汗的积蓄如果因一场大病可能失去大部份，是非常不甘心...'],
-      ['但除左唔甘心外，最重要係影響埋家人生活，仔女學費，呢樣先更緊要，你話係唔係？', '但除了不甘心外，最重要是影响了家人生活，子女学费，这样才更要紧，您说是不是？'],
+      ['但除左唔甘心外，最重要係影響埋家人生活，仔女學費，呢樣先更緊要，你話係唔係？', '但除了不甘心外，最重要的是影响了家人生活，子女学费，这样才更要紧，您说是不是？'],
+      ['完善防護網', '完善防护网'], ['消耗自身積蓄', '消耗自身积蓄'], ['無憂退休', '无忧退休'], ['仔女學費', '子女学费'], 
+      ['安穩供樓', '安稳房贷'], ['生活質素', '生活质素'], ['辛苦積蓄', '辛苦积蓄'], ['變作醫療開支', '变作医疗开支'], ['拖累家人生活', '拖累家人生活'],
       ['確','确'],['診','诊'],['歲','岁'],['額','额'],['舊','旧'],['單','单'],['補','补'],['強','强'],['儲','储'],['蓄','蓄'],['總','总'],['資','资'],['產','产'],['網','网'],['頁','页'],['導','导'],['航','航'],['庫','库'],['儀','仪'],['表','表'],['板','板'],['兒','儿'],['童','童'],['專','专'],['輕','轻'],['細','细'],['條','条'],['款','款'],['間','间'],['線','线'],['無','无'],['紅','红'],['贈','赠'],['動','动'],['隨','随'],['財','财'],['與','与'],['狀','状'],['況','况'],['現','现'],['銀','银'],['費','费'],['認','认'],['啟','启'],['區','区'],['預','预'],['發','发'],['護','护'],['積','积'],['過','过'],['躍','跃'],['腦','脑'],['癇','痫'],['黃','黄'],['疸','疸'],['貼','贴'],['繳','缴'],['臍','脐'],['帶','带'],['幹','干'],['胞','胞'],['險','险'],['應','应'],['急','急'],['僅','仅'],['項','项'],['為','为'],['復','复'],['遲','迟'],['緩','缓'],['實','实'],['離','离'],['從','从'],['講','讲'],['這','这'],['會','会'],['點','点'],['圖','图'],['結','结'],['說','说'],['明','明'],['邊','边'],['個','个'],['隱','隐'],['臟','脏'],['移','移'],['種','种'],['類','类'],['框','框'],['註','注'],['退','退'],['終','终'],['流','流'],['程','程'],['檢','检'],['查','查'],['報','报'],['告','告'],['醫','医'],['並','并'],['該','该'],['義','义'],['慮','虑'],['覆','复'],['問','问'],['題','题'],['層','层'],['創','创'],['將','将'],['當','当'],['嘅','的'],['咗','了'],['哋','们'],['係','是'],['唔','不']
   ];
   let currentLang = 'hk';
@@ -565,7 +592,7 @@
           node.nodeValue = txt;
       }
       
-      const inputs = document.querySelectorAll('input, button, .hypno-highlight');
+      const inputs = document.querySelectorAll('input, button, .hypno-highlight, .hypno-danger');
       inputs.forEach(input => {
           if(input.type === 'button' || input.type === 'submit' || input.tagName === 'BUTTON' || input.tagName === 'SPAN') {
               if(input.id === 'langToggleBtn') return; 
@@ -675,7 +702,6 @@
       document.getElementById('btnCancerAuto').innerText = T("⏭️ 推演下一次復發歲數");
       document.getElementById('valCritical').innerText = formatMoney(config.sumBasicPool); 
       
-      document.getElementById('hypno3').style.display = 'none';
       document.getElementById('rightTimeline').innerHTML = `<div style="text-align:center; color:#bdc3c7; font-size:0.95rem; padding: 30px; border: 2px dashed #eee; border-radius: 8px;">${T('等待啟動模擬賠償...')}</div>`;
       updateUI(); 
   }
@@ -694,18 +720,14 @@
 
       let savingsEl = document.getElementById('valFinalSavings');
       let statusEl = document.getElementById('valSavingsStatus');
-      let hypno3 = document.getElementById('hypno3');
       
       savingsEl.innerText = formatMoney(finalSavings);
       if (finalSavings < 0) {
           savingsEl.style.color = "#ff7675"; statusEl.innerText = "";
-          hypno3.style.display = "block"; setTimeout(() => { hypno3.classList.add('active'); }, 500);
       } else if (savingsNeeded > 0) {
           savingsEl.style.color = "#ffeaa7"; statusEl.innerText = T("(⚠️ 財富受損，復原困難)"); statusEl.style.color = "#ffeaa7";
-          hypno3.style.display = "block"; setTimeout(() => { hypno3.classList.add('active'); }, 500);
       } else {
           savingsEl.style.color = "#55efc4"; statusEl.innerText = T("(✅ 成功保護銀行累積的財富！)"); statusEl.style.color = "#55efc4";
-          hypno3.style.display = "none"; hypno3.classList.remove('active');
       }
   }
   
