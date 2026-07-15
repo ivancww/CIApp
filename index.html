@@ -3,12 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.17)</title>
+<title>生活應急保險庫 (v2.18 )</title>
 
 <!-- ⚡ 圖片秒開預加載技術 (Preload Images) -->
 <link rel="preload" href="https://i.postimg.cc/qvBfJwvc/ask.png" as="image">
 <link rel="preload" href="https://i.postimg.cc/FHFtrpHL/think.png" as="image">
 <link rel="preload" href="https://i.postimg.cc/dVQMs6V8/action.png" as="image">
+
+<!-- Firebase App (the core Firebase SDK) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<!-- Firebase Firestore -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<!-- Firebase Storage -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
@@ -45,8 +52,8 @@
   .lang-btn:hover { background: #bdc3c7; }
   .header-date { margin-top: 8px; font-size: 0.85rem; color: #bdc3c7; }
 
-  .tab-navigation { display: flex; background: #34495e; border-bottom: 3px solid var(--gold); }
-  .nav-tab { flex: 1; padding: 15px 10px; text-align: center; color: #bdc3c7; font-weight: bold; cursor: pointer; transition: all 0.2s; border: none; background: none; font-size: 1rem; }
+  .tab-navigation { display: flex; background: #34495e; border-bottom: 3px solid var(--gold); flex-wrap: wrap;}
+  .nav-tab { flex: 1; padding: 15px 10px; text-align: center; color: #bdc3c7; font-weight: bold; cursor: pointer; transition: all 0.2s; border: none; background: none; font-size: 1rem; min-width: 150px;}
   .nav-tab:hover { background: #2c3e50; color: #fff; }
   .nav-tab.active { background: #fff; color: #2c3e50; border-top: 4px solid var(--gold); margin-top: -4px; border-radius: 6px 6px 0 0; }
   .tab-content { display: none; }
@@ -74,7 +81,7 @@
   .hypno-highlight { color: #2980b9; font-weight: bold; }
   .hypno-danger { color: #c0392b; font-weight: bold; }
   
-  .view-img-btn { display: inline-block; width: 100%; text-align: center; color: #3498db; margin-top: 15px; font-weight: bold; padding: 10px; border: 2px dashed #3498db; border-radius: 6px; background: #f4f9fc; text-decoration: none; transition: 0.2s; box-sizing: border-box; cursor: pointer; font-size: 1rem; letter-spacing: 1px; }
+  .view-img-btn { display: inline-block; width: 100%; text-align: center; color: #3498db; margin-top: 10px; margin-bottom: 10px; font-weight: bold; padding: 10px; border: 2px dashed #3498db; border-radius: 6px; background: #f4f9fc; text-decoration: none; transition: 0.2s; box-sizing: border-box; cursor: pointer; font-size: 1rem; letter-spacing: 1px; }
   .view-img-btn:hover { background: #eaf2f8; color: #2980b9; border-style: solid; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2); }
 
   /* 彈出圖片置中 Modal */
@@ -150,7 +157,7 @@
   .bonus-active-tag { background: #2ecc71; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px;} .bonus-inactive-tag { background: #95a5a6; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px;}
 
   /* Info Pages Styling */
-  .info-page-container { padding: 30px 25px; background: #fff; }
+  .info-page-container { padding: 30px 25px; background: #fff; border-radius: 0 0 12px 12px;}
   .info-section { margin-bottom: 35px; }
   .info-title { font-size: 1.3rem; color: #2c3e50; border-left: 5px solid var(--blue-base); padding-left: 12px; margin-bottom: 15px; font-weight: bold; }
   .info-table { width: 100%; border-collapse: collapse; margin-top: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
@@ -161,6 +168,21 @@
   .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   @media (max-width: 768px) { .grid-2col { grid-template-columns: 1fr; } }
 
+  /* 案例展示區 CSS */
+  .case-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+  .case-title { font-size: 1.2rem; color: #e74c3c; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 10px; }
+  .case-claim-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #eee; font-size: 0.95rem; color: #34495e;}
+  .case-file-link { display: inline-block; background: #ecf0f1; color: #2980b9; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; text-decoration: none; margin-right: 5px; margin-top: 10px; border: 1px solid #bdc3c7;}
+  .case-file-link:hover { background: #bdc3c7; }
+  
+  /* 後台管理 Modal */
+  .admin-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+  .admin-content { background: #fff; padding: 25px; border-radius: 10px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
+  .admin-input { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; box-sizing: border-box;}
+  .claim-entry { display: flex; gap: 10px; margin-bottom: 10px; }
+  .claim-entry input { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
+  .btn-remove { background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; padding: 0 10px; font-weight: bold;}
+  
   /* Tooltip CSS */
   .tooltip { position: relative; display: inline-block; cursor: help; border-bottom: 1px dotted #7f8c8d; }
   .tooltip .tooltiptext { visibility: hidden; width: 220px; background-color: #34495e; color: #fff; text-align: left; border-radius: 6px; padding: 10px; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -110px; opacity: 0; transition: opacity 0.3s; font-size: 0.75rem; font-weight: normal; line-height: 1.5; box-shadow: 0 4px 6px rgba(0,0,0,0.15); }
@@ -200,10 +222,43 @@
     </div>
 </div>
 
+<!-- 隱藏後台 Modal -->
+<div id="adminModal" class="admin-modal">
+    <div class="admin-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #eee; margin-bottom:15px; padding-bottom:10px;">
+            <h2 style="margin:0; color:#2c3e50;">⚙️ 後台案例管理</h2>
+            <button onclick="document.getElementById('adminModal').style.display='none'" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">✖</button>
+        </div>
+        
+        <label><b>確診疾病名稱</b></label>
+        <input type="text" id="adminDisease" class="admin-input" placeholder="例如：乳癌、心臟病">
+        
+        <label><b>賠償次數及金額 (上限6次)</b></label>
+        <div id="adminClaimsContainer">
+            <div class="claim-entry">
+                <input type="text" placeholder="次數 (例如: 首次)" class="claim-seq">
+                <input type="text" placeholder="賠償金額 ($)" class="claim-amt">
+                <button class="btn-remove" onclick="this.parentElement.remove()">-</button>
+            </div>
+        </div>
+        <button onclick="addAdminClaimEntry()" style="background:#2ecc71; color:white; border:none; padding:5px 15px; border-radius:4px; cursor:pointer; margin-bottom:15px; font-weight:bold;">+ 新增次數</button>
+        <br>
+        
+        <label><b>上傳檔案 (PDF/JPG/PNG，最多10個)</b></label>
+        <input type="file" id="adminFiles" class="admin-input" multiple accept=".pdf,.jpg,.jpeg,.png">
+        
+        <button id="adminSubmitBtn" onclick="submitCase()" style="width:100%; padding:12px; background:#3498db; color:white; font-size:1.1rem; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">📤 儲存並發佈</button>
+        
+        <hr style="margin: 25px 0; border-top: 1px dashed #ccc;">
+        <h3 style="margin-top:0;">🗑️ 現有案例列表</h3>
+        <div id="adminCasesList">載入中...</div>
+    </div>
+</div>
+
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v2.17 嚴密資安版</span>
+          生活應急保險庫 <span class="version-badge">v2.18 雲端案例版</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
       <div class="header-date" id="currentDateDisplay"></div>
@@ -214,6 +269,7 @@
       <button class="nav-tab active" onclick="switchPage('main')">📊 模擬賠償儀表板</button>
       <button class="nav-tab" onclick="switchPage('child')">👶 兒童疾病保障專頁</button>
       <button class="nav-tab" onclick="switchPage('diseases')">📜 102種危疾/輕疾明細</button>
+      <button class="nav-tab" onclick="switchPage('cases')">📂 賠償案例</button>
   </div>
   
   <!-- 分頁 1: 主頁儀表板 -->
@@ -358,28 +414,28 @@
             <div class="status-item"><span class="status-label" style="color:#c0392b; font-weight:bold;">已提取總賠償</span><span id="displayTotalPaid" class="status-value red" style="font-size:1.6rem;">$0</span></div>
         </div>
         
-        <!-- 催眠式引導 2: 想像一下 -->
-        <div class="hypno-card" id="hypno2">
-            <div class="hypno-header" onclick="toggleHypno('hypno2')" style="background:#eaf2f8; color:#2980b9;">
-                <div class="hypno-title"><span>💭</span> 不如我哋一齊想像一下...</div>
-                <div class="hypno-arrow">▼</div>
-            </div>
-            <div class="hypno-content">
-                <div class="hypno-inner">
-                    <p class="hypno-text">
-                        如果你一早規劃好嘅退休生活、仔女學費的計劃，以及每個月嘅供樓同生活費，突然被一場突如其來嘅大病<span class="hypno-danger">『睇中咗』</span>而被中斷...
-                        <br><br>
-                        你會想用辛辛苦苦儲落嘅積蓄去填補呢個缺口呀？定係想即時有筆錢比你去解決呢個缺口？
-                    </p>
-                    <button class="view-img-btn" onclick="openModal('https://i.postimg.cc/FHFtrpHL/think.png')">🖼️ 點擊查看圖解</button>
-                </div>
-            </div>
-        </div>
-
         <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--blue-base); margin-bottom: 25px;">
             <h4 style="margin: 0 0 15px 0; color: #2c3e50; text-align: center;">
               🛡️ <span class="tooltip" style="border-bottom: 2px dotted #3498db; cursor: pointer;">3年大病休養期<span class="tooltiptext">嚴重疾病（如癌症）的平均治療及休養期約為2至3年。此設定確保在養病無法工作期間，家庭生活質素依然得到保障，避免消耗原有積蓄。</span></span> - 資金流向推演
             </h4>
+
+            <!-- 催眠式引導 2: 想像一下 (完美嵌入) -->
+            <div class="hypno-card" id="hypno2" style="background:#eaf2f8; border-color:#d4e6f1; margin-bottom:15px;">
+                <div class="hypno-header" onclick="toggleHypno('hypno2')" style="background:transparent; color:#2980b9;">
+                    <div class="hypno-title"><span>💭</span> 不如我哋一齊想像一下...</div>
+                    <div class="hypno-arrow">▼</div>
+                </div>
+                <div class="hypno-content" style="background:transparent;">
+                    <div class="hypno-inner" style="padding-top:0;">
+                        <p class="hypno-text" style="color:#34495e;">
+                            如果你一早規劃好嘅退休生活、仔女學費的計劃，以及每個月嘅供樓同生活費，突然被一場突如其來嘅大病<span class="hypno-danger">『睇中咗』</span>而被中斷...
+                            <br><br>
+                            你會想用辛辛苦苦儲落嘅積蓄去填補呢個缺口呀？定係想即時有筆錢比你去解決呢個缺口？
+                        </p>
+                        <button class="view-img-btn" onclick="openModal('https://i.postimg.cc/FHFtrpHL/think.png')" style="background:#fff;">🖼️ 點擊查看圖解</button>
+                    </div>
+                </div>
+            </div>
             
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px;">
                 <span style="color: #7f8c8d; font-weight: bold;">休養期所需總生活費 (36個月):</span>
@@ -604,11 +660,48 @@
           </table>
       </div>
   </div>
+  
+  <!-- 分頁 4: 賠償案例 -->
+  <div id="page-cases" class="tab-content info-page-container" style="background:#f4f9fc;">
+      <div class="info-section">
+          <h2 id="casesTitle" class="dark-title" style="font-size: 1.6rem; color: #2c3e50; text-align:center; cursor:default;" ondblclick="document.getElementById('adminModal').style.display='flex'">📜 賠償案例庫</h2>
+          <p style="color:#666; text-align:center; font-size:0.9rem;">真實理賠數據展示，讓數據說話。</p>
+      </div>
+      
+      <div id="frontendCasesList">
+          <div style="text-align:center; color:#95a5a6; padding:30px;">載入中...</div>
+      </div>
+  </div>
 </div>
 
 <script>
+  // --- Firebase 初始化 ---
+  const firebaseConfig = {
+      apiKey: "AIzaSyDBA5Iitb8X0qmbVfjVdYWw-M2D_9ZhFIg",
+      authDomain: "medical-and-ci.firebaseapp.com",
+      projectId: "medical-and-ci",
+      storageBucket: "medical-and-ci.firebasestorage.app",
+      messagingSenderId: "857984223277",
+      appId: "1:857984223277:web:bd64aa72fc7e374c3450a4",
+      measurementId: "G-VC775G3QRW"
+  };
+  if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+  }
+  const db = firebase.firestore();
+  const storage = firebase.storage();
+
   // --- 登入驗證邏輯 ---
   const GAS_URL = "https://script.google.com/macros/s/AKfycbwmpVo8uGg8ZaC-oTFKdTdLAgCibw8FhD0UpcuMA6wWKwV0GWPWhO7hfFqL4NYRds2v/exec";
+
+  // 頁面載入時檢查 Session
+  window.onload = () => {
+      if(localStorage.getItem('ava_logged_in') === 'true') {
+          document.getElementById('loginOverlay').style.display = 'none';
+          document.getElementById('mainContainer').style.display = 'block';
+          loadCases(); // 載入案例
+      }
+  };
 
   async function checkLogin() {
       const pwd = document.getElementById('passwordInput').value;
@@ -618,17 +711,16 @@
       
       btn.innerText = "驗證中...";
       try {
-          // 透過 GET 請求呼叫 GAS，如果跨域失敗會入 catch
           const response = await fetch(GAS_URL + "?pwd=" + encodeURIComponent(pwd), { method: "GET" });
-          
-          // 此處嘗試解析 JSON。如果你嘅 GAS 已按照上一階段更新回傳 JSON 格式，就會成功。
           const data = await response.json();
           
           if(data.status === "success") {
+              localStorage.setItem('ava_logged_in', 'true'); // 記住登入狀態
               document.getElementById('loginOverlay').style.opacity = '0';
               setTimeout(() => { 
                   document.getElementById('loginOverlay').style.display = 'none'; 
                   document.getElementById('mainContainer').style.display = 'block';
+                  loadCases(); // 載入案例
               }, 500);
           } else {
               msg.innerText = "❌ 密碼錯誤，請重試！";
@@ -643,8 +735,8 @@
 
   // --- 繁簡轉換字典與引擎 ---
   const t2sMap = [
-      ['生活應急保險庫', '生活应急保险库'], ['加密時光機版', '加密时光机版'], ['模擬賠償儀表板', '模拟理赔仪表板'], 
-      ['兒童疾病保障專頁', '儿童疾病保障专页'], ['危疾/輕疾明細', '重疾/轻症明细'], 
+      ['生活應急保險庫', '生活应急保险库'], ['雲端案例版', '云端案例版'], ['模擬賠償儀表板', '模拟理赔仪表板'], 
+      ['兒童疾病保障專頁', '儿童疾病保障专页'], ['危疾/輕疾明細', '重疾/轻症明细'], ['賠償案例', '理赔案例'],
       ['多重賠償', '多次理赔'], ['危疾', '重疾'], ['早期疾病', '轻症'], ['輕疾', '轻症'], 
       ['賠償', '理赔'], ['供款', '缴费'], ['免供款', '豁免保费'], ['歲數', '年龄'], 
       ['戶口', '账户'], ['舊單', '旧单'], ['補強', '补强'], ['儲蓄', '储蓄'], 
@@ -665,6 +757,8 @@
       ['但除左唔甘心外，最重要係影響埋家人生活，仔女學費，呢樣先更緊要，你話係唔係？', '但除了不甘心，更重要的是会牵连家人的生活和子女的学业，这才是最要紧的，您说对吧？'],
       ['完善防護網', '完善防护网'], ['消耗自身積蓄', '消耗自身积蓄'], ['無憂退休', '无忧退休'], ['仔女學費', '子女学费'], 
       ['安穩供樓', '安稳房贷'], ['生活質素', '生活质素'], ['辛苦積蓄', '辛苦积蓄'], ['變作醫療開支', '变作医疗开支'], ['拖累家人生活', '拖累家人生活'],
+      ['後台案例管理', '后台案例管理'], ['確診疾病名稱', '确诊疾病名称'], ['賠償次數及金額', '理赔次数及金额'], ['上傳檔案', '上传档案'], ['儲存並發佈', '储存并发布'], ['現有案例列表', '现有案例列表'],
+      ['刪除', '删除'], ['上傳中', '上传中'],
       ['確','确'],['診','诊'],['歲','岁'],['額','额'],['舊','旧'],['單','单'],['補','补'],['強','强'],['儲','储'],['蓄','蓄'],['總','总'],['資','资'],['產','产'],['網','网'],['頁','页'],['導','导'],['航','航'],['庫','库'],['儀','仪'],['表','表'],['板','板'],['兒','儿'],['童','童'],['專','专'],['輕','轻'],['細','细'],['條','条'],['款','款'],['間','间'],['線','线'],['無','无'],['紅','红'],['贈','赠'],['動','动'],['隨','随'],['財','财'],['與','与'],['狀','状'],['況','况'],['現','现'],['銀','银'],['費','费'],['認','认'],['啟','启'],['區','区'],['預','预'],['發','发'],['護','护'],['積','积'],['過','过'],['躍','跃'],['腦','脑'],['癇','痫'],['黃','黄'],['疸','疸'],['貼','贴'],['繳','缴'],['臍','脐'],['帶','带'],['幹','干'],['胞','胞'],['險','险'],['應','应'],['急','急'],['僅','仅'],['項','项'],['為','为'],['復','复'],['遲','迟'],['緩','缓'],['實','实'],['離','离'],['從','从'],['講','讲'],['這','这'],['會','会'],['點','点'],['圖','图'],['結','结'],['說','说'],['明','明'],['邊','边'],['個','个'],['隱','隐'],['臟','脏'],['移','移'],['種','种'],['類','类'],['框','框'],['註','注'],['退','退'],['終','终'],['流','流'],['程','程'],['檢','检'],['查','查'],['報','报'],['告','告'],['醫','医'],['並','并'],['該','该'],['義','义'],['慮','虑'],['覆','复'],['問','问'],['題','题'],['層','层'],['創','创'],['將','将'],['當','当'],['嘅','的'],['咗','了'],['哋','们'],['係','是'],['唔','不']
   ];
   let currentLang = 'hk';
@@ -681,6 +775,7 @@
       document.getElementById('langToggleBtn').innerText = currentLang === 'hk' ? '简' : '繁';
       translateStatic();
       updateUI(); 
+      loadCases(); // Reload cases with new language
   }
 
   function translateStatic() {
@@ -714,6 +809,7 @@
       });
   }
 
+  // --- UI 切換邏輯 ---
   function toggleHypno(id) {
       const el = document.getElementById(id);
       el.classList.toggle('active');
@@ -733,6 +829,108 @@
 
   function updateDate() { document.getElementById('currentDateDisplay').innerText = new Date().toLocaleDateString('zh-HK', { year: 'numeric', month: '2-digit', day: '2-digit' }); }
   
+  // --- Firebase 案例管理邏輯 ---
+  function addAdminClaimEntry() {
+      let container = document.getElementById('adminClaimsContainer');
+      if(container.children.length >= 6) { alert(T("已達上限6次")); return; }
+      let div = document.createElement('div');
+      div.className = "claim-entry";
+      div.innerHTML = `<input type="text" placeholder="${T('次數 (例如: 第二次)')}" class="claim-seq"><input type="text" placeholder="${T('賠償金額 ($)')}" class="claim-amt"><button class="btn-remove" onclick="this.parentElement.remove()">-</button>`;
+      container.appendChild(div);
+  }
+
+  async function submitCase() {
+      let disease = document.getElementById('adminDisease').value;
+      if(!disease) return alert(T("請輸入疾病名稱"));
+      
+      let claims = [];
+      document.querySelectorAll('.claim-entry').forEach(entry => {
+          let seq = entry.querySelector('.claim-seq').value;
+          let amt = entry.querySelector('.claim-amt').value;
+          if(seq || amt) claims.push({seq: seq, amt: amt});
+      });
+      
+      let files = document.getElementById('adminFiles').files;
+      if(files.length > 10) return alert(T("最多只能上傳10個檔案"));
+      
+      let btn = document.getElementById('adminSubmitBtn');
+      btn.innerText = T("⏳ 上傳中...");
+      btn.disabled = true;
+
+      try {
+          let fileUrls = [];
+          for(let i=0; i<files.length; i++) {
+              let f = files[i];
+              let ref = storage.ref('cases/' + Date.now() + '_' + f.name);
+              await ref.put(f);
+              let url = await ref.getDownloadURL();
+              fileUrls.push({name: f.name, url: url});
+          }
+          
+          await db.collection("claim_cases").add({
+              disease: disease,
+              claims: claims,
+              files: fileUrls,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          
+          // Reset form
+          document.getElementById('adminDisease').value = "";
+          document.getElementById('adminClaimsContainer').innerHTML = `<div class="claim-entry"><input type="text" placeholder="${T('次數 (例如: 首次)')}" class="claim-seq"><input type="text" placeholder="${T('賠償金額 ($)')}" class="claim-amt"><button class="btn-remove" onclick="this.parentElement.remove()">-</button></div>`;
+          document.getElementById('adminFiles').value = "";
+          alert(T("發佈成功！"));
+      } catch(e) {
+          console.error(e);
+          alert(T("發生錯誤"));
+      } finally {
+          btn.innerText = T("📤 儲存並發佈");
+          btn.disabled = false;
+      }
+  }
+
+  function loadCases() {
+      db.collection("claim_cases").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+          let html = "";
+          let adminHtml = "";
+          
+          if(snapshot.empty) {
+              html = `<div style="text-align:center; color:#95a5a6; padding:30px;">${T('暫無案例')}</div>`;
+              adminHtml = html;
+          } else {
+              snapshot.forEach(doc => {
+                  let data = doc.data();
+                  let claimsHtml = data.claims.map(c => `<div class="case-claim-row"><span>${c.seq}</span><strong>${c.amt}</strong></div>`).join("");
+                  let filesHtml = data.files.map(f => `<a href="${f.url}" target="_blank" class="case-file-link">📎 ${f.name}</a>`).join("");
+                  
+                  // Frontend Card
+                  html += `
+                  <div class="case-card">
+                      <div class="case-title">🩺 ${data.disease}</div>
+                      ${claimsHtml}
+                      <div style="margin-top:10px;">${filesHtml}</div>
+                  </div>`;
+                  
+                  // Admin List Item
+                  adminHtml += `
+                  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding:10px 0;">
+                      <div><strong>${data.disease}</strong> (${data.claims.length} 次理賠)</div>
+                      <button onclick="deleteCase('${doc.id}')" style="background:#e74c3c; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">${T('刪除')}</button>
+                  </div>`;
+              });
+          }
+          
+          document.getElementById('frontendCasesList').innerHTML = html;
+          document.getElementById('adminCasesList').innerHTML = adminHtml;
+      });
+  }
+
+  async function deleteCase(id) {
+      if(confirm(T("確定要刪除此案例嗎？"))) {
+          await db.collection("claim_cases").doc(id).delete();
+      }
+  }
+
+  // --- 計算機與保單邏輯 ---
   let config = { sumExisting: 200000, sumTerm: 500000, sumWhole: 500000, sumUpgradeB: 500000, sumBasicPool: 1200000, existingMulti: false, existingCancerWait: 5, startAge: 0, assets: 500000, expense: 30000 };
   let state = { isConfirmed: false, balance: 1000000, totalPaid: 0, isCriticalClaimed: false, hasStartedCancerMonthly: false, cancerCountNew: 0, cancerCountOld: 0, nextClaimAge_New: Infinity, nextClaimAge_Old: Infinity, heartCount: 0, dementiaLumpSumClaimed: false, dementiaYearsPaid: 0, cancerMonthsPaid: 0, accEarly: 0, accCancerLump: 0, accCancerMonthly: 0, accHeart: 0, accDementia: 0, accChild: 0, currentAge: 30, claimCount: 0, bonusPaid: 0 };
   let historyStack = [];
