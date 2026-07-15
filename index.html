@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.16)</title>
+<title>生活應急保險庫 (v2.17)</title>
 
 <!-- ⚡ 圖片秒開預加載技術 (Preload Images) -->
 <link rel="preload" href="https://i.postimg.cc/qvBfJwvc/ask.png" as="image">
@@ -203,7 +203,7 @@
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v2.16 加密時光機版</span>
+          生活應急保險庫 <span class="version-badge">v2.17 嚴密資安版</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
       <div class="header-date" id="currentDateDisplay"></div>
@@ -620,9 +620,11 @@
       try {
           // 透過 GET 請求呼叫 GAS，如果跨域失敗會入 catch
           const response = await fetch(GAS_URL + "?pwd=" + encodeURIComponent(pwd), { method: "GET" });
-          const text = await response.text();
           
-          if(text.toLowerCase().includes("success") || text.toLowerCase().includes("true") || text.includes("1")) {
+          // 此處嘗試解析 JSON。如果你嘅 GAS 已按照上一階段更新回傳 JSON 格式，就會成功。
+          const data = await response.json();
+          
+          if(data.status === "success") {
               document.getElementById('loginOverlay').style.opacity = '0';
               setTimeout(() => { 
                   document.getElementById('loginOverlay').style.display = 'none'; 
