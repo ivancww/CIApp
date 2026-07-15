@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.14 圖解彈窗版)</title>
+<title>生活應急保險庫 (v2.16)</title>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2c3e50">
-<link rel="apple-touch-icon" href="icon.png">
+<!-- ⚡ 圖片秒開預加載技術 (Preload Images) -->
+<link rel="preload" href="https://i.postimg.cc/qvBfJwvc/ask.png" as="image">
+<link rel="preload" href="https://i.postimg.cc/FHFtrpHL/think.png" as="image">
+<link rel="preload" href="https://i.postimg.cc/dVQMs6V8/action.png" as="image">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
@@ -22,11 +23,20 @@
   
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #ecf0f1; color: #333; margin: 0; padding: 20px; -webkit-tap-highlight-color: transparent; }
   
+  /* 🛡️ 登入介面 CSS */
+  #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; transition: opacity 0.5s; }
+  .login-box { background: rgba(255,255,255,0.1); padding: 40px; border-radius: 12px; backdrop-filter: blur(10px); text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); }
+  .login-box h2 { margin-top: 0; margin-bottom: 20px; letter-spacing: 1px; }
+  .login-box input { padding: 12px 15px; border-radius: 6px; border: none; font-size: 1.1rem; margin-bottom: 20px; width: 250px; text-align: center; outline: none; }
+  .login-box button { padding: 12px 30px; font-size: 1.1rem; background: var(--gold); color: #2c3e50; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; width: 100%; }
+  .login-box button:hover { background: #f39c12; transform: translateY(-2px); }
+  #login-msg { margin-top: 15px; font-size: 0.9rem; color: #f1c40f; min-height: 20px; }
+
   body.readonly-mode .btn-confirm, body.readonly-mode .btn-reset-link, body.readonly-mode .data-tools { display: none !important; }
   body.readonly-mode input, body.readonly-mode select { background-color: #f9f9f9 !important; color: #555 !important; border-color: #ddd !important; pointer-events: none; }
 
   .input-wrapper { position: relative; flex: 1; display: flex; }
-  .container { max-width: 1200px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+  .container { max-width: 1200px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: none; /* 登入前隱藏主畫面 */ }
   
   .header { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; padding: 25px 20px; text-align: center; border-bottom: 6px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 12px 12px 0 0; position: relative; }
   .header h1 { margin: 0; font-size: 2rem; letter-spacing: 2px; font-weight: 900; text-shadow: 0 3px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
@@ -55,12 +65,10 @@
   .hypno-header:hover { background: #eef2f5; }
   .hypno-title { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; }
   .hypno-arrow { transition: transform 0.3s; font-size: 0.8rem; color: #7f8c8d; }
-  
-  /* 更新展開動畫機制，避免內層 padding 導致切割問題 */
   .hypno-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-in-out; background: #fff; }
   .hypno-card.active .hypno-content { max-height: 800px; border-top: 1px solid #f1f2f6; }
   .hypno-card.active .hypno-arrow { transform: rotate(180deg); }
-  .hypno-inner { padding: 15px; } /* 內層處理 Padding */
+  .hypno-inner { padding: 15px; }
 
   .hypno-text { font-size: 0.95rem; color: #444; line-height: 1.6; margin: 0; }
   .hypno-highlight { color: #2980b9; font-weight: bold; }
@@ -70,7 +78,7 @@
   .view-img-btn:hover { background: #eaf2f8; color: #2980b9; border-style: solid; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2); }
 
   /* 彈出圖片置中 Modal */
-  .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; opacity: 0; animation: fadeIn 0.3s forwards; }
+  .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; opacity: 0; animation: fadeIn 0.3s forwards; }
   @keyframes fadeIn { to { opacity: 1; } }
   .modal-content { max-width: 90%; max-height: 90%; position: relative; animation: slideUp 0.3s forwards; }
   @keyframes slideUp { from { transform: translateY(20px); } to { transform: translateY(0); } }
@@ -174,6 +182,16 @@
 </head>
 <body>
 
+<!-- 🛡️ 登入介面 -->
+<div id="loginOverlay">
+    <div class="login-box">
+        <h2>🔒 生活應急保險庫系統</h2>
+        <input type="password" id="passwordInput" placeholder="請輸入訪問密碼" onkeypress="if(event.key === 'Enter') checkLogin()">
+        <button id="loginBtn" onclick="checkLogin()">驗證登入</button>
+        <div id="login-msg"></div>
+    </div>
+</div>
+
 <!-- 彈出圖片置中 Modal -->
 <div id="imageModal" class="modal-overlay" onclick="closeModal(event)">
     <div class="modal-content">
@@ -182,10 +200,10 @@
     </div>
 </div>
 
-<div class="container">
+<div class="container" id="mainContainer">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v2.13 視覺時光機版</span>
+          生活應急保險庫 <span class="version-badge">v2.16 加密時光機版</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
       <div class="header-date" id="currentDateDisplay"></div>
@@ -312,7 +330,15 @@
           </div>
           
           <div class="card heart"><h3>5. 心臟病/中風 <span class="tag">B1+舊</span></h3><div class="btn-group"><div class="action-row"><button class="btn-purple" onclick="claimHeartStroke()">❤️ 復發賠償</button><div class="amount-display"><span class="amount-label">款:</span><span id="valHeart">$0</span></div><div class="age-record"><span class="age-label">歲:</span><span id="ageHeart">--</span></div></div><div class="action-row" style="background:#fcf5ff; border-color:#ebdef0;"><div class="acc-tag"><span>累計:</span><div id="accHeartDisplay">$0</div></div><span id="heartCountDisplay" style="font-size:0.9em; color:#7f8c8d;">(0/3)</span></div></div></div>
-          <div class="card dementia"><h3>6. 腦退化 <span class="tag">只用B1</span></h3><div class="btn-group"><div class="action-row"><button class="btn-green" onclick="manualClaimDementia()">👇 1年年金</button><div class="amount-display"><span class="amount-label">年金:</span><span id="valDementia">$0</span></div><div class="age-record"><span class="age-label">歲:</span><span id="ageDementia">--</span></div></div><div class="action-row" style="background:#eafaf1; border-color:#d5f5e3;"><div class="acc-tag"><span>累計:</span><div id="accDementiaDisplay">$0</div></div><span id="dementiaYearDisplay" style="font-size:0.9em; color:#7f8c8d;">(0)</span></div></div></div>
+          
+          <div class="card dementia">
+              <h3>6. 腦退化 <span class="tag">只用B1</span></h3>
+              <div class="btn-group">
+                  <div class="action-row"><button class="btn-green" id="btnDementia" onclick="manualClaimDementia()">🚨 提取 100% 賠償</button><div class="amount-display"><span class="amount-label">發放:</span><span id="valDementia">$0</span></div><div class="age-record"><span class="age-label">歲:</span><span id="ageDementia">--</span></div></div>
+                  <div class="action-row" style="background:#eafaf1; border-color:#d5f5e3;"><div class="acc-tag"><span>累計:</span><div id="accDementiaDisplay">$0</div></div><span id="dementiaYearDisplay" style="font-size:0.9em; color:#7f8c8d;">(0)</span></div>
+              </div>
+          </div>
+          
         </div>
       </div>
       
@@ -581,8 +607,41 @@
 </div>
 
 <script>
+  // --- 登入驗證邏輯 ---
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbwmpVo8uGg8ZaC-oTFKdTdLAgCibw8FhD0UpcuMA6wWKwV0GWPWhO7hfFqL4NYRds2v/exec";
+
+  async function checkLogin() {
+      const pwd = document.getElementById('passwordInput').value;
+      const btn = document.getElementById('loginBtn');
+      const msg = document.getElementById('login-msg');
+      if(!pwd) { msg.innerText = "請輸入密碼！"; return; }
+      
+      btn.innerText = "驗證中...";
+      try {
+          // 透過 GET 請求呼叫 GAS，如果跨域失敗會入 catch
+          const response = await fetch(GAS_URL + "?pwd=" + encodeURIComponent(pwd), { method: "GET" });
+          const text = await response.text();
+          
+          if(text.toLowerCase().includes("success") || text.toLowerCase().includes("true") || text.includes("1")) {
+              document.getElementById('loginOverlay').style.opacity = '0';
+              setTimeout(() => { 
+                  document.getElementById('loginOverlay').style.display = 'none'; 
+                  document.getElementById('mainContainer').style.display = 'block';
+              }, 500);
+          } else {
+              msg.innerText = "❌ 密碼錯誤，請重試！";
+              btn.innerText = "驗證登入";
+          }
+      } catch(e) {
+          console.error(e);
+          msg.innerText = "⚠️ 網絡或授權錯誤，請檢查 GAS 設置。";
+          btn.innerText = "驗證登入";
+      }
+  }
+
+  // --- 繁簡轉換字典與引擎 ---
   const t2sMap = [
-      ['生活應急保險庫', '生活应急保险库'], ['視覺時光機版', '视觉时光机版'], ['模擬賠償儀表板', '模拟理赔仪表板'], 
+      ['生活應急保險庫', '生活应急保险库'], ['加密時光機版', '加密时光机版'], ['模擬賠償儀表板', '模拟理赔仪表板'], 
       ['兒童疾病保障專頁', '儿童疾病保障专页'], ['危疾/輕疾明細', '重疾/轻症明细'], 
       ['多重賠償', '多次理赔'], ['危疾', '重疾'], ['早期疾病', '轻症'], ['輕疾', '轻症'], 
       ['賠償', '理赔'], ['供款', '缴费'], ['免供款', '豁免保费'], ['歲數', '年龄'], 
@@ -604,7 +663,7 @@
       ['但除左唔甘心外，最重要係影響埋家人生活，仔女學費，呢樣先更緊要，你話係唔係？', '但除了不甘心，更重要的是会牵连家人的生活和子女的学业，这才是最要紧的，您说对吧？'],
       ['完善防護網', '完善防护网'], ['消耗自身積蓄', '消耗自身积蓄'], ['無憂退休', '无忧退休'], ['仔女學費', '子女学费'], 
       ['安穩供樓', '安稳房贷'], ['生活質素', '生活质素'], ['辛苦積蓄', '辛苦积蓄'], ['變作醫療開支', '变作医疗开支'], ['拖累家人生活', '拖累家人生活'],
-      ['確','确'],['診','诊'],['歲','岁'],['額','额'],['舊','旧'],['單','单'],['補','补'],['強','强'],['儲','储'],['蓄','蓄'],['總','总'],['資','资'],['產','产'],['網','网'],['頁','页'],['導','导'],['航','航'],['庫','库'],['儀','仪'],['表','表'],['板','板'],['兒','儿'],['童','童'],['專','专'],['輕','轻'],['細','细'],['條','条'],['款','款'],['間','间'],['線','线'],['無','无'],['紅','红'],['贈','赠'],['動','动'],['隨','随'],['財','财'],['與','与'],['狀','状'],['況','况'],['現','现'],['銀','银'],['費','费'],['認','认'],['啟','启'],['區','区'],['預','预'],['發','发'],['護','护'],['積','积'],['過','过'],['躍','躍'],['腦','脑'],['癇','痫'],['黃','黄'],['疸','疸'],['貼','贴'],['繳','缴'],['臍','脐'],['帶','带'],['幹','干'],['胞','胞'],['險','险'],['應','应'],['急','急'],['僅','仅'],['項','项'],['為','为'],['復','复'],['遲','迟'],['緩','缓'],['實','实'],['離','离'],['從','从'],['講','讲'],['這','这'],['會','会'],['點','点'],['圖','图'],['結','结'],['說','说'],['明','明'],['邊','边'],['個','个'],['隱','隐'],['臟','脏'],['移','移'],['種','种'],['類','类'],['框','框'],['註','注'],['退','退'],['終','终'],['流','流'],['程','程'],['檢','检'],['查','查'],['報','报'],['告','告'],['醫','医'],['並','并'],['該','该'],['義','义'],['慮','虑'],['覆','复'],['問','问'],['題','题'],['層','层'],['創','创'],['將','将'],['當','当'],['嘅','的'],['咗','了'],['哋','们'],['係','是'],['唔','不']
+      ['確','确'],['診','诊'],['歲','岁'],['額','额'],['舊','旧'],['單','单'],['補','补'],['強','强'],['儲','储'],['蓄','蓄'],['總','总'],['資','资'],['產','产'],['網','网'],['頁','页'],['導','导'],['航','航'],['庫','库'],['儀','仪'],['表','表'],['板','板'],['兒','儿'],['童','童'],['專','专'],['輕','轻'],['細','细'],['條','条'],['款','款'],['間','间'],['線','线'],['無','无'],['紅','红'],['贈','赠'],['動','动'],['隨','随'],['財','财'],['與','与'],['狀','状'],['況','况'],['現','现'],['銀','银'],['費','费'],['認','认'],['啟','启'],['區','区'],['預','预'],['發','发'],['護','护'],['積','积'],['過','过'],['躍','跃'],['腦','脑'],['癇','痫'],['黃','黄'],['疸','疸'],['貼','贴'],['繳','缴'],['臍','脐'],['帶','带'],['幹','干'],['胞','胞'],['險','险'],['應','应'],['急','急'],['僅','仅'],['項','项'],['為','为'],['復','复'],['遲','迟'],['緩','缓'],['實','实'],['離','离'],['從','从'],['講','讲'],['這','这'],['會','会'],['點','点'],['圖','图'],['結','结'],['說','说'],['明','明'],['邊','边'],['個','个'],['隱','隐'],['臟','脏'],['移','移'],['種','种'],['類','类'],['框','框'],['註','注'],['退','退'],['終','终'],['流','流'],['程','程'],['檢','检'],['查','查'],['報','报'],['告','告'],['醫','医'],['並','并'],['該','该'],['義','义'],['慮','虑'],['覆','复'],['問','问'],['題','题'],['層','层'],['創','创'],['將','将'],['當','当'],['嘅','的'],['咗','了'],['哋','们'],['係','是'],['唔','不']
   ];
   let currentLang = 'hk';
 
@@ -673,7 +732,7 @@
   function updateDate() { document.getElementById('currentDateDisplay').innerText = new Date().toLocaleDateString('zh-HK', { year: 'numeric', month: '2-digit', day: '2-digit' }); }
   
   let config = { sumExisting: 200000, sumTerm: 500000, sumWhole: 500000, sumUpgradeB: 500000, sumBasicPool: 1200000, existingMulti: false, existingCancerWait: 5, startAge: 0, assets: 500000, expense: 30000 };
-  let state = { isConfirmed: false, balance: 1000000, totalPaid: 0, isCriticalClaimed: false, hasStartedCancerMonthly: false, cancerCountNew: 0, cancerCountOld: 0, nextClaimAge_New: Infinity, nextClaimAge_Old: Infinity, heartCount: 0, cancerMonthsPaid: 0, dementiaYearsPaid: 0, accEarly: 0, accCancerLump: 0, accCancerMonthly: 0, accHeart: 0, accDementia: 0, accChild: 0, currentAge: 30, claimCount: 0, bonusPaid: 0 };
+  let state = { isConfirmed: false, balance: 1000000, totalPaid: 0, isCriticalClaimed: false, hasStartedCancerMonthly: false, cancerCountNew: 0, cancerCountOld: 0, nextClaimAge_New: Infinity, nextClaimAge_Old: Infinity, heartCount: 0, dementiaLumpSumClaimed: false, dementiaYearsPaid: 0, cancerMonthsPaid: 0, accEarly: 0, accCancerLump: 0, accCancerMonthly: 0, accHeart: 0, accDementia: 0, accChild: 0, currentAge: 30, claimCount: 0, bonusPaid: 0 };
   let historyStack = [];
 
   function saveState() {
@@ -760,7 +819,7 @@
       state.isCriticalClaimed=false; state.hasStartedCancerMonthly=false; 
       state.cancerCountNew = 0; state.cancerCountOld = 0;
       state.nextClaimAge_New = Infinity; state.nextClaimAge_Old = Infinity; 
-      state.heartCount=0; state.cancerMonthsPaid=0; state.dementiaYearsPaid=0; 
+      state.heartCount=0; state.cancerMonthsPaid=0; state.dementiaYearsPaid=0; state.dementiaLumpSumClaimed = false;
       
       document.getElementById('displayTotalPaid').innerText = "$0"; 
       document.getElementById('accEarlyDisplay').innerText = "$0"; 
@@ -901,6 +960,7 @@
           state.heartCount = 1;
       } else if (type === 'dementia') {
           typeTitle = T("確診腦退化/柏金遜"); icon = "🧠"; color = "#27ae60";
+          state.dementiaLumpSumClaimed = true;
       } else {
           typeTitle = T("確診其他危疾"); icon = "🏥"; color = "#3498db";
       }
@@ -1003,15 +1063,26 @@
       if(!state.isCriticalClaimed) { alert(T("需先啟動嚴重危疾")); return; } 
       
       saveState();
-      changeAge(state.currentAge + 1); 
-      let amt = config.sumUpgradeB * 0.06; 
-      state.totalPaid += amt; state.dementiaYearsPaid++; state.accDementia += amt; 
-      state.claimCount++;
-      
-      let titleStr = T(`🧠 嚴重腦退化/柏金遜症終身年金 (第 ${state.dementiaYearsPaid} 年發放)`);
-      let descStr = T("精細拆分來源：全數由【補強B1（多重支援：腦退化終身年金條款）】每年發放原有保額之6%。");
-      
-      addTimelineCard(state.currentAge, amt, "#27ae60", "🧠", titleStr, descStr);
+      if (!state.dementiaLumpSumClaimed) {
+          changeAge(state.currentAge + 1); 
+          let amt = config.sumUpgradeB;
+          let breakdownParts = [T(`補強B1多重支援 [$${config.sumUpgradeB.toLocaleString()}]`)];
+          if(config.existingMulti) { amt += config.sumExisting; breakdownParts.push(T(`舊單多重保障 [$${config.sumExisting.toLocaleString()}]`)); }
+          
+          state.totalPaid += amt; state.accDementia += amt; state.dementiaLumpSumClaimed = true; state.claimCount++;
+          
+          let titleStr = T(`🧠 嚴重腦退化/柏金遜症 (100% 嚴重賠償)`);
+          let descStr = T(`精細拆分來源：`) + breakdownParts.join(" + ");
+          addTimelineCard(state.currentAge, amt, "#27ae60", "🧠", titleStr, descStr);
+      } else {
+          changeAge(state.currentAge + 1); 
+          let amt = config.sumUpgradeB * 0.06; 
+          state.totalPaid += amt; state.dementiaYearsPaid++; state.accDementia += amt; state.claimCount++;
+          
+          let titleStr = T(`🧠 嚴重腦退化/柏金遜症終身年金 (第 ${state.dementiaYearsPaid} 年發放)`);
+          let descStr = T("精細拆分來源：全數由【補強B1（多重支援：腦退化終身年金條款）】每年發放原有保額之6%。");
+          addTimelineCard(state.currentAge, amt, "#27ae60", "🧠", titleStr, descStr);
+      }
       updateUI(); 
   }
 
@@ -1092,6 +1163,13 @@
       
       if(state.hasStartedCancerMonthly) { document.getElementById('btnCancerAuto').disabled=true; } 
       
+      // Dementia Button Update
+      if(state.isCriticalClaimed && !state.dementiaLumpSumClaimed) {
+          document.getElementById('btnDementia').innerText = T("🚨 提取 100% 賠償");
+      } else {
+          document.getElementById('btnDementia').innerText = T("👇 發放 1 年年金");
+      }
+
       updateBenefitValues(); 
       updateBonusDisplay(); 
       updateAnalysis();
