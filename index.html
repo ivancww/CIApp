@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.18 )</title>
+<title>生活應急保險庫 (v2.19 )</title>
 
 <!-- ⚡ 圖片秒開預加載技術 (Preload Images) -->
 <link rel="preload" href="https://i.postimg.cc/qvBfJwvc/ask.png" as="image">
@@ -258,7 +258,7 @@
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v2.18 雲端案例版</span>
+          生活應急保險庫 <span class="version-badge">v2.19 雲端案例版</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
       <div class="header-date" id="currentDateDisplay"></div>
@@ -270,6 +270,7 @@
       <button class="nav-tab" onclick="switchPage('child')">👶 兒童疾病保障專頁</button>
       <button class="nav-tab" onclick="switchPage('diseases')">📜 102種危疾/輕疾明細</button>
       <button class="nav-tab" onclick="switchPage('cases')">📂 賠償案例</button>
+      <button class="nav-tab" onclick="switchPage('compare')">⚖️ 補強方案大比拼</button>
   </div>
   
   <!-- 分頁 1: 主頁儀表板 -->
@@ -672,6 +673,144 @@
           <div style="text-align:center; color:#95a5a6; padding:30px;">載入中...</div>
       </div>
   </div>
+
+  <!-- 分頁 5: 補強A vs 補強B 對比分析 -->
+  <div id="page-compare" class="tab-content info-page-container">
+      <div class="info-section">
+          <h2 class="dark-title" style="font-size: 1.6rem; color: #2980b9; text-align: center;">⚖️ 補強方案對比：簡護危疾保 vs 愛伴航2</h2>
+      </div>
+
+      <!-- 客戶資料設定區 -->
+      <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd;">
+          <div class="action-row" style="gap: 15px; justify-content: center; flex-wrap: wrap;">
+              <div class="input-group" style="margin-bottom:0;">
+                  <label>地區版本</label>
+                  <select id="compareRegion" onchange="calculateComparison()">
+                      <option value="hk">香港版</option>
+                      <option value="pearl">明珠版 (內地)</option>
+                  </select>
+              </div>
+              <div class="input-group" style="margin-bottom:0;">
+                  <label>性別</label>
+                  <select id="compareGender" onchange="calculateComparison()">
+                      <option value="M">男</option>
+                      <option value="F">女</option>
+                  </select>
+              </div>
+              <div class="input-group" style="margin-bottom:0;">
+                  <label>吸煙習慣</label>
+                  <select id="compareSmoker" onchange="calculateComparison()">
+                      <option value="nonSmoker">非吸煙</option>
+                      <option value="smoker">吸煙</option>
+                  </select>
+              </div>
+              <div class="input-group" style="margin-bottom:0; border-left: 2px solid #bdc3c7; padding-left: 10px;">
+                  <label style="color: #27ae60;">OYS2 供款期</label>
+                  <select id="oys2PayTerm" onchange="calculateComparison()">
+                      <option value="pay10">10年供</option>
+                      <option value="pay18">18年供</option>
+                      <option value="pay25" selected>25年供</option>
+                  </select>
+              </div>
+          </div>
+      </div>
+
+      <!-- 1. 核心條款對比表 -->
+      <div class="info-section">
+          <div class="info-title">📋 基礎條款對比</div>
+          <table class="info-table">
+              <thead>
+                  <tr>
+                      <th style="width: 20%;">比較項目</th>
+                      <th style="width: 40%; background-color: #34495e;">補強 A：簡護危疾保 (SCE)</th>
+                      <th style="width: 40%; background-color: #2c3e50;">補強 B：愛伴航2 (OYS2)</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td><strong>保障期</strong></td>
+                      <td>至受保人 80 歲</td>
+                      <td>終身保障</td>
+                  </tr>
+                  <tr>
+                      <td><strong>保費結構</strong></td>
+                      <td>每 5 年續保並按年齡調整保費 (起步保費極低)</td>
+                      <td>保費水平固定 (長遠預算受控)</td>
+                  </tr>
+                  <tr>
+                      <td><strong>延續性</strong></td>
+                      <td>可於 70 歲前行使「可轉換權益」轉為終身壽險</td>
+                      <td>包含保證現金價值及非保證終期分紅</td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+
+      <!-- 2. 長遠保費對比計算器 -->
+      <div class="info-section">
+          <div class="info-title" style="border-left-color: #e67e22;">💰 總保費成本推算</div>
+          <div class="action-row" style="background:#fffcf5; border-color:#fdebd0;">
+              <div class="input-group" style="margin-bottom:0;">
+                  <label>投保歲數</label>
+                  <input type="number" id="compareStartAge" value="30" onchange="calculateComparison()">
+              </div>
+              <div class="input-group" style="margin-bottom:0;">
+                  <label>推算至歲數</label>
+                  <input type="number" id="compareTargetAge" value="65" onchange="calculateComparison()">
+              </div>
+          </div>
+          
+          <div style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap;">
+              <div style="flex: 1; min-width: 250px; background: #fdfdfd; border: 2px solid #bdc3c7; border-radius: 8px; padding: 15px; text-align: center;">
+                  <h4 style="margin: 0 0 10px 0; color: #7f8c8d;">簡護危疾保 (累計總保費)</h4>
+                  <div style="font-size: 0.8rem; color: #95a5a6; margin-bottom: 5px;">*每 5 年自動隨年齡加價</div>
+                  <div id="totalPremiumSCE" style="font-size: 1.8rem; font-weight: bold; color: #2c3e50;">$0</div>
+              </div>
+              <div style="flex: 1; min-width: 250px; background: #eafaf1; border: 2px solid #27ae60; border-radius: 8px; padding: 15px; text-align: center;">
+                  <h4 style="margin: 0 0 10px 0; color: #27ae60;">愛伴航2 (累計總保費)</h4>
+                  <div id="oys2PremiumLabel" style="font-size: 0.8rem; color: #95a5a6; margin-bottom: 5px;">*保費水平終身不變 (繳付 25 年)</div>
+                  <div id="totalPremiumOYS2" style="font-size: 1.8rem; font-weight: bold; color: #2c3e50;">$0</div>
+              </div>
+          </div>
+      </div>
+
+      <!-- 3. 多重理賠推演 -->
+      <div class="info-section">
+          <div class="info-title" style="border-left-color: #e74c3c;">🚨 賠償金額實戰推演</div>
+          
+          <div id="claimScenariosContainer">
+              <div class="claim-entry-box" style="background: #fff5f5; border: 1px dashed #e74c3c; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                  <strong>第 1 次確診</strong>
+                  <div class="action-row" style="margin-top: 5px;">
+                      <input type="number" class="claim-age-input" placeholder="確診歲數" style="width: 80px;" onchange="calculateClaims()">
+                      <input type="number" class="claim-amt-input" placeholder="賠償金額 $" style="width: 120px;" onchange="calculateClaims()">
+                  </div>
+              </div>
+          </div>
+          
+          <button onclick="addCompareClaim()" style="background: #ecf0f1; color: #2c3e50; border: 1px solid #bdc3c7; width: 100%; justify-content: center; margin-bottom: 15px;">+ 新增後續復發/確診 (上限 6 次)</button>
+
+          <table class="info-table">
+              <thead>
+                  <tr>
+                      <th>賠償項目</th>
+                      <th style="background-color: #34495e;">簡護危疾保 (SCE)</th>
+                      <th style="background-color: #2c3e50;">愛伴航2 (OYS2)</th>
+                  </tr>
+              </thead>
+              <tbody id="claimResultsBody">
+                  <!-- Javascript 會自動生成 -->
+              </tbody>
+              <tfoot>
+                  <tr style="background-color: #f1c40f; font-weight: bold;">
+                      <td>總累計理賠金額</td>
+                      <td id="totalClaimSCE">$0</td>
+                      <td id="totalClaimOYS2">$0</td>
+                  </tr>
+              </tfoot>
+          </table>
+      </div>
+  </div>
 </div>
 
 <script>
@@ -701,6 +840,7 @@
           document.getElementById('mainContainer').style.display = 'block';
           loadCases(); // 載入案例
       }
+      fetchPremiumRates(); // 啟動時預先載入保費表
   };
 
   async function checkLogin() {
@@ -1376,6 +1516,155 @@
   }
 
   updateDate(); handleSumInput(); toggleExistingOptions(); translateStatic();
+
+  // --- 對比方案邏輯 ---
+  let globalPremiumRates = {};
+
+  // 系統啟動時載入保費表
+  async function fetchPremiumRates() {
+      // 替換為你的 GAS Web App URL
+      const gasApiUrl = "https://script.google.com/macros/s/AKfycbwUKoJ7p9XMP3VKv4h_p5o95H0_TFIMzk2rM_JD_C5ZRsrlUCF8xWT7LrODnvntKDaRRQ/exec"; 
+      try {
+          const response = await fetch(gasApiUrl);
+          const data = await response.json();
+          if (data.status === "success") {
+              globalPremiumRates = data.rates;
+          }
+      } catch (e) {
+          console.error("載入保費表失敗", e);
+      }
+  }
+
+  // 根據所選條件獲取正確的分頁名稱
+  function getSheetName(region, gender, plan) {
+      if (region === "hk") {
+          return (gender === "M" ? "男" : "女") + (plan === "OYS2" ? "愛伴航2" : "簡護危疾保");
+      } else {
+          return "內地" + (gender === "M" ? "男" : "女") + (plan === "OYS2" ? "愛伴航2" : "簡護危疾保");
+      }
+  }
+
+  // 計算保費對比
+  function calculateComparison() {
+      if (Object.keys(globalPremiumRates).length === 0) return; // 確保數據已載入
+
+      const region = document.getElementById('compareRegion').value;
+      const gender = document.getElementById('compareGender').value;
+      const smoker = document.getElementById('compareSmoker').value;
+      const oys2PayTerm = document.getElementById('oys2PayTerm').value; // pay10, pay18, pay25
+      
+      const startAge = parseInt(document.getElementById('compareStartAge').value) || 30;
+      const targetAge = parseInt(document.getElementById('compareTargetAge').value) || 65;
+      
+      // 引用主頁的基礎保額 / 1000 計算每千元保費率
+      const basicSum = getNumVal('sumWhole'); 
+
+      const oys2Sheet = getSheetName(region, gender, "OYS2");
+      const sceSheet = getSheetName(region, gender, "SCE");
+
+      let totalSCE = 0;
+      let totalOYS2 = 0;
+
+      // 計算 OYS2 總保費 (平準保費)
+      const oys2YearsToPayMap = { "pay10": 10, "pay18": 18, "pay25": 25 };
+      const oys2MaxYears = oys2YearsToPayMap[oys2PayTerm];
+      
+      // 讀取 OYS2 特定供款期嘅保費
+      const oys2YearlyRate = globalPremiumRates[oys2Sheet]?.[startAge]?.[oys2PayTerm]?.[smoker] || 0;
+      
+      // 實際供款年期 (目標歲數 - 投保歲數，但不能超過最高供款期)
+      const oys2YearsToPay = Math.max(0, Math.min(targetAge - startAge, oys2MaxYears)); 
+      totalOYS2 = oys2YearlyRate * (basicSum / 1000) * oys2YearsToPay;
+
+      // 計算 SCE 總保費 (每 5 年續保並加價)
+      for (let currentAge = startAge; currentAge < targetAge; currentAge++) {
+          // 找出最近的一個 5 年續保年齡段 (例如 31 歲會用 30 歲嘅 Rate)
+          let pricingAge = startAge + Math.floor((currentAge - startAge) / 5) * 5;
+          let sceYearlyRate = globalPremiumRates[sceSheet]?.[pricingAge]?.[smoker] || 0;
+          totalSCE += sceYearlyRate * (basicSum / 1000);
+      }
+
+      document.getElementById('totalPremiumSCE').innerText = formatMoney(totalSCE);
+      document.getElementById('totalPremiumOYS2').innerText = formatMoney(totalOYS2);
+      document.getElementById('oys2PremiumLabel').innerText = `*保費水平終身不變 (繳付 ${oys2MaxYears} 年)`;
+      
+      calculateClaims(); // 同步更新理賠表
+  }
+
+  // 新增理賠次數 (UI)
+  function addCompareClaim() {
+      const container = document.getElementById('claimScenariosContainer');
+      const currentCount = container.children.length;
+      if (currentCount >= 6) return alert("最高只能演示 6 次理賠！");
+
+      let div = document.createElement('div');
+      div.className = "claim-entry-box";
+      div.style = "background: #fff; border: 1px dashed #bdc3c7; padding: 10px; border-radius: 6px; margin-bottom: 10px;";
+      div.innerHTML = `
+          <strong>第 ${currentCount + 1} 次確診</strong>
+          <div class="action-row" style="margin-top: 5px;">
+              <input type="number" class="claim-age-input" placeholder="確診歲數" style="width: 80px;" onchange="calculateClaims()">
+              <input type="number" class="claim-amt-input" placeholder="賠償金額 $" style="width: 120px;" onchange="calculateClaims()">
+          </div>
+      `;
+      container.appendChild(div);
+  }
+
+  // 計算理賠對比
+  function calculateClaims() {
+      const startAge = parseInt(document.getElementById('compareStartAge').value) || 30;
+      const claimEntries = document.querySelectorAll('.claim-entry-box');
+      
+      let totalSCEClaim = 0;
+      let totalOYS2Claim = 0;
+      let tbodyHtml = "";
+
+      claimEntries.forEach((entry, index) => {
+          let diagAge = parseInt(entry.querySelector('.claim-age-input').value) || 0;
+          let amt = parseInt(entry.querySelector('.claim-amt-input').value) || 0;
+          
+          if(amt === 0) return; // 無輸入金額就跳過
+          
+          let scePays = 0;
+          let oys2Pays = amt; 
+          let bonusHtml = "";
+
+          // SCE 只有第一次有 100% 賠償
+          if (index === 0) {
+              scePays = amt;
+              
+              // OYS2 首 10 年升級保障
+              if (diagAge > 0 && (diagAge - startAge) <= 10 && (diagAge - startAge) >= 0) {
+                  let bonusRate = startAge <= 30 ? 0.50 : 0.35;
+                  let bonusAmt = amt * bonusRate;
+                  oys2Pays += bonusAmt;
+                  
+                  bonusHtml = `
+                  <tr style="background: #fdf2e9; font-size: 0.85rem;">
+                      <td>🎁 首 10 年升級保障 (+${bonusRate * 100}%)</td>
+                      <td style="color: #95a5a6;">--</td>
+                      <td style="color: #e67e22;">+$${bonusAmt.toLocaleString('en-US')}</td>
+                  </tr>`;
+              }
+          }
+
+          totalSCEClaim += scePays;
+          totalOYS2Claim += oys2Pays;
+
+          tbodyHtml += `
+              <tr>
+                  <td>第 ${index + 1} 次理賠 (${diagAge} 歲)</td>
+                  <td style="${scePays === 0 ? 'color: #e74c3c; text-decoration: line-through;' : 'font-weight: bold;'}">$${scePays.toLocaleString('en-US')}</td>
+                  <td style="font-weight: bold;">$${amt.toLocaleString('en-US')}</td>
+              </tr>
+              ${bonusHtml}
+          `;
+      });
+
+      document.getElementById('claimResultsBody').innerHTML = tbodyHtml;
+      document.getElementById('totalClaimSCE').innerText = formatMoney(totalSCEClaim);
+      document.getElementById('totalClaimOYS2').innerText = formatMoney(totalOYS2Claim);
+  }
 
 </script>
 </body>
