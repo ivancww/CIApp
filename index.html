@@ -3,13 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.20)</title>
+<title>生活應急保險庫 v2.21</title>
 
-<!-- ⚡ 圖片預加載 (轉用 Firebase 後速度更快) -->
-<!-- 請將以下 href 換成你真實嘅 Firebase Storage URL -->
-<link rel="preload" href="YOUR_FIREBASE_URL_ASK" as="image">
-<link rel="preload" href="YOUR_FIREBASE_URL_THINK" as="image">
-<link rel="preload" href="YOUR_FIREBASE_URL_ACTION" as="image">
+<!-- ⚡ 圖片預加載 (Firebase 極速載入) -->
+<link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
+<link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
+<link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5773.jpeg?alt=media&token=4abe322b-b474-4114-9104-4a1a53313929" as="image">
 
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -35,7 +34,7 @@
   
   .container { max-width: 1200px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: none; }
   .header { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; padding: 25px 20px; text-align: center; border-bottom: 6px solid var(--gold); border-radius: 12px 12px 0 0; }
-  .header h1 { margin: 0; font-size: 2rem; font-weight: 900; }
+  .header h1 { margin: 0; font-size: 2rem; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
   .version-badge { font-size: 0.75rem; background: var(--gold); color: #2c3e50; padding: 4px 10px; border-radius: 20px; font-weight: bold; vertical-align: middle; }
   
   .tab-navigation { display: flex; background: #34495e; border-bottom: 3px solid var(--gold); flex-wrap: wrap;}
@@ -50,7 +49,7 @@
   .config-panel { background: #f8f9fa; padding: 20px; border-right: 1px solid #eee; border-radius: 0 0 0 12px; }
   .analysis-panel { background: #fff; padding: 20px; position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; display: flex; flex-direction: column; border-radius: 0 0 12px 0; scroll-behavior: smooth; }
 
-  /* 更新版 Modal CSS：圖文並茂 */
+  /* 升級版 Modal CSS：圖文並茂 */
   .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; opacity: 0; animation: fadeIn 0.3s forwards; }
   @keyframes fadeIn { to { opacity: 1; } }
   .modal-content { background: white; max-width: 550px; width: 100%; max-height: 90vh; border-radius: 12px; position: relative; animation: slideUp 0.3s forwards; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
@@ -127,7 +126,7 @@
 
 <div class="container" id="mainContainer">
   <div class="header">
-      <h1>生活應急保險庫 <span class="version-badge">v2.20 雲端案例版</span></h1>
+      <h1>生活應急保險庫 v2.21 <span class="version-badge">雲端案例版</span></h1>
   </div>
 
   <div class="tab-navigation">
@@ -235,7 +234,7 @@
     </div>
   </div>
 
-  <!-- 其他 Info 頁面省略內容以節省空間 (保留原結構) -->
+  <!-- 其他 Info 頁面 -->
   <div id="page-child" class="tab-content info-page-container"><h2 class="dark-title">👶 兒童疾病保障</h2></div>
   <div id="page-diseases" class="tab-content info-page-container"><h2 class="dark-title">📜 危疾明細</h2></div>
   <div id="page-cases" class="tab-content info-page-container"><h2 class="dark-title">📂 賠償案例</h2></div>
@@ -319,9 +318,6 @@
 </div>
 
 <script>
-  // --- Firebase 與原有邏輯省略，保留原有架構，只集中重寫 Modal 及 Compare 邏輯 ---
-  // (請注意保留你原本關於 Firebase Init, Login, Format 嘅 Code)
-
   function getNumVal(id) { return parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0; }
   function formatMoney(num) { return "$" + Math.round(num).toLocaleString('en-US'); }
   
@@ -342,12 +338,10 @@
   function openHypnoModal(type) {
       let text = "", img = "";
       
-      // ==========================================
-      // 在此處填寫你上傳到 Firebase 後取得的圖片連結
-      // ==========================================
-      const FIREBASE_IMG_ASK = "gs://medical-and-ci.firebasestorage.app/ci pic/IMG_5774.jpeg";
-      const FIREBASE_IMG_THINK = "gs://medical-and-ci.firebasestorage.app/ci pic/IMG_5770.jpeg";
-      const FIREBASE_IMG_ACTION = "gs://medical-and-ci.firebasestorage.app/ci pic/IMG_5773.jpeg";
+      // 已成功替換為真實 Firebase 連結
+      const FIREBASE_IMG_ASK = "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80";
+      const FIREBASE_IMG_THINK = "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166";
+      const FIREBASE_IMG_ACTION = "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5773.jpeg?alt=media&token=4abe322b-b474-4114-9104-4a1a53313929";
 
       if (type === 'ask') {
           text = "喺你現在的規劃下，萬一聽日健康真係出現變數，<span class='hypno-danger'>要停工休養</span>... <br><br>你心目中嘅<span class='hypno-highlight'>『Plan B / 後備方案』</span>會有邊方面的安排呢？你的安排會係...？";
@@ -369,7 +363,6 @@
       event.currentTarget.classList.add('active');
       
       if(pageId === 'compare') {
-          // 切換到比拼頁時，自動帶入基礎保額
           const basicSum = getNumVal('sumWhole');
           const firstClaimAmtInput = document.querySelector('.claim-amt-input');
           if (firstClaimAmtInput && firstClaimAmtInput.value === "") {
@@ -383,7 +376,6 @@
   let globalPremiumRates = {};
 
   async function fetchPremiumRates() {
-      // 確保使用最新的 GAS 連結
       const gasApiUrl = "https://script.google.com/macros/s/AKfycbwUKoJ7p9XMP3VKv4h_p5o95H0_TFIMzk2rM_JD_C5ZRsrlUCF8xWT7LrODnvntKDaRRQ/exec"; 
       try {
           const response = await fetch(gasApiUrl);
@@ -422,7 +414,6 @@
           let prem = rate * (basicSum / 1000);
           sceTotal += prem;
 
-          // 5 倍數顯示明細，或者最後一年
           if ((age - sceStartAge) % 5 === 0 || age === sceTargetAge - 1) {
               if (lastSceRowAge !== age) {
                   sceHtml += `<tr><td>${age} 歲</td><td>第 ${age - sceStartAge + 1} 年</td><td>$${Math.round(prem).toLocaleString()}</td></tr>`;
@@ -435,7 +426,7 @@
 
       // OYS2 計算
       const oys2StartAge = parseInt(document.getElementById('oys2StartAge').value) || 30;
-      const oys2PayTerm = document.getElementById('oys2PayTerm').value; // pay10, pay18, pay25
+      const oys2PayTerm = document.getElementById('oys2PayTerm').value; 
       const oys2MaxYears = parseInt(oys2PayTerm.replace('pay', ''));
       const oys2Sheet = getSheetName(region, gender, "OYS2");
       
@@ -449,7 +440,6 @@
           oys2Total += oys2Prem;
           let age = oys2StartAge + year - 1;
           
-          // 顯示 1, 5, 10... 及供款期最後一年
           if (year === 1 || year % 5 === 0 || year === oys2MaxYears) {
               oys2Html += `<tr><td>${age} 歲</td><td>第 ${year} 年</td><td>$${Math.round(oys2Prem).toLocaleString()}</td></tr>`;
           }
@@ -481,7 +471,7 @@
   }
 
   function calculateClaims() {
-      const startAge = parseInt(document.getElementById('oys2StartAge').value) || 30; // 基準以 OYS2 起始歲數計算
+      const startAge = parseInt(document.getElementById('oys2StartAge').value) || 30; 
       const claimEntries = document.querySelectorAll('.claim-entry-box');
       
       let totalSCEClaim = 0;
