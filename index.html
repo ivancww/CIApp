@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.24)</title>
+<title>生活應急保險庫 (v2.25)</title>
 
 <!-- ⚡ 圖片秒開預加載技術 (Firebase) -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
@@ -26,6 +26,7 @@
   
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #ecf0f1; color: #333; margin: 0; padding: 20px; -webkit-tap-highlight-color: transparent; }
   
+  /* 🛡️ 登入介面 CSS */
   #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; transition: opacity 0.5s; }
   .login-box { background: rgba(255,255,255,0.1); padding: 40px; border-radius: 12px; backdrop-filter: blur(10px); text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); }
   .login-box h2 { margin-top: 0; margin-bottom: 20px; letter-spacing: 1px; }
@@ -125,6 +126,7 @@
   .admin-input { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; box-sizing: border-box;}
   .claim-entry { display: flex; gap: 10px; margin-bottom: 10px; }
   .claim-entry input { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
+  .btn-remove { background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; padding: 0 10px; font-weight: bold;}
 
   /* 比較頁面專屬 CSS */
   .compare-col { flex: 1; min-width: 300px; background: #fff; border: 1px solid #ecf0f1; border-radius: 8px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
@@ -193,7 +195,7 @@
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v2.24 完美還原版</span>
+          生活應急保險庫 <span class="version-badge">v2.25 完美修復版</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
       <div class="header-date" id="currentDateDisplay"></div>
@@ -325,7 +327,7 @@
     </div>
   </div>
 
-  <!-- 分頁 2: 兒童疾病保障專頁 (100% 完美保留原內容) -->
+  <!-- 分頁 2: 兒童疾病保障專頁 -->
   <div id="page-child" class="tab-content info-page-container">
       <div class="info-section">
           <h2 class="dark-title" style="font-size: 1.6rem; color: #2980b9;">👶 「愛伴航」兒童疾病及家長身故豁免保障全覽</h2>
@@ -396,7 +398,7 @@
       </div>
   </div>
 
-  <!-- 分頁 3: 危疾/輕疾明細 (100% 完美保留原內容) -->
+  <!-- 分頁 3: 危疾/輕疾明細 -->
   <div id="page-diseases" class="tab-content info-page-container">
       <div class="info-section">
           <h2 class="dark-title" style="font-size: 1.6rem; color: #2c3e50;">📜 「愛伴航」102種受保疾病分類與賠償額度明細</h2>
@@ -494,7 +496,7 @@
       </div>
   </div>
   
-  <!-- 分頁 4: 賠償案例 (100% 完美保留原內容) -->
+  <!-- 分頁 4: 賠償案例 -->
   <div id="page-cases" class="tab-content info-page-container" style="background:#f4f9fc;">
       <div class="info-section">
           <h2 id="casesTitle" class="dark-title" style="font-size: 1.6rem; color: #2c3e50; text-align:center; cursor:default;" ondblclick="document.getElementById('adminModal').style.display='flex'">📜 賠償案例庫</h2>
@@ -768,7 +770,107 @@
   }
 
   // ==========================================
-  // 案例管理與工具邏輯 (保留原有)
+  // 後台案例管理邏輯 (已完美修復)
+  // ==========================================
+  function addAdminClaimEntry() {
+      let container = document.getElementById('adminClaimsContainer');
+      if(container.children.length >= 6) { alert(T("已達上限6次")); return; }
+      let div = document.createElement('div');
+      div.className = "claim-entry";
+      div.innerHTML = `<input type="text" placeholder="${T('次數 (例如: 第二次)')}" class="claim-seq"><input type="text" placeholder="${T('賠償金額 ($)')}" class="claim-amt"><button class="btn-remove" onclick="this.parentElement.remove()">-</button>`;
+      container.appendChild(div);
+  }
+
+  async function submitCase() {
+      let disease = document.getElementById('adminDisease').value;
+      if(!disease) return alert(T("請輸入疾病名稱"));
+      
+      let claims = [];
+      document.querySelectorAll('.claim-entry').forEach(entry => {
+          let seq = entry.querySelector('.claim-seq').value;
+          let amt = entry.querySelector('.claim-amt').value;
+          if(seq || amt) claims.push({seq: seq, amt: amt});
+      });
+      
+      let files = document.getElementById('adminFiles').files;
+      if(files.length > 10) return alert(T("最多只能上傳10個檔案"));
+      
+      let btn = document.getElementById('adminSubmitBtn');
+      btn.innerText = T("⏳ 上傳中...");
+      btn.disabled = true;
+
+      try {
+          let fileUrls = [];
+          for(let i=0; i<files.length; i++) {
+              let f = files[i];
+              let ref = storage.ref('cases/' + Date.now() + '_' + f.name);
+              await ref.put(f);
+              let url = await ref.getDownloadURL();
+              fileUrls.push({name: f.name, url: url});
+          }
+          
+          await db.collection("claim_cases").add({
+              disease: disease,
+              claims: claims,
+              files: fileUrls,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          
+          document.getElementById('adminDisease').value = "";
+          document.getElementById('adminClaimsContainer').innerHTML = `<div class="claim-entry"><input type="text" placeholder="${T('次數 (例如: 首次)')}" class="claim-seq"><input type="text" placeholder="${T('賠償金額 ($)')}" class="claim-amt"><button class="btn-remove" onclick="this.parentElement.remove()">-</button></div>`;
+          document.getElementById('adminFiles').value = "";
+          alert(T("發佈成功！"));
+      } catch(e) {
+          console.error(e);
+          alert(T("發生錯誤"));
+      } finally {
+          btn.innerText = T("📤 儲存並發佈");
+          btn.disabled = false;
+      }
+  }
+
+  function loadCases() {
+      db.collection("claim_cases").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+          let html = "";
+          let adminHtml = "";
+          
+          if(snapshot.empty) {
+              html = `<div style="text-align:center; color:#95a5a6; padding:30px;">${T('暫無案例')}</div>`;
+              adminHtml = html;
+          } else {
+              snapshot.forEach(doc => {
+                  let data = doc.data();
+                  let claimsHtml = data.claims.map(c => `<div class="case-claim-row"><span>${c.seq}</span><strong>${c.amt}</strong></div>`).join("");
+                  let filesHtml = data.files.map(f => `<a href="${f.url}" target="_blank" class="case-file-link">📎 ${f.name}</a>`).join("");
+                  
+                  html += `
+                  <div class="case-card">
+                      <div class="case-title">🩺 ${data.disease}</div>
+                      ${claimsHtml}
+                      <div style="margin-top:10px;">${filesHtml}</div>
+                  </div>`;
+                  
+                  adminHtml += `
+                  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding:10px 0;">
+                      <div><strong>${data.disease}</strong> (${data.claims.length} 次理賠)</div>
+                      <button onclick="deleteCase('${doc.id}')" style="background:#e74c3c; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">${T('刪除')}</button>
+                  </div>`;
+              });
+          }
+          
+          document.getElementById('frontendCasesList').innerHTML = html;
+          document.getElementById('adminCasesList').innerHTML = adminHtml;
+      });
+  }
+
+  async function deleteCase(id) {
+      if(confirm(T("確定要刪除此案例嗎？"))) {
+          await db.collection("claim_cases").doc(id).delete();
+      }
+  }
+
+  // ==========================================
+  // 工具與共用邏輯
   // ==========================================
   function getNumVal(id) { return parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0; }
   function formatOnly(input) { let v = input.value.replace(/,/g, '').replace(/[^\d]/g, ''); if(v) input.value = Number(v).toLocaleString('en-US'); }
@@ -780,6 +882,11 @@
       document.getElementById('sumUpgradeB').value = whole.toLocaleString('en-US'); 
       document.getElementById('displayTotalBasic').innerText = "$" + (ex+term+whole).toLocaleString('en-US'); 
       document.getElementById('displayTotalMulti').innerText = "$" + whole.toLocaleString('en-US');
+
+      const compareSceSumInput = document.getElementById('sceSum');
+      const compareOys2SumInput = document.getElementById('oys2Sum');
+      if(compareSceSumInput) { compareSceSumInput.value = whole.toLocaleString('en-US'); }
+      if(compareOys2SumInput) { compareOys2SumInput.value = whole.toLocaleString('en-US'); }
   }
 
   function switchPage(pageId) {
@@ -787,16 +894,11 @@
       document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
       document.getElementById('page-' + pageId).classList.add('active');
       if (event && event.currentTarget) { event.currentTarget.classList.add('active'); }
+      if(pageId === 'compare') { calculateComparison(); }
   }
 
-  // (案例上傳功能保留)
-  function addAdminClaimEntry() { /* ... */ }
-  async function submitCase() { /* ... */ }
-  function loadCases() { /* ... */ }
-  async function deleteCase(id) { /* ... */ }
-
   // ==========================================
-  // 主頁儀表板邏輯 (完美保留 v2.18)
+  // 主頁儀表板邏輯
   // ==========================================
   let config = { sumExisting: 200000, sumTerm: 500000, sumWhole: 500000, sumUpgradeB: 500000, sumBasicPool: 1200000, existingMulti: false, existingCancerWait: 5, startAge: 0, assets: 500000, expense: 30000 };
   let state = { isConfirmed: false, balance: 1000000, totalPaid: 0, isCriticalClaimed: false, hasStartedCancerMonthly: false, cancerCountNew: 0, cancerCountOld: 0, nextClaimAge_New: Infinity, nextClaimAge_Old: Infinity, heartCount: 0, dementiaLumpSumClaimed: false, dementiaYearsPaid: 0, cancerMonthsPaid: 0, accEarly: 0, accCancerLump: 0, accCancerMonthly: 0, accHeart: 0, accDementia: 0, accChild: 0, currentAge: 30, claimCount: 0, bonusPaid: 0 };
@@ -951,7 +1053,6 @@
       let descStr = T(`精細拆分來源：餘下舊單及定期危疾額度 + 補強B儲蓄餘下額度。<br><br><b>💡 豁免保費啟動：</b><br>此筆 100% 賠償一經批核，餘下未繳的保費將全數豁免！<br><i>例子：假設原定 25 年繳費期，若在第 ${policyYear} 年確診，其後 ${remainingYears} 年的保費無需再繳交，<span style="color:#000; font-weight:900; font-size:1.1em;">多重賠償持續生效。</span></i>`);
       let smallStr = hasBonus ? T(`<br>細字註明：符合首10年免費升級保障，已結算並發放餘下的加贈額度 $${bonusClaim.toLocaleString()}`) : "";
       
-      document.getElementById('ciCard').classList.remove('active');
       addTimelineCard(state.currentAge, claim+bonusClaim, color, icon, titleStr, descStr, smallStr);
       updateUI(); 
   }
@@ -1072,8 +1173,6 @@
       document.getElementById('heartCountDisplay').innerText = `(${state.heartCount}/3)`; 
       document.getElementById('dementiaYearDisplay').innerText = `(${state.dementiaYearsPaid})`; 
       
-      document.getElementById('ciCard').style.opacity = state.isCriticalClaimed ? "0.5" : "1";
-      document.getElementById('ciCard').style.pointerEvents = state.isCriticalClaimed ? "none" : "auto";
       if(state.hasStartedCancerMonthly) { document.getElementById('btnCancerAuto').disabled=true; } 
       if(state.isCriticalClaimed && !state.dementiaLumpSumClaimed) { document.getElementById('btnDementia').innerText = T("🚨 提取 100% 賠償"); } else { document.getElementById('btnDementia').innerText = T("👇 發放 1 年年金"); }
 
@@ -1102,7 +1201,6 @@
       if (!globalPremiumRates || Object.keys(globalPremiumRates).length === 0) return 0;
       let keys = Object.keys(globalPremiumRates);
       
-      // 智能模糊搜尋：無視分頁叫「男簡護危疾保」定「男簡護危疾保保費」
       let targetKey = keys.find(k => {
           let isM = gender === "M" ? k.includes("男") : k.includes("女");
           let isPearl = region === "pearl" ? k.includes("明珠") : !k.includes("明珠");
@@ -1243,6 +1341,7 @@
       document.getElementById('totalClaimSCE').innerText = formatMoney(compClaimState.totalSCE);
       document.getElementById('totalClaimOYS2').innerText = formatMoney(compClaimState.totalOYS2);
   }
+
 </script>
 </body>
 </html>
