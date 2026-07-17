@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.25)</title>
+<title>生活應急保險庫 (v2.26 終極流暢版)</title>
 
 <!-- ⚡ 圖片秒開預加載技術 (Firebase) -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
@@ -26,7 +26,6 @@
   
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #ecf0f1; color: #333; margin: 0; padding: 20px; -webkit-tap-highlight-color: transparent; }
   
-  /* 🛡️ 登入介面 CSS */
   #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; transition: opacity 0.5s; }
   .login-box { background: rgba(255,255,255,0.1); padding: 40px; border-radius: 12px; backdrop-filter: blur(10px); text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); }
   .login-box h2 { margin-top: 0; margin-bottom: 20px; letter-spacing: 1px; }
@@ -61,6 +60,7 @@
   .hypno-title { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; }
   .hypno-arrow { transition: transform 0.3s; font-size: 0.8rem; color: #7f8c8d; }
 
+  /* 彈出圖文 Modal */
   .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; opacity: 0; animation: fadeIn 0.3s forwards; }
   @keyframes fadeIn { to { opacity: 1; } }
   .modal-content { background: white; max-width: 550px; width: 100%; max-height: 90vh; border-radius: 12px; position: relative; animation: slideUp 0.3s forwards; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
@@ -195,7 +195,7 @@
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v2.25 完美修復版</span>
+          生活應急保險庫 <span class="version-badge">v2.26 終極流暢版</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
       <div class="header-date" id="currentDateDisplay"></div>
@@ -508,7 +508,7 @@
       </div>
   </div>
 
-  <!-- 分頁 5: 補強方案大比拼 (更新保額獨立及自動推演) -->
+  <!-- 分頁 5: 補強方案大比拼 (更新全自動防禦機制) -->
   <div id="page-compare" class="tab-content info-page-container">
       <div class="info-section">
           <h2 class="dark-title" style="font-size: 1.6rem; color: #2980b9; text-align: center;">⚖️ 補強方案對比：簡護危疾保 (SCE) vs 愛伴航2 (OYS2)</h2>
@@ -518,12 +518,9 @@
       <!-- 全局控制區 -->
       <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd;">
           <div class="action-row" style="justify-content:center; gap:15px; flex-wrap:wrap; border:none; background:transparent;">
-              <div class="input-group" style="margin:0;"><label>地區</label><select id="compareRegion"><option value="hk">香港版</option><option value="pearl">明珠版</option></select></div>
-              <div class="input-group" style="margin:0;"><label>性別</label><select id="compareGender"><option value="M">男</option><option value="F">女</option></select></div>
-              <div class="input-group" style="margin:0;"><label>吸煙</label><select id="compareSmoker"><option value="nonSmoker">非吸煙</option><option value="smoker">吸煙</option></select></div>
-          </div>
-          <div style="text-align:center; margin-top:15px;">
-              <button class="btn-confirm" onclick="calculateComparison()" style="width: auto; padding: 10px 30px; font-size: 1.1rem; display: inline-block;">✅ 點擊計算對比保費</button>
+              <div class="input-group" style="margin:0;"><label>地區</label><select id="compareRegion" onchange="calculateComparison()"><option value="hk">香港版</option><option value="pearl">明珠版</option></select></div>
+              <div class="input-group" style="margin:0;"><label>性別</label><select id="compareGender" onchange="calculateComparison()"><option value="M">男</option><option value="F">女</option></select></div>
+              <div class="input-group" style="margin:0;"><label>吸煙</label><select id="compareSmoker" onchange="calculateComparison()"><option value="nonSmoker">非吸煙</option><option value="smoker">吸煙</option></select></div>
           </div>
       </div>
 
@@ -536,17 +533,17 @@
               
               <div class="input-group" style="justify-content:center; margin-bottom:15px;">
                   <label style="flex:none; font-weight:bold; color:#34495e;">獨立保額 $</label>
-                  <input type="text" id="sceSum" value="1,000,000" onkeyup="formatOnly(this);" style="width:120px; color:#2c3e50; font-size:1.1rem;">
+                  <input type="text" id="sceSum" value="1,000,000" onkeyup="formatOnly(this); calculateComparison();" style="width:120px; color:#2c3e50; font-size:1.1rem;">
               </div>
               
               <div class="action-row" style="justify-content:space-between; margin-bottom:10px;">
-                  <div class="input-group" style="margin:0;"><label style="flex:none;">投保年歲</label><input type="number" id="sceStartAge" value="30" style="width:60px;"></div>
-                  <div class="input-group" style="margin:0;"><label style="flex:none;">推算至</label><input type="number" id="sceTargetAge" value="65" style="width:60px;"></div>
+                  <div class="input-group" style="margin:0;"><label style="flex:none;">投保年歲</label><input type="number" id="sceStartAge" value="30" style="width:60px;" onchange="calculateComparison()"></div>
+                  <div class="input-group" style="margin:0;"><label style="flex:none;">推算至</label><input type="number" id="sceTargetAge" value="65" style="width:60px;" onchange="calculateComparison()"></div>
               </div>
               
               <table class="breakdown-table">
                   <thead><tr><th>時段 (年齡)</th><th>保單年度</th><th>該時段年繳保費</th></tr></thead>
-                  <tbody id="sceBreakdownBody"><tr><td colspan="3" style="color:#95a5a6;">請點擊上方按鈕計算</td></tr></tbody>
+                  <tbody id="sceBreakdownBody"><tr><td colspan="3" style="color:#95a5a6;">載入中...</td></tr></tbody>
                   <tfoot><tr><td colspan="2">累積總保費成本</td><td id="sceTotalPremium" style="font-size:1.1rem; color:#e74c3c;">$0</td></tr></tfoot>
               </table>
           </div>
@@ -558,23 +555,23 @@
               
               <div class="input-group" style="justify-content:center; margin-bottom:15px;">
                   <label style="flex:none; font-weight:bold; color:#27ae60;">獨立保額 $</label>
-                  <input type="text" id="oys2Sum" value="1,000,000" onkeyup="formatOnly(this);" style="width:120px; color:#2c3e50; font-size:1.1rem;">
+                  <input type="text" id="oys2Sum" value="1,000,000" onkeyup="formatOnly(this); calculateComparison();" style="width:120px; color:#2c3e50; font-size:1.1rem;">
               </div>
 
               <div class="action-row" style="justify-content:space-between; margin-bottom:10px;">
-                  <div class="input-group" style="margin:0;"><label style="flex:none;">投保年歲</label><input type="number" id="oys2StartAge" value="30" style="width:60px;"></div>
-                  <div class="input-group" style="margin:0;"><label style="flex:none; color:#27ae60;">供款期</label><select id="oys2PayTerm" style="width:80px;"><option value="pay10">10年</option><option value="pay18">18年</option><option value="pay25" selected>25年</option></select></div>
+                  <div class="input-group" style="margin:0;"><label style="flex:none;">投保年歲</label><input type="number" id="oys2StartAge" value="30" style="width:60px;" onchange="calculateComparison()"></div>
+                  <div class="input-group" style="margin:0;"><label style="flex:none; color:#27ae60;">供款期</label><select id="oys2PayTerm" style="width:80px;" onchange="calculateComparison()"><option value="pay10">10年</option><option value="pay18">18年</option><option value="pay25" selected>25年</option></select></div>
               </div>
               
               <table class="breakdown-table">
                   <thead><tr><th>時段 (年齡)</th><th>保單年度</th><th>該時段年繳保費</th></tr></thead>
-                  <tbody id="oys2BreakdownBody"><tr><td colspan="3" style="color:#95a5a6;">請點擊上方按鈕計算</td></tr></tbody>
+                  <tbody id="oys2BreakdownBody"><tr><td colspan="3" style="color:#95a5a6;">載入中...</td></tr></tbody>
                   <tfoot><tr><td colspan="2">累積總保費成本</td><td id="oys2TotalPremium" style="font-size:1.1rem; color:#e74c3c;">$0</td></tr></tfoot>
               </table>
           </div>
       </div>
 
-      <!-- 賠償實戰推演 (自動連動獨立保額) -->
+      <!-- 賠償實戰推演 -->
       <div class="info-section" style="margin-top: 30px;">
           <div class="info-title" style="border-left-color: #e74c3c;">💰 保額（賠償金額）實戰推演</div>
           <div style="font-size:0.85rem; color:#7f8c8d; margin-bottom:15px;">請輸入首次確診歲數，並點擊下方按鈕，系統將自動按等候期推進歲數，推演出兩者多次理賠之極大差異。</div>
@@ -689,6 +686,9 @@
       currentLang = currentLang === 'hk' ? 'cn' : 'hk';
       document.getElementById('langToggleBtn').innerText = currentLang === 'hk' ? '简' : '繁';
       translateStatic();
+      if(document.getElementById('page-compare').classList.contains('active')) {
+          calculateComparison();
+      }
   }
 
   function translateStatic() {
@@ -770,7 +770,7 @@
   }
 
   // ==========================================
-  // 後台案例管理邏輯 (已完美修復)
+  // 後台案例管理邏輯
   // ==========================================
   function addAdminClaimEntry() {
       let container = document.getElementById('adminClaimsContainer');
@@ -887,6 +887,8 @@
       const compareOys2SumInput = document.getElementById('oys2Sum');
       if(compareSceSumInput) { compareSceSumInput.value = whole.toLocaleString('en-US'); }
       if(compareOys2SumInput) { compareOys2SumInput.value = whole.toLocaleString('en-US'); }
+      
+      calculateComparison(); // 連動後自動重計
   }
 
   function switchPage(pageId) {
@@ -1180,7 +1182,7 @@
   }
 
   // ==========================================
-  // 補強方案大比拼 (智能模糊配對保費率)
+  // 補強方案大比拼 (完美修復全自動計算)
   // ==========================================
   let globalPremiumRates = {};
   let compClaimState = { count: 0, currentAge: 30, totalSCE: 0, totalOYS2: 0, rows: [] };
@@ -1193,6 +1195,9 @@
           if (data.status === "success") { 
               globalPremiumRates = data.rates; 
               console.log("保費表載入成功"); 
+              if(document.getElementById('page-compare').classList.contains('active')) {
+                  calculateComparison();
+              }
           }
       } catch (e) { console.error("載入保費表失敗", e); }
   }
@@ -1220,7 +1225,11 @@
   }
 
   function calculateComparison() {
-      if (Object.keys(globalPremiumRates).length === 0) return alert(T("系統讀取保費表中，請稍候重試。"));
+      // 延遲防禦機制：數據未 ready 自動稍後再計
+      if (!globalPremiumRates || Object.keys(globalPremiumRates).length === 0) {
+          setTimeout(calculateComparison, 500);
+          return;
+      }
 
       const region = document.getElementById('compareRegion').value;
       const gender = document.getElementById('compareGender').value;
@@ -1241,7 +1250,7 @@
 
           if ((age - sceStartAge) % 5 === 0 || age === sceTargetAge - 1) {
               if (lastSceRowAge !== age) {
-                  sceHtml += `<tr><td>${age} ${T("歲")}</td><td>${T("第")} ${age - sceStartAge + 1} ${T("年")}</td><td>$${Math.round(prem).toLocaleString()}</td></tr>`;
+                  sceHtml += `<tr><td>${age} ${T("歲")}</td><td>${T("第")} ${age - sceStartAge + 1} ${T("年")}</td><td><span style="color:#2980b9; font-weight:bold;">$${Math.round(prem).toLocaleString()}</span></td></tr>`;
                   lastSceRowAge = age;
               }
           }
@@ -1265,14 +1274,14 @@
           let age = oys2StartAge + year - 1;
           
           if (year === 1 || year % 5 === 0 || year === oys2MaxYears) {
-              oys2Html += `<tr><td>${age} ${T("歲")}</td><td>${T("第")} ${year} ${T("年")}</td><td>$${Math.round(oys2Prem).toLocaleString()}</td></tr>`;
+              oys2Html += `<tr><td>${age} ${T("歲")}</td><td>${T("第")} ${year} ${T("年")}</td><td><span style="color:#2980b9; font-weight:bold;">$${Math.round(oys2Prem).toLocaleString()}</span></td></tr>`;
           }
       }
       
       document.getElementById('oys2BreakdownBody').innerHTML = oys2Html || `<tr><td colspan="3">${T("無資料")}</td></tr>`;
       document.getElementById('oys2TotalPremium').innerText = formatMoney(oys2Total);
 
-      resetCompareClaims(); // 保額/歲數變更時重置推演
+      // (若推演表已有資料，可在此加入自動重置邏輯，或保留手動重置)
   }
 
   function resetCompareClaims() {
@@ -1341,7 +1350,6 @@
       document.getElementById('totalClaimSCE').innerText = formatMoney(compClaimState.totalSCE);
       document.getElementById('totalClaimOYS2').innerText = formatMoney(compClaimState.totalOYS2);
   }
-
 </script>
 </body>
 </html>
