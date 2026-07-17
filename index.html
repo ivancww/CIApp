@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.27)</title>
+<title>生活應急保險庫 v2.28</title>
 
 <!-- ⚡ 圖片秒開預加載技術 (Firebase) -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
@@ -35,9 +35,6 @@
   .login-box button:hover { background: #f39c12; transform: translateY(-2px); }
   #login-msg { margin-top: 15px; font-size: 0.9rem; color: #f1c40f; min-height: 20px; }
 
-  body.readonly-mode .btn-confirm, body.readonly-mode .btn-reset-link, body.readonly-mode .data-tools { display: none !important; }
-  body.readonly-mode input, body.readonly-mode select { background-color: #f9f9f9 !important; color: #555 !important; border-color: #ddd !important; pointer-events: none; }
-
   .input-wrapper { position: relative; flex: 1; display: flex; }
   .container { max-width: 1200px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: none; }
   
@@ -45,12 +42,9 @@
   .header h1 { margin: 0; font-size: 2rem; letter-spacing: 2px; font-weight: 900; text-shadow: 0 3px 6px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
   .version-badge { font-size: 0.75rem; background: var(--gold); color: #2c3e50; padding: 4px 10px; border-radius: 20px; font-weight: bold; letter-spacing: 1px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); vertical-align: middle; }
   .lang-btn { font-size: 0.8rem; background: #ecf0f1; color: #2c3e50; border: none; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-weight: bold; margin-left: 10px; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-  .lang-btn:hover { background: #bdc3c7; }
-  .header-date { margin-top: 8px; font-size: 0.85rem; color: #bdc3c7; }
-
+  
   .tab-navigation { display: flex; background: #34495e; border-bottom: 3px solid var(--gold); flex-wrap: wrap;}
   .nav-tab { flex: 1; padding: 15px 10px; text-align: center; color: #bdc3c7; font-weight: bold; cursor: pointer; transition: all 0.2s; border: none; background: none; font-size: 1rem; min-width: 150px;}
-  .nav-tab:hover { background: #2c3e50; color: #fff; }
   .nav-tab.active { background: #fff; color: #2c3e50; border-top: 4px solid var(--gold); margin-top: -4px; border-radius: 6px 6px 0 0; }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
@@ -61,16 +55,11 @@
   .config-panel { background: #f8f9fa; padding: 20px; border-right: 1px solid #eee; border-radius: 0 0 0 12px; }
   .analysis-panel { background: #fff; padding: 20px; position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; display: flex; flex-direction: column; border-radius: 0 0 12px 0; scroll-behavior: smooth; }
 
-  /* 催眠式引導展開卡片 CSS (保留 V2.18 的展開功能，但為 Modal 增加 cursor) */
-  .hypno-card { background: #fff; border: 1px solid #dcdde1; border-radius: 8px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-  .hypno-header { padding: 12px 15px; background: #f5f6fa; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: #2f3640; transition: background 0.2s; }
-  .hypno-header:hover { background: #eef2f5; }
+  .hypno-card { background: #fff; border: 1px solid #dcdde1; border-radius: 8px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; transition: 0.2s; }
+  .hypno-card:hover { border-color: var(--blue-base); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .hypno-header { padding: 12px 15px; background: #f5f6fa; display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: #2f3640; }
   .hypno-title { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; }
   .hypno-arrow { transition: transform 0.3s; font-size: 0.8rem; color: #7f8c8d; }
-  .hypno-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-in-out; background: #fff; }
-  .hypno-card.active .hypno-content { max-height: 800px; border-top: 1px solid #f1f2f6; }
-  .hypno-card.active .hypno-arrow { transform: rotate(180deg); }
-  .hypno-inner { padding: 15px; }
 
   /* 彈出圖文 Modal */
   .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; opacity: 0; animation: fadeIn 0.3s forwards; }
@@ -91,13 +80,7 @@
   .input-group { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
   .input-group label { flex: 1; color: #555; font-size: 0.9rem; font-weight: bold; }
   .input-group input, .input-group select { padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; width: 110px; font-size: 1rem; text-align: right; color: #2c3e50; font-weight: bold; background: #fff; }
-  .input-sub-label { display: block; font-size: 0.75rem; color: #999; margin-top: -8px; margin-bottom: 12px; line-height: 1.3; }
-
-  .existing-options { background: #eaf2f8; padding: 10px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #d6eaf8; }
-  .check-row { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #34495e; font-weight: bold; cursor: pointer; }
-  .sub-option-row { margin-top: 8px; padding-left: 25px; display: none; }
-  .sub-select { padding: 4px; font-size: 0.8rem; border: 1px solid #bdc3c7; border-radius: 4px; width: auto !important; }
-
+  
   .total-coverage-box { background: #eafaf1; border: 1px solid #d5f5e3; border-radius: 6px; padding: 10px; margin-bottom: 20px; text-align: right; }
   .total-label { font-size: 0.85rem; color: #27ae60; font-weight: bold; } .total-value { font-size: 1.4rem; font-weight: bold; color: #2c3e50; }
   .dark-title { color: #2c3e50; font-weight: bold; margin-top: 0; }
@@ -112,41 +95,15 @@
 
   .controls-area { padding-top: 25px; margin-top: 25px; border-top: 2px solid #ddd; }
   .card { border: 1px solid #eee; border-left: 4px solid transparent; border-radius: 6px; padding: 15px; margin-bottom: 15px; background: white; transition: transform 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
-  .card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
-  .card h3 { margin: 0 0 10px 0; font-size: 1rem; }
+  .card.child { border-left-color: var(--blue-base); } .card.early { border-left-color: #f39c12; } .card.critical { border-left-color: #c0392b; background: #fff5f5;} .card.cancer { border-left-color: #e67e22; } .card.heart { border-left-color: #8e44ad; } .card.dementia { border-left-color: var(--green-base); }
   
-  .card.child { border-left-color: var(--blue-base); background: #f4f9fc; }
-  .card.early { border-left-color: #f39c12; } 
-  .card.critical { border-left-color: #c0392b; background: #fff5f5; }
-  .card.cancer { border-left-color: #e67e22; } 
-  .card.heart { border-left-color: #8e44ad; } 
-  .card.dementia { border-left-color: var(--green-base); }
-
-  .tag { font-size: 0.7em; background: #eee; padding: 2px 8px; border-radius: 12px; color: #666; font-weight: normal; float: right; }
-  .option-header { font-size: 0.95rem; font-weight: bold; color: #555; margin: 12px 0 8px; display: flex; align-items: center; gap: 10px; }
-  .wait-badge { background-color: #fff8e1; color: #d35400; border: 1px solid #fceecb; font-size: 0.75rem; padding: 2px 8px; border-radius: 12px; font-weight: normal; display: inline-flex; align-items: center; }
-  .btn-group { display: flex; flex-direction: column; gap: 5px; margin-top: 5px; }
-  .action-row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; background: #fdfdfd; padding: 8px; border-radius: 6px; border: 1px dashed #eee; }
-  
-  button { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; transition: all 0.2s; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; min-width: 150px; }
-  button:hover { opacity: 0.9; transform: scale(1.02); } button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; background-color: #bdc3c7; color: #7f8c8d; box-shadow: none; }
-  
+  .action-row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; background: #fdfdfd; padding: 8px; border-radius: 6px; border: 1px dashed #eee; margin-top: 5px;}
+  button { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 5px; justify-content: center;}
+  button:hover { opacity: 0.9; transform: scale(1.02); } button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; background-color: #bdc3c7; color: #7f8c8d;}
   .btn-confirm { background-color: #2980b9; color: white; font-size: 1rem; padding: 12px; width: 100%; margin-top: 20px; }
-  .btn-undo-small { background: #95a5a6; color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 0.8rem; height: 35px; cursor: pointer; display: inline-flex; justify-content: center; align-items: center; font-weight:bold;}
-  .btn-reset-link { background: none; border: none; color: #95a5a6; text-decoration: underline; font-size: 0.8rem; cursor: pointer; margin-top: 10px; min-width: auto; display: inline-block; }
-  
   .btn-blue { background: #3498db; color: white; } .btn-red { background: #e74c3c; color: white; } .btn-orange { background: #d35400; color: white; } .btn-purple { background: #9b59b6; color: white; } .btn-green { background: #2ecc71; color: white; }
-
-  .amount-display { font-family: 'Consolas', monospace; color: #2c3e50; font-weight: bold; font-size: 0.95em; background: #ecf0f1; padding: 4px 8px; border-radius: 4px; border-left: 3px solid #bdc3c7; }
-  .amount-label { font-size: 0.8em; color: #7f8c8d; margin-right: 5px; font-weight: normal;}
-  .age-record { font-family: 'Consolas', monospace; background: #fcf3cf; color: #d68910; padding: 4px 8px; border-radius: 4px; font-weight: bold; border: 1px solid #f9e79f; min-width: 50px; text-align: center; font-size: 0.9em; }
-  .age-label { font-size: 0.8em; color: #b7950b; margin-right: 3px; font-weight: normal; }
-  .acc-tag { background-color: var(--info-bg); color: var(--info-text); padding: 4px 10px; border-radius: 15px; font-size: 0.85em; font-weight: bold; border: 1px solid #a9cce3; display: flex; align-items: center;}
-
-  .bonus-box { margin-top: 10px; padding: 10px; border-radius: 6px; background: #f8fcfd; border: 1px solid #d1ecf1; color: #0c5460; font-size: 0.85rem; }
-  .bonus-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; } .bonus-highlight { font-weight: bold; color: #e74c3c; }
-  .bonus-active-tag { background: #2ecc71; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px;} .bonus-inactive-tag { background: #95a5a6; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px;}
-
+  .btn-undo-small { background: #95a5a6; color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 0.8rem; height: 28px;}
+  
   /* Info Pages Styling */
   .info-page-container { padding: 30px 25px; background: #fff; border-radius: 0 0 12px 12px;}
   .info-section { margin-bottom: 35px; }
@@ -197,7 +154,7 @@
     </div>
 </div>
 
-<!-- 彈出圖文 Modal (保留 V2.26 樣式) -->
+<!-- 彈出圖文 Modal -->
 <div id="imageModal" class="modal-overlay" onclick="closeModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-close" onclick="closeModal(event)">×</div>
@@ -231,7 +188,7 @@
         <input type="file" id="adminFiles" class="admin-input" multiple accept=".pdf,.jpg,.jpeg,.png">
         <button id="adminSubmitBtn" onclick="submitCase()" style="width:100%; padding:12px; background:#3498db; color:white; font-size:1.1rem; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">📤 儲存並發佈</button>
         <hr style="margin: 25px 0; border-top: 1px dashed #ccc;">
-        <h3 style="margin-top:0;">🗑️ 現有案例列表</h3>
+        <h3 style="margin-top:0;">🗑️ 現現有案例列表</h3>
         <div id="adminCasesList">載入中...</div>
     </div>
 </div>
@@ -239,7 +196,7 @@
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v2.27 完美還原V2.18版</span>
+          生活應急保險庫 <span class="version-badge">v2.28</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
       <div class="header-date" id="currentDateDisplay"></div>
@@ -258,7 +215,7 @@
     <div class="main-grid">
       <div class="config-panel">
         
-        <!-- 點擊即開提示卡：請教 (Modal) -->
+        <!-- 點擊即開提示卡：請教 -->
         <div class="hypno-card" id="hypno1" onclick="openHypnoModal('ask')">
             <div class="hypno-header" style="background:#f5f6fa;">
                 <div class="hypno-title"><span>💡</span> 想請教你一個問題... (點擊展開)</div>
@@ -268,14 +225,12 @@
 
         <div class="section-title">1. 保障額度 (Review)</div>
         <div class="input-group"><label>舊單 (Existing)</label><div class="input-wrapper" id="wrap_sumExisting"><input type="text" id="sumExisting" value="200,000" onkeyup="handleSumInput()"></div></div>
-        <div class="existing-options" id="wrap_existingMulti"><div class="check-row"><input type="checkbox" id="existingMultiCheck" onchange="toggleExistingOptions()"><label for="existingMultiCheck" style="cursor:pointer; flex:1; color:#34495e;">包含多重賠償 (癌症/心臟)?</label></div><div class="sub-option-row" id="existingSubOptions"><div style="display:flex; align-items:center; margin-top:5px;"><span class="sub-option-label">癌症等候期:</span><select id="existingCancerWait" class="sub-select"><option value="3">3年 (新式)</option><option value="5" selected>5年 (舊式)</option></select></div></div></div>
-        <div class="input-group"><label>補強 A（定期危疾）</label><div class="input-wrapper" id="wrap_sumTerm"><input type="text" id="sumTerm" value="500,000" onkeyup="handleSumInput()" style="color:#7f8c8d; border-color:#bdc3c7;"></div></div><span class="input-sub-label">純保障，無紅利/Bonus，用完即棄。</span>
-        <div class="input-group"><label>補強B（儲蓄危疾）</label><div class="input-wrapper" id="wrap_sumWhole"><input type="text" id="sumWhole" value="500,000" onkeyup="handleSumInput()" style="color:#27ae60; border-color:#27ae60;"></div></div><span class="input-sub-label">伴隨終身，包含首十年贈送額。</span>
-        <div class="input-group"><label>補強B1（多重支援）</label><div class="input-wrapper" id="wrap_sumUpgradeB"><input type="text" id="sumUpgradeB" value="500,000" readonly style="background:#fdf2e9; color:#e67e22; border-color:#e67e22; cursor:not-allowed;"></div></div><span class="input-sub-label">🔒 自動跟隨 補強B（儲蓄危疾） 額度。</span>
-        <div class="total-coverage-box"><div class="total-label">總危疾保額 (舊+補強A+補強B)</div><div class="total-value" id="displayTotalBasic">$1,200,000</div><div style="font-size:0.8rem; color:#7f8c8d; margin-top:5px;">含多重支援 (B1): <span id="displayTotalMulti" style="font-weight:bold; color:#e67e22;">$500,000</span></div></div>
+        <div class="input-group"><label>補強 A (定期)</label><div class="input-wrapper" id="wrap_sumTerm"><input type="text" id="sumTerm" value="500,000" onkeyup="handleSumInput()" style="color:#7f8c8d;"></div></div>
+        <div class="input-group"><label>補強 B (儲蓄)</label><div class="input-wrapper" id="wrap_sumWhole"><input type="text" id="sumWhole" value="500,000" onkeyup="handleSumInput()" style="color:#27ae60;"></div></div>
+        <div class="input-group"><label>補強 B1 (多重)</label><div class="input-wrapper" id="wrap_sumUpgradeB"><input type="text" id="sumUpgradeB" value="500,000" readonly style="background:#fdf2e9; color:#e67e22;"></div></div>
         <div class="input-group"><label>投保歲數</label><div class="input-wrapper"><input type="number" id="startAge" value="0" onkeyup="formatOnly(this)"></div></div>
         
-        <div class="section-title" style="margin-top:20px;">2. 財政與收入狀況</div>
+        <div class="section-title" style="margin-top:20px;">2. 財政狀況</div>
         <div class="input-group" style="border-left: 4px solid var(--blue-base); padding-left: 8px;">
           <label style="color:var(--blue-base);">現有銀行存款</label>
           <div class="input-wrapper" id="wrap_assets"><input type="text" id="assets" value="500,000" onkeyup="formatOnly(this)"></div>
@@ -314,29 +269,15 @@
           <div class="card critical">
               <h3>3. 嚴重危疾 (100%) <span class="tag">危疾全賠 + 啟動B1</span><div style="font-size:0.75rem; color:#95a5a6; font-weight:normal; margin-top:4px;">* 加分紅（如有）</div></h3>
               <div class="btn-group">
-                  <div class="hypno-card" id="ciCard" style="margin-bottom:0; border-color:#e74c3c; overflow:visible;">
-                      <div class="hypno-header" onclick="toggleHypno('ciCard')" style="background:#e74c3c; color:white; border-bottom: none;">
-                          <div class="hypno-title">🚨 首次確診嚴重危疾 (展開選擇)</div>
-                          <div class="hypno-arrow" style="color:white;">▼</div>
-                      </div>
-                      <div class="hypno-content" style="background:#fff5f5; border-top: none;">
-                          <div class="hypno-inner" style="padding: 15px 10px;">
-                              <button class="btn-red" onclick="claimCriticalIllness('cancer')" style="width:100%; justify-content:center; margin-bottom:6px;">🎗️ 確診癌症 (扣1次名額)</button>
-                              <button class="btn-purple" onclick="claimCriticalIllness('heart')" style="width:100%; justify-content:center; margin-bottom:6px;">❤️ 確診心臟病/中風 (扣1次名額)</button>
-                              <button class="btn-green" onclick="claimCriticalIllness('dementia')" style="width:100%; justify-content:center; margin-bottom:6px;">🧠 確診腦退化 (扣1次名額)</button>
-                              <button class="btn-blue" onclick="claimCriticalIllness('other')" style="width:100%; justify-content:center;">🏥 其他危疾 (三大名額全數保留)</button>
-                          </div>
-                      </div>
+                  <div class="action-row">
+                      <button class="btn-red" onclick="claimCriticalIllness('cancer')" style="width:100%; justify-content:center; margin-bottom:6px;">🎗️ 確診癌症 (扣1次名額)</button>
+                      <button class="btn-purple" onclick="claimCriticalIllness('heart')" style="width:100%; justify-content:center; margin-bottom:6px;">❤️ 確診心臟病/中風 (扣1次名額)</button>
+                      <button class="btn-green" onclick="claimCriticalIllness('dementia')" style="width:100%; justify-content:center; margin-bottom:6px;">🧠 確診腦退化 (扣1次名額)</button>
+                      <button class="btn-blue" onclick="claimCriticalIllness('other')" style="width:100%; justify-content:center;">🏥 其他危疾 (三大名額全數保留)</button>
                   </div>
                   <div class="action-row" style="background:#fffcf5; border-color:#fdebd0; margin-top: 5px;">
                       <div class="amount-display" style="width:100%; display:flex; justify-content:space-between;"><span class="amount-label">剩餘基礎額度:</span><span id="valCritical">$0</span></div>
                   </div>
-              </div>
-              <div class="bonus-box" id="criticalBonusBox" style="display:none;">
-                  <div class="bonus-row"><strong>🎁 首十年免費升級 (只計補強B):</strong></div>
-                  <div class="bonus-row" id="ruleADisplay" style="display:none; color:#555;"><span>A. 30歲或以下 (+50%)</span><span id="bonusAmountA" class="bonus-highlight">$0</span></div>
-                  <div class="bonus-row" id="ruleBDisplay" style="display:none; color:#555;"><span>B. 31歲或以上 (+35%)</span><span id="bonusAmountB" class="bonus-highlight">$0</span></div>
-                  <div style="margin-top:5px; padding-top:5px; border-top:1px dashed #d1ecf1; text-align:right;"><span id="bonusStatusBadge"></span></div>
               </div>
           </div>
           
@@ -378,7 +319,6 @@
                 <span class="status-label">確診歲數</span>
                 <div style="display:flex; justify-content:center; align-items:center; gap:5px;">
                     <input type="number" id="currentAge" value="30" class="editable-age" onchange="userChangeAge(this.value)">
-                    <button onclick="undoState()" class="btn-undo-small" title="返回上一步">↩️</button>
                 </div>
             </div>
             <div class="status-item"><span class="status-label">剩餘危疾池</span><span id="displayBalance" class="status-value">$1,200,000</span></div>
@@ -386,11 +326,9 @@
         </div>
         
         <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--blue-base); margin-bottom: 25px;">
-            <h4 style="margin: 0 0 15px 0; color: #2c3e50; text-align: center;">
-              🛡️ <span class="tooltip" style="border-bottom: 2px dotted #3498db; cursor: pointer;">3年大病休養期<span class="tooltiptext">嚴重疾病（如癌症）的平均治療及休養期約為2至3年。此設定確保在養病無法工作期間，家庭生活質素依然得到保障，避免消耗原有積蓄。</span></span> - 資金流向推演
-            </h4>
+            <h4 style="text-align: center; color: #2c3e50; margin: 0 0 15px 0;">🛡️ 3年大病休養期</h4>
             
-            <!-- 點擊即開提示卡：想像一下 (Modal) -->
+            <!-- 點擊即開提示卡：想像一下 -->
             <div class="hypno-card" style="border-color:#d4e6f1; margin-bottom:15px;" onclick="openHypnoModal('think')">
                 <div class="hypno-header" style="background:#eaf2f8; color:#2980b9;">
                     <div class="hypno-title"><span>💭</span> 不如我哋一齊想像一下... (點擊展開)</div>
@@ -420,7 +358,7 @@
                 <div id="valSavingsStatus" style="font-size: 0.9rem; font-weight: bold;"></div>
             </div>
             
-            <!-- 點擊即開提示卡：代價 (Modal) -->
+            <!-- 點擊即開提示卡：代價 -->
             <div class="hypno-card" style="border-color:#e74c3c; margin-bottom:0;" onclick="openHypnoModal('action')">
                 <div class="hypno-header" style="background:#fff5f5; color:#c0392b;">
                     <div class="hypno-title"><span>⚠️</span> 唔行動的代價... (點擊展開)</div>
@@ -429,7 +367,10 @@
             </div>
         </div>
         
-        <div class="section-title" style="border-color:#bdc3c7;">⏳ 多重賠償時間線</div>
+        <div class="section-title" style="border-color:#bdc3c7;">
+            ⏳ 多重賠償時間線
+            <button onclick="undoState()" class="btn-undo-small" style="margin-left:auto; background:#95a5a6; height: 28px; padding: 2px 8px; border-radius:4px; color:white; border:none; cursor:pointer;" title="返回上一步">↩️ 返回上一步</button>
+        </div>
         <div id="rightTimeline">
             <div style="text-align:center; color:#bdc3c7; font-size:0.95rem; padding: 30px; border: 2px dashed #eee; border-radius: 8px;">等待啟動模擬賠償...</div>
         </div>
@@ -848,11 +789,6 @@
       }
   }
 
-  function toggleHypno(id) {
-      const el = document.getElementById(id);
-      if(el) el.classList.toggle('active');
-  }
-
   function openHypnoModal(type) {
       let text = "", img = "";
       const FIREBASE_IMG_ASK = "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80";
@@ -934,11 +870,15 @@
           document.getElementById('adminDisease').value = "";
           document.getElementById('adminClaimsContainer').innerHTML = `<div class="claim-entry"><input type="text" placeholder="${T('次數 (例如: 首次)')}" class="claim-seq"><input type="text" placeholder="${T('賠償金額 ($)')}" class="claim-amt"><button class="btn-remove" onclick="this.parentElement.remove()">-</button></div>`;
           document.getElementById('adminFiles').value = "";
-          alert(T("發佈成功！"));
+          
+          btn.innerText = T("✅ 成功發佈");
+          setTimeout(() => {
+              btn.innerText = T("📤 儲存並發佈");
+              btn.disabled = false;
+          }, 2000);
       } catch(e) {
           console.error(e);
           alert(T("發生錯誤"));
-      } finally {
           btn.innerText = T("📤 儲存並發佈");
           btn.disabled = false;
       }
@@ -956,7 +896,7 @@
               snapshot.forEach(doc => {
                   let data = doc.data();
                   let claimsHtml = data.claims.map(c => `<div class="case-claim-row"><span>${c.seq}</span><strong>${c.amt}</strong></div>`).join("");
-                  let filesHtml = data.files.map(f => `<a href="${f.url}" target="_blank" class="case-file-link">📎 ${f.name}</a>`).join("");
+                  let filesHtml = data.files.map(f => `<a href="javascript:void(0)" onclick="openModal('${f.url}')" class="case-file-link">📎 ${f.name}</a>`).join("");
                   
                   html += `
                   <div class="case-card">
@@ -1002,6 +942,8 @@
       const compareOys2SumInput = document.getElementById('oys2Sum');
       if(compareSceSumInput) { compareSceSumInput.value = whole.toLocaleString('en-US'); }
       if(compareOys2SumInput) { compareOys2SumInput.value = whole.toLocaleString('en-US'); }
+      
+      calculateComparison(); // 連動後自動重計
   }
 
   function switchPage(pageId) {
@@ -1013,7 +955,7 @@
   }
 
   // ==========================================
-  // 主頁儀表板邏輯 (完美保留 V2.18)
+  // 主頁儀表板邏輯
   // ==========================================
   let config = { sumExisting: 200000, sumTerm: 500000, sumWhole: 500000, sumUpgradeB: 500000, sumBasicPool: 1200000, existingMulti: false, existingCancerWait: 5, startAge: 0, assets: 500000, expense: 30000 };
   let state = { isConfirmed: false, balance: 1000000, totalPaid: 0, isCriticalClaimed: false, hasStartedCancerMonthly: false, cancerCountNew: 0, cancerCountOld: 0, nextClaimAge_New: Infinity, nextClaimAge_Old: Infinity, heartCount: 0, dementiaLumpSumClaimed: false, dementiaYearsPaid: 0, cancerMonthsPaid: 0, accEarly: 0, accCancerLump: 0, accCancerMonthly: 0, accHeart: 0, accDementia: 0, accChild: 0, currentAge: 30, claimCount: 0, bonusPaid: 0 };
@@ -1168,7 +1110,6 @@
       let descStr = T(`精細拆分來源：餘下舊單及定期危疾額度 + 補強B儲蓄餘下額度。<br><br><b>💡 豁免保費啟動：</b><br>此筆 100% 賠償一經批核，餘下未繳的保費將全數豁免！<br><i>例子：假設原定 25 年繳費期，若在第 ${policyYear} 年確診，其後 ${remainingYears} 年的保費無需再繳交，<span style="color:#000; font-weight:900; font-size:1.1em;">多重賠償持續生效。</span></i>`);
       let smallStr = hasBonus ? T(`<br>細字註明：符合首10年免費升級保障，已結算並發放餘下的加贈額度 $${bonusClaim.toLocaleString()}`) : "";
       
-      document.getElementById('ciCard').classList.remove('active');
       addTimelineCard(state.currentAge, claim+bonusClaim, color, icon, titleStr, descStr, smallStr);
       updateUI(); 
   }
@@ -1289,12 +1230,6 @@
       document.getElementById('heartCountDisplay').innerText = `(${state.heartCount}/3)`; 
       document.getElementById('dementiaYearDisplay').innerText = `(${state.dementiaYearsPaid})`; 
       
-      let ciCard = document.getElementById('ciCard');
-      if (ciCard) {
-          ciCard.style.opacity = state.isCriticalClaimed ? "0.5" : "1";
-          ciCard.style.pointerEvents = state.isCriticalClaimed ? "none" : "auto";
-      }
-      
       if(state.hasStartedCancerMonthly) { document.getElementById('btnCancerAuto').disabled=true; } 
       if(state.isCriticalClaimed && !state.dementiaLumpSumClaimed) { document.getElementById('btnDementia').innerText = T("🚨 提取 100% 賠償"); } else { document.getElementById('btnDementia').innerText = T("👇 發放 1 年年金"); }
 
@@ -1302,7 +1237,7 @@
   }
 
   // ==========================================
-  // 補強方案大比拼 (自動計算保費及智能推演)
+  // 補強方案大比拼 (智能模糊配對保費率)
   // ==========================================
   let globalPremiumRates = {};
   let compClaimState = { count: 0, currentAge: 30, totalSCE: 0, totalOYS2: 0, rows: [] };
@@ -1314,7 +1249,6 @@
           const data = await response.json();
           if (data.status === "success") { 
               globalPremiumRates = data.rates; 
-              console.log("保費表載入成功"); 
               if(document.getElementById('page-compare').classList.contains('active')) {
                   calculateComparison();
               }
@@ -1400,7 +1334,7 @@
       document.getElementById('oys2BreakdownBody').innerHTML = oys2Html || `<tr><td colspan="3">${T("無資料")}</td></tr>`;
       document.getElementById('oys2TotalPremium').innerText = formatMoney(oys2Total);
 
-      resetCompareClaims();
+      resetCompareClaims(); // 保額/歲數變更時重置推演
   }
 
   function resetCompareClaims() {
@@ -1421,6 +1355,7 @@
       
       if (sceSum === 0 && oys2Sum === 0) return alert(T("請先輸入獨立保額！"));
 
+      // 自動推算歲數
       if (compClaimState.count === 0) {
           compClaimState.currentAge = firstClaimAge;
       } else {
@@ -1434,6 +1369,7 @@
       let oys2Pays = oys2Sum;
       let bonusHtml = "";
 
+      // 首10年升級保障 (以 OYS2 為主)
       if (compClaimState.count === 1 && (compClaimState.currentAge - oys2StartAge) <= 10 && (compClaimState.currentAge - oys2StartAge) >= 0) {
           let bonusRate = oys2StartAge <= 30 ? 0.50 : 0.35;
           let bonusAmt = oys2Sum * bonusRate;
