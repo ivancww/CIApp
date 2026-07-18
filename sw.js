@@ -2,7 +2,7 @@
 
 // --- 1. 設定你的快取版本號和要離線存取的檔案 ---
 // ⚠️ 重要：版本號已升級至 v3，確保手機抓取最新的 Emoji 故事版 HTML！
-const CACHE_VERSION = 'insurance-pwa-cache-v2.92';
+const CACHE_VERSION = 'insurance-pwa-cache-v2.93';
 const FILES_TO_CACHE = [
   './index.html',     // 主應用程式檔案
   './manifest.json',  // PWA 設定檔
