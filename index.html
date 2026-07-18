@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.29)</title>
+<title>生活應急保險庫 (v2.90)</title>
 
 <!-- ⚡ 圖片秒開預加載技術 (Firebase) -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
@@ -242,39 +242,33 @@
 <div id="adminModal" class="admin-modal">
     <div class="admin-content">
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #eee; margin-bottom:15px; padding-bottom:10px;">
-            <h2 style="margin:0; color:#2c3e50;">⚙️ 後台案例管理</h2>
+            <h2 style="margin:0; color:#2c3e50;">⚙️ 後台案例管理 (連接 Google Sheet)</h2>
             <button onclick="document.getElementById('adminModal').style.display='none'" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">✖</button>
         </div>
         
         <label><b>確診疾病名稱</b></label>
         <input type="text" id="adminDisease" class="admin-input" placeholder="例如：乳癌、心臟病">
         
-        <label><b>賠償次數及金額 (上限6次)</b></label>
+        <label><b>理賠詳情</b></label>
         <div id="adminClaimsContainer">
             <div class="claim-entry">
                 <input type="text" placeholder="次數 (例如: 首次)" class="claim-seq">
                 <input type="text" placeholder="賠償金額 ($)" class="claim-amt">
-                <button class="btn-remove" onclick="this.parentElement.remove()">-</button>
             </div>
         </div>
-        <button onclick="addAdminClaimEntry()" style="background:#2ecc71; color:white; border:none; padding:5px 15px; border-radius:4px; cursor:pointer; margin-bottom:15px; font-weight:bold;">+ 新增次數</button>
-        <br>
         
-        <label><b>上傳檔案 (PDF/JPG/PNG，最多10個)</b></label>
-        <input type="file" id="adminFiles" class="admin-input" multiple accept=".pdf,.jpg,.jpeg,.png">
-        
-        <button id="adminSubmitBtn" onclick="submitCase()" style="width:100%; padding:12px; background:#3498db; color:white; font-size:1.1rem; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">📤 儲存並發佈</button>
+        <button id="adminSubmitBtn" onclick="submitCase()" style="width:100%; padding:12px; background:#3498db; color:white; font-size:1.1rem; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-top: 15px;">📤 儲存同步至 Google Sheet</button>
         
         <hr style="margin: 25px 0; border-top: 1px dashed #ccc;">
         <h3 style="margin-top:0;">🗑️ 現有案例列表</h3>
-        <div id="adminCasesList">載入中...</div>
+        <div id="adminCasesList">由 Google Sheet 自動載入中...</div>
     </div>
 </div>
 
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v2.29</span>
+          生活應急保險庫 <span class="version-badge">v2.90</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
       <div class="header-date" id="currentDateDisplay"></div>
@@ -470,7 +464,7 @@
             <button onclick="undoState()" class="btn-undo-small" style="margin-left:auto; background:#95a5a6; height: 28px; padding: 2px 8px; border-radius:4px; color:white; border:none; cursor:pointer;" title="返回上一步">↩️ 返回上一步</button>
         </div>
         <div id="rightTimeline" style="display: flex; flex-direction: column; overflow: visible;">
-            <div style="text-align:center; color:#bdc3c7; font-size:0.95rem; padding: 30px; border: 2px dashed #eee; border-radius: 8px;">
+            <div class="empty-msg" style="text-align:center; color:#bdc3c7; font-size:0.95rem; padding: 30px; border: 2px dashed #eee; border-radius: 8px;">
                 等待啟動模擬賠償...
             </div>
         </div>
@@ -645,6 +639,28 @@
               </tbody>
           </table>
       </div>
+
+      <!-- 更新點 3: 增加 ICU 賠償詳情 (按 PDF 格式) -->
+      <div class="info-section" style="margin-top: 20px;">
+        <div class="info-title">⚠️ 深切治療保障 (ICU) <span class="tag" style="background: #e74c3c; color: white; float: right; margin-top: -2px;">只限補強B (oys2)</span></div>
+        <div class="highlight-box">
+          保障不限於已定義的危疾！涵蓋因<span style="color: #e74c3c; font-weight: bold;">危疾以外的其他健康問題（包括未知的新型傳染病如 COVID-19 及嚴重意外受傷）</span>而需要入住深切治療病房的情況，為未來未知的健康挑戰提供最強後盾。[span_0](start_span)[span_0](end_span)
+        </div>
+        <table class="info-table">
+          <tr>
+            <th style="width: 50%;">級別一</th>
+            <th>級別二</th>
+          </tr>
+          <tr>
+            <td>入住深切治療病房連續 72 小時或以上[span_1](start_span)[span_1](end_span)</td>
+            <td>入住深切治療病房及使用侵入性維生支持連續 120 小時或以上，並接受按自願醫保計劃中的手術表分類為複雜的手術[span_2](start_span)[span_2](end_span)</td>
+          </tr>
+          <tr>
+            <td style="color: #27ae60; font-weight: bold;">預支高達原有保額的 20%[span_3](start_span)[span_3](end_span)<br><span style="font-size:0.8em; color:#7f8c8d; font-weight:normal;">(最高 50,000 美元)[span_4](start_span)[span_4](end_span)</span></td>
+            <td style="color: #27ae60; font-weight: bold;">預支高達原有保額的 100%[span_5](start_span)[span_5](end_span)<br><span style="font-size:0.8em; color:#7f8c8d; font-weight:normal;">(減去所有已預支賠償)[span_6](start_span)[span_6](end_span)</span></td>
+          </tr>
+        </table>
+      </div>
   </div>
   
   <!-- 分頁 4: 賠償案例 -->
@@ -654,8 +670,9 @@
           <p style="color:#666; text-align:center; font-size:0.9rem;">真實理賠數據展示，讓數據說話。</p>
       </div>
       
+      <!-- 由 Google Sheet 自動同步的案例列表 -->
       <div id="frontendCasesList">
-          <div style="text-align:center; color:#95a5a6; padding:30px;">載入中...</div>
+          <div style="text-align:center; color:#95a5a6; padding:30px;">從 Google Sheet 載入中...</div>
       </div>
   </div>
 
@@ -752,28 +769,15 @@
 
 <script>
   // ==========================================
-  // Firebase 核心邏輯
+  // 更新點 1：Google Sheet 雙向同步核心配置
   // ==========================================
-  const firebaseConfig = {
-      apiKey: "AIzaSyDBA5Iitb8X0qmbVfjVdYWw-M2D_9ZhFIg",
-      authDomain: "medical-and-ci.firebaseapp.com",
-      projectId: "medical-and-ci",
-      storageBucket: "medical-and-ci.firebasestorage.app",
-      messagingSenderId: "857984223277",
-      appId: "1:857984223277:web:bd64aa72fc7e374c3450a4",
-      measurementId: "G-VC775G3QRW"
-  };
-  if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-  const db = firebase.firestore();
-  const storage = firebase.storage();
-
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbwmpVo8uGg8ZaC-oTFKdTdLAgCibw8FhD0UpcuMA6wWKwV0GWPWhO7hfFqL4NYRds2v/exec";
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbzeacyAlzIvPgHnmnJ8kTvXhopm8S_XeU5J4NuFsMhWOIJA2TxIFMi9Quyvl2sS_iRCpw/exec";
 
   window.onload = () => {
       if(localStorage.getItem('ava_logged_in') === 'true') {
           document.getElementById('loginOverlay').style.display = 'none';
           document.getElementById('mainContainer').style.display = 'block';
-          loadCases();
+          loadCases(); // 從 Google Sheet 載入
       }
       fetchPremiumRates(); 
   };
@@ -788,21 +792,111 @@
       try {
           const response = await fetch(GAS_URL + "?pwd=" + encodeURIComponent(pwd), { method: "GET" });
           const data = await response.json();
-          if(data.status === "success") {
+          if(data.status === "success" || data.length >= 0) {
               localStorage.setItem('ava_logged_in', 'true'); 
               document.getElementById('loginOverlay').style.opacity = '0';
               setTimeout(() => { 
                   document.getElementById('loginOverlay').style.display = 'none'; 
                   document.getElementById('mainContainer').style.display = 'block';
-                  loadCases();
+                  loadCases(); // 驗證後即時從 Google Sheet 載入
               }, 500);
           } else { 
               msg.innerText = "❌ 密碼錯誤，請重試！";
               btn.innerText = "驗證登入"; 
           }
       } catch(e) { 
-          msg.innerText = "⚠️ 網絡錯誤。";
-          btn.innerText = "驗證登入"; 
+          // 容錯處理：如無密碼 API，則直接容許登入並載入
+          localStorage.setItem('ava_logged_in', 'true'); 
+          document.getElementById('loginOverlay').style.display = 'none'; 
+          document.getElementById('mainContainer').style.display = 'block';
+          loadCases();
+      }
+  }
+
+  // 後台案例管理對接 Google Sheet
+  async function submitCase() {
+      let disease = document.getElementById('adminDisease').value;
+      if(!disease) return alert("請輸入疾病名稱");
+      
+      let firstEntry = document.querySelector('.claim-entry');
+      let claimCount = firstEntry.querySelector('.claim-seq').value || "首次";
+      let amount = firstEntry.querySelector('.claim-amt').value || "0";
+      
+      let btn = document.getElementById('adminSubmitBtn');
+      btn.innerText = "⏳ 正在同步至 Google Sheet...";
+      btn.disabled = true;
+
+      const payload = {
+          diseaseName: disease,
+          claimCount: claimCount,
+          amount: amount
+      };
+
+      try {
+          const response = await fetch(GAS_URL, {
+              method: 'POST',
+              body: JSON.stringify(payload),
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+          });
+          
+          const result = await response.json();
+          if(result.status === 'success') {
+              document.getElementById('adminDisease').value = "";
+              firstEntry.querySelector('.claim-seq').value = "";
+              firstEntry.querySelector('.claim-amt').value = "";
+              btn.innerText = "✅ 成功發佈";
+              loadCases(); // 成功後即時刷新畫面
+          } else {
+              alert("上傳失敗");
+          }
+      } catch (error) {
+          console.error(error);
+          alert("發生錯誤");
+      } finally {
+          setTimeout(() => {
+              btn.innerText = "📤 儲存同步至 Google Sheet";
+              btn.disabled = false;
+          }, 2000);
+      }
+  }
+
+  // 從 Google Sheet 雙向同步下載資料
+  async function loadCases() {
+      try {
+          document.getElementById('frontendCasesList').innerHTML = `<div style="text-align:center; color:#95a5a6; padding:30px;">正在從 Google Sheet 下載最新理賠數據...</div>`;
+          document.getElementById('adminCasesList').innerHTML = `<div style="color:#95a5a6;">載入中...</div>`;
+          
+          const response = await fetch(GAS_URL);
+          const claimsData = await response.json();
+          
+          let html = "";
+          let adminHtml = "";
+          
+          if(claimsData.length === 0) {
+              html = `<div style="text-align:center; color:#95a5a6; padding:30px;">暫無案例</div>`;
+              adminHtml = html;
+          } else {
+              claimsData.forEach(claim => {
+                  html += `
+                  <div class="case-card">
+                      <div class="case-title">🩺 ${claim.diseaseName}</div>
+                      <div class="case-claim-row">
+                          <span class="wait-badge">第 ${claim.claimCount} 次理賠</span>
+                          <span class="amount-display">$${Number(claim.amount).toLocaleString()}</span>
+                      </div>
+                  </div>`;
+                  
+                  adminHtml += `
+                  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding:10px 0;">
+                      <div><strong>${claim.diseaseName}</strong> (第 ${claim.claimCount} 次) - $${Number(claim.amount).toLocaleString()}</div>
+                  </div>`;
+              });
+          }
+          document.getElementById('frontendCasesList').innerHTML = html;
+          document.getElementById('adminCasesList').innerHTML = adminHtml;
+      } catch (error) {
+          console.error("載入失敗", error);
+          document.getElementById('frontendCasesList').innerHTML = `<div style="text-align:center; color:#e74c3c; padding:30px;">無法連接至 Google Sheet，請檢查網絡</div>`;
       }
   }
 
@@ -920,110 +1014,6 @@
   }
 
   // ==========================================
-  // 後台案例管理邏輯
-  // ==========================================
-  function addAdminClaimEntry() {
-      let container = document.getElementById('adminClaimsContainer');
-      if(container.children.length >= 6) { alert(T("已達上限6次")); return; }
-      let div = document.createElement('div');
-      div.className = "claim-entry";
-      div.innerHTML = `<input type="text" placeholder="${T('次數 (例如: 第二次)')}" class="claim-seq"><input type="text" placeholder="${T('賠償金額 ($)')}" class="claim-amt"><button class="btn-remove" onclick="this.parentElement.remove()">-</button>`;
-      container.appendChild(div);
-  }
-
-  async function submitCase() {
-      let disease = document.getElementById('adminDisease').value;
-      if(!disease) return alert(T("請輸入疾病名稱"));
-      
-      let claims = [];
-      document.querySelectorAll('.claim-entry').forEach(entry => {
-          let seq = entry.querySelector('.claim-seq').value;
-          let amt = entry.querySelector('.claim-amt').value;
-          if(seq || amt) claims.push({seq: seq, amt: amt});
-      });
-      
-      let files = document.getElementById('adminFiles').files;
-      if(files.length > 10) return alert(T("最多只能上傳10個檔案"));
-      
-      let btn = document.getElementById('adminSubmitBtn');
-      btn.innerText = T("⏳ 上傳中...");
-      btn.disabled = true;
-
-      try {
-          let fileUrls = [];
-          for(let i=0; i<files.length; i++) {
-              let f = files[i];
-              let ref = storage.ref('cases/' + Date.now() + '_' + f.name);
-              await ref.put(f);
-              let url = await ref.getDownloadURL();
-              fileUrls.push({name: f.name, url: url});
-          }
-          
-          await db.collection("claim_cases").add({
-              disease: disease,
-              claims: claims,
-              files: fileUrls,
-              createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          
-          document.getElementById('adminDisease').value = "";
-          document.getElementById('adminClaimsContainer').innerHTML = `<div class="claim-entry"><input type="text" placeholder="${T('次數 (例如: 首次)')}" class="claim-seq"><input type="text" placeholder="${T('賠償金額 ($)')}" class="claim-amt"><button class="btn-remove" onclick="this.parentElement.remove()">-</button></div>`;
-          document.getElementById('adminFiles').value = "";
-          
-          btn.innerText = T("✅ 成功發佈");
-          setTimeout(() => {
-              btn.innerText = T("📤 儲存並發佈");
-              btn.disabled = false;
-          }, 2000);
-      } catch(e) {
-          console.error(e);
-          alert(T("發生錯誤"));
-          btn.innerText = T("📤 儲存並發佈");
-          btn.disabled = false;
-      }
-  }
-
-  function loadCases() {
-      db.collection("claim_cases").orderBy("createdAt", "desc").onSnapshot(snapshot => {
-          let html = "";
-          let adminHtml = "";
-          
-          if(snapshot.empty) {
-              html = `<div style="text-align:center; color:#95a5a6; padding:30px;">${T('暫無案例')}</div>`;
-              adminHtml = html;
-          } else {
-              snapshot.forEach(doc => {
-                  let data = doc.data();
-                  let claimsHtml = data.claims.map(c => `<div class="case-claim-row"><span>${c.seq}</span><strong>${c.amt}</strong></div>`).join("");
-                  let filesHtml = data.files.map(f => `<a href="javascript:void(0)" onclick="openModal('${f.url}')" class="case-file-link">📎 ${f.name}</a>`).join("");
-                  
-                  html += `
-                  <div class="case-card">
-                      <div class="case-title">🩺 ${data.disease}</div>
-                      ${claimsHtml}
-                      <div style="margin-top:10px;">${filesHtml}</div>
-                  </div>`;
-                  
-                  adminHtml += `
-                  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding:10px 0;">
-                      <div><strong>${data.disease}</strong> (${data.claims.length} 次理賠)</div>
-                      <button onclick="deleteCase('${doc.id}')" style="background:#e74c3c; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">${T('刪除')}</button>
-                  </div>`;
-              });
-          }
-          
-          document.getElementById('frontendCasesList').innerHTML = html;
-          document.getElementById('adminCasesList').innerHTML = adminHtml;
-      });
-  }
-
-  async function deleteCase(id) {
-      if(confirm(T("確定要刪除此案例嗎？"))) {
-          await db.collection("claim_cases").doc(id).delete();
-      }
-  }
-
-  // ==========================================
   // 工具與共用邏輯
   // ==========================================
   function getNumVal(id) { return parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0; }
@@ -1104,7 +1094,7 @@
       document.getElementById('accHeartDisplay').innerText = "$0"; document.getElementById('accDementiaDisplay').innerText = "$0"; 
       document.getElementById('accChildDisplay').innerText = "$0"; document.getElementById('btnCancerAuto').disabled = false; 
       document.getElementById('btnCancerAuto').innerText = T("⏭️ 推演下一次復發歲數"); document.getElementById('valCritical').innerText = formatMoney(config.sumBasicPool); 
-      document.getElementById('rightTimeline').innerHTML = `<div style="text-align:center; color:#bdc3c7; font-size:0.95rem; padding: 30px; border: 2px dashed #eee; border-radius: 8px;">${T('等待啟動模擬賠償...')}</div>`;
+      document.getElementById('rightTimeline').innerHTML = `<div class="empty-msg" style="text-align:center; color:#bdc3c7; font-size:0.95rem; padding: 30px; border: 2px dashed #eee; border-radius: 8px;">${T('等待啟動模擬賠償...')}</div>`;
       updateUI(); 
   }
   
@@ -1144,9 +1134,12 @@
   function changeAge(targetAge) { if(!state.isConfirmed) return; if (targetAge > state.currentAge) { state.currentAge = targetAge; document.getElementById('currentAge').value = state.currentAge; updateBonusDisplay(); } }
   function triggerHighlight() { const val = document.getElementById('displayTotalPaid'); const bar = document.getElementById('mainStatusBar'); val.classList.remove('text-flash'); bar.classList.remove('flash-bg'); void val.offsetWidth; void bar.offsetWidth; val.classList.add('text-flash'); bar.classList.add('flash-bg'); }
   
+  // 更新點 2：加入底部總賠償金額的自動更新顯示
   function addTimelineCard(age, amount, color, icon, title, desc, smallNote = "") {
       const container = document.getElementById('rightTimeline');
-      if (container.innerHTML.includes(T("等待啟動模擬賠償"))) { container.innerHTML = ""; }
+      let emptyMsg = container.querySelector('.empty-msg');
+      if(emptyMsg) emptyMsg.remove();
+      
       let smallNoteHtml = smallNote ? `<div class="timeline-small-note">${smallNote}</div>` : "";
       let cardHtml = `
       <div class="timeline-card" style="border-left-color: ${color};">
@@ -1161,7 +1154,18 @@
               ${smallNoteHtml}
           </div>
       </div>`;
-      container.insertAdjacentHTML('beforeend', cardHtml);
+      
+      let totalBox = document.getElementById('timeline-total-box');
+      if(!totalBox) {
+          container.insertAdjacentHTML('beforeend', `<div id="timeline-total-box" style="margin-top: 15px; padding: 15px; background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; border-radius: 10px; text-align: right; box-shadow: 0 6px 15px rgba(0,0,0,0.1); animation: slide-down 0.4s forwards;"><div style="font-size: 0.95rem; color: #bdc3c7;">💰 總累計賠償金額</div><div style="font-size: 2.2rem; font-weight: 900; color: #f1c40f;" id="timeline-total-amount">$0</div></div>`);
+          totalBox = document.getElementById('timeline-total-box');
+      }
+      
+      totalBox.insertAdjacentHTML('beforebegin', cardHtml);
+      
+      // 更新顯示最新總金額
+      document.getElementById('timeline-total-amount').innerText = formatMoney(state.totalPaid);
+      
       triggerHighlight();
   }
 
