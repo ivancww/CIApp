@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.92)</title>
+<title>生活應急保險庫 (v2.93)</title>
 
 <!-- ⚡ 圖片秒開預加載技術 (Firebase) -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
@@ -1024,36 +1024,54 @@
       }
   }
 
-  // 修復點 2：新增一併刪除 Firebase 與 Google Sheet 檔案功能
+   // 修復點 2：新增一併刪除 Firebase (Firestore + Storage 實體檔案) 與 Google Sheet 檔案功能
   async function deleteCase(diseaseName, claimCount) {
-      if(!confirm(T("確定要刪除這個案例嗎？這將會從資料庫 (Firebase) 及試算表 (Google Sheet) 中永久移除。"))) return;
+      if(!confirm(T("確定要刪除這個案例嗎？這將會從資料庫 (Firebase) 及試算表 (Google Sheet) 中永久移除，並一併清空已上傳的附加檔案 (PDF/圖片)。"))) return;
       
       try {
-          // 1. 從 Firebase Firestore 刪除該紀錄
+          // 1. 從 Firebase Firestore 搜尋該紀錄
           const snapshot = await db.collection("claim_cases").where("disease", "==", diseaseName).get();
-          snapshot.forEach(doc => {
+          
+          // 使用 for...of 確保非同步 (await) 順序執行
+          for (const doc of snapshot.docs) {
               let data = doc.data();
               let hasMatch = data.claims && data.claims.some(c => c.seq === claimCount);
+              
               if(hasMatch) {
-                  db.collection("claim_cases").doc(doc.id).delete();
+                  // 2. 核心新增：先刪除 Firebase Storage 中的實體檔案 (PDF/JPG)
+                  if (data.files && data.files.length > 0) {
+                      for (const file of data.files) {
+                          try {
+                              // 透過儲存喺 Firestore 嘅 URL 搵返 Storage 裡面嘅檔案並刪除
+                              let fileRef = storage.refFromURL(file.url);
+                              await fileRef.delete();
+                              console.log("已成功刪除附加檔案: " + file.name);
+                          } catch (fileError) {
+                              console.error("刪除實體檔案失敗 (可能已被刪除):", fileError);
+                          }
+                      }
+                  }
+                  
+                  // 3. 刪除 Firestore 內嘅文字紀錄
+                  await db.collection("claim_cases").doc(doc.id).delete();
               }
-          });
+          }
 
-          // 2. 呼叫 GAS 刪除 Google Sheet 內的紀錄 
-          // (假定後端 GAS 有處理 action: 'delete' 的邏輯)
+          // 4. 呼叫 GAS 刪除 Google Sheet 內的紀錄 
           await fetch(GAS_URL, {
               method: 'POST',
               body: JSON.stringify({ action: 'delete', diseaseName: diseaseName, claimCount: claimCount }),
               headers: { 'Content-Type': 'text/plain;charset=utf-8' }
           });
 
-          alert(T("✅ 刪除成功"));
+          alert(T("✅ 刪除成功，相關附加檔案已一併清空"));
           loadCases(); // 重新載入列表
       } catch(e) {
           console.error(e);
           alert(T("❌ 刪除失敗，請檢查網絡"));
       }
   }
+
 
   // 從 Google Sheet 雙向同步下載資料
   async function loadCases() {
