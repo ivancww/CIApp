@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-HK">
+<html lang="zh-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.92)</title>
+<title>生活應急保險庫 (v2.93)</title>
 
 <!-- ⚡ 圖片秒開預加載技術 (Firebase) -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
@@ -20,7 +20,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
-  :root {
+  :root jk
     --primary: #2c3e50; --gold: #f1c40f; --accent: #e74c3c;
     --blue-base: #3498db; --green-base: #27ae60; --orange-base: #e67e22;
     --color-assets: #34495e; --color-assets-safe: #f1c40f;
@@ -997,78 +997,58 @@
               createdAt: firebase.firestore.FieldValue.serverTimestamp()
           });
 
-          // 將摘要同步至 Google Sheet
-          let firstClaimSeq = claims.length > 0 ? claims[0].seq : "首次";
-          let firstClaimAmt = claims.length > 0 ? claims[0].amt : "0";
+ // --- 修正後的完整 loadCases 與 deleteCase ---
 
-          const payload = {
-              diseaseName: disease,
-              claimCount: firstClaimSeq,
-              amount: firstClaimAmt
-          };
+// 1. 從 Google Sheet 雙向同步下載資料 (確保只有這一個 loadCases)
+async function loadCases() {
+    try {
+        document.getElementById('frontendCasesList').innerHTML = `<div style="text-align:center; color:#95a5a6; padding:30px;">${T('正在從 Google Sheet 下載最新理賠數據...')}</div>`;
+        document.getElementById('adminCasesList').innerHTML = `<div style="color:#95a5a6;">${T('載入中...')}</div>`;
+        
+        // 讀取 Google Sheet 資料
+        const response = await fetch(GAS_URL);
+        const claimsData = await response.json();
+        
+        let html = "";
+        let adminHtml = "";
+        
+        if(claimsData.length === 0) {
+            html = `<div style="text-align:center; color:#95a5a6; padding:30px;">${T('暫無案例')}</div>`;
+            adminHtml = html;
+        } else {
+            claimsData.forEach((claim, index) => {
+                html += `
+                <div class="case-card">
+                    <div class="case-title">🩺 ${claim.diseaseName}</div>
+                    <div class="case-claim-row">
+                        <span class="wait-badge">${T('第')} ${claim.claimCount} ${T('次理賠')}</span>
+                        <span class="amount-display">$${Number(claim.amount).toLocaleString()}</span>
+                    </div>
+                </div>`;
+                
+                // 這裡的 index 用作簡易刪除識別
+                adminHtml += `
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding:10px 0;">
+                    <div><strong>${claim.diseaseName}</strong> (${T('第')} ${claim.claimCount} ${T('次')})</div>
+                    <button onclick="deleteCase(${index})" style="background:#e74c3c; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">${T('刪除')}</button>
+                </div>`;
+            });
+        }
+        document.getElementById('frontendCasesList').innerHTML = html;
+        document.getElementById('adminCasesList').innerHTML = adminHtml;
+    } catch (error) {
+        console.error("載入失敗", error);
+        document.getElementById('frontendCasesList').innerHTML = `<div style="text-align:center; color:#e74c3c; padding:30px;">無法連接至 Google Sheet</div>`;
+    }
+}
 
-          await fetch(GAS_URL, {
-              method: 'POST',
-              body: JSON.stringify(payload),
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-          });
-          
-          document.getElementById('adminDisease').value = "";
-          document.getElementById('adminClaimsContainer').innerHTML = `<div class="claim-entry"><input type="text" placeholder="${T('次數 (例如: 首次)')}" class="claim-seq"><input type="text" placeholder="${T('賠償金額 ($)')}" class="claim-amt"><button class="btn-remove" onclick="this.parentElement.remove()">-</button></div>`;
-          document.getElementById('adminFiles').value = "";
-          
-          btn.innerText = T("✅ 成功發佈");
-          loadCases(); // 成功後即時刷新畫面
-      } catch (error) {
-          console.error(error);
-          alert(T("發生錯誤"));
-      } finally {
-          setTimeout(() => {
-              btn.innerText = T("📤 儲存同步至 Google Sheet");
-              btn.disabled = false;
-          }, 2000);
-      }
-  }
-
-  // 從 Google Sheet 雙向同步下載資料
-  async function loadCases() {
-      try {
-          document.getElementById('frontendCasesList').innerHTML = `<div style="text-align:center; color:#95a5a6; padding:30px;">${T('正在從 Google Sheet 下載最新理賠數據...')}</div>`;
-          document.getElementById('adminCasesList').innerHTML = `<div style="color:#95a5a6;">${T('載入中...')}</div>`;
-          
-          const response = await fetch(GAS_URL);
-          const claimsData = await response.json();
-          
-          let html = "";
-          let adminHtml = "";
-          
-          if(claimsData.length === 0) {
-              html = `<div style="text-align:center; color:#95a5a6; padding:30px;">${T('暫無案例')}</div>`;
-              adminHtml = html;
-          } else {
-              claimsData.forEach(claim => {
-                  html += `
-                  <div class="case-card">
-                      <div class="case-title">🩺 ${claim.diseaseName}</div>
-                      <div class="case-claim-row">
-                          <span class="wait-badge">${T('第')} ${claim.claimCount} ${T('次理賠')}</span>
-                          <span class="amount-display">$${Number(claim.amount).toLocaleString()}</span>
-                      </div>
-                  </div>`;
-                  
-                  adminHtml += `
-                  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding:10px 0;">
-                      <div><strong>${claim.diseaseName}</strong> (${T('第')} ${claim.claimCount} ${T('次')}) - $${Number(claim.amount).toLocaleString()}</div>
-                  </div>`;
-              });
-          }
-          document.getElementById('frontendCasesList').innerHTML = html;
-          document.getElementById('adminCasesList').innerHTML = adminHtml;
-      } catch (error) {
-          console.error("載入失敗", error);
-          document.getElementById('frontendCasesList').innerHTML = `<div style="text-align:center; color:#e74c3c; padding:30px;">無法連接至 Google Sheet，請檢查網絡</div>`;
-      }
-  }
+// 2. 刪除案例 (配合 Google Sheet 同步邏輯)
+async function deleteCase(index) {
+    if(confirm(T("確定要刪除此案例嗎？"))) {
+        // 這裏需要你喺 GAS 入面加入一個 doPost 刪除邏輯，或者直接喺 Sheet 刪除再重新同步
+        alert(T("請在 Google Sheet 表格中刪除該行，刪除後將自動同步。"));
+    }
+}
 
   // ==========================================
   // 工具與共用邏輯
