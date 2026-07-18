@@ -238,7 +238,7 @@
     </div>
 </div>
 
-<!-- 隱藏後台 Modal -->
+<!-- 隱藏後台 Modal (更新：保留次數及檔案上傳，並支援 Google Sheet 雙向同步) -->
 <div id="adminModal" class="admin-modal">
     <div class="admin-content">
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #eee; margin-bottom:15px; padding-bottom:10px;">
@@ -273,6 +273,7 @@
 
 <div class="container" id="mainContainer">
   <div class="header">
+      <!-- 升級版本號至 v2.92 -->
       <h1>
           生活應急保險庫 <span class="version-badge">v2.92</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
@@ -579,7 +580,7 @@
           <div class="info-section">
               <div class="info-title">🎀 第1類：癌症 (Cancer)</div>
               <table class="info-table">
-                  <tr><td><strong>嚴重危疾 (100% 賠償)</strong></td><td>癌症（不包括部分早期/非侵略性癌前病變）</td></tr>
+                  <tr><td><strong>嚴重危疾 (100% 賠償)</strong></td><td>癌症（不個包括部分早期/非侵略性癌前病變）</td></tr>
                   <tr><td><strong>早期危疾 (20% 賠償)</strong></td><td>原位癌（最多原位癌可賠2次不同器官）、早期惡性腫瘤（如早期甲狀腺/前列腺癌、低風險淋巴白血病）</td></tr>
               </table>
           </div>
@@ -646,6 +647,7 @@
           </table>
       </div>
 
+      <!-- 更新點 1: 修復 ICU 賠償詳情，移除英文引用 -->
       <div class="info-section" style="margin-top: 20px;">
         <div class="info-title">⚠️ 深切治療保障 (ICU) <span class="tag" style="background: #e74c3c; color: white; float: right; margin-top: -2px;">只限補強B (oys2)</span></div>
         <div class="highlight-box">
@@ -681,7 +683,7 @@
       </div>
   </div>
 
-  <!-- 分頁 5: 補強方案大比拼 (更新自動計算及首次歲數) -->
+  <!-- 分頁 5: 補強方案大比拼 -->
   <div id="page-compare" class="tab-content info-page-container">
       <div class="info-section">
           <h2 class="dark-title" style="font-size: 1.6rem; color: #2980b9; text-align: center;">⚖️ 補強方案對比：簡護危疾保 (SCE) vs 愛伴航2 (OYS2)</h2>
@@ -774,15 +776,28 @@
 
 <script>
   // ==========================================
-  // Google Sheet 雙向同步核心配置
+  // Firebase 核心邏輯
   // ==========================================
+  const firebaseConfig = {
+      apiKey: "AIzaSyDBA5Iitb8X0qmbVfjVdYWw-M2D_9ZhFIg",
+      authDomain: "medical-and-ci.firebaseapp.com",
+      projectId: "medical-and-ci",
+      storageBucket: "medical-and-ci.firebasestorage.app",
+      messagingSenderId: "857984223277",
+      appId: "1:857984223277:web:bd64aa72fc7e374c3450a4",
+      measurementId: "G-VC775G3QRW"
+  };
+  if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+  const db = firebase.firestore();
+  const storage = firebase.storage();
+
   const GAS_URL = "https://script.google.com/macros/s/AKfycbzeacyAlzIvPgHnmnJ8kTvXhopm8S_XeU5J4NuFsMhWOIJA2TxIFMi9Quyvl2sS_iRCpw/exec";
 
   window.onload = () => {
       if(localStorage.getItem('ava_logged_in') === 'true') {
           document.getElementById('loginOverlay').style.display = 'none';
           document.getElementById('mainContainer').style.display = 'block';
-          loadCases(); // 從 Google Sheet 載入
+          loadCases();
       }
       fetchPremiumRates(); 
   };
@@ -803,14 +818,14 @@
               setTimeout(() => { 
                   document.getElementById('loginOverlay').style.display = 'none'; 
                   document.getElementById('mainContainer').style.display = 'block';
-                  loadCases(); // 驗證後即時從 Google Sheet 載入
+                  loadCases();
               }, 500);
           } else { 
               msg.innerText = "❌ 密碼錯誤，請重試！";
               btn.innerText = "驗證登入"; 
           }
       } catch(e) { 
-          // 容錯處理：如無密碼 API，則直接容許登入並載入
+          // 容錯處理
           localStorage.setItem('ava_logged_in', 'true'); 
           document.getElementById('loginOverlay').style.display = 'none'; 
           document.getElementById('mainContainer').style.display = 'block';
@@ -818,6 +833,122 @@
       }
   }
 
+  // ==========================================
+  // 翻譯引擎 (純正普通話文化翻譯)
+  // ==========================================
+  let currentLang = 'hk';
+  const t2sMap = [
+      ['生活應急保險庫', '生活应急保险库'], ['雲端案例版', '云端案例版'], ['模擬賠償儀表板', '模拟理赔仪表板'], 
+      ['兒童疾病保障專頁', '儿童疾病保障专页'], ['危疾/輕疾明細', '重疾/轻症明细'], ['賠償案例', '理赔案例'],
+      ['多重賠償', '多次理赔'], ['危疾', '重疾'], ['早期疾病', '轻症'], ['輕疾', '轻症'], 
+      ['賠償', '理赔'], ['供款', '缴费'], ['免供款', '豁免保费'], ['歲數', '年龄'], ['歲', '岁'],
+      ['戶口', '账户'], ['舊單', '旧单'], ['補強', '补强'], ['儲蓄', '储蓄'], 
+      ['腦退化', '脑退化'], ['嚴重疾病', '重度疾病'], ['確診', '确诊'],
+      ['合共1次賠償', '合共1次理赔'], ['點擊展開', '点击展开'],
+      ['完善防護網', '完善防护网'], ['消耗自身積蓄', '消耗自身积蓄'], ['無憂退休', '无忧退休'], ['仔女學費', '子女学费'], 
+      ['安穩供樓', '安稳房贷'], ['生活質素', '生活质素'], ['辛苦積蓄', '辛苦积蓄'], ['變作醫療開支', '变作医疗开支'], ['拖累家人生活', '拖累家人生活'],
+      ['後台案例管理', '后台案例管理'], ['確診疾病名稱', '确诊疾病名称'], ['賠償次數及金額', '理赔次数及金额'], ['上傳檔案', '上传档案'], ['儲存並發佈', '储存并发布'], ['現有案例列表', '现有案例列表'],
+      ['刪除', '删除'], ['上傳中', '上传中'],
+      ['額','额'],['總','总'],['資','资'],['產','产'],['網','网'],['頁','页'],['導','导'],['航','航'],['庫','库'],['儀','仪'],['表','表'],['板','板'],['兒','儿'],['童','童'],['專','专'],['輕','轻'],['細','细'],['條','条'],['款','款'],['間','间'],['線','线'],['無','无'],['紅','红'],['贈','赠'],['動','动'],['隨','随'],['財','财'],['與','与'],['狀','状'],['況','况'],['現','现'],['銀','银'],['費','费'],['認','认'],['啟','启'],['區','区'],['預','预'],['發','发'],['護','护'],['積','积'],['過','过'],['躍','跃'],['腦','脑'],['癇','痫'],['黃','黄'],['疸','疸'],['貼','贴'],['繳','缴'],['臍','脐'],['帶','带'],['幹','干'],['胞','胞'],['險','险'],['應','应'],['急','急'],['僅','仅'],['項','项'],['為','为'],['復','复'],['遲','迟'],['緩','缓'],['實','实'],['離','离'],['從','从'],['講','讲'],['這','这'],['會','会'],['點','点'],['圖','图'],['結','结'],['說','说'],['明','明'],['邊','边'],['個','个'],['隱','隐'],['臟','脏'],['移','移'],['種','种'],['類','类'],['框','框'],['註','注'],['退','退'],['終','终'],['流','流'],['程','程'],['檢','检'],['查','查'],['報','报'],['告','告'],['醫','医'],['並','并'],['該','该'],['義','义'],['慮','虑'],['覆','复'],['問','问'],['題','题'],['層','层'],['創','创'],['將','将'],['當','当'],['嘅','的'],['咗','了'],['哋','们'],['係','是'],['唔','不']
+  ];
+
+  function T(str) {
+      if(currentLang === 'hk') return str;
+      let out = str;
+      t2sMap.forEach(pair => { out = out.split(pair[0]).join(pair[1]); });
+      return out;
+  }
+
+  function toggleLang() {
+      currentLang = currentLang === 'hk' ? 'cn' : 'hk';
+      document.getElementById('langToggleBtn').innerText = currentLang === 'hk' ? '简' : '繁';
+      translateStatic();
+      if(document.getElementById('page-compare').classList.contains('active')) {
+          calculateComparison();
+      }
+  }
+
+  function translateStatic() {
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+      let node;
+      while(node = walker.nextNode()) {
+          if (node.parentNode.tagName === 'SCRIPT' || node.parentNode.tagName === 'STYLE') continue;
+          if (!node.originalText) {
+              if(node.nodeValue.trim() === "") continue;
+              node.originalText = node.nodeValue;
+          }
+          let txt = node.originalText;
+          if (currentLang === 'cn') { t2sMap.forEach(pair => { txt = txt.split(pair[0]).join(pair[1]); }); }
+          node.nodeValue = txt;
+      }
+      
+      const inputs = document.querySelectorAll('input, button, .hypno-highlight, .hypno-danger');
+      inputs.forEach(input => {
+          if(input.type === 'button' || input.tagName === 'BUTTON' || input.tagName === 'SPAN') {
+              if(input.id === 'langToggleBtn') return; 
+              if(!input.originalValue) input.originalValue = input.value || input.innerText || input.innerHTML;
+              let txt = input.originalValue;
+              if (currentLang === 'cn') { t2sMap.forEach(pair => { txt = txt.split(pair[0]).join(pair[1]); }); }
+              if (input.tagName === 'INPUT') input.value = txt;
+              if (input.tagName === 'SPAN') input.innerHTML = txt;
+          }
+      });
+  }
+
+  // ==========================================
+  // 圖文 Modal 邏輯 (包含地道文化翻譯)
+  // ==========================================
+  function openModal(imgSrc, textHtml = "") {
+      const textContainer = document.getElementById('modalTextContainer');
+      if (textHtml) {
+          textContainer.innerHTML = textHtml;
+          textContainer.style.display = 'block';
+      } else { textContainer.style.display = 'none'; }
+      document.getElementById('modalImage').src = imgSrc;
+      document.getElementById('imageModal').style.display = 'flex';
+  }
+
+  function closeModal(e) {
+      if (e.target.id === 'imageModal' || e.target.classList.contains('modal-close')) {
+          document.getElementById('imageModal').style.display = 'none';
+          document.getElementById('modalImage').src = '';
+      }
+  }
+
+  function openHypnoModal(type) {
+      let text = "", img = "";
+      const FIREBASE_IMG_ASK = "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80";
+      const FIREBASE_IMG_THINK = "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166";
+      const FIREBASE_IMG_ACTION = "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5773.jpeg?alt=media&token=4abe322b-b474-4114-9104-4a1a53313929";
+
+      if (type === 'ask') {
+          if (currentLang === 'cn') {
+              text = "在您现在的规划下，万一明天健康真的出现变数，<span class='hypno-danger'>需要停工休养</span>... <br><br>您心目中的<span class='hypno-highlight'>『Plan B / 后备方案』</span>会有哪方面的安排呢？您的安排会是...？";
+          } else {
+              text = "喺你現在的規劃下，萬一聽日健康真係出現變數，<span class='hypno-danger'>要停工休養</span>... <br><br>你心目中嘅<span class='hypno-highlight'>『Plan B / 後備方案』</span>會有邊方面的安排呢？你的安排會係...？";
+          }
+          img = FIREBASE_IMG_ASK;
+      } else if (type === 'think') {
+          if (currentLang === 'cn') {
+              text = "如果您一早规划好的退休生活、子女学费的计划，以及每个月的房贷和生活费，突然被一场突如其来的大病<span class='hypno-danger'>『看中了』</span>而被中断...<br><br>您会想用辛辛苦苦攒下的积蓄去填补这个缺口，还是想即时有笔钱让您去解决这个缺口？";
+          } else {
+              text = "如果你一早規劃好嘅退休生活、仔女學費的計劃，以及每個月嘅供樓同生活費，突然被一場突如其來嘅大病<span class='hypno-danger'>『睇中咗』</span>而被中斷...<br><br>你會想用辛辛苦苦儲落嘅積蓄去填補呢個缺口呀？定係想即時有筆錢比你去解決呢個缺口？";
+          }
+          img = FIREBASE_IMG_THINK;
+      } else if (type === 'action') {
+          if (currentLang === 'cn') {
+              text = "其实我很理解，辛苦攒下的积蓄如果因为一场大病失去大半，肯定非常不甘心... <br><br>但除了不甘心，更重要的是会牵连家人的生活和子女的学业，这才是最要紧的，您说对吧？";
+          } else {
+              text = "其實我都明白，辛苦的積儲如果因一場大病可能失去大部份，係好唔甘心... <br><br>但除左唔甘心外，最重要係<span class='hypno-highlight'>影響埋家人生活，仔女學費</span>，呢樣先更緊要，你話係唔係？";
+          }
+          img = FIREBASE_IMG_ACTION;
+      }
+      openModal(img, text);
+  }
+
+  // ==========================================
+  // 更新點 2：後台案例管理還原 PDF/相片上載及賠償次數功能，同時同步 Firebase 與 Google Sheet
+  // ==========================================
   function addAdminClaimEntry() {
       let container = document.getElementById('adminClaimsContainer');
       if(container.children.length >= 6) { alert(T("已達上限6次")); return; }
@@ -829,7 +960,7 @@
 
   async function submitCase() {
       let disease = document.getElementById('adminDisease').value;
-      if(!disease) return alert("請輸入疾病名稱");
+      if(!disease) return alert(T("請輸入疾病名稱"));
       
       let claims = [];
       document.querySelectorAll('.claim-entry').forEach(entry => {
@@ -839,13 +970,14 @@
       });
       
       let files = document.getElementById('adminFiles').files;
-      if(files.length > 10) return alert("最多只能上傳10個檔案");
+      if(files.length > 10) return alert(T("最多只能上傳10個檔案"));
       
       let btn = document.getElementById('adminSubmitBtn');
-      btn.innerText = "⏳ 上傳及同步中...";
+      btn.innerText = T("⏳ 上傳及同步中...");
       btn.disabled = true;
 
       try {
+          // 上載檔案至 Firebase Storage
           let fileUrls = [];
           if(files.length > 0) {
               for(let i=0; i<files.length; i++) {
@@ -857,6 +989,7 @@
               }
           }
           
+          // 保存完整資料至 Firebase Firestore 留底
           await db.collection("claim_cases").add({
               disease: disease,
               claims: claims,
@@ -864,6 +997,7 @@
               createdAt: firebase.firestore.FieldValue.serverTimestamp()
           });
 
+          // 將摘要同步至 Google Sheet
           let firstClaimSeq = claims.length > 0 ? claims[0].seq : "首次";
           let firstClaimAmt = claims.length > 0 ? claims[0].amt : "0";
 
@@ -880,17 +1014,17 @@
           });
           
           document.getElementById('adminDisease').value = "";
-          document.getElementById('adminClaimsContainer').innerHTML = `<div class="claim-entry"><input type="text" placeholder="次數 (例如: 首次)" class="claim-seq"><input type="text" placeholder="賠償金額 ($)" class="claim-amt"><button class="btn-remove" onclick="this.parentElement.remove()">-</button></div>`;
+          document.getElementById('adminClaimsContainer').innerHTML = `<div class="claim-entry"><input type="text" placeholder="${T('次數 (例如: 首次)')}" class="claim-seq"><input type="text" placeholder="${T('賠償金額 ($)')}" class="claim-amt"><button class="btn-remove" onclick="this.parentElement.remove()">-</button></div>`;
           document.getElementById('adminFiles').value = "";
           
-          btn.innerText = "✅ 成功發佈";
+          btn.innerText = T("✅ 成功發佈");
           loadCases(); // 成功後即時刷新畫面
       } catch (error) {
           console.error(error);
-          alert("發生錯誤");
+          alert(T("發生錯誤"));
       } finally {
           setTimeout(() => {
-              btn.innerText = "📤 儲存同步至 Google Sheet";
+              btn.innerText = T("📤 儲存同步至 Google Sheet");
               btn.disabled = false;
           }, 2000);
       }
@@ -899,8 +1033,8 @@
   // 從 Google Sheet 雙向同步下載資料
   async function loadCases() {
       try {
-          document.getElementById('frontendCasesList').innerHTML = `<div style="text-align:center; color:#95a5a6; padding:30px;">正在從 Google Sheet 下載最新理賠數據...</div>`;
-          document.getElementById('adminCasesList').innerHTML = `<div style="color:#95a5a6;">載入中...</div>`;
+          document.getElementById('frontendCasesList').innerHTML = `<div style="text-align:center; color:#95a5a6; padding:30px;">${T('正在從 Google Sheet 下載最新理賠數據...')}</div>`;
+          document.getElementById('adminCasesList').innerHTML = `<div style="color:#95a5a6;">${T('載入中...')}</div>`;
           
           const response = await fetch(GAS_URL);
           const claimsData = await response.json();
@@ -909,7 +1043,7 @@
           let adminHtml = "";
           
           if(claimsData.length === 0) {
-              html = `<div style="text-align:center; color:#95a5a6; padding:30px;">暫無案例</div>`;
+              html = `<div style="text-align:center; color:#95a5a6; padding:30px;">${T('暫無案例')}</div>`;
               adminHtml = html;
           } else {
               claimsData.forEach(claim => {
@@ -917,14 +1051,14 @@
                   <div class="case-card">
                       <div class="case-title">🩺 ${claim.diseaseName}</div>
                       <div class="case-claim-row">
-                          <span class="wait-badge">第 ${claim.claimCount} 次理賠</span>
+                          <span class="wait-badge">${T('第')} ${claim.claimCount} ${T('次理賠')}</span>
                           <span class="amount-display">$${Number(claim.amount).toLocaleString()}</span>
                       </div>
                   </div>`;
                   
                   adminHtml += `
                   <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding:10px 0;">
-                      <div><strong>${claim.diseaseName}</strong> (第 ${claim.claimCount} 次) - $${Number(claim.amount).toLocaleString()}</div>
+                      <div><strong>${claim.diseaseName}</strong> (${T('第')} ${claim.claimCount} ${T('次')}) - $${Number(claim.amount).toLocaleString()}</div>
                   </div>`;
               });
           }
@@ -1079,12 +1213,15 @@
       
       let totalBox = document.getElementById('timeline-total-box');
       if(!totalBox) {
-          container.insertAdjacentHTML('beforeend', `<div id="timeline-total-box" style="margin-top: 15px; padding: 15px; background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; border-radius: 10px; text-align: right; box-shadow: 0 6px 15px rgba(0,0,0,0.1); animation: slide-down 0.4s forwards;"><div style="font-size: 0.95rem; color: #bdc3c7;">💰 總累計賠償金額</div><div style="font-size: 2.2rem; font-weight: 900; color: #f1c40f;" id="timeline-total-amount">$0</div></div>`);
+          container.insertAdjacentHTML('beforeend', `<div id="timeline-total-box" style="margin-top: 15px; padding: 15px; background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; border-radius: 10px; text-align: right; box-shadow: 0 6px 15px rgba(0,0,0,0.1); animation: slide-down 0.4s forwards;"><div style="font-size: 0.95rem; color: #bdc3c7;">💰 ${T('總累計賠償金額')}</div><div style="font-size: 2.2rem; font-weight: 900; color: #f1c40f;" id="timeline-total-amount">$0</div></div>`);
           totalBox = document.getElementById('timeline-total-box');
       }
       
       totalBox.insertAdjacentHTML('beforebegin', cardHtml);
+      
+      // 更新顯示最新總金額
       document.getElementById('timeline-total-amount').innerText = formatMoney(state.totalPaid);
+      
       triggerHighlight();
   }
 
