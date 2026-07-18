@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.29)</title>
+<title>生活應急保險庫 (v2.30)</title>
 
 <!-- ⚡ 圖片秒開預加載技術 (Firebase) -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
@@ -84,19 +84,22 @@
 
   /* 新增：圖文並茂 Modal CSS */
   .modal-text-area { padding: 20px 25px; font-size: 1.05rem; color: #34495e; line-height: 1.6; border-bottom: 2px dashed #ecf0f1; background: #fdfdfd; border-radius: 8px 8px 0 0; }
-  .modal-img-area { background: #ecf0f1; display: flex; justify-content: center; align-items: center; padding: 0; border-radius: 0 0 8px 8px; }
-  .modal-img-area img { width: 100%; max-height: 60vh; object-fit: contain; display: block; border-radius: 0 0 8px 8px; }
+  
+  /* 彈出圖片置中 Modal (已更新置中及70%大小) */
+  .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; opacity: 0; animation: fadeIn 0.3s forwards; }
+  @keyframes fadeIn { to { opacity: 1; } }
+  .modal-content { background: rgba(255, 255, 255, 0.95); width: 70vw !important; height: 70vh !important; max-width: none; border-radius: 12px; position: relative; animation: slideUp 0.3s forwards; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: auto; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
+  @keyframes slideUp { from { transform: translateY(20px); } to { transform: translateY(0); } }
+  
+  .modal-img-area { background: transparent; display: flex; justify-content: center; align-items: center; padding: 0; width: 100%; height: 100%; overflow: auto; border-radius: 0 0 8px 8px; }
+  .modal-img-area img { width: 100%; height: 100%; object-fit: contain; display: block; border-radius: 0 0 8px 8px; transition: transform 0.3s ease; cursor: zoom-in; }
+  .modal-img-area img:hover { transform: scale(1.5); cursor: zoom-out; }
+
+  .modal-close { position: absolute; top: 10px; right: 15px; background: rgba(231, 76, 60, 0.1); color: #e74c3c; width: 32px; height: 32px; border-radius: 50%; font-size: 1.2rem; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; z-index: 10; }
+  .modal-close:hover { background: #e74c3c; color: white; transform: scale(1.1); }
 
   .view-img-btn { display: inline-block; width: 100%; text-align: center; color: #3498db; margin-top: 10px; margin-bottom: 10px; font-weight: bold; padding: 10px; border: 2px dashed #3498db; border-radius: 6px; background: #f4f9fc; text-decoration: none; transition: 0.2s; box-sizing: border-box; cursor: pointer; font-size: 1rem; letter-spacing: 1px; }
   .view-img-btn:hover { background: #eaf2f8; color: #2980b9; border-style: solid; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2); }
-
-  /* 彈出圖片置中 Modal */
-  .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; opacity: 0; animation: fadeIn 0.3s forwards; }
-  @keyframes fadeIn { to { opacity: 1; } }
-  .modal-content { background: white; max-width: 550px; width: 100%; max-height: 90vh; border-radius: 12px; position: relative; animation: slideUp 0.3s forwards; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
-  @keyframes slideUp { from { transform: translateY(20px); } to { transform: translateY(0); } }
-  .modal-close { position: absolute; top: 10px; right: 15px; background: rgba(231, 76, 60, 0.1); color: #e74c3c; width: 32px; height: 32px; border-radius: 50%; font-size: 1.2rem; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; z-index: 10; }
-  .modal-close:hover { background: #e74c3c; color: white; transform: scale(1.1); }
 
   @keyframes flash-bg { 0% { background-color: rgba(46, 204, 113, 0.4); box-shadow: 0 0 15px rgba(46, 204, 113, 0.8); } 10% { background-color: rgba(46, 204, 113, 0.6); box-shadow: 0 0 20px rgba(46, 204, 113, 1); } 100% { background-color: #f0f3f4; box-shadow: none; } }
   @keyframes flash-text { 0% { color: #27ae60; transform: scale(1.1); text-shadow: 0 0 10px rgba(39, 174, 96, 0.5); } 10% { color: #e74c3c; transform: scale(1.2); text-shadow: 0 0 15px rgba(231, 76, 60, 0.8); } 100% { color: #e74c3c; transform: scale(1); text-shadow: none;} }
@@ -274,7 +277,7 @@
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v2.29</span>
+          生活應急保險庫 <span class="version-badge">v2.30</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
       <div class="header-date" id="currentDateDisplay"></div>
@@ -645,6 +648,28 @@
               </tbody>
           </table>
       </div>
+
+      <!-- 新增：ICU 深切治療保障 -->
+      <div class="info-section">
+        <div class="info-title">⚠️ 深切治療保障 (ICU) <span class="tag" style="background: #e74c3c; color: white;">只限 OYS 2</span></div>
+        <div class="highlight-box">
+          保障不限於已定義的危疾！涵蓋因<span style="color: #e74c3c; font-weight: bold;">危疾以外的其他健康問題（包括未知的新型傳染病如 COVID-19 及嚴重意外受傷）</span>而需要入住深切治療病房的情況，為未來未知的健康挑戰提供最強後盾。
+        </div>
+        <table class="info-table">
+          <tr>
+            <th style="width: 50%;">級別一</th>
+            <th>級別二</th>
+          </tr>
+          <tr>
+            <td>入住深切治療病房連續 72 小時或以上</td>
+            <td>入住深切治療病房及使用侵入性維生支持連續 120 小時或以上，並接受按自願醫保計劃中的手術表分類為複雜的手術</td>
+          </tr>
+          <tr>
+            <td style="color: #27ae60; font-weight: bold;">預支高達原有保額的 20%</td>
+            <td style="color: #27ae60; font-weight: bold;">預支高達原有保額的 100%</td>
+          </tr>
+        </table>
+      </div>
   </div>
   
   <!-- 分頁 4: 賠償案例 -->
@@ -684,7 +709,8 @@
               
               <div class="input-group" style="justify-content:center; margin-bottom:15px;">
                   <label style="flex:none; font-weight:bold; color:#34495e;">獨立保額 $</label>
-                  <input type="text" id="sceSum" value="1,000,000" onkeyup="formatOnly(this); calculateComparison();" style="width:120px; color:#2c3e50; font-size:1.1rem;">
+                  <input type="text" id="sceSum" value="1,000,000" onkeyup="formatOnly(this);" style="width:120px; color:#2c3e50; font-size:1.1rem;">
+                  <button class="btn-undo-small btn-blue" onclick="calculateComparison()">確認</button>
               </div>
               
               <div class="action-row" style="justify-content:space-between; margin-bottom:10px;">
@@ -706,7 +732,8 @@
               
               <div class="input-group" style="justify-content:center; margin-bottom:15px;">
                   <label style="flex:none; font-weight:bold; color:#27ae60;">獨立保額 $</label>
-                  <input type="text" id="oys2Sum" value="1,000,000" onkeyup="formatOnly(this); calculateComparison();" style="width:120px; color:#2c3e50; font-size:1.1rem;">
+                  <input type="text" id="oys2Sum" value="1,000,000" onkeyup="formatOnly(this);" style="width:120px; color:#2c3e50; font-size:1.1rem;">
+                  <button class="btn-undo-small btn-blue" onclick="calculateComparison()">確認</button>
               </div>
 
               <div class="action-row" style="justify-content:space-between; margin-bottom:10px;">
@@ -767,7 +794,7 @@
   const db = firebase.firestore();
   const storage = firebase.storage();
 
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbwmpVo8uGg8ZaC-oTFKdTdLAgCibw8FhD0UpcuMA6wWKwV0GWPWhO7hfFqL4NYRds2v/exec";
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbzeacyAlzIvPgHnmnJ8kTvXhopm8S_XeU5J4NuFsMhWOIJA2TxIFMi9Quyvl2sS_iRCpw/exec";
 
   window.onload = () => {
       if(localStorage.getItem('ava_logged_in') === 'true') {
@@ -1163,6 +1190,11 @@
       </div>`;
       container.insertAdjacentHTML('beforeend', cardHtml);
       triggerHighlight();
+
+      const analysisPanel = document.querySelector('.analysis-panel');
+      if (analysisPanel) {
+          analysisPanel.scrollTo({ top: analysisPanel.scrollHeight, behavior: 'smooth' });
+      }
   }
 
   function claimEarlyStage() { 
