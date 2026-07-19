@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.95)</title>
+<title>生活應急保險庫 (v2.94)</title>
 
 <!-- ⚡ 圖片秒開預加載技術 (Firebase) -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
@@ -16,8 +16,6 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <!-- Firebase Storage -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
   :root {
@@ -33,14 +31,12 @@
   /* 🛡️ 登入介面 CSS */
   #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; transition: opacity 0.5s; }
   .login-box { background: rgba(255,255,255,0.1); padding: 40px; border-radius: 12px; backdrop-filter: blur(10px); text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); }
-  .login-box h2 { margin-top: 0; margin-bottom: 20px; letter-spacing: 1px; }
+  .login-box h2 { margin-top: 0; margin-bottom: 10px; letter-spacing: 1px; }
+  .login-box p { font-size: 0.9rem; color: #bdc3c7; margin-bottom: 20px; }
   .login-box input { padding: 12px 15px; border-radius: 6px; border: none; font-size: 1.1rem; margin-bottom: 20px; width: 250px; text-align: center; outline: none; }
   .login-box button { padding: 12px 30px; font-size: 1.1rem; background: var(--gold); color: #2c3e50; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; width: 100%; }
   .login-box button:hover { background: #f39c12; transform: translateY(-2px); }
-  #login-msg { margin-top: 15px; font-size: 0.9rem; color: #f1c40f; min-height: 20px; }
-
-  body.readonly-mode .btn-confirm, body.readonly-mode .btn-reset-link, body.readonly-mode .data-tools { display: none !important; }
-  body.readonly-mode input, body.readonly-mode select { background-color: #f9f9f9 !important; color: #555 !important; border-color: #ddd !important; pointer-events: none; }
+  #login-msg { margin-top: 15px; font-size: 0.9rem; color: #e74c3c; font-weight: bold; min-height: 20px; }
 
   .input-wrapper { position: relative; flex: 1; display: flex; }
   .container { max-width: 1200px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: none; }
@@ -86,9 +82,6 @@
   .modal-text-area { padding: 20px 25px; font-size: 1.05rem; color: #34495e; line-height: 1.6; border-bottom: 2px dashed #ecf0f1; background: #fdfdfd; border-radius: 8px 8px 0 0; }
   .modal-img-area { background: #ecf0f1; display: flex; justify-content: center; align-items: center; padding: 0; border-radius: 0 0 8px 8px; }
   .modal-img-area img { width: 100%; max-height: 60vh; object-fit: contain; display: block; border-radius: 0 0 8px 8px; }
-
-  .view-img-btn { display: inline-block; width: 100%; text-align: center; color: #3498db; margin-top: 10px; margin-bottom: 10px; font-weight: bold; padding: 10px; border: 2px dashed #3498db; border-radius: 6px; background: #f4f9fc; text-decoration: none; transition: 0.2s; box-sizing: border-box; cursor: pointer; font-size: 1rem; letter-spacing: 1px; }
-  .view-img-btn:hover { background: #eaf2f8; color: #2980b9; border-style: solid; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2); }
 
   /* 彈出圖片置中 Modal */
   .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; opacity: 0; animation: fadeIn 0.3s forwards; }
@@ -221,7 +214,8 @@
 <div id="loginOverlay">
     <div class="login-box">
         <h2>🔒 生活應急保險庫系統</h2>
-        <input type="password" id="passwordInput" placeholder="請輸入訪問密碼" onkeypress="if(event.key === 'Enter') checkLogin()">
+        <p>系統需要驗證您的授權身份</p>
+        <input type="password" id="passwordInput" placeholder="請輸入登入密碼" onkeypress="if(event.key === 'Enter') checkLogin()">
         <button id="loginBtn" onclick="checkLogin()">驗證登入</button>
         <div id="login-msg"></div>
     </div>
@@ -266,7 +260,7 @@
         <button id="adminSubmitBtn" onclick="submitCase()" style="width:100%; padding:12px; background:#3498db; color:white; font-size:1.1rem; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-top: 15px;">📤 儲存同步至 Google Sheet</button>
         
         <hr style="margin: 25px 0; border-top: 1px dashed #ccc;">
-        <h3 style="margin-top:0;">🗑️ 現有案例列表</h3>
+        <h3 style="margin-top:0;">🗑️ 現有案例列表 (附刪除功能)</h3>
         <div id="adminCasesList">由 Google Sheet 自動載入中...</div>
     </div>
 </div>
@@ -647,7 +641,6 @@
           </table>
       </div>
 
-      <!-- 更新點 1: 修復 ICU 賠償詳情，移除英文引用 -->
       <div class="info-section" style="margin-top: 20px;">
         <div class="info-title">⚠️ 深切治療保障 (ICU) <span class="tag" style="background: #e74c3c; color: white; float: right; margin-top: -2px;">只限補強B (oys2)</span></div>
         <div class="highlight-box">
@@ -825,11 +818,10 @@
               btn.innerText = "驗證登入"; 
           }
       } catch(e) { 
-          // 容錯處理
-          localStorage.setItem('ava_logged_in', 'true'); 
-          document.getElementById('loginOverlay').style.display = 'none'; 
-          document.getElementById('mainContainer').style.display = 'block';
-          loadCases();
+          // 修復點 1: 修正強行登入錯誤邏輯，正確進行阻擋與提示
+          console.error(e);
+          msg.innerText = "❌ 系統連線錯誤，請檢查網絡後重試！";
+          btn.innerText = "驗證登入";
       }
   }
 
@@ -947,7 +939,7 @@
   }
 
   // ==========================================
-  // 更新點 2：後台案例管理還原 PDF/相片上載及賠償次數功能，同時同步 Firebase 與 Google Sheet
+  // 後台案例管理 (包含上載修正及刪除功能)
   // ==========================================
   function addAdminClaimEntry() {
       let container = document.getElementById('adminClaimsContainer');
@@ -1001,13 +993,11 @@
           let firstClaimSeq = claims.length > 0 ? claims[0].seq : "首次";
           let firstClaimAmt = claims.length > 0 ? claims[0].amt : "0";
 
-          // 確保 HTML 內的這一部分順序與 GAS 的 appendRow([data.diseaseName, data.claimCount, data.amount]) 一致
           const payload = {
-              diseaseName: disease,     // 對應 GAS 的 data.diseaseName
-              claimCount: firstClaimSeq,// 對應 GAS 的 data.claimCount
-              amount: firstClaimAmt     // 對應 GAS 的 data.amount
+              diseaseName: disease,
+              claimCount: firstClaimSeq,
+              amount: firstClaimAmt
           };
-
 
           await fetch(GAS_URL, {
               method: 'POST',
@@ -1019,18 +1009,69 @@
           document.getElementById('adminClaimsContainer').innerHTML = `<div class="claim-entry"><input type="text" placeholder="${T('次數 (例如: 首次)')}" class="claim-seq"><input type="text" placeholder="${T('賠償金額 ($)')}" class="claim-amt"><button class="btn-remove" onclick="this.parentElement.remove()">-</button></div>`;
           document.getElementById('adminFiles').value = "";
           
-          btn.innerText = T("✅ 成功發佈");
-          loadCases(); // 成功後即時刷新畫面
+          // 修復點 2：確保按鈕文字確實改變，不會卡住在「上傳中」
+          btn.innerText = T("✅ 發佈成功");
+          await loadCases(); // 等待更新完成
       } catch (error) {
           console.error(error);
-          alert(T("發生錯誤"));
+          btn.innerText = T("❌ 發生錯誤，請重試");
+          alert(T("上載或同步過程發生錯誤，請確保檔案大小適中或網絡正常。"));
       } finally {
           setTimeout(() => {
               btn.innerText = T("📤 儲存同步至 Google Sheet");
               btn.disabled = false;
-          }, 2000);
+          }, 3000); // 加長顯示成功訊息的時間
       }
   }
+
+   // 修復點 2：新增一併刪除 Firebase (Firestore + Storage 實體檔案) 與 Google Sheet 檔案功能
+  async function deleteCase(diseaseName, claimCount) {
+      if(!confirm(T("確定要刪除這個案例嗎？這將會從資料庫 (Firebase) 及試算表 (Google Sheet) 中永久移除，並一併清空已上傳的附加檔案 (PDF/圖片)。"))) return;
+      
+      try {
+          // 1. 從 Firebase Firestore 搜尋該紀錄
+          const snapshot = await db.collection("claim_cases").where("disease", "==", diseaseName).get();
+          
+          // 使用 for...of 確保非同步 (await) 順序執行
+          for (const doc of snapshot.docs) {
+              let data = doc.data();
+              let hasMatch = data.claims && data.claims.some(c => c.seq === claimCount);
+              
+              if(hasMatch) {
+                  // 2. 核心新增：先刪除 Firebase Storage 中的實體檔案 (PDF/JPG)
+                  if (data.files && data.files.length > 0) {
+                      for (const file of data.files) {
+                          try {
+                              // 透過儲存喺 Firestore 嘅 URL 搵返 Storage 裡面嘅檔案並刪除
+                              let fileRef = storage.refFromURL(file.url);
+                              await fileRef.delete();
+                              console.log("已成功刪除附加檔案: " + file.name);
+                          } catch (fileError) {
+                              console.error("刪除實體檔案失敗 (可能已被刪除):", fileError);
+                          }
+                      }
+                  }
+                  
+                  // 3. 刪除 Firestore 內嘅文字紀錄
+                  await db.collection("claim_cases").doc(doc.id).delete();
+              }
+          }
+
+          // 4. 呼叫 GAS 刪除 Google Sheet 內的紀錄 
+          await fetch(GAS_URL, {
+              method: 'POST',
+              body: JSON.stringify({ action: 'delete', diseaseName: diseaseName, claimCount: claimCount }),
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+          });
+
+          alert(T("✅ 刪除成功，相關附加檔案已一併清空"));
+          loadCases(); // 重新載入列表
+      } catch(e) {
+          console.error(e);
+          alert(T("❌ 刪除失敗，請檢查網絡"));
+      }
+  }
+
 
   // 從 Google Sheet 雙向同步下載資料
   async function loadCases() {
@@ -1058,9 +1099,11 @@
                       </div>
                   </div>`;
                   
+                  // 修復點 2：加入垃圾桶按鈕以支援一鍵刪除
                   adminHtml += `
-                  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding:10px 0;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed #eee; padding:10px 0;">
                       <div><strong>${claim.diseaseName}</strong> (${T('第')} ${claim.claimCount} ${T('次')}) - $${Number(claim.amount).toLocaleString()}</div>
+                      <button onclick="deleteCase('${claim.diseaseName}', '${claim.claimCount}')" style="background:#e74c3c; color:white; border:none; padding:5px 12px; border-radius:4px; font-weight:bold; cursor:pointer; font-size:0.85rem;">🗑️ 刪除</button>
                   </div>`;
               });
           }
@@ -1103,7 +1146,7 @@
   }
 
   // ==========================================
-  // 主頁儀表板邏輯 (完美保留 V2.18 原有操作)
+  // 主頁儀表板邏輯
   // ==========================================
   let config = { sumExisting: 200000, sumTerm: 500000, sumWhole: 500000, sumUpgradeB: 500000, sumBasicPool: 1200000, existingMulti: false, existingCancerWait: 5, startAge: 0, assets: 500000, expense: 30000 };
   let state = { isConfirmed: false, balance: 1000000, totalPaid: 0, isCriticalClaimed: false, hasStartedCancerMonthly: false, cancerCountNew: 0, cancerCountOld: 0, nextClaimAge_New: Infinity, nextClaimAge_Old: Infinity, heartCount: 0, dementiaLumpSumClaimed: false, dementiaYearsPaid: 0, cancerMonthsPaid: 0, accEarly: 0, accCancerLump: 0, accCancerMonthly: 0, accHeart: 0, accDementia: 0, accChild: 0, currentAge: 30, claimCount: 0, bonusPaid: 0 };
