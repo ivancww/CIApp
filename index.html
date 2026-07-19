@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v2.92)</title>
+<title>生活應急保險庫 (v2.95)</title>
 
 <!-- ⚡ 圖片秒開預加載技術 (Firebase) -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
@@ -1001,11 +1001,13 @@
           let firstClaimSeq = claims.length > 0 ? claims[0].seq : "首次";
           let firstClaimAmt = claims.length > 0 ? claims[0].amt : "0";
 
+          // 確保 HTML 內的這一部分順序與 GAS 的 appendRow([data.diseaseName, data.claimCount, data.amount]) 一致
           const payload = {
-              diseaseName: disease,
-              claimCount: firstClaimSeq,
-              amount: firstClaimAmt
+              diseaseName: disease,     // 對應 GAS 的 data.diseaseName
+              claimCount: firstClaimSeq,// 對應 GAS 的 data.claimCount
+              amount: firstClaimAmt     // 對應 GAS 的 data.amount
           };
+
 
           await fetch(GAS_URL, {
               method: 'POST',
