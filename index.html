@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v3.10)</title>
+<title>生活應急保險庫 (v3.11)</title>
 
 <!-- ⚡ 圖片預加載技術 (Firebase) -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
@@ -230,7 +230,7 @@
 
 <div class="container" id="mainContainer">
   <div class="header">
-      <h1>生活應急保險庫 <span class="version-badge">v3.10</span><button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button></h1>
+      <h1>生活應急保險庫 <span class="version-badge">v3.11</span><button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button></h1>
       <div class="header-date" id="currentDateDisplay"></div>
   </div>
 
@@ -511,132 +511,26 @@
   const GAS_CASE_URL = "https://script.google.com/macros/s/AKfycbzeacyAlzIvPgHnmnJ8kTvXhopm8S_XeU5J4NuFsMhWOIJA2TxIFMi9Quyvl2sS_iRCpw/exec";
   const GAS_COMPARE_RATES_URL = "https://script.google.com/macros/s/AKfycbwUKoJ7p9XMP3VKv4h_p5o95H0_TFIMzk2rM_JD_C5ZRsrlUCF8xWT7LrODnvntKDaRRQ/exec";
 
-  const firebaseConfig = {
-      apiKey: "AIzaSyDBA5Iitb8X0qmbVfjVdYWw-M2D_9ZhFIg",
-      authDomain: "medical-and-ci.firebaseapp.com",
-      projectId: "medical-and-ci",
-      storageBucket: "medical-and-ci.firebasestorage.app",
-      messagingSenderId: "857984223277",
-      appId: "1:857984223277:web:bd64aa72fc7e374c3450a4",
-      measurementId: "G-VC775G3QRW"
-  };
+  const firebaseConfig = { apiKey: "AIzaSyDBA5Iitb8X0qmbVfjVdYWw-M2D_9ZhFIg", authDomain: "medical-and-ci.firebaseapp.com", projectId: "medical-and-ci", storageBucket: "medical-and-ci.firebasestorage.app", messagingSenderId: "857984223277", appId: "1:857984223277:web:bd64aa72fc7e374c3450a4", measurementId: "G-VC775G3QRW" };
   if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-  const db = firebase.firestore();
-  const storage = firebase.storage();
+  const db = firebase.firestore(); const storage = firebase.storage();
 
-  // 🛡️ 網頁載入時自動讀取 localStorage 判斷是否已經登入過
-  window.onload = () => {
-      if(localStorage.getItem('ava_logged_in') === 'true') {
-          document.getElementById('loginOverlay').style.display = 'none';
-          document.getElementById('mainContainer').style.display = 'block';
-          loadCases();
-      }
-      fetchPremiumRates(); 
-  };
+  window.onload = () => { if(localStorage.getItem('ava_logged_in') === 'true') { document.getElementById('loginOverlay').style.display = 'none'; document.getElementById('mainContainer').style.display = 'block'; loadCases(); } fetchPremiumRates(); };
 
-  async function checkLogin() {
-      const pwd = document.getElementById('passwordInput').value;
-      const btn = document.getElementById('loginBtn');
-      const msg = document.getElementById('login-msg');
-      if(!pwd) { msg.innerText = "請輸入密碼！"; return; }
-      btn.innerText = "驗證中...";
-      try {
-          const response = await fetch(GAS_LOGIN_URL + "?pwd=" + encodeURIComponent(pwd), { method: "GET" });
-          const data = await response.json();
-          if(data.status === "success") {
-              // 登入成功後，將紀錄永久保存在瀏覽器本地
-              localStorage.setItem('ava_logged_in', 'true'); 
-              document.getElementById('loginOverlay').style.opacity = '0';
-              setTimeout(() => { 
-                  document.getElementById('loginOverlay').style.display = 'none'; 
-                  document.getElementById('mainContainer').style.display = 'block';
-                  loadCases();
-              }, 500);
-          } else { msg.innerText = "❌ 密碼錯誤，請重試！"; btn.innerText = "驗證登入"; }
-      } catch(e) { console.error(e); msg.innerText = "❌ 驗證連線失敗，請稍後重試！"; btn.innerText = "驗證登入"; }
-  }
+  async function checkLogin() { const pwd = document.getElementById('passwordInput').value; const btn = document.getElementById('loginBtn'); const msg = document.getElementById('login-msg'); if(!pwd) { msg.innerText = "請輸入密碼！"; return; } btn.innerText = "驗證中..."; try { const response = await fetch(GAS_LOGIN_URL + "?pwd=" + encodeURIComponent(pwd), { method: "GET" }); const data = await response.json(); if(data.status === "success") { localStorage.setItem('ava_logged_in', 'true'); document.getElementById('loginOverlay').style.opacity = '0'; setTimeout(() => { document.getElementById('loginOverlay').style.display = 'none'; document.getElementById('mainContainer').style.display = 'block'; loadCases(); }, 500); } else { msg.innerText = "❌ 密碼錯誤，請重試！"; btn.innerText = "驗證登入"; } } catch(e) { console.error(e); msg.innerText = "❌ 驗證連線失敗，請稍後重試！"; btn.innerText = "驗證登入"; } }
 
-  // 賠償案例同步載入
-  async function loadCases() {
-      try {
-          document.getElementById('frontendCasesList').innerHTML = `<div style="text-align:center; color:#95a5a6; padding:30px;">${T('正在從 Google Sheet 下載最新理賠數據...')}</div>`;
-          document.getElementById('adminCasesList').innerHTML = `<div style="color:#95a5a6;">${T('載入中...')}</div>`;
-          const response = await fetch(GAS_CASE_URL, { method: "GET", redirect: "follow" });
-          const claimsData = await response.json();
-          let html = ""; let adminHtml = "";
-          if(claimsData.length === 0) {
-              html = `<div style="text-align:center; color:#95a5a6; padding:30px;">${T('暫無案例')}</div>`; adminHtml = html;
-          } else {
-              claimsData.forEach(claim => {
-                  html += `<div class="case-card"><div class="case-title">🩺 ${claim.diseaseName}</div><div class="case-claim-row"><span class="wait-badge">${T('第')} ${claim.claimCount} ${T('次理賠')}</span><span class="amount-display">$${Number(claim.amount).toLocaleString()}</span></div></div>`;
-                  adminHtml += `<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed #eee; padding:10px 0;"><div><strong>${claim.diseaseName}</strong> (${T('第')} ${claim.claimCount} ${T('次')}) - $${Number(claim.amount).toLocaleString()}</div><button onclick="deleteCase('${claim.diseaseName}', '${claim.claimCount}')" style="background:#e74c3c; color:white; border:none; padding:5px 12px; border-radius:4px; font-weight:bold; cursor:pointer; font-size:0.85rem;">🗑️ 刪除</button></div>`;
-              });
-          }
-          document.getElementById('frontendCasesList').innerHTML = html; document.getElementById('adminCasesList').innerHTML = adminHtml;
-      } catch (error) {
-          console.error("載入失敗", error);
-          document.getElementById('frontendCasesList').innerHTML = `<div style="text-align:center; color:#e74c3c; padding:30px;">無法連接至 Google Sheet，請檢查網絡</div>`;
-      }
-  }
+  async function loadCases() { try { document.getElementById('frontendCasesList').innerHTML = `<div style="text-align:center; color:#95a5a6; padding:30px;">${T('正在從 Google Sheet 下載最新理賠數據...')}</div>`; document.getElementById('adminCasesList').innerHTML = `<div style="color:#95a5a6;">${T('載入中...')}</div>`; const response = await fetch(GAS_CASE_URL, { method: "GET", redirect: "follow" }); const claimsData = await response.json(); let html = ""; let adminHtml = ""; if(claimsData.length === 0) { html = `<div style="text-align:center; color:#95a5a6; padding:30px;">${T('暫無案例')}</div>`; adminHtml = html; } else { claimsData.forEach(claim => { html += `<div class="case-card"><div class="case-title">🩺 ${claim.diseaseName}</div><div class="case-claim-row"><span class="wait-badge">${T('第')} ${claim.claimCount} ${T('次理賠')}</span><span class="amount-display">$${Number(claim.amount).toLocaleString()}</span></div></div>`; adminHtml += `<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed #eee; padding:10px 0;"><div><strong>${claim.diseaseName}</strong> (${T('第')} ${claim.claimCount} ${T('次')}) - $${Number(claim.amount).toLocaleString()}</div><button onclick="deleteCase('${claim.diseaseName}', '${claim.claimCount}')" style="background:#e74c3c; color:white; border:none; padding:5px 12px; border-radius:4px; font-weight:bold; cursor:pointer; font-size:0.85rem;">🗑️ 刪除</button></div>`; }); } document.getElementById('frontendCasesList').innerHTML = html; document.getElementById('adminCasesList').innerHTML = adminHtml; } catch (error) { console.error("載入失敗", error); document.getElementById('frontendCasesList').innerHTML = `<div style="text-align:center; color:#e74c3c; padding:30px;">無法連接至 Google Sheet，請檢查網絡</div>`; } }
 
-  // 後台上傳與同步功能
-  async function submitCase() {
-      let disease = document.getElementById('adminDisease').value; if(!disease) return alert(T("請輸入疾病名稱"));
-      let claims = [];
-      document.querySelectorAll('.claim-entry').forEach(entry => {
-          let seq = entry.querySelector('.claim-seq').value; let amt = entry.querySelector('.claim-amt').value;
-          if(seq || amt) claims.push({seq: seq, amt: amt});
-      });
-      let files = document.getElementById('adminFiles').files; if(files.length > 10) return alert(T("最多只能上傳10個檔案"));
-      let btn = document.getElementById('adminSubmitBtn'); btn.innerText = T("⏳ 上傳及同步中..."); btn.disabled = true;
-      try {
-          let fileUrls = [];
-          if(files.length > 0) {
-              for(let i=0; i<files.length; i++) {
-                  let f = files[i]; let ref = storage.ref('cases/' + Date.now() + '_' + f.name);
-                  await ref.put(f); let url = await ref.getDownloadURL(); fileUrls.push({name: f.name, url: url});
-              }
-          }
-          await db.collection("claim_cases").add({ disease: disease, claims: claims, files: fileUrls, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-          let firstClaimSeq = claims.length > 0 ? claims[0].seq : "首次"; let firstClaimAmt = claims.length > 0 ? claims[0].amt : "0";
-          await fetch(GAS_CASE_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify({ diseaseName: disease, claimCount: firstClaimSeq, amount: firstClaimAmt }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } });
-          document.getElementById('adminDisease').value = ""; document.getElementById('adminFiles').value = "";
-          btn.innerText = T("✅ 發佈成功"); await loadCases();
-      } catch (error) { console.error(error); alert(T("同步過程發生錯誤，請重試。")); } finally { setTimeout(() => { btn.innerText = T("📤 儲存同步至 Google Sheet"); btn.disabled = false; }, 3000); }
-  }
+  async function submitCase() { let disease = document.getElementById('adminDisease').value; if(!disease) return alert(T("請輸入疾病名稱")); let claims = []; document.querySelectorAll('.claim-entry').forEach(entry => { let seq = entry.querySelector('.claim-seq').value; let amt = entry.querySelector('.claim-amt').value; if(seq || amt) claims.push({seq: seq, amt: amt}); }); let files = document.getElementById('adminFiles').files; if(files.length > 10) return alert(T("最多只能上傳10個檔案")); let btn = document.getElementById('adminSubmitBtn'); btn.innerText = T("⏳ 上傳及同步中..."); btn.disabled = true; try { let fileUrls = []; if(files.length > 0) { for(let i=0; i<files.length; i++) { let f = files[i]; let ref = storage.ref('cases/' + Date.now() + '_' + f.name); await ref.put(f); let url = await ref.getDownloadURL(); fileUrls.push({name: f.name, url: url}); } } await db.collection("claim_cases").add({ disease: disease, claims: claims, files: fileUrls, createdAt: firebase.firestore.FieldValue.serverTimestamp() }); let firstClaimSeq = claims.length > 0 ? claims[0].seq : "首次"; let firstClaimAmt = claims.length > 0 ? claims[0].amt : "0"; await fetch(GAS_CASE_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify({ diseaseName: disease, claimCount: firstClaimSeq, amount: firstClaimAmt }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } }); document.getElementById('adminDisease').value = ""; document.getElementById('adminFiles').value = ""; btn.innerText = T("✅ 發佈成功"); await loadCases(); } catch (error) { console.error(error); alert(T("同步過程發生錯誤，請重試。")); } finally { setTimeout(() => { btn.innerText = T("📤 儲存同步至 Google Sheet"); btn.disabled = false; }, 3000); } }
 
-  // 雙向刪除同步功能
-  async function deleteCase(diseaseName, claimCount) {
-      if(!confirm(T("確定要刪除這個案例嗎？這將會從 Firebase 雲端與 Google Sheet 同步永久移除。"))) return;
-      try {
-          const snapshot = await db.collection("claim_cases").where("disease", "==", diseaseName).get();
-          for (const doc of snapshot.docs) {
-              let data = doc.data(); if(data.claims && data.claims.some(c => c.seq === claimCount)) {
-                  if (data.files && data.files.length > 0) {
-                      for (const file of data.files) { try { await storage.refFromURL(file.url).delete(); } catch (err) {} }
-                  }
-                  await db.collection("claim_cases").doc(doc.id).delete();
-              }
-          }
-          await fetch(GAS_CASE_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify({ action: 'delete', diseaseName: diseaseName, claimCount: claimCount }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } });
-          alert(T("✅ 刪除成功")); loadCases();
-      } catch(e) { console.error(e); alert(T("❌ 刪除失敗")); }
-  }
+  async function deleteCase(diseaseName, claimCount) { if(!confirm(T("確定要刪除這個案例嗎？這將會從 Firebase 雲端與 Google Sheet 同步永久移除。"))) return; try { const snapshot = await db.collection("claim_cases").where("disease", "==", diseaseName).get(); for (const doc of snapshot.docs) { let data = doc.data(); if(data.claims && data.claims.some(c => c.seq === claimCount)) { if (data.files && data.files.length > 0) { for (const file of data.files) { try { await storage.refFromURL(file.url).delete(); } catch (err) {} } } await db.collection("claim_cases").doc(doc.id).delete(); } } await fetch(GAS_CASE_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify({ action: 'delete', diseaseName: diseaseName, claimCount: claimCount }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } }); alert(T("✅ 刪除成功")); loadCases(); } catch(e) { console.error(e); alert(T("❌ 刪除失敗")); } }
 
   function addAdminClaimEntry() { let container = document.getElementById('adminClaimsContainer'); if(container.children.length >= 6) return alert(T("已達上限6次")); let div = document.createElement('div'); div.className = "claim-entry"; div.innerHTML = `<input type="text" placeholder="${T('次數 (例如: 第二次)')}" class="claim-seq"><input type="text" placeholder="${T('賠償金額 ($)')}" class="claim-amt"><button class="btn-remove" onclick="this.parentElement.remove()">-</button>`; container.appendChild(div); }
   function toggleExistingOptions() { document.getElementById('existingSubOptions').style.display = document.getElementById('existingMultiCheck').checked ? 'block' : 'none'; updateUI(); }
   function confirmAndStart() { config.sumExisting = getNumVal('sumExisting'); config.sumTerm = getNumVal('sumTerm'); config.sumWhole = getNumVal('sumWhole'); config.sumUpgradeB = config.sumWhole; config.sumBasicPool = config.sumExisting + config.sumTerm + config.sumWhole; let ageInput = parseInt(document.getElementById('startAge').value); config.startAge = isNaN(ageInput) ? 0 : ageInput; config.assets = getNumVal('assets'); config.expense = getNumVal('expense'); config.existingMulti = document.getElementById('existingMultiCheck').checked; config.existingCancerWait = parseInt(document.getElementById('existingCancerWait').value); if (!state.isCriticalClaimed) state.balance = config.sumBasicPool - state.accEarly; if (!state.isConfirmed) { state.currentAge = config.startAge; document.getElementById('currentAge').value = state.currentAge; } state.isConfirmed = true; document.getElementById('analysisOverlay').style.display = 'none'; updateBenefitValues(); updateBonusDisplay(); updateAnalysis(); updateUI(); }
   function fullReset() { state.isConfirmed = false; historyStack = []; document.getElementById('analysisOverlay').style.display = 'flex'; document.getElementById('criticalBonusBox').style.display = 'none'; state.totalPaid=0; state.accEarly=0; state.accCancerLump=0; state.accCancerMonthly=0; state.accHeart=0; state.accDementia=0; state.accChild=0; state.isCriticalClaimed=false; state.hasStartedCancerMonthly=false; state.cancerCountNew = 0; state.cancerCountOld = 0; document.getElementById('rightTimeline').innerHTML = `<div class="empty-msg" style="text-align:center; color:#bdc3c7; font-size:0.95rem; padding: 30px; border: 2px dashed #eee; border-radius: 8px;">${T('等待啟動模擬賠償...')}</div>`; updateUI(); }
   
-  function updateAnalysis() {
-      if (!state.isConfirmed) return;
-      let totalNeeds3Y = config.expense * 36; let insCoversAmount = Math.min(totalNeeds3Y, config.sumBasicPool); let savingsNeeded = Math.max(0, totalNeeds3Y - insCoversAmount); let finalSavings = config.assets - savingsNeeded;
-      document.getElementById('valNeeds3Y').innerText = formatMoney(totalNeeds3Y); document.getElementById('valInsCovers').innerText = formatMoney(insCoversAmount); document.getElementById('valSavingsNeeded').innerText = formatMoney(savingsNeeded);
-      let savingsEl = document.getElementById('valFinalSavings'); let statusEl = document.getElementById('valSavingsStatus'); savingsEl.innerText = formatMoney(finalSavings);
-      if (finalSavings < 0) { savingsEl.style.color = "#ff7675"; statusEl.innerText = ""; } 
-      else if (savingsNeeded > 0) { savingsEl.style.color = "#ffeaa7"; statusEl.innerText = T("(⚠️ 財富受損，復原困難)"); statusEl.style.color = "#ffeaa7"; } 
-      else { savingsEl.style.color = "#55efc4"; statusEl.innerText = T("(✅ 成功保護銀行累積的財富！)"); statusEl.style.color = "#55efc4"; }
-  }
+  function updateAnalysis() { if (!state.isConfirmed) return; let totalNeeds3Y = config.expense * 36; let insCoversAmount = Math.min(totalNeeds3Y, config.sumBasicPool); let savingsNeeded = Math.max(0, totalNeeds3Y - insCoversAmount); let finalSavings = config.assets - savingsNeeded; document.getElementById('valNeeds3Y').innerText = formatMoney(totalNeeds3Y); document.getElementById('valInsCovers').innerText = formatMoney(insCoversAmount); document.getElementById('valSavingsNeeded').innerText = formatMoney(savingsNeeded); let savingsEl = document.getElementById('valFinalSavings'); let statusEl = document.getElementById('valSavingsStatus'); savingsEl.innerText = formatMoney(finalSavings); if (finalSavings < 0) { savingsEl.style.color = "#ff7675"; statusEl.innerText = ""; } else if (savingsNeeded > 0) { savingsEl.style.color = "#ffeaa7"; statusEl.innerText = T("(⚠️ 財富受損，復原困難)"); statusEl.style.color = "#ffeaa7"; } else { savingsEl.style.color = "#55efc4"; statusEl.innerText = T("(✅ 成功保護銀行累積的財富！)"); statusEl.style.color = "#55efc4"; } }
   function updateBenefitValues() { let curr = state.isConfirmed ? state.balance : config.sumBasicPool; document.getElementById('valEarlyStage').innerText = formatMoney(config.sumBasicPool * 0.20); document.getElementById('valCritical').innerText = formatMoney(curr); }
   function updateBonusDisplay() { if(!state.isConfirmed) return; document.getElementById('criticalBonusBox').style.display = 'block'; let rA = document.getElementById('ruleADisplay'), rB = document.getElementById('ruleBDisplay'); let base = config.sumWhole; if (config.startAge <= 30) { rA.style.display='flex'; rB.style.display='none'; document.getElementById('bonusAmountA').innerText = "+" + formatMoney(base*0.50); } else { rA.style.display='none'; rB.style.display='flex'; document.getElementById('bonusAmountB').innerText = "+" + formatMoney(base*0.35); } let badge = document.getElementById('bonusStatusBadge'); let py = state.currentAge - config.startAge; if (state.isCriticalClaimed) { badge.className = 'bonus-inactive-tag'; badge.innerText = T(`❌ 已隨首次確診結束`); } else if (py < 10) { badge.className = 'bonus-active-tag'; badge.innerText = T(`✅ 生效中 (第 ${py+1} 年)`); } else { badge.className = 'bonus-inactive-tag'; badge.innerText = T(`❌ 已過期`); } }
   function userChangeAge(val) { let newAge = parseInt(val); if(newAge < config.startAge) { newAge = config.startAge; document.getElementById('currentAge').value = newAge; alert(T("確診歲數不能小於投保歲數！")); } state.currentAge = newAge; updateBonusDisplay(); updateUI(); }
@@ -655,48 +549,13 @@
   function updateUI() { document.getElementById('displayBalance').innerText = formatMoney(state.balance); document.getElementById('displayTotalPaid').innerText = formatMoney(state.totalPaid); document.getElementById('accEarlyDisplay').innerText = formatMoney(state.accEarly); document.getElementById('accCancerLumpDisplay').innerText = formatMoney(state.accCancerLump); document.getElementById('accCancerMonthlyDisplay').innerText = formatMoney(state.accCancerMonthly); document.getElementById('accHeartDisplay').innerText = formatMoney(state.accHeart); document.getElementById('accDementiaDisplay').innerText = formatMoney(state.accDementia); document.getElementById('accChildDisplay').innerText = formatMoney(state.accChild); document.getElementById('cancerCountDisplayOld').innerText = `(${T("舊單")}: ${state.cancerCountOld}/${config.existingMulti ? 3 : 1})`; document.getElementById('cancerCountDisplayNew').innerText = `(${T("新單")}: ${state.cancerCountNew}/6)`; document.getElementById('cancerMonthDisplay').innerText = `(${state.cancerMonthsPaid}/100)`; document.getElementById('heartCountDisplay').innerText = `(${state.heartCount}/3)`; document.getElementById('dementiaYearDisplay').innerText = `(${state.dementiaYearsPaid})`; document.getElementById('ciCard').style.opacity = state.isCriticalClaimed ? "0.5" : "1"; document.getElementById('ciCard').style.pointerEvents = state.isCriticalClaimed ? "none" : "auto"; if(state.hasStartedCancerMonthly) document.getElementById('btnCancerAuto').disabled=true; document.getElementById('btnDementia').innerText = !state.dementiaLumpSumClaimed ? T("🚨 提取 100% 賠償") : T("👇 發放 1 年年金"); updateBenefitValues(); updateBonusDisplay(); updateAnalysis(); }
 
   // 🧮 方案大比拼：遠端動態載入數據精算
-  async function fetchPremiumRates() {
-      try {
-          const response = await fetch(GAS_COMPARE_RATES_URL, { method: "GET", redirect: "follow" });
-          const data = await response.json();
-          if (data.status === "success") { globalPremiumRates = data.rates; calculateComparison(); }
-      } catch (e) { console.error("精算數據表加載失敗", e); }
-  }
-  function getRateFromData(plan, region, gender, age, smoker, payTerm) {
-      if (!globalPremiumRates) return 0;
-      let keys = Object.keys(globalPremiumRates);
-      let targetKey = keys.find(k => {
-          let isM = gender === "M" ? k.includes("男") : k.includes("女");
-          let isPearl = region === "pearl" ? k.includes("明珠") : !k.includes("明珠");
-          let isPlan = plan === "OYS2" ? (k.includes("愛伴航") || k.includes("OYS2")) : (k.includes("簡護") || k.includes("SCE"));
-          return isM && isPearl && isPlan;
-      });
-      if (!targetKey) return 0;
-      let ageData = globalPremiumRates[targetKey][age]; if (!ageData) return 0;
-      return plan === "OYS2" ? (ageData[payTerm]?.[smoker] || 0) : (ageData[smoker] || 0);
-  }
-  function calculateComparison() {
-      if (!globalPremiumRates || Object.keys(globalPremiumRates).length === 0) return;
-      const region = document.getElementById('compareRegion').value; const gender = document.getElementById('compareGender').value; const smoker = document.getElementById('compareSmoker').value;
-      const sceStartAge = parseInt(document.getElementById('sceStartAge').value) || 30; const sceTargetAge = parseInt(document.getElementById('sceTargetAge').value) || 65; const sceSum = getNumVal('sceSum');
-      let sceTotal = 0; let sceHtml = ""; let lastSceRowAge = -1;
-      for (let age = sceStartAge; age < sceTargetAge; age++) {
-          let pricingAge = sceStartAge + Math.floor((age - sceStartAge) / 5) * 5;
-          let rate = getRateFromData("SCE", region, gender, pricingAge, smoker, null); let prem = rate * (sceSum / 1000); sceTotal += prem;
-          if ((age - sceStartAge) % 5 === 0 || age === sceTargetAge - 1) {
-              if (lastSceRowAge !== age) { sceHtml += `<tr><td>${age} 歲</td><td>第 ${age - sceStartAge + 1} 年</td><td><span style="color:#2980b9; font-weight:bold;">$${Math.round(prem).toLocaleString()}</span></td></tr>`; lastSceRowAge = age; }
-          }
-      }
-      document.getElementById('sceBreakdownBody').innerHTML = sceHtml; document.getElementById('sceTotalPremium').innerText = formatMoney(sceTotal);
-      const oys2StartAge = parseInt(document.getElementById('oys2StartAge').value) || 30; const oys2PayTerm = document.getElementById('oys2PayTerm').value; const oys2MaxYears = parseInt(oys2PayTerm.replace('pay', '')); const oys2Sum = getNumVal('oys2Sum');
-      let oys2Total = 0; let oys2Html = ""; let oys2Rate = getRateFromData("OYS2", region, gender, oys2StartAge, smoker, oys2PayTerm); let oys2Prem = oys2Rate * (oys2Sum / 1000);
-      for (let year = 1; year <= oys2MaxYears; year++) { oys2Total += oys2Prem; let age = oys2StartAge + year - 1; if (year === 1 || year % 5 === 0 || year === oys2MaxYears) { oys2Html += `<tr><td>${age} 歲</td><td>第 ${year} 年</td><td><span style="color:#2980b9; font-weight:bold;">$${Math.round(oys2Prem).toLocaleString()}</span></td></tr>`; } }
-      document.getElementById('oys2BreakdownBody').innerHTML = oys2Html; document.getElementById('oys2TotalPremium').innerText = formatMoney(oys2Total); resetCompareClaims();
-  }
+  async function fetchPremiumRates() { try { const response = await fetch(GAS_COMPARE_RATES_URL, { method: "GET", redirect: "follow" }); const data = await response.json(); if (data.status === "success") { globalPremiumRates = data.rates; calculateComparison(); } } catch (e) { console.error("精算數據表加載失敗", e); } }
+  function getRateFromData(plan, region, gender, age, smoker, payTerm) { if (!globalPremiumRates) return 0; let keys = Object.keys(globalPremiumRates); let targetKey = keys.find(k => { let isM = gender === "M" ? k.includes("男") : k.includes("女"); let isPearl = region === "pearl" ? k.includes("明珠") : !k.includes("明珠"); let isPlan = plan === "OYS2" ? (k.includes("愛伴航") || k.includes("OYS2")) : (k.includes("簡護") || k.includes("SCE")); return isM && isPearl && isPlan; }); if (!targetKey) return 0; let ageData = globalPremiumRates[targetKey][age]; if (!ageData) return 0; return plan === "OYS2" ? (ageData[payTerm]?.[smoker] || 0) : (ageData[smoker] || 0); }
+  function calculateComparison() { if (!globalPremiumRates || Object.keys(globalPremiumRates).length === 0) return; const region = document.getElementById('compareRegion').value; const gender = document.getElementById('compareGender').value; const smoker = document.getElementById('compareSmoker').value; const sceStartAge = parseInt(document.getElementById('sceStartAge').value) || 30; const sceTargetAge = parseInt(document.getElementById('sceTargetAge').value) || 65; const sceSum = getNumVal('sceSum'); let sceTotal = 0; let sceHtml = ""; let lastSceRowAge = -1; for (let age = sceStartAge; age < sceTargetAge; age++) { let pricingAge = sceStartAge + Math.floor((age - sceStartAge) / 5) * 5; let rate = getRateFromData("SCE", region, gender, pricingAge, smoker, null); let prem = rate * (sceSum / 1000); sceTotal += prem; if ((age - sceStartAge) % 5 === 0 || age === sceTargetAge - 1) { if (lastSceRowAge !== age) { sceHtml += `<tr><td>${age} 歲</td><td>第 ${age - sceStartAge + 1} 年</td><td><span style="color:#2980b9; font-weight:bold;">$${Math.round(prem).toLocaleString()}</span></td></tr>`; lastSceRowAge = age; } } } document.getElementById('sceBreakdownBody').innerHTML = sceHtml; document.getElementById('sceTotalPremium').innerText = formatMoney(sceTotal); const oys2StartAge = parseInt(document.getElementById('oys2StartAge').value) || 30; const oys2PayTerm = document.getElementById('oys2PayTerm').value; const oys2MaxYears = parseInt(oys2PayTerm.replace('pay', '')); const oys2Sum = getNumVal('oys2Sum'); let oys2Total = 0; let oys2Html = ""; let oys2Rate = getRateFromData("OYS2", region, gender, oys2StartAge, smoker, oys2PayTerm); let oys2Prem = oys2Rate * (oys2Sum / 1000); for (let year = 1; year <= oys2MaxYears; year++) { oys2Total += oys2Prem; let age = oys2StartAge + year - 1; if (year === 1 || year % 5 === 0 || year === oys2MaxYears) { oys2Html += `<tr><td>${age} 歲</td><td>第 ${year} 年</td><td><span style="color:#2980b9; font-weight:bold;">$${Math.round(oys2Prem).toLocaleString()}</span></td></tr>`; } } document.getElementById('oys2BreakdownBody').innerHTML = oys2Html; document.getElementById('oys2TotalPremium').innerText = formatMoney(oys2Total); resetCompareClaims(); }
   function resetCompareClaims() { const startAge = parseInt(document.getElementById('compareClaim1Age').value) || 35; compClaimState = { count: 0, currentAge: startAge, totalSCE: 0, totalOYS2: 0, rows: [] }; document.getElementById('claimResultsBody').innerHTML = `<tr><td colspan="3" style="text-align:center; color:#95a5a6;">請點擊上方按鈕開始推演</td></tr>`; document.getElementById('totalClaimSCE').innerText = "$0"; document.getElementById('totalClaimOYS2').innerText = "$0"; }
   function triggerCompareClaim(type) { if (compClaimState.count >= 6) return alert(T("最高只能演示 6 次理賠！")); const oys2StartAge = parseInt(document.getElementById('oys2StartAge').value) || 30; const sceSum = getNumVal('sceSum'); const oys2Sum = getNumVal('oys2Sum'); if (sceSum === 0 && oys2Sum === 0) return alert(T("請先輸入獨立保額！")); if (compClaimState.count === 0) { compClaimState.currentAge = parseInt(document.getElementById('compareClaim1Age').value); } else { compClaimState.currentAge += type === 'cancer' ? 3 : 1; } compClaimState.count++; let scePays = (compClaimState.count === 1) ? sceSum : 0; let oys2Pays = oys2Sum; let bonusHtml = ""; if (compClaimState.count === 1 && (compClaimState.currentAge - oys2StartAge) <= 10) { let bonusAmt = oys2Sum * (oys2StartAge <= 30 ? 0.50 : 0.35); oys2Pays += bonusAmt; bonusHtml = `<tr style="background: #eafaf1; font-size: 0.85rem;"><td>🎁 首 10 年升級</td><td>--</td><td style="color: #27ae60; font-weight:bold;">+$${bonusAmt.toLocaleString()}</td></tr>`; } compClaimState.totalSCE += scePays; compClaimState.totalOYS2 += oys2Pays; let rowHtml = `<tr><td>第 ${compClaimState.count} 次理賠 (${compClaimState.currentAge} 歲) - ${type === 'cancer' ? '🎗️ 癌症' : '❤️ 心臟病'}</td><td style="${scePays === 0 ? 'color: #e74c3c; text-decoration: line-through;' : 'font-weight: bold;'}">$${scePays.toLocaleString()}</td><td style="font-weight: bold;">$${oys2Sum.toLocaleString()}</td></tr>${bonusHtml}`; compClaimState.rows.push(rowHtml); document.getElementById('claimResultsBody').innerHTML = compClaimState.rows.join(""); document.getElementById('totalClaimSCE').innerText = formatMoney(compClaimState.totalSCE); document.getElementById('totalClaimOYS2').innerText = formatMoney(compClaimState.totalOYS2); }
 
-  let currentLang = 'hk';
+  let currentLang = 'hk'; let config = { sumExisting: 200000, sumTerm: 500000, sumWhole: 500000, sumUpgradeB: 500000, sumBasicPool: 1200000, existingMulti: false, existingCancerWait: 5, startAge: 0, assets: 500000, expense: 30000 }; let state = { isConfirmed: false, balance: 1000000, totalPaid: 0, isCriticalClaimed: false, hasStartedCancerMonthly: false, cancerCountNew: 0, cancerCountOld: 0, nextClaimAge_New: Infinity, nextClaimAge_Old: Infinity, heartCount: 0, dementiaLumpSumClaimed: false, dementiaYearsPaid: 0, cancerMonthsPaid: 0, accEarly: 0, accCancerLump: 0, accCancerMonthly: 0, accHeart: 0, accDementia: 0, accChild: 0, currentAge: 30, claimCount: 0, bonusPaid: 0 }; let historyStack = []; let globalPremiumRates = {}; let compClaimState = { count: 0, currentAge: 30, totalSCE: 0, totalOYS2: 0, rows: [] };
   function T(str) { if(currentLang === 'hk') return str; let out = str; t2sMap.forEach(pair => { out = out.split(pair[0]).join(pair[1]); }); return out; }
   function toggleLang() { currentLang = currentLang === 'hk' ? 'cn' : 'hk'; document.getElementById('langToggleBtn').innerText = currentLang === 'hk' ? '简' : '繁'; translateStatic(); if(document.getElementById('page-compare').classList.contains('active')) { calculateComparison(); } }
   function translateStatic() { const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false); let node; while(node = walker.nextNode()) { if (node.parentNode.tagName === 'SCRIPT' || node.parentNode.tagName === 'STYLE') continue; if (!node.originalText) { if(node.nodeValue.trim() === "") continue; node.originalText = node.nodeValue; } let txt = node.originalText; if (currentLang === 'cn') { t2sMap.forEach(pair => { txt = txt.split(pair[0]).join(pair[1]); }); } node.nodeValue = txt; } const inputs = document.querySelectorAll('input, button, .hypno-highlight, .hypno-danger'); inputs.forEach(input => { if(input.type === 'button' || input.tagName === 'BUTTON' || input.tagName === 'SPAN') { if(input.id === 'langToggleBtn') return; if(!input.originalValue) input.originalValue = input.value || input.innerText || input.innerHTML; let txt = input.originalValue; if (currentLang === 'cn') { t2sMap.forEach(pair => { txt = txt.split(pair[0]).join(pair[1]); }); } if (input.tagName === 'INPUT') input.value = txt; if (input.tagName === 'SPAN') input.innerHTML = txt; } }); }
