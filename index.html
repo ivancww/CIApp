@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v3.15)</title>
+<title>生活應急保險庫 (v3.17)</title>
+
+<!-- ⚡ 圖片秒開預加載技術 (Firebase) -->
+<link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
+<link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
+<link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5773.jpeg?alt=media&token=4abe322b-b474-4114-9104-4a1a53313929" as="image">
 
 <!-- Firebase SDK (用於跨裝置數據同步與檔案上傳) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -71,7 +76,7 @@
   .hypno-highlight { color: #2980b9; font-weight: bold; }
   .hypno-danger { color: #c0392b; font-weight: bold; }
 
-  /* Modal CSS */
+  /* 圖文並茂 Modal CSS */
   .modal-text-area { padding: 20px 25px; font-size: 1.05rem; color: #34495e; line-height: 1.6; border-bottom: 2px dashed #ecf0f1; background: #fdfdfd; border-radius: 8px 8px 0 0; }
   .modal-img-area { background: #ecf0f1; display: flex; justify-content: center; align-items: center; padding: 0; border-radius: 0 0 8px 8px; }
   .modal-img-area img { width: 100%; max-height: 60vh; object-fit: contain; display: block; border-radius: 0 0 8px 8px; }
@@ -246,7 +251,7 @@
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v3.13</span>
+          生活應急保險庫 <span class="version-badge">v3.17</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
       <div class="header-date" id="currentDateDisplay"></div>
@@ -740,7 +745,8 @@
   // 後端服務與 Firebase 設定
   // ==========================================
   const GAS_LOGIN_URL = "https://script.google.com/macros/s/AKfycbwmpVo8uGg8ZaC-oTFKdTdLAgCibw8FhD0UpcuMA6wWKwV0GWPWhO7hfFqL4NYRds2v/exec";
-  const GAS_CASE_URL = "https://script.google.com/macros/s/AKfycbzeacyAlzIvPgHnmnJ8kTvXhopm8S_XeU5J4NuFsMhWOIJA2TxIFMi9Quyvl2sS_iRCpw/exec";
+  // 🟢 已更新：賠償案例專用 GAS Link (已連結至 Spreadsheet ID: 12Zkre8BaTIgoQEb1U5qT3TWKmEoWn-vpjW2NL0shspc)
+  const GAS_CASE_URL = "https://script.google.com/macros/s/AKfycbwvibk7PlwTzFKwEqQSvEF1syOiPRCAUDWVmvmVe6AmcBIi5TB8G9Zm-TniNb1Okp4IfA/exec";
 
   const firebaseConfig = {
       apiKey: "AIzaSyDBA5Iitb8X0qmbVfjVdYWw-M2D_9ZhFIg",
@@ -829,7 +835,7 @@
               createdAt: firebase.firestore.FieldValue.serverTimestamp()
           });
 
-          // 2. 同步發送到 Google Sheet
+          // 2. 同步發送到指定 Google Sheet 的 GAS
           fetch(GAS_CASE_URL, {
               method: 'POST',
               body: JSON.stringify({ diseaseName: disease, claimCount: claimSeq, amount: claimAmt }),
@@ -858,7 +864,7 @@
           // 1. 刪除 Firebase Firestore 數據
           await db.collection("claim_cases").doc(docId).delete();
           
-          // 2. 同步指令給 Google Sheet
+          // 2. 同步刪除指令給 Google Sheet 的 GAS
           fetch(GAS_CASE_URL, { 
               method: 'POST', 
               body: JSON.stringify({ action: 'delete', diseaseName: diseaseName, claimCount: claimSeq }), 
@@ -870,7 +876,7 @@
       } catch(e) { console.error(e); alert("❌ 刪除失敗"); }
   }
 
-  // 自動訂閱 Firestore 实现跨裝置即時更新 (Real-time listener)
+  // 自動訂閱 Firestore 實現跨裝置即時更新 (Real-time listener)
   function loadCases() {
       db.collection("claim_cases").orderBy("createdAt", "desc").onSnapshot(snapshot => {
           let html = ""; let adminHtml = "";
@@ -910,7 +916,7 @@
   }
 
   // ==========================================
-  // 其他前台互動與介面邏輯
+  // 其他前台互動與介面邏輯 (圖片 Modal 完整保留)
   // ==========================================
   let currentLang = 'hk';
   const t2sMap = [
@@ -948,31 +954,52 @@
       }
   }
 
-  function openModal(textHtml = "") {
+  function openModal(imgSrc, textHtml = "") {
       const textContainer = document.getElementById('modalTextContainer');
       if (textHtml) {
           textContainer.innerHTML = textHtml;
           textContainer.style.display = 'block';
       } else { textContainer.style.display = 'none'; }
+      document.getElementById('modalImage').src = imgSrc;
       document.getElementById('imageModal').style.display = 'flex';
   }
 
   function closeModal(e) {
       if (e.target.id === 'imageModal' || e.target.classList.contains('modal-close')) {
           document.getElementById('imageModal').style.display = 'none';
+          document.getElementById('modalImage').src = '';
       }
   }
 
   function openHypnoModal(type) {
-      let text = "";
+      let text = "", img = "";
+      const FIREBASE_IMG_ASK = "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80";
+      const FIREBASE_IMG_THINK = "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166";
+      const FIREBASE_IMG_ACTION = "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5773.jpeg?alt=media&token=4abe322b-b474-4114-9104-4a1a53313929";
+
       if (type === 'ask') {
-          text = "喺你現在的規劃下，萬一聽日健康真係出現變數，<span class='hypno-danger'>要停工休養</span>... <br><br>你心目中嘅<span class='hypno-highlight'>『Plan B / 後備方案』</span>會有邊方面的安排呢？你的安排會係...？";
+          if (currentLang === 'cn') {
+              text = "在您现在的规划下，万一明天健康真的出现变数，<span class='hypno-danger'>需要停工休养</span>... <br><br>您心目中的<span class='hypno-highlight'>『Plan B / 后备方案』</span>会有哪方面的安排呢？您的安排会是...？";
+          } else {
+              text = "喺你現在的規劃下，萬一聽日健康真係出現變數，<span class='hypno-danger'>要停工休養</span>... <br><br>你心目中嘅<span class='hypno-highlight'>『Plan B / 後備方案』</span>會有邊方面的安排呢？你的安排會係...？";
+          }
+          img = FIREBASE_IMG_ASK;
       } else if (type === 'think') {
-          text = "如果你一早規劃好嘅退休生活、仔女學費的計劃，以及每個月嘅供樓同生活費，突然被一場突如其來嘅大病<span class='hypno-danger'>『睇中咗』</span>而被中斷...<br><br>你會想用辛辛苦苦儲落嘅積蓄去填補呢個缺口呀？定係想即時有筆錢比你去解決呢個缺口？";
+          if (currentLang === 'cn') {
+              text = "如果您一早规划好的退休生活、子女学费的计划，以及每个月的房贷和生活费，突然被一场突如其来的大病<span class='hypno-danger'>『看中了』</span>而被中断...<br><br>您会想用辛辛苦苦攒下的积蓄去填补这个缺口，还是想即时有笔钱让您去解决这个缺口？";
+          } else {
+              text = "如果你一早規劃好嘅退休生活、仔女學費的計劃，以及每個月嘅供樓同生活費，突然被一場突如其來嘅大病<span class='hypno-danger'>『睇中咗』</span>而被中斷...<br><br>你會想用辛辛苦苦儲落嘅積蓄去填補呢個缺口呀？定係想即時有筆錢比你去解決呢個缺口？";
+          }
+          img = FIREBASE_IMG_THINK;
       } else if (type === 'action') {
-          text = "其實我都明白，辛苦的積儲如果因一場大病可能失去大部份，係好唔甘心... <br><br>但除左唔甘心外，最重要係<span class='hypno-highlight'>影響埋家人生活，仔女學費</span>，呢樣先更緊要，你話係唔係？";
+          if (currentLang === 'cn') {
+              text = "其实我很理解，辛苦攒下的积蓄如果因为一场大病失去大半，肯定非常不甘心... <br><br>但除了不甘心，更重要的是会牵连家人的生活和子女的学业，这才是最要紧的，您说对吧？";
+          } else {
+              text = "其實我都明白，辛苦的積儲如果因一場大病可能失去大部份，係好唔甘心... <br><br>但除左唔甘心外，最重要係<span class='hypno-highlight'>影響埋家人生活，仔女學費</span>，呢樣先更緊要，你話係唔係？";
+          }
+          img = FIREBASE_IMG_ACTION;
       }
-      openModal(text);
+      openModal(img, text);
   }
 
   function getNumVal(id) { return parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0; }
