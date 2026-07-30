@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v3.27)</title>
+<title>生活應急保險庫 (v3.28)</title>
 <!-- ⚡ 圖片預加載 -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
@@ -210,7 +210,7 @@
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v3.27</span>
+          生活應急保險庫 <span class="version-badge">v3.28</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
@@ -1286,38 +1286,52 @@
       document.getElementById('totalClaimSCE').innerText = formatMoney(compClaimState.totalSCE); 
       document.getElementById('totalClaimOYS2').innerText = formatMoney(compClaimState.totalOYS2);
   }
+
   // ==========================================
-  // 前台 Modal 彈窗與標準普通話繁簡轉換對照表
+  // ⚡ 方案 B：動態全頁面語境與標準普通話轉換機制
   // ==========================================
   let currentLang = 'hk';
   
-  // 🟢 擴充且精確化：標準普通話（規範漢語）轉換字典
-  const t2sMap = [
-      ['生活應急保險庫', '生活应急保险库'], ['模擬賠償儀表板', '模拟理赔仪表板'], 
-      ['兒童疾病保障專頁', '儿童疾病保障专页'], ['危疾/輕疾明細', '重疾/轻症明细'], ['賠償案例', '理赔案例'],
-      ['補強方案大比拼', '补强方案大比拼'], ['多重賠償', '多次理赔'], ['危疾', '重疾'], 
-      ['早期疾病', '轻症'], ['輕疾', '轻症'], ['賠償', '理赔'], ['供款', '缴费'], 
-      ['免供款', '豁免保费'], ['歲數', '年龄'], ['歲', '岁'], ['舊單', '旧单'], 
-      ['補強', '补强'], ['儲蓄', '储蓄'], ['腦退化', '脑退化'], ['嚴重疾病', '重度疾病'], 
-      ['確診', '确诊'], ['點擊展開', '点击展开'], ['選擇', '选择'], ['續保', '续保'],
-      ['保費', '保费'], ['保額', '保额'], ['贈送保額', '赠送保额'], ['香港版', '香港版'],
-      ['明珠版', '明珠版'], ['非吸煙', '非吸烟'], ['吸煙', '吸烟'], ['未加入', '未加入'],
-      ['已加入', '已加入'], ['男', '男'], ['女', '女'], ['地區', '地区'], ['性別', '性别'],
-      ['獨立保額', '独立保额'], ['投保年歲', '投保年龄'], ['推算至', '推算至'],
-      ['累積總保費成本', '累计总保费成本'], ['供款期', '缴费期'], ['第 1 次確診年歲', '第 1 次确诊年龄'],
-      ['新增癌症', '新增癌症'], ['新增心臟病/中風', '新增心脏病/中风'], ['重置推演', '重置推演'],
-      ['賠償項目', '理赔项目'], ['簡護危疾保', '简护重疾保'], ['愛伴航2', '爱伴航2'],
-      ['總累計理賠金額', '总累计理赔金额'], ['首 10 年升級', '首 10 年升级'], ['暫無案例', '暂无案例'],
-      ['載入中...', '加载中...'], ['刪除', '删除'], ['請填寫完整資訊', '请填写完整信息'],
-      ['上傳成功！Google Sheet 與跨裝置附件已同步。', '上传成功！Google Sheet 与跨设备附件已同步。'],
-      ['已成功刪除！', '已成功删除！'], ['請輸入登入密碼', '请输入登录密码'], ['驗證登入', '验证登录']
+  // 1. 保險行業規範術語 & 常用詞字典
+  const termMap = [
+      ['危疾', '重疾'], ['輕疾', '轻症'], ['早期疾病', '轻症'], ['賠償', '理赔'],
+      ['供款期', '缴费期'], ['供款', '缴费'], ['免供款', '保费豁免'], ['豁免保費', '保费豁免'],
+      ['等候期', '等待期'], ['受保人', '被保险人'], ['持有人', '投保人'], ['歲數', '年龄'],
+      ['歲', '岁'], ['舊單', '既有保单'], ['補強', '加固保障'], ['通波仔', '心脏冠状动脉介入手术'],
+      ['腦退化', '阿尔茨海默病/脑退化'], ['儀表板', '控制台'], ['大比拼', '对比方案']
   ];
+
+  // 2. 廣東話口語 / 港式句式連貫替換表
+  const cantonesePhrasesMap = [
+      ['不如我哋一齊想像一下', '不如我们一起来想像一下'],
+      ['唔行動的代價', '不采取行动的代价'],
+      ['想請教你一個問題', '想请教您一个问题'],
+      ['聽日健康真係出現變數', '明天健康真的出现变数'],
+      ['要停工休養', '需要停工休养'],
+      ['你心目中嘅', '您心目中的'],
+      ['後備方案', '后备方案'],
+      ['邊方面的安排呢', '哪方面的安排呢'],
+      ['你的安排會係', '您的安排会是'],
+      ['仔女學費', '子女学费'],
+      ['供樓同生活費', '房贷与生活费'],
+      ['睇中咗', '看中了'],
+      ['儲落嘅積蓄', '积攒的积蓄'],
+      ['邊樣先更緊要', '哪样才是最要紧的'],
+      ['幾多', '多少'], ['邊個', '哪个'], ['點樣', '怎样'],
+      ['我哋', '我们'], ['你哋', '你们'], ['佢哋', '他们'],
+      ['嘅', '的'], ['啲', '些'], ['咗', '了'], ['喺', '在'], ['咁', '那么']
+  ];
+
   function T(str) {
       if(currentLang === 'hk') return str;
       let out = str;
-      t2sMap.forEach(pair => { out = out.split(pair[0]).join(pair[1]); });
+      // 優先替換句式與口語
+      cantonesePhrasesMap.forEach(pair => { out = out.split(pair[0]).join(pair[1]); });
+      // 替換行業專有名詞
+      termMap.forEach(pair => { out = out.split(pair[0]).join(pair[1]); });
       return out;
   }
+
   function toggleLang() {
       currentLang = currentLang === 'hk' ? 'cn' : 'hk';
       document.getElementById('langToggleBtn').innerText = currentLang === 'hk' ? '简' : '繁';
@@ -1326,6 +1340,7 @@
           calculateComparison();
       }
   }
+
   function translateStatic() {
       const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
       let node;
@@ -1336,10 +1351,13 @@
               node.originalText = node.nodeValue;
           }
           let txt = node.originalText;
-          if (currentLang === 'cn') { t2sMap.forEach(pair => { txt = txt.split(pair[0]).join(pair[1]); }); }
+          if (currentLang === 'cn') {
+              txt = T(txt); // 自動執行廣東話口語轉化及專業術語替換
+          }
           node.nodeValue = txt;
       }
   }
+
   function openModal(imgSrc, textHtml = "") {
       const textContainer = document.getElementById('modalTextContainer');
       if (textHtml) {
@@ -1349,18 +1367,20 @@
       document.getElementById('modalImage').src = imgSrc;
       document.getElementById('imageModal').style.display = 'flex';
   }
+
   function closeModal(e) {
       if (e.target.id === 'imageModal' || e.target.classList.contains('modal-close')) {
           document.getElementById('imageModal').style.display = 'none';
           document.getElementById('modalImage').src = '';
       }
   }
-  // 🟢 徹底修正：繁體使用地道廣東話 / 簡體使用規範標準普通話表達
+
   function openHypnoModal(type) {
       let text = "", img = "";
       const FIREBASE_IMG_ASK = "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80";
       const FIREBASE_IMG_THINK = "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166";
       const FIREBASE_IMG_ACTION = "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5773.jpeg?alt=media&token=4abe322b-b474-4114-9104-4a1a53313929";
+      
       if (type === 'ask') {
           if (currentLang === 'cn') {
               text = "在您现在的规划下，万一明天健康真的出现变数，<span class='hypno-danger'>需要停工休养</span>... <br><br>您心目中的<span class='hypno-highlight'>『Plan B / 后备方案』</span>会有哪方面的安排呢？您的安排会是...？";
@@ -1385,6 +1405,7 @@
       }
       openModal(img, text);
   }
+
   function switchPage(pageId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
