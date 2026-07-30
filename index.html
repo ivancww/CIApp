@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>生活應急保險庫 v3.30 (Cloud Dynamic Core)</title>
+  <title>生活應急保險庫 v3.30</title>
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
@@ -14,107 +14,122 @@
       --bg-color: #f8f9fa;
       --card-bg: #ffffff;
     }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: var(--bg-color); margin: 0; padding: 15px; color: #333; }
-    .header { text-align: center; margin-bottom: 15px; position: relative; }
-    .header h1 { margin: 0; font-size: 22px; color: #2c3e50; display: inline-block; }
-    .version-tag { font-size: 12px; color: #7f8c8d; background: #ecf0f1; padding: 2px 8px; border-radius: 10px; cursor: pointer; margin-left: 6px; display: inline-block; vertical-align: middle; }
-    .version-tag:hover { background: #d5dbdb; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: var(--bg-color); margin: 0; padding: 12px; color: #333; }
     
-    /* Nav Tabs */
-    .nav-tabs { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 15px; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
-    .nav-tab { padding: 8px 14px; background: #e0e0e0; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 14px; white-space: nowrap; font-weight: bold; }
+    /* v3.29 Header 排版 */
+    .header { text-align: center; margin-bottom: 12px; position: relative; }
+    .header h1 { margin: 0; font-size: 22px; color: #2c3e50; display: inline-block; font-weight: bold; }
+    .version-tag { font-size: 12px; color: #7f8c8d; background: #ecf0f1; padding: 2px 8px; border-radius: 10px; cursor: pointer; margin-left: 6px; display: inline-block; vertical-align: middle; }
+    
+    /* v3.29 導航分頁 (跟足原本排列) */
+    .nav-tabs { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 12px; border-bottom: 2px solid #e0e0e0; padding-bottom: 4px; }
+    .nav-tab { padding: 8px 12px; background: #eaeded; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 14px; white-space: nowrap; font-weight: bold; color: #555; }
     .nav-tab.active { background: var(--primary-color); color: #fff; }
 
-    /* Cards & Containers */
-    .card { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-    .promo-container { border: 2px solid #f39c12; background: #fffcf5; border-radius: 12px; padding: 15px; }
-    .promo-header { font-size: 18px; color: var(--primary-color); font-weight: bold; margin-bottom: 12px; }
+    /* Cards & Section Boxes */
+    .card { background: var(--card-bg); border-radius: 10px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; }
     
-    /* Toggle Button */
-    .btn-toggle-emoji { background: #f39c12; color: #fff; border: none; padding: 6px 14px; border-radius: 20px; font-size: 18px; cursor: pointer; display: inline-block; margin-bottom: 10px; }
+    /* 優惠試算區塊 (修正標題與符號) */
+    .promo-box { border: 2px solid #f39c12; background: #fffcf5; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+    .btn-toggle-emoji { background: #f39c12; color: #fff; border: none; padding: 6px 14px; border-radius: 20px; font-size: 16px; cursor: pointer; display: inline-block; margin-bottom: 8px; }
+
+    /* 對比表與試算表 Table Layout */
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+    th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; }
+    th { background: #f1f5f9; color: #334155; }
 
     /* Admin Modal */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
-    .modal-content { background: #fff; border-radius: 12px; width: 92%; max-width: 600px; max-height: 85vh; overflow-y: auto; padding: 20px; position: relative; }
-    .close-btn { position: absolute; top: 12px; right: 15px; font-size: 22px; cursor: pointer; font-weight: bold; }
+    .modal-content { background: #fff; border-radius: 12px; width: 92%; max-width: 600px; max-height: 85vh; overflow-y: auto; padding: 18px; position: relative; }
+    .close-btn { position: absolute; top: 10px; right: 14px; font-size: 22px; cursor: pointer; font-weight: bold; color: #777; }
 
-    .btn { background: var(--primary-color); color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; }
-    .btn-danger { background: #c0392b; }
-    .btn-secondary { background: #7f8c8d; }
+    .btn { background: var(--primary-color); color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+    .btn-danger { background: #e74c3c; }
+    .btn-secondary { background: #95a5a6; }
   </style>
 </head>
 <body>
 
-  <!-- Header Section -->
+  <!-- v3.29 Header 標題區 (點擊 v3.30 進入後台) -->
   <div class="header">
     <h1>生活應急保險庫</h1>
-    <!-- 進入後台入口：點擊 Version -->
     <span class="version-tag" onclick="openAdminModal()">v3.30</span>
   </div>
 
-  <!-- 主導航 Tab -->
+  <!-- v3.29 主導航 Tab (完全保留原分頁組合) -->
   <div class="nav-tabs">
     <div class="nav-tab active" onclick="switchMainTab('calc')">📊 模擬理賠儀表板</div>
-    <div class="nav-tab" onclick="switchMainTab('child')">👶 兒童疾病保障</div>
+    <div class="nav-tab" onclick="switchMainTab('cases')">📂 賠償案例展示</div>
+    <div class="nav-tab" onclick="switchMainTab('compare')">⚖️ 計劃產品對比表</div>
+    <div class="nav-tab" onclick="switchMainTab('child')">👶 兒童疾病保障專頁</div>
     <div class="nav-tab" onclick="switchMainTab('critical')">📜 102/110種危疾明細</div>
     <div class="nav-tab" onclick="openShareModal()">🔗 分享給客人</div>
   </div>
 
-  <!-- 分頁 1：模擬理賠儀表板 -->
+  <!-- ========================================== -->
+  <!-- 1. 📊 模擬理賠儀表板 (v3.29 核心排版) -->
+  <!-- ========================================== -->
   <div id="tab-calc" class="tab-content">
     
-    <!-- 限時保費優惠摺疊按鈕 (只顯示 Emoji + 點擊 Toggle) -->
+    <!-- 總累計理賠金額總覽 (v3.29 保留) -->
+    <div class="card" style="background: #fef9e7; border-color: #f1c40f; text-align: center;">
+      <span style="font-size: 14px; color: #7f8c8d; font-weight: bold;">總累計理賠金額</span>
+      <div id="totalClaimDisplay" style="font-size: 24px; color: #d35400; font-weight: bold; margin-top: 4px;">HK$0</div>
+    </div>
+
+    <!-- 折疊按鈕：只顯示 🎁 Emoji -->
     <div style="text-align: center;">
       <button class="btn-toggle-emoji" onclick="togglePromoSection()">🎁 優惠試算</button>
     </div>
 
-    <!-- 優惠試算表區塊 -->
-    <div id="promoSectionContainer" class="promo-container" style="display: block;">
-      <!-- 精簡標題：只保留「限時保費優惠累積試算表」 -->
-      <div class="promo-header">🎁 限時保費優惠累積試算表</div>
+    <!-- 限時保費優惠累積試算表 (完全修正 UI) -->
+    <div id="promoSectionContainer" class="promo-box" style="display: block;">
+      <div style="font-size: 16px; color: #d35400; font-weight: bold; margin-bottom: 10px;">🎁 限時保費優惠累積試算表</div>
       
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
         <!-- 補強 A (SCE) -->
-        <div style="border: 1px solid #e0e0e0; padding: 10px; border-radius: 8px; background: #fff;">
-          <h4 style="margin: 0 0 8px 0; color: #2980b9;">補強 A：簡護危疾保 (SCE)</h4>
-          <label>首年券面額：</label>
-          <select id="sceCouponVal" onchange="recalculatePromo()">
+        <div style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; background: #fff;">
+          <h4 style="margin: 0 0 6px 0; color: #2980b9; font-size: 14px;">補強 A：簡護危疾保 (SCE)</h4>
+          <label style="font-size: 12px;">首年券面額：</label>
+          <select id="sceCouponVal" onchange="recalculatePromo()" style="font-size: 12px;">
             <option value="25">$25 USD</option>
           </select><br>
-          <label>張數：</label>
-          <input type="number" id="sceCouponCount" value="1" min="0" style="width: 50px;" onchange="recalculatePromo()"><br><br>
+          <label style="font-size: 12px;">累積張數：</label>
+          <input type="number" id="sceCouponCount" value="1" min="0" style="width: 45px; font-size: 12px;" onchange="recalculatePromo()"><br><br>
           
-          <div id="scePromoDetails" style="font-size: 13px; line-height: 1.6;">
-            • 首年原保費 (HKD)：<span id="sceRawHKD">HK$15,834</span><br>
+          <div style="font-size: 12px; line-height: 1.6;">
+            • 首年原保費 (HKD)：HK$15,834<br>
             • 第 1 年優惠折扣：使用 <span id="sceCountTxt">1</span> 張 $<span id="sceValTxt">25</span> 美金券 → <span style="color:#e74c3c; font-weight:bold;" id="sceDiscountHKD">-HK$195</span><br>
-            • 首年實際淨保費：<b style="color:#27ae60;" id="sceNetHKD">HK$15,639</b>
+            • 首年實際淨保費：<b style="color:#27ae60;" id="sceNetHKD">HK$15,639</b><br>
+            • 總共自動計算節省：<b style="color:#e74c3c;" id="sceTotalSavings">HK$195</b>
           </div>
         </div>
 
         <!-- 補強 B (OYS2) -->
-        <div style="border: 1px solid #e0e0e0; padding: 10px; border-radius: 8px; background: #fff;">
-          <h4 style="margin: 0 0 8px 0; color: #27ae60;">補強 B：愛伴航2 (OYS2)</h4>
-          <label>首年券面額：</label>
-          <select id="oys2CouponVal" onchange="recalculatePromo()">
+        <div style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; background: #fff;">
+          <h4 style="margin: 0 0 6px 0; color: #27ae60; font-size: 14px;">補強 B：愛伴航2 (OYS2)</h4>
+          <label style="font-size: 12px;">首年券面額：</label>
+          <select id="oys2CouponVal" onchange="recalculatePromo()" style="font-size: 12px;">
             <option value="63">$63 USD</option>
           </select><br>
-          <label>張數：</label>
-          <input type="number" id="oys2CouponCount" value="1" min="0" style="width: 50px;" onchange="recalculatePromo()"><br><br>
+          <label style="font-size: 12px;">累積張數：</label>
+          <input type="number" id="oys2CouponCount" value="1" min="0" style="width: 45px; font-size: 12px;" onchange="recalculatePromo()"><br><br>
           
-          <div id="oys2PromoDetails" style="font-size: 13px; line-height: 1.6;">
-            • 首年原保費 (HKD)：<span id="oys2RawHKD">HK$91,650</span><br>
+          <div style="font-size: 12px; line-height: 1.6;">
+            • 首年原保費 (HKD)：HK$91,650<br>
             • 第 1 年優惠折扣：使用 <span id="oys2CountTxt">1</span> 張 $<span id="oys2ValTxt">63</span> 美金券 → <span style="color:#e74c3c; font-weight:bold;" id="oys2DiscountHKD">-HK$491</span><br>
             • 首年實際淨保費：<b style="color:#27ae60;" id="oys2NetHKD">HK$91,159</b><br>
-            <span id="oys2Y2Row">• 第 2 年回贈：<span id="oys2Y2Months">2</span> 個月回贈 → <span style="color:#e74c3c; font-weight:bold;" id="oys2Y2HKD">-HK$15,275</span></span>
+            • 第 2 年回贈：2 個月回贈 → <span style="color:#e74c3c; font-weight:bold;" id="oys2Y2HKD">-HK$15,275</span><br>
+            • 總共自動計算節省：<b style="color:#e74c3c;" id="oys2TotalSavings">HK$15,766</b>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 癌症試算精算區 (600% / 300% & 固定 5% 選項 B) -->
-    <div class="card" style="margin-top: 15px;">
-      <h3>🎗️ 癌症多重理賠動態試算 (選項 A Lump Sum vs 選項 B Monthly)</h3>
-      <div style="margin-bottom: 10px;">
+    <!-- 癌症試算精算區 (600% / 300% & 固定 5% 整數月) -->
+    <div class="card">
+      <h3 style="font-size: 15px; margin-top: 0; color: #2c3e50;">🎗️ 癌症多重理賠動態試算 (選項 A 一筆過 vs 選項 B 每月津貼)</h3>
+      <div style="margin-bottom: 8px; font-size: 13px;">
         <label>選擇計劃：</label>
         <select id="cancerPlanType" onchange="calculateCancerClaims()">
           <option value="OYS2">全新愛伴航2 (總上限 600%)</option>
@@ -122,58 +137,112 @@
         </select>
       </div>
 
-      <div style="margin-bottom: 10px;">
+      <div style="margin-bottom: 8px; font-size: 13px;">
         <label>選項 A (一筆過 100%) 已提取次數：</label>
-        <input type="number" id="cancerOptionACount" value="0" min="0" max="6" onchange="calculateCancerClaims()" style="width: 60px;"> 次
+        <input type="number" id="cancerOptionACount" value="0" min="0" max="6" onchange="calculateCancerClaims()" style="width: 50px;"> 次
       </div>
 
-      <div style="background: #e8f8f5; padding: 12px; border-radius: 8px; border-left: 4px solid #1abc9c;">
-        <b>選項 B (固定每月 5% 津貼) 自動精算結果：</b><br>
-        <span id="cancerOptionBResult">剩餘額度：600% | 可領取固定每月 5% 津貼：<b>120 個月</b> (四捨五入整數)</span>
+      <div style="background: #e8f8f5; padding: 10px; border-radius: 6px; border-left: 4px solid #1abc9c; font-size: 13px;">
+        <span id="cancerOptionBResult">計算中...</span>
       </div>
     </div>
 
   </div>
 
-  <!-- 分頁 2：兒童疾病保障 -->
+  <!-- ========================================== -->
+  <!-- 2. 📂 賠償案例展示 (v3.29 保留獨立分頁與卡片) -->
+  <!-- ========================================== -->
+  <div id="tab-cases" class="tab-content" style="display:none;">
+    <div class="card">
+      <h3 style="font-size: 16px; margin-top:0;">📂 賠償案例紀錄庫</h3>
+      <div id="casesListDisplay">正在從 Google Sheet 載入最新案例...</div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 3. ⚖️ 計劃產品對比表 (v3.29 完全復原) -->
+  <!-- ========================================== -->
+  <div id="tab-compare" class="tab-content" style="display:none;">
+    <div class="card">
+      <h3 style="font-size: 16px; margin-top:0;">⚖️ 簡護危疾保 (SCE) vs 愛伴航2 (OYS2) 核心保障對比</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>保障項目</th>
+            <th>補強 A：簡護危疾保 (SCE)</th>
+            <th>補強 B：愛伴航2 (OYS2)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>保障性質</b></td>
+            <td>純危疾純保障 (單次賠償)</td>
+            <td>儲蓄型多重危疾 (多次賠償)</td>
+          </tr>
+          <tr>
+            <td><b>癌症多次理賠</b></td>
+            <td>不適用</td>
+            <td>最高 600% (選項A + 選項B 合共)</td>
+          </tr>
+          <tr>
+            <td><b>首 10 年免費升級</b></td>
+            <td>高達 50% 額外保額</td>
+            <td>高達 50% 額外保額</td>
+          </tr>
+          <tr>
+            <td><b>兒童特定保障</b></td>
+            <td>基礎兒童保障</td>
+            <td>含 ADHD、罕見病、黃疸光照等</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 4. 👶 兒童疾病保障專頁 (v3.29 動態載入) -->
+  <!-- ========================================== -->
   <div id="tab-child" class="tab-content" style="display:none;">
     <div class="card">
-      <h3>👶 兒童特定疾病保障條款</h3>
-      <div id="childDiseasesContent">正在從 Google Sheet 載入最新條款...</div>
+      <h3 style="font-size: 16px; margin-top:0;">👶 兒童特定疾病保障條款</h3>
+      <div id="childDiseasesContent">正在從 Google Sheet 載入...</div>
     </div>
   </div>
 
-  <!-- 分頁 3：102/110種危疾明細 -->
+  <!-- ========================================== -->
+  <!-- 5. 📜 102/110種危疾明細 (v3.29 動態載入) -->
+  <!-- ========================================== -->
   <div id="tab-critical" class="tab-content" style="display:none;">
     <div class="card">
-      <h3>📜 102/110種危疾及輕疾分類明細</h3>
-      <div id="criticalDiseasesContent">正在從 Google Sheet 載入最新疾病清單...</div>
+      <h3 style="font-size: 16px; margin-top:0;">📜 102/110種危疾及輕疾分類明細</h3>
+      <div id="criticalDiseasesContent">正在從 Google Sheet 載入...</div>
     </div>
   </div>
 
+  <!-- ========================================== -->
   <!-- ⚙️ 雲端後台管理 Modal (點擊 Version 觸發) -->
+  <!-- ========================================== -->
   <div id="adminModal" class="modal-overlay">
     <div class="modal-content">
       <span class="close-btn" onclick="closeAdminModal()">&times;</span>
-      <h2>⚙️ 雲端後台管理 (v3.30)</h2>
+      <h3 style="margin-top:0;">⚙️ 雲端後台管理 (v3.30)</h3>
 
-      <!-- 後台 Sub Tabs -->
       <div class="nav-tabs">
         <div class="nav-tab active" onclick="switchAdminTab('cases')">📂 賠償案例</div>
         <div class="nav-tab" onclick="switchAdminTab('promo')">🎁 折扣與優惠</div>
         <div class="nav-tab" onclick="switchAdminTab('rules')">📊 試算規則</div>
       </div>
 
-      <!-- 後台子頁 1: 賠償案例管理 -->
+      <!-- 後台子頁 1: 賠償案例管理 (雙向刪除) -->
       <div id="admin-tab-cases">
         <h4>新增賠償案例 (同步 Firebase + Google Sheet)</h4>
-        <input type="text" id="adminDiseaseName" placeholder="疾病名稱 (例: 早期甲狀腺癌)" style="width:90%; margin-bottom:8px;"><br>
-        <input type="text" id="adminClaimCount" placeholder="賠償次數 (例: 第 1 次)" style="width:90%; margin-bottom:8px;"><br>
-        <input type="number" id="adminAmount" placeholder="賠償金額 (USD)" style="width:90%; margin-bottom:8px;"><br>
-        <input type="file" id="adminFileInput" multiple style="margin-bottom:10px;"><br>
+        <input type="text" id="adminDiseaseName" placeholder="疾病名稱" style="width:90%; margin-bottom:6px;"><br>
+        <input type="text" id="adminClaimCount" placeholder="賠償次數" style="width:90%; margin-bottom:6px;"><br>
+        <input type="number" id="adminAmount" placeholder="賠償金額 (USD)" style="width:90%; margin-bottom:6px;"><br>
+        <input type="file" id="adminFileInput" multiple style="margin-bottom:8px;"><br>
         <button class="btn" onclick="uploadAndSaveCase()">💾 儲存並上傳至 Firebase & Sheet</button>
         
-        <hr style="margin: 15px 0;">
+        <hr style="margin: 12px 0;">
         <h4>已存案例清單 (支援一鍵徹底刪除)</h4>
         <div id="adminCasesList">載入中...</div>
       </div>
@@ -182,13 +251,11 @@
       <div id="admin-tab-promo" style="display:none;">
         <h4>🎁 保費優惠與回贈設定</h4>
         <label>SCE 首年折扣券面額 (USD):</label>
-        <input type="number" id="cfgSceCoupon" value="25" style="width:80px;"><br><br>
+        <input type="number" id="cfgSceCoupon" value="25" style="width:70px;"><br><br>
         <label>OYS2 首年折扣券面額 (USD):</label>
-        <input type="number" id="cfgOys2Coupon" value="63" style="width:80px;"><br><br>
+        <input type="number" id="cfgOys2Coupon" value="63" style="width:70px;"><br><br>
         <label>OYS2 第 2 年回贈月數:</label>
-        <input type="number" id="cfgOys2Y2Months" value="2" style="width:80px;"><br><br>
-        <label>港幣固定匯率 (USD -> HKD):</label>
-        <input type="number" id="cfgHkdRate" value="7.8" step="0.1" style="width:80px;"><br><br>
+        <input type="number" id="cfgOys2Y2Months" value="2" style="width:70px;"><br><br>
         
         <button class="btn" onclick="savePromoConfig()">💾 儲存優惠設定並全網同步</button>
         <button class="btn btn-danger" onclick="resetPromoConfig()">🗑️ 重置優惠設定</button>
@@ -198,11 +265,11 @@
       <div id="admin-tab-rules" style="display:none;">
         <h4>📊 模擬理賠上限與規則設定</h4>
         <label>愛伴航2 癌症總上限 (%):</label>
-        <input type="number" id="cfgMaxCancerNew" value="600" style="width:80px;"><br><br>
+        <input type="number" id="cfgMaxCancerNew" value="600" style="width:70px;"><br><br>
         <label>舊單 癌症總上限 (%):</label>
-        <input type="number" id="cfgMaxCancerOld" value="300" style="width:80px;"><br><br>
+        <input type="number" id="cfgMaxCancerOld" value="300" style="width:70px;"><br><br>
         <label>癌症選項 B 固定每月津貼 (%):</label>
-        <input type="number" id="cfgCancerOptB" value="5" readonly style="width:80px; background:#eee;"><br><br>
+        <input type="number" id="cfgCancerOptB" value="5" readonly style="width:70px; background:#eee;"><br><br>
         
         <button class="btn" onclick="saveRulesConfig()">💾 儲存規則並全網同步</button>
         <button class="btn btn-danger" onclick="resetRulesConfig()">🗑️ 重置規則</button>
@@ -211,29 +278,25 @@
     </div>
   </div>
 
-  <!-- 分享二維碼自訂選擇 Modal -->
+  <!-- 分享 Modal -->
   <div id="shareModal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 400px;">
+    <div class="modal-content" style="max-width: 380px;">
       <span class="close-btn" onclick="closeShareModal()">&times;</span>
       <h3>🔗 自訂客戶分享內容</h3>
-      <p style="font-size: 13px; color: #666;">請勾選希望展示給客戶的資訊：</p>
-      
       <label><input type="checkbox" id="chkCustomerInfo" checked> 客戶基本資料與試算總結</label><br><br>
       <label><input type="checkbox" id="chkPromoDetails" checked> 限時保費優惠累積試算表</label><br><br>
       <label><input type="checkbox" id="chkChildPage"> 兒童特定疾病保障專頁</label><br><br>
       <label><input type="checkbox" id="chkCriticalPage"> 102/110 種危疾明細表</label><br><br>
-      
       <button class="btn" onclick="generateShareLink()">📱 生成專屬二維碼 / 複製連結</button>
     </div>
   </div>
 
   <script>
     // ==========================================
-    // 🌐 Firebase & GAS 基礎配置
+    // 🌐 GAS & Firebase 設定
     // ==========================================
     const GAS_URL = "https://script.google.com/macros/s/AKfycbx_YOUR_GAS_DEPLOYMENT_ID/exec"; // 請替換為你的 GAS Web App URL
     
-    // 初始化 Firebase (請替換為你的 Firebase Config)
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "YOUR_AUTH_DOMAIN",
@@ -242,16 +305,11 @@
       messagingSenderId: "YOUR_SENDER_ID",
       appId: "YOUR_APP_ID"
     };
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const storage = firebase.storage();
 
-    let cloudData = {}; // 暫存雲端 6 工作表資料
+    let cloudData = {};
 
-    // ==========================================
-    // 🚀 初始化載入 (0 秒頁面 + 背景 6 頁雲端同步)
-    // ==========================================
     window.onload = function() {
       fetchCloudData();
     };
@@ -261,39 +319,37 @@
         .then(res => res.json())
         .then(data => {
           cloudData = data;
+          renderCasesList(data.casesData);
           renderChildDiseases(data.childDiseases);
           renderCriticalDiseases(data.criticalDiseases);
           renderAdminCasesList(data.casesData);
           recalculatePromo();
           calculateCancerClaims();
         })
-        .catch(err => console.log("讀取雲端資料失敗，改用快取:", err));
+        .catch(err => console.log("雲端資料讀取失敗:", err));
     }
 
     // ==========================================
-    // 🎗️ 癌症賠償動態精算 (600% / 300% & 固定 5% 整數月)
+    // 🎗️ 癌症多重精算 (選項 B 固定 5% 四捨五入整數)
     // ==========================================
     function calculateCancerClaims() {
       const planType = document.getElementById('cancerPlanType').value;
       const optionACount = parseInt(document.getElementById('cancerOptionACount').value) || 0;
       
-      const maxTotalPct = (planType === 'OYS2') ? 600 : 300; // 愛伴航2: 600%, 舊單: 300%
-      const optionBMonthlyPct = 5; // 固定 5%
+      const maxTotalPct = (planType === 'OYS2') ? 600 : 300;
+      const optionBMonthlyPct = 5;
 
-      // 選項 A 消耗比例
       const optionAUsedPct = optionACount * 100;
       const remainingPct = Math.max(0, maxTotalPct - optionAUsedPct);
-
-      // 選項 B 剩餘月數 (Math.round 四捨五入取整數)
       const optionBMonths = Math.round(remainingPct / optionBMonthlyPct);
 
       const resultEl = document.getElementById('cancerOptionBResult');
       resultEl.innerHTML = `計劃上限：<b>${maxTotalPct}%</b> | 選項 A 已提取：<b>${optionACount} 次 (${optionAUsedPct}%)</b><br>` + 
-                           `👉 選項 B (固定每月 5%) 剩餘可用：<b style="color:#d35400; font-size:16px;">${optionBMonths} 個月</b> (四捨五入整數)`;
+                           `👉 選項 B (固定每月 5%) 剩餘可用：<b style="color:#d35400; font-size:15px;">${optionBMonths} 個月</b> (四捨五入整數)`;
     }
 
     // ==========================================
-    // 🎁 限時保費優惠計算 (移走 \rightarrow, 簡化標題)
+    // 🎁 優惠試算 (修復符號與標題)
     // ==========================================
     function recalculatePromo() {
       const hkdRate = 7.8;
@@ -304,14 +360,17 @@
       document.getElementById('sceCountTxt').innerText = sceCount;
       document.getElementById('sceValTxt').innerText = sceVal;
       document.getElementById('sceDiscountHKD').innerText = `-HK$${sceDiscountHKD.toLocaleString()}`;
+      document.getElementById('sceTotalSavings').innerText = `HK$${sceDiscountHKD.toLocaleString()}`;
 
       const oys2Val = parseFloat(document.getElementById('oys2CouponVal').value) || 63;
       const oys2Count = parseInt(document.getElementById('oys2CouponCount').value) || 0;
       const oys2DiscountHKD = Math.round(oys2Val * oys2Count * hkdRate);
+      const oys2Y2HKD = 15275;
 
       document.getElementById('oys2CountTxt').innerText = oys2Count;
       document.getElementById('oys2ValTxt').innerText = oys2Val;
       document.getElementById('oys2DiscountHKD').innerText = `-HK$${oys2DiscountHKD.toLocaleString()}`;
+      document.getElementById('oys2TotalSavings').innerText = `HK$${(oys2DiscountHKD + oys2Y2HKD).toLocaleString()}`;
     }
 
     function togglePromoSection() {
@@ -320,40 +379,51 @@
     }
 
     // ==========================================
-    // 📂 Firebase + Google Sheet 雙向同步刪除
+    // 📂 展示與刪除案例 (Firebase + Sheet 同步)
     // ==========================================
-    function deleteCase(diseaseName, claimCount, fileUrlsJson) {
-      if (!confirm(`確定要刪除「${diseaseName} (${claimCount})」嗎？此操作將同步刪除 Firebase 圖片與 Google Sheet 紀錄！`)) return;
+    function renderCasesList(cases) {
+      const container = document.getElementById('casesListDisplay');
+      if (!cases || cases.length === 0) {
+        container.innerHTML = "<p style='color:#777;'>暫無理賠案例紀錄。</p>";
+        return;
+      }
+      let html = "";
+      cases.forEach(item => {
+        html += `<div style="border:1px solid #e2e8f0; padding:10px; border-radius:8px; margin-bottom:8px; background:#fff;">
+          <b>${item.diseaseName}</b> (${item.claimCount}) - <span style="color:#d35400;">$${item.amount} USD</span><br>
+          <small style="color:#888;">日期: ${item.date || '雲端紀錄'}</small>
+        </div>`;
+      });
+      container.innerHTML = html;
+    }
 
-      // 1. 先刪除 Firebase Storage 內的檔案
+    function deleteCase(diseaseName, claimCount, fileUrlsJson) {
+      if (!confirm(`確定要刪除「${diseaseName} (${claimCount})」嗎？將同步刪除 Firebase 圖片與 Google Sheet 紀錄！`)) return;
+
       try {
         const files = JSON.parse(fileUrlsJson || "[]");
         files.forEach(file => {
           if (file.url && file.url.includes("firebasestorage")) {
             const fileRef = storage.refFromURL(file.url);
-            fileRef.delete().then(() => console.log("Firebase 檔案成功刪除:", file.name)).catch(e => console.log("Firebase 刪除失敗:", e));
+            fileRef.delete().then(() => console.log("Firebase 檔案已刪除")).catch(e => console.log("Firebase 刪除失敗", e));
           }
         });
-      } catch (err) { console.log("解析附件網址失敗:", err); }
+      } catch (err) {}
 
-      // 2. 發送指令給 GAS 刪除 Google Sheet 整列
       fetch(GAS_URL, {
         method: 'POST',
         body: JSON.stringify({ action: 'deleteCase', diseaseName: diseaseName, claimCount: claimCount })
       })
       .then(res => res.json())
-      .then(res => {
-        alert("✅ 案例及 Firebase 檔案已成功徹底刪除！");
-        fetchCloudData(); // 重新拉取
+      .then(() => {
+        alert("✅ 已成功同步刪除！");
+        fetchCloudData();
       });
     }
 
     // ==========================================
-    // ⚙️ 後台 UI 切換與開啟
+    // ⚙️ UI 頁面切換控制 (跟足 v3.29)
     // ==========================================
-    function openAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
-    function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
-    
     function switchMainTab(tabKey) {
       document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
       document.getElementById(`tab-${tabKey}`).style.display = 'block';
@@ -361,14 +431,16 @@
       event.target.classList.add('active');
     }
 
+    function openAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
+    function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
+    function openShareModal() { document.getElementById('shareModal').style.display = 'flex'; }
+    function closeShareModal() { document.getElementById('shareModal').style.display = 'none'; }
+
     function switchAdminTab(subTabKey) {
       document.getElementById('admin-tab-cases').style.display = subTabKey === 'cases' ? 'block' : 'none';
       document.getElementById('admin-tab-promo').style.display = subTabKey === 'promo' ? 'block' : 'none';
       document.getElementById('admin-tab-rules').style.display = subTabKey === 'rules' ? 'block' : 'none';
     }
-
-    function openShareModal() { document.getElementById('shareModal').style.display = 'flex'; }
-    function closeShareModal() { document.getElementById('shareModal').style.display = 'none'; }
   </script>
 </body>
 </html>
