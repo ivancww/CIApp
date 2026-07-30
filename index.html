@@ -3,18 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v3.26)</title>
-
+<title>生活應急保險庫 (v3.27)</title>
 <!-- ⚡ 圖片預加載 -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5773.jpeg?alt=media&token=4abe322b-b474-4114-9104-4a1a53313929" as="image">
-
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-
 <style>
   :root {
     --primary: #2c3e50; --gold: #f1c40f; --accent: #e74c3c;
@@ -35,7 +32,6 @@
   .login-box button { padding: 12px 30px; font-size: 1.1rem; background: var(--gold); color: #2c3e50; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; width: 100%; }
   .login-box button:hover { background: #f39c12; transform: translateY(-2px); }
   #login-msg { margin-top: 15px; font-size: 0.9rem; color: #e74c3c; font-weight: bold; min-height: 20px; }
-
   .input-wrapper { position: relative; flex: 1; display: flex; }
   .container { max-width: 1200px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: none; }
   
@@ -44,21 +40,23 @@
   .version-badge { font-size: 0.75rem; background: var(--gold); color: #2c3e50; padding: 4px 10px; border-radius: 20px; font-weight: bold; letter-spacing: 1px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); vertical-align: middle; }
   .lang-btn { font-size: 0.8rem; background: #ecf0f1; color: #2c3e50; border: none; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-weight: bold; margin-left: 10px; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
   .lang-btn:hover { background: #bdc3c7; }
-
   .tab-navigation { display: flex; background: #34495e; border-bottom: 3px solid var(--gold); flex-wrap: wrap;}
   .nav-tab { flex: 1; padding: 15px 10px; text-align: center; color: #bdc3c7; font-weight: bold; cursor: pointer; transition: all 0.2s; border: none; background: none; font-size: 1rem; min-width: 150px;}
   .nav-tab:hover { background: #2c3e50; color: #fff; }
   .nav-tab.active { background: #fff; color: #2c3e50; border-top: 4px solid var(--gold); margin-top: -4px; border-radius: 6px 6px 0 0; }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
-
-  .main-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 0; align-items: flex-start; border-radius: 0 0 12px 12px; }
-  @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; align-items: stretch; } }
+  .main-grid { display: grid; grid-template-columns: 1fr 1.25fr; gap: 0; align-items: flex-start; border-radius: 0 0 12px 12px; }
+  @media (max-width: 600px) { .main-grid { grid-template-columns: 1fr; align-items: stretch; } }
   
   .config-panel { background: #f8f9fa; padding: 20px; border-right: 1px solid #eee; border-radius: 0 0 0 12px; }
   .analysis-panel { background: #fff; padding: 20px; position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; display: flex; flex-direction: column; border-radius: 0 0 12px 0; scroll-behavior: smooth; }
-  @media (max-width: 900px) { .analysis-panel { position: static; max-height: none; overflow-y: visible; } }
-
+  @media (max-width: 600px) { .analysis-panel { position: static; max-height: none; overflow-y: visible; } }
+  
+  /* 📱 Honor Magic V5 摺機展開屏 & iPad 雙欄獨立顯示 */
+  .fold-split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 600px) { .fold-split-grid { grid-template-columns: 1fr; } }
+  
   .hypno-card { background: #fff; border: 1px solid #dcdde1; border-radius: 8px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; transition: 0.2s; }
   .hypno-card:hover { border-color: var(--blue-base); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
   .hypno-header { padding: 12px 15px; background: #f5f6fa; display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: #2f3640; transition: background 0.2s; }
@@ -68,45 +66,36 @@
   .hypno-card.active .hypno-content { max-height: 800px; border-top: 1px solid #f1f2f6; }
   .hypno-card.active .hypno-arrow { transform: rotate(180deg); }
   .hypno-inner { padding: 15px; }
-
   .modal-text-area { padding: 20px 25px; font-size: 1.05rem; color: #34495e; line-height: 1.6; border-bottom: 2px dashed #ecf0f1; background: #fdfdfd; border-radius: 8px 8px 0 0; }
   .modal-img-area { background: #ecf0f1; display: flex; justify-content: center; align-items: center; padding: 0; border-radius: 0 0 8px 8px; }
   .modal-img-area img { width: 100%; max-height: 60vh; object-fit: contain; display: block; border-radius: 0 0 8px 8px; }
-
   .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; opacity: 0; animation: fadeIn 0.3s forwards; }
   @keyframes fadeIn { to { opacity: 1; } }
   .modal-content { background: white; max-width: 550px; width: 100%; max-height: 90vh; border-radius: 12px; position: relative; animation: slideUp 0.3s forwards; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
   @keyframes slideUp { from { transform: translateY(20px); } to { transform: translateY(0); } }
   .modal-close { position: absolute; top: 10px; right: 15px; background: rgba(231, 76, 60, 0.1); color: #e74c3c; width: 32px; height: 32px; border-radius: 50%; font-size: 1.2rem; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; z-index: 10; }
-
   .admin-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
   .admin-content { background: #fff; padding: 25px; border-radius: 10px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
   .admin-input { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem; box-sizing: border-box;}
-
   @keyframes flash-bg { 0% { background-color: rgba(46, 204, 113, 0.4); box-shadow: 0 0 15px rgba(46, 204, 113, 0.8); } 10% { background-color: rgba(46, 204, 113, 0.6); box-shadow: 0 0 20px rgba(46, 204, 113, 1); } 100% { background-color: #f0f3f4; box-shadow: none; } }
   @keyframes flash-text { 0% { color: #27ae60; transform: scale(1.1); text-shadow: 0 0 10px rgba(39, 174, 96, 0.5); } 10% { color: #e74c3c; transform: scale(1.2); text-shadow: 0 0 15px rgba(231, 76, 60, 0.8); } 100% { color: #e74c3c; transform: scale(1); text-shadow: none;} }
   .flash-bg { animation: flash-bg 5s ease-out; } .text-flash { animation: flash-text 5s ease-out; display: inline-block; }
-
   .section-title { font-size: 0.9rem; color: #7f8c8d; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; font-weight: bold; border-bottom: 2px solid #ddd; padding-bottom: 5px; display: flex; align-items: center; }
   .input-group { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
   .input-group label { flex: 1; color: #555; font-size: 0.9rem; font-weight: bold; }
   .input-group input, .input-group select { padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; width: 110px; font-size: 1rem; text-align: right; color: #2c3e50; font-weight: bold; background: #fff; }
   .input-sub-label { display: block; font-size: 0.75rem; color: #999; margin-top: -8px; margin-bottom: 12px; line-height: 1.3; }
-
   .existing-options { background: #eaf2f8; padding: 10px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #d6eaf8; }
   .check-row { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #34495e; font-weight: bold; cursor: pointer; }
   .sub-option-row { margin-top: 8px; padding-left: 25px; display: none; }
   .sub-select { padding: 4px; font-size: 0.8rem; border: 1px solid #bdc3c7; border-radius: 4px; width: auto !important; }
-
   .total-coverage-box { background: #eafaf1; border: 1px solid #d5f5e3; border-radius: 6px; padding: 10px; margin-bottom: 20px; text-align: right; }
   .total-label { font-size: 0.85rem; color: #27ae60; font-weight: bold; } .total-value { font-size: 1.4rem; font-weight: bold; color: #2c3e50; }
   .dark-title { color: #2c3e50; font-weight: bold; margin-top: 0; }
-
   .status-bar { display: flex; justify-content: space-between; align-items: center; background: #f0f3f4; padding: 10px 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e0e0e0; transition: all 0.3s; }
   .status-item { text-align: center; } .status-label { font-size: 0.8rem; color: #7f8c8d; display: block; margin-bottom: 2px; }
   .status-value { font-size: 1.2rem; font-weight: bold; color: #2c3e50; transition: all 0.3s; } .status-value.red { color: #e74c3c; }
   .editable-age { width: 60px !important; text-align: center; padding: 5px; border: 1px solid #bdc3c7; background: #fff; font-weight: bold; font-size: 1.4rem; color: #2c3e50; border-radius: 6px; cursor: pointer; }
-
   .overlay-mask { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.98); z-index: 10; display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center; border-radius: 0 0 12px 0; }
   .controls-area { padding-top: 25px; margin-top: 25px; border-top: 2px solid #ddd; }
   .card { border: 1px solid #eee; border-left: 4px solid transparent; border-radius: 6px; padding: 15px; margin-bottom: 15px; background: white; transition: transform 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
@@ -132,17 +121,14 @@
   .btn-undo-small { background: #95a5a6; color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 4px; font-weight:bold; height: 35px;} .btn-undo-small:hover { background: #7f8c8d; }
   .btn-reset-link { background: none; border: none; color: #95a5a6; text-decoration: underline; font-size: 0.8rem; cursor: pointer; margin-top: 10px; min-width: auto; display: inline-block; }
   .btn-blue { background: #3498db; color: white; } .btn-red { background: #e74c3c; color: white; } .btn-orange { background: #d35400; color: white; } .btn-purple { background: #9b59b6; color: white; } .btn-green { background: #2ecc71; color: white; }
-
   .amount-display { font-family: 'Consolas', monospace; color: #2c3e50; font-weight: bold; font-size: 0.95em; background: #ecf0f1; padding: 4px 8px; border-radius: 4px; border-left: 3px solid #bdc3c7; }
   .amount-label { font-size: 0.8em; color: #7f8c8d; margin-right: 5px; font-weight: normal;}
   .age-record { font-family: 'Consolas', monospace; background: #fcf3cf; color: #d68910; padding: 4px 8px; border-radius: 4px; font-weight: bold; border: 1px solid #f9e79f; min-width: 50px; text-align: center; font-size: 0.9em; }
   .age-label { font-size: 0.8em; color: #b7950b; margin-right: 3px; font-weight: normal; }
   .acc-tag { background-color: var(--info-bg); color: var(--info-text); padding: 4px 10px; border-radius: 15px; font-size: 0.85em; font-weight: bold; border: 1px solid #a9cce3; display: flex; align-items: center;}
-
   .bonus-box { margin-top: 10px; padding: 10px; border-radius: 6px; background: #f8fcfd; border: 1px solid #d1ecf1; color: #0c5460; font-size: 0.85rem; }
   .bonus-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; } .bonus-highlight { font-weight: bold; color: #e74c3c; }
   .bonus-active-tag { background: #2ecc71; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px;} .bonus-inactive-tag { background: #95a5a6; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px;}
-
   .info-page-container { padding: 30px 25px; background: #fff; border-radius: 0 0 12px 12px;}
   .info-section { margin-bottom: 35px; }
   .info-title { font-size: 1.3rem; color: #2c3e50; border-left: 5px solid var(--blue-base); padding-left: 12px; margin-bottom: 15px; font-weight: bold; }
@@ -153,13 +139,11 @@
   .highlight-box { background: #fff8e1; border: 1px solid #ffe082; padding: 15px; border-radius: 8px; color: #5d4037; line-height: 1.6; margin-top: 10px; }
   .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   @media (max-width: 768px) { .grid-2col { grid-template-columns: 1fr; } }
-
   .case-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
   .case-title { font-size: 1.2rem; color: #e74c3c; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 10px; }
   .case-claim-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #eee; font-size: 0.95rem; color: #34495e;}
   .case-file-link { display: inline-block; background: #ecf0f1; color: #2980b9; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; text-decoration: none; margin-right: 5px; margin-top: 10px; border: 1px solid #bdc3c7; font-weight: bold; }
   .case-file-link:hover { background: #3498db; color: white; }
-
   .timeline-card { display: flex; align-items: center; background: white; border-radius: 10px; padding: 15px 20px; margin-bottom: 12px; border: 1px solid #eee; border-left: 6px solid #e74c3c; box-shadow: 0 6px 15px rgba(0,0,0,0.06); animation: slide-down 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: translateY(-20px); }
   @keyframes slide-down { to { opacity: 1; transform: translateY(0); } }
   .timeline-icon { font-size: 2rem; margin-right: 18px; }
@@ -167,7 +151,6 @@
   .timeline-meta-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
   .timeline-age { font-size: 1.1rem; color: #7f8c8d; font-weight: bold; }
   .timeline-amt { font-size: 1.6rem; color: #2c3e50; font-weight: 900; letter-spacing: 1px; }
-
   .compare-col { flex: 1; min-width: 300px; background: #fff; border: 1px solid #ecf0f1; border-radius: 8px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
   .compare-col-sce { border-top: 4px solid #34495e; }
   .compare-col-oys2 { border-top: 4px solid #27ae60; }
@@ -177,7 +160,6 @@
 </style>
 </head>
 <body>
-
 <!-- 🛡️ 登入介面 -->
 <div id="loginOverlay">
     <div class="login-box">
@@ -188,7 +170,6 @@
         <div id="login-msg"></div>
     </div>
 </div>
-
 <!-- 彈出圖文 Modal -->
 <div id="imageModal" class="modal-overlay" onclick="closeModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
@@ -199,7 +180,6 @@
         </div>
     </div>
 </div>
-
 <!-- 後台案例管理 Modal -->
 <div id="adminModal" class="admin-modal">
     <div class="admin-content">
@@ -227,15 +207,13 @@
         <div id="adminCasesList">載入中...</div>
     </div>
 </div>
-
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v3.26</span>
+          生活應急保險庫 <span class="version-badge">v3.27</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
-
   <!-- 全局導航欄 -->
   <div class="tab-navigation">
       <button class="nav-tab active" onclick="switchPage('main')">📊 模擬賠償儀表板</button>
@@ -256,7 +234,6 @@
                 <div class="hypno-arrow">👉</div>
             </div>
         </div>
-
         <div class="section-title">1. 保障額度 (Review)</div>
         <div class="input-group"><label>舊單 (Existing)</label><div class="input-wrapper" id="wrap_sumExisting"><input type="text" id="sumExisting" value="200,000" onkeyup="handleSumInput()"></div></div>
         <div class="existing-options" id="wrap_existingMulti"><div class="check-row"><input type="checkbox" id="existingMultiCheck" onchange="toggleExistingOptions()"><label for="existingMultiCheck" style="cursor:pointer; flex:1; color:#34495e;">包含多重賠償 (癌症/心臟)?</label></div><div class="sub-option-row" id="existingSubOptions"><div style="display:flex; align-items:center; margin-top:5px;"><span class="sub-option-label">癌症等候期:</span><select id="existingCancerWait" class="sub-select"><option value="3">3年 (新式)</option><option value="5" selected>5年 (舊式)</option></select></div></div></div>
@@ -275,7 +252,6 @@
           <label style="color:var(--orange-base);">每月所需生活費 (代替收入)</label>
           <div class="input-wrapper" id="wrap_expense"><input type="text" id="expense" value="30,000" onkeyup="formatOnly(this)"></div>
         </div>
-
         <button class="btn-confirm" onclick="confirmAndStart()">✅ 確認資料並啟動儀表板</button>
         <div style="text-align:center; margin-top:10px;"><button class="btn-reset-link" onclick="fullReset()">全部重置</button></div>
         
@@ -377,7 +353,6 @@
         
         <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--blue-base); margin-bottom: 25px;">
             <h4 style="margin: 0 0 15px 0; color: #2c3e50; text-align: center;">🛡️ 3年大病休養期</h4>
-
             <div class="hypno-card" style="background:#eaf2f8; border-color:#d4e6f1; margin-bottom:15px;" onclick="openHypnoModal('think')">
                 <div class="hypno-header" style="background:transparent; color:#2980b9;">
                     <div class="hypno-title"><span>💭</span> 不如我哋一齊想像一下... (點擊展開)</div>
@@ -389,7 +364,6 @@
                 <span style="color: #7f8c8d; font-weight: bold;">休養期所需總生活費 (36個月):</span>
                 <span style="font-weight: 900; font-size: 1.3rem; color: #2c3e50;" id="valNeeds3Y">$0</span>
             </div>
-
             <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
                 <div style="flex: 1; min-width: 130px; padding: 15px 10px; border-radius: 8px; border: 2px solid #d5f5e3; background: #eafaf1; text-align: center;">
                     <div style="font-size: 0.85rem; color: #27ae60; font-weight: bold;">✅ 保險賠償支付</div>
@@ -400,7 +374,6 @@
                     <div style="font-size: 1.4rem; font-weight: 900; color: #e74c3c; margin-top: 5px;" id="valSavingsNeeded">$0</div>
                 </div>
             </div>
-
             <div style="text-align: center; padding: 18px; background: #2c3e50; color: white; border-radius: 8px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); margin-bottom: 15px;">
                 <div style="font-size: 0.95rem; margin-bottom: 5px; opacity: 0.9;">大病後存款最終結餘：</div>
                 <div style="font-size: 1.6rem; font-weight: bold; margin-bottom: 4px;" id="valFinalSavings">$0</div>
@@ -427,78 +400,79 @@
       </div>
     </div>
   </div>
-
   <!-- 分頁 2: 兒童疾病保障專頁 -->
   <div id="page-child" class="tab-content info-page-container">
       <div class="info-section">
           <h2 class="dark-title" style="font-size: 1.6rem; color: #2980b9;">👶 「愛伴航」兒童疾病及家長身故豁免保障全覽</h2>
           <p style="color:#666;">由懷孕期第22週起至出生後提供終身守護。以下為兒童專屬權益及理賠核心明細：</p>
       </div>
-
-      <div class="info-section">
-          <div class="info-title" style="border-left-color: #e74c3c;">🔥 關鍵保障：父母身故豁免繳付保費保障</div>
-          <div class="highlight-box">
-              <strong>保障核心機制：</strong><br>
-              當保單已生效滿 <strong>2 年</strong>或以上，若受保子女的父母（須為保單持有人或第二持有人，且投保時年齡為 <strong>50 歲或以下</strong>）不幸於 <strong>75 歲前身故</strong>，基本保單未來的獨立保費餘額將會被<strong>全數豁免</strong>，直至受保子女年滿 <strong>25 歲</strong>為止。在此期間，子女的保障及保單價值完全不受任何影響，讓愛得以延續。
+      <div class="fold-split-grid">
+          <div>
+              <div class="info-section">
+                  <div class="info-title" style="border-left-color: #e74c3c;">🔥 關鍵保障：父母身故豁免繳付保費保障</div>
+                  <div class="highlight-box">
+                      <strong>保障核心機制：</strong><br>
+                      當保單已生效滿 <strong>2 年</strong>或以上，若受保子女的父母（須為保單持有人或第二持有人，且投保時年齡為 <strong>50 歲或以下</strong>）不幸於 <strong>75 歲前身故</strong>，基本保單未來的獨立保費餘額將會被<strong>全數豁免</strong>，直至受保子女年滿 <strong>25 歲</strong>為止。在此期間，子女的保障及保單價值完全不受任何影響，讓愛得以延續。
+                  </div>
+              </div>
+              <div class="info-section">
+                  <div class="info-title" style="border-left-color: #f39c12;">⚠️ 兒童理賠重要注意事項</div>
+                  <ul style="line-height: 1.8; color: #444; padding-left: 20px;">
+                      <li><strong>額度共用限制：</strong>「專注力不足/過度活躍症」、「妥瑞症」以及嚴重兒童疾病下的「自閉症」，此三項疾病的總應付賠償額<strong>合共不能超過原有保額的 20%</strong>（上限50,000美元）。</li>
+                      <li><strong>出生首90日保障打折：</strong>如果受保子女在出生後 <strong>90 日之內</strong>確診疾病或入住深切治療病房，所有受保疾病賠償額或深切治療保障賠償<strong>僅支付應付金額的 20%</strong>。</li>
+                      <li><strong>首180日身故限制：</strong>如初生子女於出生後 <strong>180 日或之內</strong>不幸身故，身故賠償將按「已付基本保費總和」或「現時保額與可用升級保障餘額總和的 20%」兩者之較高者支付。</li>
+                      <li><strong>保單存續期限：</strong>必須在受保子女出生後、且在首個保單週年日前 14 日或之前，呈交出世紙核證真實副本，否則保單會於首個保單週年日自動終止。</li>
+                  </ul>
+              </div>
+          </div>
+          <div>
+              <div class="info-section">
+                  <div class="info-title">📊 兒童特定疾病與增值保障一覽表</div>
+                  <table class="info-table">
+                      <thead>
+                          <tr>
+                              <th style="width: 25%;">保障種類</th>
+                              <th style="width: 45%;">涵蓋疾病種類</th>
+                              <th style="width: 30%;">賠償額度 (按原有保額)</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr>
+                              <td><strong>兒童成長保障<br>(高發性疾病)</strong></td>
+                              <td>專注力不足 / 過度活躍症 (ADHD)、妥瑞症</td>
+                              <td>預支 <strong>20%</strong><br>(個人最高上限 50,000 美元)</td>
+                          </tr>
+                          <tr>
+                              <td><strong>兒童成長保障<br>(罕見性疾病)</strong></td>
+                              <td>天使綜合症 (Angelman Syndrome)、大理石骨病、嚴重腦癇症</td>
+                              <td>預支 <strong>5%</strong><br>(個人最高上限 12,500 美元)</td>
+                          </tr>
+                          <tr>
+                              <td><strong>嚴重兒童疾病保障<br>(共13種)</strong></td>
+                              <td>自閉症、嚴重哮喘、植物人、因疾病或受傷引致智力障礙、俱心臟併發症的川崎病、成骨不全症第三型、風濕性心瓣疾病、嚴重型血友病、斯蒂爾病、一型青少年脊髓性肌肉萎縮症、威爾遜病等。</td>
+                              <td>每項疾病預支 <strong>20%</strong><br>(個人最高上限 50,000 美元)</td>
+                          </tr>
+                          <tr>
+                              <td><strong>嚴重黃疸保障<br>(市場首創)</strong></td>
+                              <td>初生子女於懷孕37週或之後出生且患嚴重黃疸，出生30日內需連續至少5日住院接受光照治療。</td>
+                              <td>每日額外補貼 <strong>0.1%</strong><br>(上限每日250美元，最多7日)</td>
+                          </tr>
+                          <tr>
+                              <td><strong>唐氏綜合症豁免<br>(市場首創)</strong></td>
+                              <td>準媽媽產前無創產前檢查為「低風險/低機率」，但出生後子女確診唐氏綜合症。</td>
+                              <td>基本保單餘下定期保費<strong>全免</strong></td>
+                          </tr>
+                          <tr>
+                              <td><strong>臍帶血幹細胞移植<br>(市場首創)</strong></td>
+                              <td>受保子女確診癌症並獲批嚴重危疾賠償，且於18歲前由醫生建議進行醫療所需之臍帶血幹細胞移植。</td>
+                              <td>額外支付 <strong>10%</strong><br>(個人最高上限 35,000 美元)</td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
           </div>
       </div>
-
-      <div class="info-section">
-          <div class="info-title">📊 兒童特定疾病與增值保障一覽表</div>
-          <table class="info-table">
-              <thead>
-                  <tr>
-                      <th style="width: 25%;">保障種類</th>
-                      <th style="width: 45%;">涵蓋疾病種類</th>
-                      <th style="width: 30%;">賠償額度 (按原有保額)</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr>
-                      <td><strong>兒童成長保障<br>(高發性疾病)</strong></td>
-                      <td>專注力不足 / 過度活躍症 (ADHD)、妥瑞症</td>
-                      <td>預支 <strong>20%</strong><br>(個人最高上限 50,000 美元)</td>
-                  </tr>
-                  <tr>
-                      <td><strong>兒童成長保障<br>(罕見性疾病)</strong></td>
-                      <td>天使綜合症 (Angelman Syndrome)、大理石骨病、嚴重腦癇症</td>
-                      <td>預支 <strong>5%</strong><br>(個人最高上限 12,500 美元)</td>
-                  </tr>
-                  <tr>
-                      <td><strong>嚴重兒童疾病保障<br>(共13種)</strong></td>
-                      <td>自閉症、嚴重哮喘、植物人、因疾病或受傷引致智力障礙、俱心臟併發症的川崎病、成骨不全症第三型、風濕性心瓣疾病、嚴重型血友病、斯蒂爾病、一型青少年脊髓性肌肉萎縮症、威爾遜病等。</td>
-                      <td>每項疾病預支 <strong>20%</strong><br>(個人最高上限 50,000 美元)</td>
-                  </tr>
-                  <tr>
-                      <td><strong>嚴重黃疸保障<br>(市場首創)</strong></td>
-                      <td>初生子女於懷孕37週或之後出生且患嚴重黃疸，出生30日內需連續至少5日住院接受光照治療。</td>
-                      <td>每日額外補貼 <strong>0.1%</strong><br>(上限每日250美元，最多7日)</td>
-                  </tr>
-                  <tr>
-                      <td><strong>唐氏綜合症豁免<br>(市場首創)</strong></td>
-                      <td>準媽媽產前無創產前檢查為「低風險/低機率」，但出生後子女確診唐氏綜合症。</td>
-                      <td>基本保單餘下定期保費<strong>全免</strong></td>
-                  </tr>
-                  <tr>
-                      <td><strong>臍帶血幹細胞移植<br>(市場首創)</strong></td>
-                      <td>受保子女確診癌症並獲批嚴重危疾賠償，且於18歲前由醫生建議進行醫療所需之臍帶血幹細胞移植。</td>
-                      <td>額外支付 <strong>10%</strong><br>(個人最高上限 35,000 美元)</td>
-                  </tr>
-              </tbody>
-          </table>
-      </div>
-
-      <div class="info-section">
-          <div class="info-title" style="border-left-color: #f39c12;">⚠️ 兒童理賠重要注意事項</div>
-          <ul style="line-height: 1.8; color: #444; padding-left: 20px;">
-              <li><strong>額度共用限制：</strong>「專注力不足/過度活躍症」、「妥瑞症」以及嚴重兒童疾病下的「自閉症」，此三項疾病的總應付賠償額<strong>合共不能超過原有保額的 20%</strong>（上限50,000美元）。</li>
-              <li><strong>出生首90日保障打折：</strong>如果受保子女在出生後 <strong>90 日之內</strong>確診疾病或入住深切治療病房，所有受保疾病賠償額或深切治療保障賠償<strong>僅支付應付金額的 20%</strong>。</li>
-              <li><strong>首180日身故限制：</strong>如初生子女於出生後 <strong>180 日或之內</strong>不幸身故，身故賠償將按「已付基本保費總和」或「現時保額與可用升級保障餘額總和的 20%」兩者之較高者支付。</li>
-              <li><strong>保單存續期限：</strong>必須在受保子女出生後、且在首個保單週年日前 14 日或之前，呈交出世紙核證真實副本，否則保單會於首個保單週年日自動終止。</li>
-          </ul>
-      </div>
   </div>
-
   <!-- 分頁 3: 危疾/輕疾明細 -->
   <div id="page-diseases" class="tab-content info-page-container">
       <div class="info-section">
@@ -524,97 +498,93 @@
               </div>
           </div>
       </div>
-
-      <div class="grid-2col">
-          <div class="info-section">
-              <div class="info-title">🎀 第1類：癌症 (Cancer)</div>
-              <table class="info-table">
-                  <tr><td><strong>嚴重危疾 (100% 賠償)</strong></td><td>癌症（不包括部分早期/非侵略性癌前病變）</td></tr>
-                  <tr><td><strong>早期危疾 (20% 賠償)</strong></td><td>原位癌（最多原位癌可賠2次不同器官）、早期惡性腫瘤（如早期甲狀腺/前列腺癌、低風險淋巴白血病）</td></tr>
-              </table>
+      <div class="fold-split-grid">
+          <div>
+              <div class="info-section">
+                  <div class="info-title">🎀 第1類：癌症 (Cancer)</div>
+                  <table class="info-table">
+                      <tr><td><strong>嚴重危疾 (100% 賠償)</strong></td><td>癌症（不包括部分早期/非侵略性癌前病變）</td></tr>
+                      <tr><td><strong>早期危疾 (20% 賠償)</strong></td><td>原位癌（最多原位癌可賠2次不同器官）、早期惡性腫瘤（如早期甲狀腺/前列腺癌、低風險淋巴白血病）</td></tr>
+                  </table>
+              </div>
+              <div class="info-section">
+                  <div class="info-title">❤️ 第2類：心臟相關疾病 (Heart)</div>
+                  <table class="info-table">
+                      <tr><td><strong>嚴重危疾 (100% 賠償)</strong></td><td>心肌病、冠狀動脈手術、心臟病發、心瓣置換及修補、傳染性心內膜炎、肺動脈高血壓、主動脈手術。</td></tr>
+                      <tr><td><strong>早期危疾 (20% 賠償)</strong></td><td>經皮穿刺冠狀動脈介入（俗稱「通波仔」）、微創直接冠狀動脈搭橋、心包切除術、主動脈瘤血管介入治療。</td></tr>
+                  </table>
+              </div>
+              <div class="info-section">
+                  <div class="info-title">🧠 第3類：神經系統疾病 (Nervous)</div>
+                  <table class="info-table">
+                      <tr><td><strong>嚴重危疾 (100% 賠償)</strong></td><td>亞爾茲默氏病/不可還原之腦退化、中風、癱瘓、柏金遜症、昏迷、腦炎、植物人、嚴重頭部創傷、多發性硬化症、運動神經原疾病（漸凍症）。</td></tr>
+                      <tr><td><strong>早期危疾 (20% 賠償)</strong></td><td>早期腦退化症、大腦動脈瘤血管介入治療、良性腦腫瘤、於頸動脈進行血管成形術、次級嚴重柏金遜症。</td></tr>
+                  </table>
+              </div>
           </div>
-
-          <div class="info-section">
-              <div class="info-title">❤️ 第2類：心臟相關疾病 (Heart)</div>
-              <table class="info-table">
-                  <tr><td><strong>嚴重危疾 (100% 賠償)</strong></td><td>心肌病、冠狀動脈手術、心臟病發、心瓣置換及修補、傳染性心內膜炎、肺動脈高血壓、主動脈手術。</td></tr>
-                  <tr><td><strong>早期危疾 (20% 賠償)</strong></td><td>經皮穿刺冠狀動脈介入（俗稱「通波仔」）、微創直接冠狀動脈搭橋、心包切除術、主動脈瘤血管介入治療。</td></tr>
-              </table>
+          <div>
+              <div class="info-section">
+                  <div class="info-title">🏥 第4類：主要器官與功能 (Organs)</div>
+                  <table class="info-table">
+                      <tr><td><strong>嚴重危疾 (100% 賠償)</strong></td><td>腎衰竭、主要器官移植（心/肺/肝/腎/胰）、慢性肝病、暴發性病毒性肝炎、系統性紅斑狼瘡連狼瘡性腎炎、末期肺病。</td></tr>
+                      <tr><td><strong>早期危疾 (20% 賠償)</strong></td><td>嚴重哮喘、慢性肺病、肝炎連肝硬化、膽道重建、次級嚴重腎臟疾病、腎小球腎炎合併腎病綜合症。</td></tr>
+                  </table>
+              </div>
+              <div class="info-section">
+                  <div class="info-title">🛡️ 第5及第6類：其他主要疾病、末期疾病與不能獨立生活</div>
+                  <table class="info-table">
+                      <thead>
+                          <tr>
+                              <th style="width: 30%;">疾病級別</th>
+                              <th style="width: 50%;">病症明細</th>
+                              <th style="width: 20%;">賠償額度</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr>
+                              <td><strong>第5類：嚴重危疾</strong></td>
+                              <td>失明、失聰、喪失語言能力、失去兩肢、嚴重燒傷、克羅恩氏病、壞死性筋膜炎（食肉菌）。</td>
+                              <td><strong>100% 保額</strong></td>
+                          </tr>
+                          <tr>
+                              <td><strong>第5類：早期/輕疾</strong></td>
+                              <td>單耳失聰、失去一肢、單眼失明、意外引致臉部燒傷、微創面容重建手術。</td>
+                              <td>預支 <strong>20%</strong></td>
+                          </tr>
+                          <tr>
+                              <td><strong>第5類：特定輕疾</strong></td>
+                              <td>骨質疏鬆症連骨折、嚴重阻塞性睡眠窒息症。</td>
+                              <td>預支 <strong>10%</strong></td>
+                          </tr>
+                          <tr>
+                              <td><strong>第6類：末期與獨立性</strong></td>
+                              <td>末期疾病（終身）、不能獨立生活（保障至受保人65歲）。</td>
+                              <td><strong>100% 保額</strong></td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+              <div class="info-section">
+                <div class="info-title">⚠️ 深切治療保障 (ICU) <span class="tag" style="background: #e74c3c; color: white; float: right; margin-top: -2px;">只限補強B (oys2)</span></div>
+                <div class="highlight-box">
+                  保障不限於已定義的危疾！涵蓋因<span style="color: #e74c3c; font-weight: bold;">危疾以外的其他健康問題（包括未知的新型傳染病如 COVID-19 及嚴重意外受傷）</span>而需要入住深切治療病房的情況，為未來未知的健康挑戰提供最強後盾。
+                </div>
+                <table class="info-table">
+                  <tr>
+                    <th style="width: 50%;">級別一</th>
+                    <th>級別二</th>
+                  </tr>
+                  <tr>
+                    <td>入住深切治療病房連續 72 小時或以上</td>
+                    <td>入住深切治療病房及使用侵入性維生支持連續 120 小時或以上，並接受按自願醫保計劃中的手術表分類為複雜的手術</td>
+                  </tr>
+                  <tr>
+                    <td style="color: #27ae60; font-weight: bold;">預支高達原有保額的 20%<br><span style="font-size:0.8em; color:#7f8c8d; font-weight:normal;">(最高 50,000 美元)</span></td>
+                    <td style="color: #27ae60; font-weight: bold;">預支高達原有保額的 100%<br><span style="font-size:0.8em; color:#7f8c8d; font-weight:normal;">(減去所有已預支賠償)</span></td>
+                  </tr>
+                </table>
+              </div>
           </div>
-      </div>
-
-      <div class="grid-2col" style="margin-top: 20px;">
-          <div class="info-section">
-              <div class="info-title">🧠 第3類：神經系統疾病 (Nervous)</div>
-              <table class="info-table">
-                  <tr><td><strong>嚴重危疾 (100% 賠償)</strong></td><td>亞爾茲默氏病/不可還原之腦退化、中風、癱瘓、柏金遜症、昏迷、腦炎、植物人、嚴重頭部創傷、多發性硬化症、運動神經原疾病（漸凍症）。</td></tr>
-                  <tr><td><strong>早期危疾 (20% 賠償)</strong></td><td>早期腦退化症、大腦動脈瘤血管介入治療、良性腦腫瘤、於頸動脈進行血管成形術、次級嚴重柏金遜症。</td></tr>
-              </table>
-          </div>
-
-          <div class="info-section">
-              <div class="info-title">🏥 第4類：主要器官與功能 (Organs)</div>
-              <table class="info-table">
-                  <tr><td><strong>嚴重危疾 (100% 賠償)</strong></td><td>腎衰竭、主要器官移植（心/肺/肝/腎/胰）、慢性肝病、暴發性病毒性肝炎、系統性紅斑狼瘡連狼瘡性腎炎、末期肺病。</td></tr>
-                  <tr><td><strong>早期危疾 (20% 賠償)</strong></td><td>嚴重哮喘、慢性肺病、肝炎連肝硬化、膽道重建、次級嚴重腎臟疾病、腎小球腎炎合併腎病綜合症。</td></tr>
-              </table>
-          </div>
-      </div>
-
-      <div class="info-section" style="margin-top: 20px;">
-          <div class="info-title">🛡️ 第5及第6類：其他主要疾病、末期疾病與不能獨立生活</div>
-          <table class="info-table">
-              <thead>
-                  <tr>
-                      <th style="width: 30%;">疾病級別</th>
-                      <th style="width: 50%;">病症明細</th>
-                      <th style="width: 20%;">賠償額度</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr>
-                      <td><strong>第5類：嚴重危疾</strong></td>
-                      <td>失明、失聰、喪失語言能力、失去兩肢、嚴重燒傷、克羅恩氏病、壞死性筋膜炎（食肉菌）。</td>
-                      <td><strong>100% 保額</strong></td>
-                  </tr>
-                  <tr>
-                      <td><strong>第5類：早期/輕疾</strong></td>
-                      <td>單耳失聰、失去一肢、單眼失明、意外引致臉部燒傷、微創面容重建手術。</td>
-                      <td>預支 <strong>20%</strong></td>
-                  </tr>
-                  <tr>
-                      <td><strong>第5類：特定輕疾</strong></td>
-                      <td>骨質疏鬆症連骨折、嚴重阻塞性睡眠窒息症。</td>
-                      <td>預支 <strong>10%</strong></td>
-                  </tr>
-                  <tr>
-                      <td><strong>第6類：末期與獨立性</strong></td>
-                      <td>末期疾病（終身）、不能獨立生活（保障至受保人65歲）。</td>
-                      <td><strong>100% 保額</strong></td>
-                  </tr>
-              </tbody>
-          </table>
-      </div>
-
-      <div class="info-section" style="margin-top: 20px;">
-        <div class="info-title">⚠️ 深切治療保障 (ICU) <span class="tag" style="background: #e74c3c; color: white; float: right; margin-top: -2px;">只限補強B (oys2)</span></div>
-        <div class="highlight-box">
-          保障不限於已定義的危疾！涵蓋因<span style="color: #e74c3c; font-weight: bold;">危疾以外的其他健康問題（包括未知的新型傳染病如 COVID-19 及嚴重意外受傷）</span>而需要入住深切治療病房的情況，為未來未知的健康挑戰提供最強後盾。
-        </div>
-        <table class="info-table">
-          <tr>
-            <th style="width: 50%;">級別一</th>
-            <th>級別二</th>
-          </tr>
-          <tr>
-            <td>入住深切治療病房連續 72 小時或以上</td>
-            <td>入住深切治療病房及使用侵入性維生支持連續 120 小時或以上，並接受按自願醫保計劃中的手術表分類為複雜的手術</td>
-          </tr>
-          <tr>
-            <td style="color: #27ae60; font-weight: bold;">預支高達原有保額的 20%<br><span style="font-size:0.8em; color:#7f8c8d; font-weight:normal;">(最高 50,000 美元)</span></td>
-            <td style="color: #27ae60; font-weight: bold;">預支高達原有保額的 100%<br><span style="font-size:0.8em; color:#7f8c8d; font-weight:normal;">(減去所有已預支賠償)</span></td>
-          </tr>
-        </table>
       </div>
   </div>
   
@@ -629,14 +599,12 @@
           <div style="text-align:center; color:#95a5a6; padding:30px;">正在從 Google Sheet 載入數據與附件...</div>
       </div>
   </div>
-
   <!-- 分頁 5: 補強方案大比拼 -->
   <div id="page-compare" class="tab-content info-page-container">
       <div class="info-section">
           <h2 class="dark-title" style="font-size: 1.6rem; color: #2980b9; text-align: center;">⚖️ 補強方案對比：簡護危疾保 (SCE) vs 愛伴航2 (OYS2)</h2>
           <p style="text-align:center; color:#7f8c8d; font-size:0.9rem;">基於相同設定，對比「定期危疾」與「儲蓄危疾」的長遠保費走勢及多次理賠槓桿。</p>
       </div>
-
       <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd;">
           <div class="action-row" style="justify-content:center; gap:15px; flex-wrap:wrap; border:none; background:transparent;">
               <div class="input-group" style="margin:0;"><label>地區</label><select id="compareRegion" onchange="calculateComparison()"><option value="hk">香港版</option><option value="pearl">明珠版</option></select></div>
@@ -645,8 +613,7 @@
               <div class="input-group" style="margin:0; border-left:2px solid var(--gold); padding-left:10px;"><label style="color:#d35400;">🏃 AIA Vitality</label><select id="compareVitality" onchange="calculateComparison()"><option value="no">未加入</option><option value="yes" selected>已加入 (SCE保費9折 / OYS2保額+10%)</option></select></div>
           </div>
       </div>
-
-      <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+      <div class="fold-split-grid">
           <div class="compare-col compare-col-sce">
               <h3 style="color: #34495e; text-align: center; margin-top:0;">補強A：簡護危疾保 (SCE)</h3>
               <div style="text-align:center; color:#7f8c8d; font-size:0.8rem; margin-bottom:15px;">特色：純保障，極低起步保費，每 5 年續保調整保費。</div>
@@ -667,7 +634,6 @@
                   <tfoot><tr><td colspan="2">累積總保費成本</td><td id="sceTotalPremium" style="font-size:1.1rem; color:#e74c3c;">$0</td></tr></tfoot>
               </table>
           </div>
-
           <div class="compare-col compare-col-oys2">
               <h3 style="color: #27ae60; text-align: center; margin-top:0;">補強B：愛伴航2 (OYS2)</h3>
               <div style="text-align:center; color:#7f8c8d; font-size:0.8rem; margin-bottom:15px;">特色：終身儲蓄危疾，保費水平固定不變，含多重理賠。</div>
@@ -676,7 +642,6 @@
                   <label style="flex:none; font-weight:bold; color:#27ae60;">獨立保額 $</label>
                   <input type="text" id="oys2Sum" value="1,000,000" onkeyup="formatOnly(this); calculateComparison();" style="width:120px; color:#2c3e50; font-size:1.1rem;">
               </div>
-
               <div class="action-row" style="justify-content:space-between; margin-bottom:10px;">
                   <div class="input-group" style="margin:0;"><label style="flex:none;">投保年歲</label><input type="number" id="oys2StartAge" value="0" style="width:60px;" onchange="calculateComparison()"></div>
                   <div class="input-group" style="margin:0;"><label style="flex:none; color:#27ae60;">供款期</label><select id="oys2PayTerm" style="width:80px;" onchange="calculateComparison()"><option value="pay10">10年</option><option value="pay18">18年</option><option value="pay25" selected>25年</option></select></div>
@@ -689,7 +654,6 @@
               </table>
           </div>
       </div>
-
       <div class="info-section" style="margin-top: 30px;">
           <div class="info-title" style="border-left-color: #e74c3c;">💰 保額（賠償金額）實戰推演</div>
           <div style="font-size:0.85rem; color:#7f8c8d; margin-bottom:15px;">請輸入首次確診歲數，並點擊下方按鈕，系統將自動按等候期推進歲數，推演出兩者多次理賠之極大差異。</div>
@@ -705,7 +669,6 @@
                   <button class="btn-undo-small" onclick="resetCompareClaims()" style="background:#95a5a6; height: 35px;">🔄 重置推演</button>
               </div>
           </div>
-
           <table class="info-table">
               <thead><tr><th>賠償項目</th><th style="background-color: #34495e; width:35%;">簡護危疾保 (SCE)</th><th style="background-color: #27ae60; width:35%;">愛伴航2 (OYS2)</th></tr></thead>
               <tbody id="claimResultsBody">
@@ -716,7 +679,6 @@
       </div>
   </div>
 </div>
-
 <script>
   // ==========================================
   // API & Firebase 設定
@@ -724,7 +686,6 @@
   const GAS_LOGIN_URL = "https://script.google.com/macros/s/AKfycbwmpVo8uGg8ZaC-oTFKdTdLAgCibw8FhD0UpcuMA6wWKwV0GWPWhO7hfFqL4NYRds2v/exec";
   const GAS_CASE_URL = "https://script.google.com/macros/s/AKfycbwvibk7PlwTzFKwEqQSvEF1syOiPRCAUDWVmvmVe6AmcBIi5TB8G9Zm-TniNb1Okp4IfA/exec";
   const GAS_COMPARE_RATES_URL = "https://script.google.com/macros/s/AKfycbwUKoJ7p9XMP3VKv4h_p5o95H0_TFIMzk2rM_JD_C5ZRsrlUCF8xWT7LrODnvntKDaRRQ/exec";
-
   const firebaseConfig = {
       apiKey: "AIzaSyDBA5Iitb8X0qmbVfjVdYWw-M2D_9ZhFIg",
       authDomain: "medical-and-ci.firebaseapp.com",
@@ -735,7 +696,6 @@
   };
   if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
   const storage = firebase.storage();
-
   window.onload = () => {
       if(localStorage.getItem('ava_logged_in') === 'true') {
           document.getElementById('loginOverlay').style.display = 'none';
@@ -744,7 +704,6 @@
       }
       fetchPremiumRates();
   };
-
   async function checkLogin() {
       const pwd = document.getElementById('passwordInput').value;
       const btn = document.getElementById('loginBtn');
@@ -770,7 +729,6 @@
           btn.innerText = "驗證登入";
       }
   }
-
   // ==========================================
   // 後台案例同步
   // ==========================================
@@ -785,7 +743,6 @@
       let btn = document.getElementById('adminSubmitBtn');
       btn.innerText = "⏳ 上傳檔案及同步中...";
       btn.disabled = true;
-
       try {
           let fileUrls = [];
           if(files.length > 0) {
@@ -810,7 +767,6 @@
               }),
               headers: { 'Content-Type': 'text/plain;charset=utf-8' }
           });
-
           document.getElementById('adminDisease').value = "";
           document.getElementById('adminClaimSeq').value = "";
           document.getElementById('adminClaimAmt').value = "";
@@ -826,7 +782,6 @@
           btn.disabled = false;
       }
   }
-
   async function deleteCase(diseaseName, claimSeq) {
       if(!confirm("確定要刪除這個案例？此操作將從 Google Sheet 同步移除。")) return;
       try {
@@ -841,7 +796,6 @@
               }), 
               headers: { 'Content-Type': 'text/plain;charset=utf-8' } 
           });
-
           alert("✅ 已成功刪除！");
           loadCases();
       } catch(e) { 
@@ -849,7 +803,6 @@
           alert("❌ 刪除失敗，請再試一次。"); 
       }
   }
-
   async function loadCases() {
       try {
           document.getElementById('frontendCasesList').innerHTML = `<div style="text-align:center; color:#95a5a6; padding:30px;">正在從 Google Sheet 下載數據與附件...</div>`;
@@ -871,7 +824,6 @@
                           filesHtml += `<a href="${f.url}" target="_blank" class="case-file-link">📎 ${f.name}</a>`;
                       });
                   }
-
                   html += `
                   <div class="case-card">
                       <div class="case-title">🩺 ${claim.diseaseName}</div>
@@ -896,28 +848,24 @@
           document.getElementById('frontendCasesList').innerHTML = `<div style="text-align:center; color:#e74c3c; padding:30px;">無法讀取 Google Sheet，請檢查連線</div>`;
       }
   }
-
   // ==========================================
   // 儀表板全功能試算邏輯
   // ==========================================
   let config = { sumExisting: 200000, sumTerm: 500000, sumWhole: 500000, sumUpgradeB: 500000, sumBasicPool: 1200000, existingMulti: false, existingCancerWait: 5, startAge: 0, assets: 500000, expense: 30000 };
   let state = { isConfirmed: false, balance: 1000000, totalPaid: 0, isCriticalClaimed: false, hasStartedCancerMonthly: false, cancerCountNew: 0, cancerCountOld: 0, nextClaimAge_New: Infinity, nextClaimAge_Old: Infinity, heartCount: 0, dementiaLumpSumClaimed: false, dementiaYearsPaid: 0, cancerMonthsPaid: 0, accEarly: 0, accCancerLump: 0, accCancerMonthly: 0, accHeart: 0, accDementia: 0, accChild: 0, currentAge: 30, claimCount: 0, bonusPaid: 0 };
   let historyStack = [];
-
   function getNumVal(id) { 
       let el = document.getElementById(id);
       return el ? (parseFloat(el.value.replace(/,/g, '')) || 0) : 0; 
   }
   function formatOnly(input) { let v = input.value.replace(/,/g, '').replace(/[^\d]/g, ''); if(v) input.value = Number(v).toLocaleString('en-US'); }
   function formatMoney(num) { return "$" + Math.round(num).toLocaleString('en-US'); }
-
   function handleSumInput() { 
       let ex = getNumVal('sumExisting'), term = getNumVal('sumTerm'), whole = getNumVal('sumWhole');
       formatOnly(document.getElementById('sumExisting')); formatOnly(document.getElementById('sumTerm')); formatOnly(document.getElementById('sumWhole')); 
       document.getElementById('sumUpgradeB').value = whole.toLocaleString('en-US'); 
       document.getElementById('displayTotalBasic').innerText = "$" + (ex+term+whole).toLocaleString('en-US'); 
       document.getElementById('displayTotalMulti').innerText = "$" + whole.toLocaleString('en-US');
-
       const compareSceSumInput = document.getElementById('sceSum');
       const compareOys2SumInput = document.getElementById('oys2Sum');
       if(compareSceSumInput) { compareSceSumInput.value = whole.toLocaleString('en-US'); }
@@ -925,9 +873,7 @@
       
       calculateComparison();
   }
-
   function saveState() { historyStack.push({ state: JSON.parse(JSON.stringify(state)), timelineHTML: document.getElementById('rightTimeline').innerHTML }); }
-
   function undoState() {
       if (historyStack.length === 0) return alert(T("已經係最開頭，無得再退後喇！"));
       let last = historyStack.pop();
@@ -936,9 +882,7 @@
       document.getElementById('currentAge').value = state.currentAge;
       updateUI();
   }
-
   function toggleExistingOptions() { const chk = document.getElementById('existingMultiCheck').checked; document.getElementById('existingSubOptions').style.display = chk ? 'block' : 'none'; updateUI(); }
-
   function confirmAndStart() { 
       config.sumExisting = getNumVal('sumExisting'); config.sumTerm = getNumVal('sumTerm'); config.sumWhole = getNumVal('sumWhole');
       config.sumUpgradeB = config.sumWhole; config.sumBasicPool = config.sumExisting + config.sumTerm + config.sumWhole; 
@@ -954,10 +898,8 @@
       } 
       state.isConfirmed = true; 
       document.getElementById('analysisOverlay').style.display = 'none'; 
-
       updateBenefitValues(); updateBonusDisplay(); updateAnalysis(); updateUI(); 
   }
-
   function fullReset() { 
       state.isConfirmed = false; historyStack = []; document.getElementById('analysisOverlay').style.display = 'flex';
       document.getElementById('criticalBonusBox').style.display = 'none'; document.getElementById('cancerWaitInfo').innerText = T("自動對比等候期"); 
@@ -973,18 +915,15 @@
       document.getElementById('rightTimeline').innerHTML = `<div class="empty-msg" style="text-align:center; color:#bdc3c7; font-size:0.95rem; padding: 30px; border: 2px dashed #eee; border-radius: 8px;">${T('等待啟動模擬賠償...')}</div>`;
       updateUI(); 
   }
-
   function updateAnalysis() { 
       if (!state.isConfirmed) return;
       let totalNeeds3Y = config.expense * 36;
       let insCoversAmount = Math.min(totalNeeds3Y, config.sumBasicPool);
       let savingsNeeded = Math.max(0, totalNeeds3Y - insCoversAmount);
       let finalSavings = config.assets - savingsNeeded;
-
       document.getElementById('valNeeds3Y').innerText = formatMoney(totalNeeds3Y);
       document.getElementById('valInsCovers').innerText = formatMoney(insCoversAmount);
       document.getElementById('valSavingsNeeded').innerText = formatMoney(savingsNeeded);
-
       let savingsEl = document.getElementById('valFinalSavings');
       let statusEl = document.getElementById('valSavingsStatus');
       savingsEl.innerText = formatMoney(finalSavings);
@@ -992,9 +931,7 @@
       else if (savingsNeeded > 0) { savingsEl.style.color = "#ffeaa7"; statusEl.innerText = T("(⚠️ 財富受損，復原困難)"); statusEl.style.color = "#ffeaa7"; } 
       else { savingsEl.style.color = "#55efc4"; statusEl.innerText = T("(✅ 成功保護銀行累積的財富！)"); statusEl.style.color = "#55efc4"; }
   }
-
   function updateBenefitValues() { let curr = state.isConfirmed ? state.balance : config.sumBasicPool; document.getElementById('valEarlyStage').innerText = formatMoney(config.sumBasicPool * 0.20); document.getElementById('valCritical').innerText = formatMoney(curr); }
-
   function updateBonusDisplay() { 
       if(!state.isConfirmed) return; 
       document.getElementById('criticalBonusBox').style.display = 'block'; 
@@ -1006,11 +943,9 @@
       else if (py < 10) { badge.className = 'bonus-active-tag'; badge.innerText = T(`✅ 生效中 (第 ${py+1} 年)`); } 
       else { badge.className = 'bonus-inactive-tag'; badge.innerText = T(`❌ 已過期`); } 
   }
-
   function userChangeAge(val) { if(!state.isConfirmed) return; let newAge = parseInt(val); if(newAge < config.startAge) { newAge = config.startAge; document.getElementById('currentAge').value = newAge; alert(T("確診歲數不能小於投保歲數！")); } state.currentAge = newAge; updateBonusDisplay(); updateUI(); }
   function changeAge(targetAge) { if(!state.isConfirmed) return; if (targetAge > state.currentAge) { state.currentAge = targetAge; document.getElementById('currentAge').value = state.currentAge; updateBonusDisplay(); } }
   function triggerHighlight() { const val = document.getElementById('displayTotalPaid'); const bar = document.getElementById('mainStatusBar'); val.classList.remove('text-flash'); bar.classList.remove('flash-bg'); void val.offsetWidth; void bar.offsetWidth; val.classList.add('text-flash'); bar.classList.add('flash-bg'); }
-
   function addTimelineCard(age, amount, color, icon, title, desc, smallNote = "") {
       const container = document.getElementById('rightTimeline');
       let emptyMsg = container.querySelector('.empty-msg');
@@ -1040,7 +975,6 @@
       document.getElementById('timeline-total-amount').innerText = formatMoney(state.totalPaid);
       triggerHighlight();
   }
-
   function claimChildDisease(type) {
       if(!state.isConfirmed) { alert(T("請先確認左側基本資料並啟動儀表板")); return; }
       state.currentAge = parseInt(document.getElementById('currentAge').value);
@@ -1055,7 +989,6 @@
       addTimelineCard(state.currentAge, amt, "#3498db", "👶", timelineTitle, descStr, T("<br>注意：此預支理賠會等額調低補強B儲蓄保單之現時保額與身故理賠金額。"));
       updateUI();
   }
-
   function claimEarlyStage() { 
       if(!state.isConfirmed) { alert(T("請先確認")); return; } 
       if(state.balance <= 0) { alert(T("額度耗盡")); return; } 
@@ -1072,7 +1005,6 @@
       addTimelineCard(state.currentAge, claim + bonusClaim, "#f39c12", "⚡", titleStr, descStr, smallStr);
       updateUI();
   }
-
   function claimCriticalIllness(type) { 
       if(!state.isConfirmed) { alert(T("請先確認")); return; } 
       if(state.isCriticalClaimed) return; 
@@ -1105,7 +1037,6 @@
       addTimelineCard(state.currentAge, claim+bonusClaim, color, icon, titleStr, descStr, smallStr);
       updateUI(); 
   }
-
   function claimCancerAuto() { 
       if(!state.isConfirmed) { alert(T("請先確認")); return; } 
       if(state.hasStartedCancerMonthly) { alert(T("已啟動每月支援，鎖定一筆過賠償")); return; } 
@@ -1132,7 +1063,6 @@
       } 
       updateUI();
   }
-
   function manualClaimCancerMonthly() { 
       if(!state.isCriticalClaimed) { alert(T("需先啟動嚴重危疾")); return; } 
       saveState(); if(!state.hasStartedCancerMonthly) changeAge(state.currentAge + 1); 
@@ -1144,7 +1074,6 @@
       addTimelineCard(state.currentAge, amt, "#f39c12", "🎗️", titleStr, descStr);
       updateUI();
   }
-
   function claimHeartStroke() { 
       if(!state.isCriticalClaimed) { alert(T("需先啟動嚴重危疾")); return; } 
       if(state.heartCount >= 3) return; 
@@ -1157,7 +1086,6 @@
       addTimelineCard(state.currentAge, amt, "#8e44ad", "❤️", titleStr, descStr);
       updateUI();
   }
-
   function manualClaimDementia() { 
       if(!state.isCriticalClaimed) { alert(T("需先啟動嚴重危疾")); return; } 
       saveState();
@@ -1176,7 +1104,6 @@
       }
       updateUI(); 
   }
-
   function updateUI() { 
       document.getElementById('displayBalance').innerText = formatMoney(state.balance);
       document.getElementById('displayTotalPaid').innerText = formatMoney(state.totalPaid); 
@@ -1215,22 +1142,18 @@
       
       if(state.hasStartedCancerMonthly) { document.getElementById('btnCancerAuto').disabled=true; } 
       if(state.isCriticalClaimed && !state.dementiaLumpSumClaimed) { document.getElementById('btnDementia').innerText = T("🚨 提取 100% 賠償"); } else { document.getElementById('btnDementia').innerText = T("👇 發放 1 年年金"); }
-
       updateBenefitValues(); updateBonusDisplay(); updateAnalysis();
   }
-
   // ==========================================
   // 大比拼精算邏輯
   // ==========================================
   let globalPremiumRates = null;
   let compClaimState = { count: 0, currentAge: 30, totalSCE: 0, totalOYS2: 0, rows: [] };
-
   function getAgeVal(id, defaultVal = 0) {
       let el = document.getElementById(id);
       if (!el || el.value === "" || isNaN(el.value)) return defaultVal;
       return parseInt(el.value);
   }
-
   async function fetchPremiumRates() {
       try {
           const response = await fetch(GAS_COMPARE_RATES_URL, { method: "GET", redirect: "follow" });
@@ -1245,7 +1168,6 @@
           document.getElementById('oys2BreakdownBody').innerHTML = `<tr><td colspan="3" style="color:#e74c3c;">${T('連線失敗，請檢查網路')}</td></tr>`;
       }
   }
-
   function getRateFromData(plan, region, gender, age, smoker, payTerm) {
       if (!globalPremiumRates || Object.keys(globalPremiumRates).length === 0) return null;
       let keys = Object.keys(globalPremiumRates);
@@ -1261,14 +1183,12 @@
       if (plan === "SCE") return ageData[smoker] ?? null;
       return null;
   }
-
   function calculateComparison() {
       if (!globalPremiumRates) {
           document.getElementById('sceBreakdownBody').innerHTML = `<tr><td colspan="3" style="color:#95a5a6;">${T('正在讀取 GAS 官方精算表中...')}</td></tr>`;
           document.getElementById('oys2BreakdownBody').innerHTML = `<tr><td colspan="3" style="color:#95a5a6;">${T('正在讀取 GAS 官方精算表中...')}</td></tr>`;
           return;
       }
-
       const region = document.getElementById('compareRegion').value; 
       const gender = document.getElementById('compareGender').value; 
       const smoker = document.getElementById('compareSmoker').value;
@@ -1279,7 +1199,6 @@
       const sceTargetAge = getAgeVal('sceTargetAge', 65); 
       const sceSum = getNumVal('sceSum');
       let sceTotal = 0; let sceHtml = ""; let lastSceRowAge = -1;
-
       for (let age = sceStartAge; age < sceTargetAge; age++) {
           let pricingAge = sceStartAge + Math.floor((age - sceStartAge) / 5) * 5;
           let rate = getRateFromData("SCE", region, gender, pricingAge, smoker, null); 
@@ -1299,7 +1218,6 @@
       }
       document.getElementById('sceBreakdownBody').innerHTML = sceHtml || `<tr><td colspan="3" style="color:#e74c3c;">${T('無對應精算數據')}</td></tr>`; 
       document.getElementById('sceTotalPremium').innerText = formatMoney(sceTotal);
-
       // OYS2 算費 (對接 GAS，支援 0 歲及不同供款期)
       const oys2StartAge = getAgeVal('oys2StartAge', 0); 
       const oys2PayTerm = document.getElementById('oys2PayTerm').value; 
@@ -1322,7 +1240,6 @@
       document.getElementById('oys2TotalPremium').innerText = formatMoney(oys2Total);
       resetCompareClaims();
   }
-
   function resetCompareClaims() {
       const startAge = getAgeVal('compareClaim1Age', 35);
       compClaimState = { count: 0, currentAge: startAge, totalSCE: 0, totalOYS2: 0, rows: [] };
@@ -1330,7 +1247,6 @@
       document.getElementById('totalClaimSCE').innerText = "$0"; 
       document.getElementById('totalClaimOYS2').innerText = "$0";
   }
-
   function triggerCompareClaim(type) {
       if (compClaimState.count >= 6) return alert(T("最高只能演示 6 次理賠！"));
       const oys2StartAge = getAgeVal('oys2StartAge', 0); 
@@ -1354,13 +1270,11 @@
           oys2Pays += bonusAmt;
           bonusHtml += `<tr style="background: #eafaf1; font-size: 0.85rem;"><td>🎁 ${T('首 10 年升級')} (+${bonusRate * 100}%)</td><td style="color: #95a5a6;">--</td><td style="color: #27ae60; font-weight:bold;">+$${bonusAmt.toLocaleString('en-US')}</td></tr>`;
       }
-
       if (isVitality) {
           let vitBonus = oys2Sum * 0.10;
           oys2Pays += vitBonus;
           bonusHtml += `<tr style="background: #fdf2e9; font-size: 0.85rem;"><td>🏃 AIA Vitality (+10% ${T('贈送保額')})</td><td style="color: #95a5a6;">--</td><td style="color: #e67e22; font-weight:bold;">+$${vitBonus.toLocaleString('en-US')}</td></tr>`;
       }
-
       compClaimState.totalSCE += scePays; 
       compClaimState.totalOYS2 += oys2Pays;
       
@@ -1372,7 +1286,6 @@
       document.getElementById('totalClaimSCE').innerText = formatMoney(compClaimState.totalSCE); 
       document.getElementById('totalClaimOYS2').innerText = formatMoney(compClaimState.totalOYS2);
   }
-
   // ==========================================
   // 前台 Modal 彈窗與標準普通話繁簡轉換對照表
   // ==========================================
@@ -1399,14 +1312,12 @@
       ['上傳成功！Google Sheet 與跨裝置附件已同步。', '上传成功！Google Sheet 与跨设备附件已同步。'],
       ['已成功刪除！', '已成功删除！'], ['請輸入登入密碼', '请输入登录密码'], ['驗證登入', '验证登录']
   ];
-
   function T(str) {
       if(currentLang === 'hk') return str;
       let out = str;
       t2sMap.forEach(pair => { out = out.split(pair[0]).join(pair[1]); });
       return out;
   }
-
   function toggleLang() {
       currentLang = currentLang === 'hk' ? 'cn' : 'hk';
       document.getElementById('langToggleBtn').innerText = currentLang === 'hk' ? '简' : '繁';
@@ -1415,7 +1326,6 @@
           calculateComparison();
       }
   }
-
   function translateStatic() {
       const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
       let node;
@@ -1430,7 +1340,6 @@
           node.nodeValue = txt;
       }
   }
-
   function openModal(imgSrc, textHtml = "") {
       const textContainer = document.getElementById('modalTextContainer');
       if (textHtml) {
@@ -1440,21 +1349,18 @@
       document.getElementById('modalImage').src = imgSrc;
       document.getElementById('imageModal').style.display = 'flex';
   }
-
   function closeModal(e) {
       if (e.target.id === 'imageModal' || e.target.classList.contains('modal-close')) {
           document.getElementById('imageModal').style.display = 'none';
           document.getElementById('modalImage').src = '';
       }
   }
-
   // 🟢 徹底修正：繁體使用地道廣東話 / 簡體使用規範標準普通話表達
   function openHypnoModal(type) {
       let text = "", img = "";
       const FIREBASE_IMG_ASK = "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80";
       const FIREBASE_IMG_THINK = "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166";
       const FIREBASE_IMG_ACTION = "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5773.jpeg?alt=media&token=4abe322b-b474-4114-9104-4a1a53313929";
-
       if (type === 'ask') {
           if (currentLang === 'cn') {
               text = "在您现在的规划下，万一明天健康真的出现变数，<span class='hypno-danger'>需要停工休养</span>... <br><br>您心目中的<span class='hypno-highlight'>『Plan B / 后备方案』</span>会有哪方面的安排呢？您的安排会是...？";
@@ -1479,7 +1385,6 @@
       }
       openModal(img, text);
   }
-
   function switchPage(pageId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
