@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v3.30)</title>
+<title>生活應急保險庫 (v3.31)</title>
 <!-- ⚡ 圖片預加載 -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
@@ -47,16 +47,18 @@
   .nav-tab.active { background: #fff; color: #2c3e50; border-top: 4px solid var(--gold); margin-top: -4px; border-radius: 6px 6px 0 0; }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
-  .main-grid { display: grid; grid-template-columns: 1fr 1.25fr; gap: 0; align-items: flex-start; border-radius: 0 0 12px 12px; }
-  @media (max-width: 600px) { .main-grid { grid-template-columns: 1fr; align-items: stretch; } }
+  
+  /* ⚖️ 左右雙欄排版，確保固定相對定位 */
+  .main-grid { display: grid; grid-template-columns: 1fr 1.25fr; gap: 0; align-items: flex-start; border-radius: 0 0 12px 12px; position: relative; }
+  @media (max-width: 768px) { .main-grid { grid-template-columns: 1fr; } }
   
   .config-panel { background: #f8f9fa; padding: 20px; border-right: 1px solid #eee; border-radius: 0 0 0 12px; }
-  .analysis-panel { background: #fff; padding: 20px; position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; display: flex; flex-direction: column; border-radius: 0 0 12px 0; scroll-behavior: smooth; }
-  @media (max-width: 600px) { .analysis-panel { position: static; max-height: none; overflow-y: visible; } }
+  .analysis-panel { background: #fff; padding: 20px; position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; display: flex; flex-direction: column; border-radius: 0 0 12px 0; scroll-behavior: smooth; position: relative; }
+  @media (max-width: 768px) { .analysis-panel { position: static; max-height: none; overflow-y: visible; } }
   
-  /* 📱 Honor Magic V5 摺機展開屏 & iPad 雙欄獨立顯示 */
+  /* 📱 平板/折疊螢幕雙欄獨立顯示 */
   .fold-split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
-  @media (max-width: 600px) { .fold-split-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 768px) { .fold-split-grid { grid-template-columns: 1fr; } }
   
   .hypno-card { background: #fff; border: 1px solid #dcdde1; border-radius: 8px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; transition: 0.2s; }
   .hypno-card:hover { border-color: var(--blue-base); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
@@ -97,7 +99,10 @@
   .status-item { text-align: center; } .status-label { font-size: 0.8rem; color: #7f8c8d; display: block; margin-bottom: 2px; }
   .status-value { font-size: 1.2rem; font-weight: bold; color: #2c3e50; transition: all 0.3s; } .status-value.red { color: #e74c3c; }
   .editable-age { width: 60px !important; text-align: center; padding: 5px; border: 1px solid #bdc3c7; background: #fff; font-weight: bold; font-size: 1.4rem; color: #2c3e50; border-radius: 6px; cursor: pointer; }
-  .overlay-mask { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.98); z-index: 10; display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center; border-radius: 0 0 12px 0; }
+  
+  /* 🛡️ 遮罩限定在右側分析面板內，避免溢出覆蓋全頁 */
+  .overlay-mask { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.98); z-index: 50; display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center; border-radius: 0 0 12px 0; }
+  
   .controls-area { padding-top: 25px; margin-top: 25px; border-top: 2px solid #ddd; }
   .card { border: 1px solid #eee; border-left: 4px solid transparent; border-radius: 6px; padding: 15px; margin-bottom: 15px; background: white; transition: transform 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
   .card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
@@ -228,7 +233,7 @@
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v3.29</span>
+          生活應急保險庫 <span class="version-badge">v3.31</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
@@ -355,6 +360,7 @@
         </div>
       </div>
       
+      <!-- ⚖️ 右側：即時資產支撐分析面板 -->
       <div class="analysis-panel">
         <div id="analysisOverlay" class="overlay-mask"><div class="overlay-content"><div style="font-size:3rem; margin-bottom:10px;">📊</div>請輸入左側資料並確認</div></div>
         
@@ -420,7 +426,7 @@
     </div>
   </div>
   
-  <!-- 分頁 2: 兒童疾病保障專頁 (動態載入) -->
+  <!-- 分頁 2: 兒童疾病保障專頁 -->
   <div id="page-child" class="tab-content info-page-container">
       <div class="info-section">
           <h2 class="dark-title" style="font-size: 1.6rem; color: #2980b9;">👶 「愛伴航」兒童疾病及家長身故豁免保障全覽</h2>
@@ -461,7 +467,7 @@
       </div>
   </div>
   
-  <!-- 分頁 3: 危疾/輕疾明細 (動態載入) -->
+  <!-- 分頁 3: 危疾/輕疾明細 -->
   <div id="page-diseases" class="tab-content info-page-container">
       <div class="info-section">
           <h2 class="dark-title" style="font-size: 1.6rem; color: #2c3e50;">📜 「愛伴航」102種受保疾病分類與賠償額度明細</h2>
@@ -569,6 +575,7 @@
           <div style="text-align:center; color:#95a5a6; padding:30px;">正在從 Google Sheet 載入數據與附件...</div>
       </div>
   </div>
+
   <!-- 分頁 5: 📱 專屬二維碼分享 -->
   <div id="page-share" class="tab-content info-page-container">
       <div class="info-section" style="text-align:center;">
@@ -602,6 +609,7 @@
           </div>
       </div>
   </div>
+
   <!-- 分頁 6: 補強方案大比拼 -->
   <div id="page-compare" class="tab-content info-page-container">
       <div class="info-section">
@@ -761,6 +769,7 @@
       }
       fetchPremiumRates();
   };
+
   async function checkLogin() {
       const pwd = document.getElementById('passwordInput').value;
       const btn = document.getElementById('loginBtn');
@@ -790,7 +799,7 @@
   }
 
   // ==========================================
-  // ⚡ Google Sheet 動態同步：兒童疾病與危疾明細
+  // ⚡ Google Sheet 動態同步：兒童疾病與危疾明細 (v3.31)
   // ==========================================
   async function loadChildDiseasesFromGS() {
       try {
@@ -809,19 +818,25 @@
       let noticeHtml = "";
       
       data.forEach(row => {
-          if (row.Section_Type === 'Table') {
+          let secType = row.Section_Type || row.section_type || "";
+          let catName = row.Category_Name || row.category_name || "";
+          let diseaseList = row.Disease_List || row.disease_list || "";
+          let payoutRule = row.Payout_Rule || row.payout_rule || "";
+          let remarks = row.Remarks || row.remarks || "";
+
+          if (secType === 'Table') {
               tableHtml += `
                   <tr>
-                      <td><strong>${row.Category_Name}</strong></td>
-                      <td>${row.Disease_List}</td>
-                      <td><strong>${row.Payout_Rule}</strong><br><span style="font-size:0.8em; color:#7f8c8d;">(${row.Remarks || ''})</span></td>
+                      <td><strong>${catName}</strong></td>
+                      <td>${diseaseList}</td>
+                      <td><strong>${payoutRule}</strong><br><span style="font-size:0.8em; color:#7f8c8d;">(${remarks})</span></td>
                   </tr>`;
-          } else if (row.Section_Type === 'Feature') {
+          } else if (secType === 'Feature') {
               document.getElementById('childExemptionBox').innerHTML = `
-                  <strong>${row.Category_Name}：</strong><br>
-                  ${row.Disease_List} <br><span style="font-size:0.85em; color:#e67e22;">(${row.Remarks || ''})</span>`;
-          } else if (row.Section_Type === 'Rule') {
-              noticeHtml += `<li><strong>${row.Category_Name}：</strong>${row.Disease_List} <span style="font-size:0.85em; color:#7f8c8d;">(${row.Remarks || ''})</span></li>`;
+                  <strong>${catName}：</strong><br>
+                  ${diseaseList} <br><span style="font-size:0.85em; color:#e67e22;">(${remarks})</span>`;
+          } else if (secType === 'Rule') {
+              noticeHtml += `<li><strong>${catName}：</strong>${diseaseList} <span style="font-size:0.85em; color:#7f8c8d;">(${remarks})</span></li>`;
           }
       });
       
@@ -846,7 +861,11 @@
       
       data.forEach(row => {
           let catKey = "";
-          let catName = row.Category || "";
+          let catName = row.Category || row.category || "";
+          let diseaseName = row.Disease_Name || row.disease_name || "";
+          let severity = row.Severity || row.severity || "";
+          let payoutPct = row.Payout_Pct || row.payout_pct || "";
+          let noteRemark = row.Note_Remark || row.note_remark || "";
           
           if (catName.includes("第1類") || catName.includes("癌症")) catKey = "cat1";
           else if (catName.includes("第2類") || catName.includes("心臟")) catKey = "cat2";
@@ -858,21 +877,21 @@
           if (catKey === "cat5") {
               catMap.cat5 += `
                   <tr>
-                      <td><strong>${row.Category || ''} - ${row.Severity || ''}</strong></td>
-                      <td>${row.Disease_Name || ''}</td>
-                      <td><strong>${row.Payout_Pct || ''}</strong></td>
+                      <td><strong>${catName} - ${severity}</strong></td>
+                      <td>${diseaseName}</td>
+                      <td><strong>${payoutPct}</strong></td>
                   </tr>`;
           } else if (catKey === "icu") {
               catMap.icu += `
                   <tr>
-                      <td style="color:#27ae60; font-weight:bold;">${row.Disease_Name || ''}<br><span style="font-size:0.8em; color:#7f8c8d;">${row.Severity || ''}</span></td>
-                      <td style="color:#27ae60; font-weight:bold;">${row.Payout_Pct || ''}<br><span style="font-size:0.8em; color:#7f8c8d;">${row.Note_Remark || ''}</span></td>
+                      <td style="color:#27ae60; font-weight:bold;">${diseaseName}<br><span style="font-size:0.8em; color:#7f8c8d;">${severity}</span></td>
+                      <td style="color:#27ae60; font-weight:bold;">${payoutPct}<br><span style="font-size:0.8em; color:#7f8c8d;">${noteRemark}</span></td>
                   </tr>`;
           } else if (catKey) {
               catMap[catKey] += `
                   <tr>
-                      <td style="width:30%;"><strong>${row.Severity || ''} (${row.Payout_Pct || ''})</strong></td>
-                      <td>${row.Disease_Name || ''} ${row.Note_Remark ? `<span style="font-size:0.8em; color:#e67e22;">[${row.Note_Remark}]</span>` : ''}</td>
+                      <td style="width:30%;"><strong>${severity} (${payoutPct})</strong></td>
+                      <td>${diseaseName} ${noteRemark ? `<span style="font-size:0.8em; color:#e67e22;">[${noteRemark}]</span>` : ''}</td>
                   </tr>`;
           }
       });
@@ -938,6 +957,7 @@
           btn.disabled = false;
       }
   }
+
   async function deleteCase(diseaseName, claimSeq) {
       if(!confirm("確定要刪除這個案例？此操作將從 Google Sheet 同步移除。")) return;
       try {
@@ -959,12 +979,13 @@
           alert("❌ 刪除失敗，請再試一次。"); 
       }
   }
+
   async function loadCases() {
       try {
           document.getElementById('frontendCasesList').innerHTML = `<div style="text-align:center; color:#95a5a6; padding:30px;">正在從 Google Sheet 下載數據與附件...</div>`;
           document.getElementById('adminCasesList').innerHTML = `<div style="color:#95a5a6;">載入中...</div>`;
           
-          const response = await fetch(GAS_CASE_URL, { method: "GET", redirect: "follow" });
+          const response = await fetch(GAS_CASE_URL + "?type=cases", { method: "GET", redirect: "follow" });
           const claimsData = await response.json();
           
           let html = ""; let adminHtml = "";
@@ -1004,6 +1025,7 @@
           document.getElementById('frontendCasesList').innerHTML = `<div style="text-align:center; color:#e74c3c; padding:30px;">無法讀取 Google Sheet，請檢查連線</div>`;
       }
   }
+
   // ==========================================
   // 儀表板全功能試算邏輯
   // ==========================================
@@ -1337,7 +1359,7 @@
       });
       if (!targetKey || !globalPremiumRates[targetKey][age]) return null;
       let ageData = globalPremiumRates[targetKey][age];
-      if (plan === "OYS2") return ageData[payTerm]?.['nonSmoker'] ?? null; // 預設非吸煙
+      if (plan === "OYS2") return ageData[payTerm]?.['nonSmoker'] ?? null;
       if (plan === "SCE") return ageData[smoker] ?? null;
       return null;
   }
@@ -1352,7 +1374,7 @@
       const smoker = document.getElementById('compareSmoker').value;
       const isVitality = document.getElementById('compareVitality').value === 'yes';
       
-      // SCE 算費 (對接 GAS)
+      // SCE 算費
       const sceStartAge = getAgeVal('sceStartAge', 0); 
       const sceTargetAge = getAgeVal('sceTargetAge', 65); 
       const sceSum = getNumVal('sceSum');
@@ -1376,6 +1398,7 @@
       }
       document.getElementById('sceBreakdownBody').innerHTML = sceHtml || `<tr><td colspan="3" style="color:#e74c3c;">${T('無對應精算數據')}</td></tr>`; 
       document.getElementById('sceTotalPremium').innerText = formatMoney(sceTotal);
+
       // OYS2 算費
       const oys2StartAge = getAgeVal('oys2StartAge', 0); 
       const oys2PayTerm = document.getElementById('oys2PayTerm').value; 
@@ -1446,13 +1469,11 @@
       document.getElementById('totalClaimSCE').innerText = formatMoney(compClaimState.totalSCE); 
       document.getElementById('totalClaimOYS2').innerText = formatMoney(compClaimState.totalOYS2);
   }
+
   // ==========================================
-  // 🎁 保費優惠計算與後台連動邏輯 (v3.29)
+  // 🎁 保費優惠計算與後台連動邏輯
   // ==========================================
-  let promoSettings = {
-      oys2Y2Months: 2,
-      oys2Y3Months: 0
-  };
+  let promoSettings = { oys2Y2Months: 2, oys2Y3Months: 0 };
   function toggleDiscountBox() {
       const box = document.getElementById('discountBox');
       const txt = document.getElementById('discountToggleText');
@@ -1507,6 +1528,7 @@
           <div>💰 <b>總共自動計算節省 (HKD)：</b><span style="color:#e74c3c; font-weight:bold; font-size:1.15rem;">HK$${sceTotalSavedHKD.toLocaleString()}</span></div>
       `;
       document.getElementById('scePromoDetails').innerHTML = T(sceHtml);
+
       // 2. OYS2 優惠計算
       const oys2UsdSum = getNumVal('oys2Sum');
       const oys2StartAge = getAgeVal('oys2StartAge', 0);
@@ -1538,8 +1560,9 @@
       `;
       document.getElementById('oys2PromoDetails').innerHTML = T(oys2Html);
   }
+
   // ==========================================
-  // 📱 專屬二維碼分享與 URL 參數連動 (v3.29)
+  // 📱 二維碼與 URL 分享
   // ==========================================
   function generateShareQRCode() {
       const clientName = document.getElementById('shareClientName').value.trim() || "尊貴客戶";
@@ -1549,7 +1572,7 @@
       const gender = document.getElementById('compareGender').value || "M";
       const sceTargetAge = document.getElementById('sceTargetAge').value || "65";
       const payTerm = document.getElementById('oys2PayTerm').value || "pay25";
-      // 構建輕量化 URL 參數
+      
       const params = new URLSearchParams({
           client: clientName,
           msg: customMsg,
@@ -1566,7 +1589,6 @@
       document.getElementById('shareInfoSceTerm').innerText = `${T("保障至")} ${sceTargetAge} ${T("歲")}`;
       document.getElementById('shareInfoPromoTotal').innerText = T("已包含限時保費回贈與折扣優惠試算");
       
-      // 清空舊二維碼
       const container = document.getElementById('qrcodeContainer');
       container.innerHTML = "";
       
@@ -1584,6 +1606,7 @@
       }
       document.getElementById('shareResultCard').style.display = 'block';
   }
+
   function copyShareLink() {
       const clientName = document.getElementById('shareClientName').value.trim() || "尊貴客戶";
       const customMsg = document.getElementById('shareCustomMsg').value.trim() || "這是專屬你的危疾保障資料";
@@ -1596,6 +1619,7 @@
           alert("連結：" + shareUrl);
       });
   }
+
   function checkUrlParamsAndInit() {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('shared') === 'true') {
@@ -1606,11 +1630,11 @@
           }
       }
   }
+
   // ==========================================
-  // ⚡ 全頁面標準普通話動態翻譯機制
+  // ⚡ 語言切換
   // ==========================================
   let currentLang = 'hk';
-  
   const termMap = [
       ['危疾', '重疾'], ['輕疾', '轻症'], ['早期疾病', '轻症'], ['賠償', '理赔'],
       ['供款期', '缴费期'], ['供款', '缴费'], ['免供款', '保费豁免'], ['豁免保費', '保费豁免'],
@@ -1637,6 +1661,7 @@
       ['我哋', '我们'], ['你哋', '你们'], ['佢哋', '他们'],
       ['嘅', '的'], ['啲', '些'], ['咗', '了'], ['喺', '在'], ['咁', '那么']
   ];
+
   function T(str) {
       if(currentLang === 'hk') return str;
       let out = str;
@@ -1644,6 +1669,7 @@
       termMap.forEach(pair => { out = out.split(pair[0]).join(pair[1]); });
       return out;
   }
+
   function toggleLang() {
       currentLang = currentLang === 'hk' ? 'cn' : 'hk';
       document.getElementById('langToggleBtn').innerText = currentLang === 'hk' ? '简' : '繁';
@@ -1652,6 +1678,7 @@
           calculateComparison();
       }
   }
+
   function translateStatic() {
       const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
       let node;
@@ -1668,6 +1695,7 @@
           node.nodeValue = txt;
       }
   }
+
   function openModal(imgSrc, textHtml = "") {
       const textContainer = document.getElementById('modalTextContainer');
       if (textHtml) {
@@ -1677,12 +1705,14 @@
       document.getElementById('modalImage').src = imgSrc;
       document.getElementById('imageModal').style.display = 'flex';
   }
+
   function closeModal(e) {
       if (e.target.id === 'imageModal' || e.target.classList.contains('modal-close')) {
           document.getElementById('imageModal').style.display = 'none';
           document.getElementById('modalImage').src = '';
       }
   }
+
   function openHypnoModal(type) {
       let text = "", img = "";
       const FIREBASE_IMG_ASK = "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80";
@@ -1713,6 +1743,7 @@
       }
       openModal(img, text);
   }
+
   function switchPage(pageId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
