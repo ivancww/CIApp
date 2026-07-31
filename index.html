@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v3.30)</title>
+<title>生活應急保險庫 (v3.31)</title>
 <!-- ⚡ 圖片預加載 -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
@@ -207,7 +207,7 @@
         <h3 style="margin-top:0; color:#d35400;">🎁 後台保費優惠與回贈設定</h3>
         <div style="background:#fef9e7; padding:12px; border-radius:6px; margin-bottom:15px; border:1px solid #f9e79f; font-size:0.85rem; line-height:1.5;">
             <div>• <b>第 1 年折扣：</b>於前台按 $25/$63 美金券累積，自動以 7.8 匯率計算港幣。</div>
-            <div>• <b>第 2、3 年回贈：</b>設定回贈月數（第 3 年設為 0 前台自動隱藏）。</div>
+            <div>• <b>第 2、3 年回贈：</b>設定回贈月數（設為 0 前台自動隱藏該列）。</div>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
             <div>
@@ -217,6 +217,14 @@
             <div>
                 <label><b>OYS2 第 3 年回贈月數 (0為隱藏)</b></label>
                 <input type="number" id="adminOys2Y3Months" class="admin-input" value="0" step="0.5">
+            </div>
+            <div>
+                <label><b>SCE 第 2 年回贈月數</b></label>
+                <input type="number" id="adminSceY2Months" class="admin-input" value="0" step="0.5">
+            </div>
+            <div>
+                <label><b>SCE 第 3 年回贈月數 (0為隱藏)</b></label>
+                <input type="number" id="adminSceY3Months" class="admin-input" value="0" step="0.5">
             </div>
         </div>
         <button onclick="saveAdminPromoSettings()" style="width:100%; padding:10px; background:#e67e22; color:white; font-size:0.95rem; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-bottom:15px;">💾 儲存優惠設定</button>
@@ -228,7 +236,7 @@
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v3.30</span>
+          生活應急保險庫 <span class="version-badge">v3.31</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
@@ -662,7 +670,7 @@
               <div class="input-group" style="margin:0;"><label>地區</label><select id="compareRegion" onchange="calculateComparison()"><option value="hk">香港版</option><option value="pearl">明珠版</option></select></div>
               <div class="input-group" style="margin:0;"><label>性別</label><select id="compareGender" onchange="calculateComparison()"><option value="M">男</option><option value="F">女</option></select></div>
               <div class="input-group" style="margin:0;"><label>吸煙</label><select id="compareSmoker" onchange="calculateComparison()"><option value="nonSmoker">非吸煙</option><option value="smoker">吸煙</option></select></div>
-              <div class="input-group" style="margin:0; border-left:2px solid var(--gold); padding-left:10px;"><label style="color:#d35400;">🏃 AIA Vitality</label><select id="compareVitality" onchange="calculateComparison()"><option value="no">未加入</option><option value="yes" selected>已加入 (SCE保費9折 / OYS2保額+10%)</option></select></div>
+              <div class="input-group" style="margin:0; border-left:2px solid var(--gold); padding-left:10px;"><label style="color:#d35400;">🏃 AIA Vitality</label><select id="compareVitality" onchange="calculateComparison()"><option value="no">未加入</option><option value="yes" selected>已加入 (SCE保費9折 / OYS2首賠額+10%)</option></select></div>
           </div>
       </div>
       <div class="fold-split-grid">
@@ -729,17 +737,13 @@
               <tfoot><tr style="background-color: #fcf3cf; font-weight: bold; font-size:1.1rem;"><td>總累計理賠金額</td><td id="totalClaimSCE">$0</td><td id="totalClaimOYS2">$0</td></tr></tfoot>
           </table>
       </div>
-      <!-- 🎁 限時保費優惠折疊區塊 (7.8 匯率換算港幣 HKD) -->
+      <!-- 🎁 保費優惠區塊 (按鈕統一為保費優惠，展開無頂部主題文字及匯率標籤) -->
       <div style="margin-top:25px; text-align:center;">
           <button onclick="toggleDiscountBox()" style="width:100%; background:linear-gradient(135deg, #d35400, #e67e22); color:white; padding:12px 20px; font-size:1.05rem; font-weight:bold; border-radius:8px; box-shadow:0 4px 10px rgba(230,126,34,0.3); justify-content:center;">
-              🎁 <span id="discountToggleText">查看限時保費優惠 (已按 7.8 匯率自動換算港幣)</span>
+              🎁 <span id="discountToggleText">保費優惠</span>
           </button>
       </div>
       <div id="discountBox" style="display:none; margin-top:15px; background:#fffcf5; border:2px solid #f39c12; border-radius:10px; padding:20px; box-shadow:0 4px 15px rgba(0,0,0,0.05);">
-          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #f39c12; padding-bottom:10px; margin-bottom:15px;">
-              <h3 style="margin:0; color:#d35400;">🎁 限時保費回贈與券額累積試算 (港幣 HKD 呈現)</h3>
-              <span style="font-size:0.85rem; color:#7f8c8d; background:#fef9e7; padding:4px 8px; border-radius:4px;">固定匯率：1 USD = 7.8 HKD</span>
-          </div>
           <div class="fold-split-grid">
               <!-- SCE 優惠 -->
               <div style="background:#f8f9fa; border:1px solid #dcdde1; border-radius:8px; padding:15px;">
@@ -751,9 +755,17 @@
                           <option value="63">$63 USD (HK$491)</option>
                       </select>
                   </div>
-                  <div class="input-group" style="margin-bottom:12px;">
+                  <div class="input-group" style="margin-bottom:8px;">
                       <label style="flex:none; font-size:0.85rem;">可累積使用張數：</label>
                       <input type="number" id="sceCouponCount" value="1" min="0" style="width:60px;" onchange="calculatePromoDiscount()">
+                  </div>
+                  <div class="input-group" style="margin-bottom:8px;">
+                      <label style="flex:none; font-size:0.85rem;">第 2 年保費回贈 (月)：</label>
+                      <input type="number" id="sceFrontY2Months" value="0" min="0" step="0.5" style="width:60px;" onchange="updatePromoFromFrontend()">
+                  </div>
+                  <div class="input-group" style="margin-bottom:12px;">
+                      <label style="flex:none; font-size:0.85rem;">第 3 年保費回贈 (月)：</label>
+                      <input type="number" id="sceFrontY3Months" value="0" min="0" step="0.5" style="width:60px;" onchange="updatePromoFromFrontend()">
                   </div>
                   <div id="scePromoDetails" style="font-size:0.9rem; line-height:1.7; color:#2c3e50;">
                       <!-- JS 動態帶入 -->
@@ -768,9 +780,17 @@
                           <option value="63" selected>$63 USD (HK$491)</option>
                       </select>
                   </div>
-                  <div class="input-group" style="margin-bottom:12px;">
+                  <div class="input-group" style="margin-bottom:8px;">
                       <label style="flex:none; font-size:0.85rem;">可累積使用張數：</label>
                       <input type="number" id="oys2CouponCount" value="1" min="0" style="width:60px;" onchange="calculatePromoDiscount()">
+                  </div>
+                  <div class="input-group" style="margin-bottom:8px;">
+                      <label style="flex:none; font-size:0.85rem;">第 2 年保費回贈 (月)：</label>
+                      <input type="number" id="oys2FrontY2Months" value="2" min="0" step="0.5" style="width:60px;" onchange="updatePromoFromFrontend()">
+                  </div>
+                  <div class="input-group" style="margin-bottom:12px;">
+                      <label style="flex:none; font-size:0.85rem;">第 3 年保費回贈 (月)：</label>
+                      <input type="number" id="oys2FrontY3Months" value="0" min="0" step="0.5" style="width:60px;" onchange="updatePromoFromFrontend()">
                   </div>
                   <div id="oys2PromoDetails" style="font-size:0.9rem; line-height:1.7; color:#2c3e50;">
                       <!-- JS 動態帶入 -->
@@ -834,7 +854,7 @@
       }
   }
   // ==========================================
-  // 後台案例同步 (對接 GAS v3.30 引擎)
+  // 後台案例同步
   // ==========================================
   async function submitCase() {
       let disease = document.getElementById('adminDisease').value.trim();
@@ -912,11 +932,9 @@
           document.getElementById('frontendCasesList').innerHTML = `<div style="text-align:center; color:#95a5a6; padding:30px;">正在從 Google Sheet 下載數據與附件...</div>`;
           document.getElementById('adminCasesList').innerHTML = `<div style="color:#95a5a6;">載入中...</div>`;
           
-          // 明確帶入 ?type=cases 對接 GAS v3.30 API
           const response = await fetch(GAS_CASE_URL + "?type=cases", { method: "GET", redirect: "follow" });
           let claimsData = await response.json();
           
-          // 自適應兼容：如 GAS 回傳單一打包物件，取出內含的 casesData
           if (claimsData && claimsData.casesData) {
               claimsData = claimsData.casesData;
           }
@@ -1384,10 +1402,11 @@
           oys2Pays += bonusAmt;
           bonusHtml += `<tr style="background: #eafaf1; font-size: 0.85rem;"><td>🎁 ${T('首 10 年升級')} (+${bonusRate * 100}%)</td><td style="color: #95a5a6;">--</td><td style="color: #27ae60; font-weight:bold;">+$${bonusAmt.toLocaleString('en-US')}</td></tr>`;
       }
-      if (isVitality) {
+      // Vitality 額外 10% 贈送保額，嚴格限制只在「第 1 次理賠」觸發
+      if (isVitality && compClaimState.count === 1) {
           let vitBonus = oys2Sum * 0.10;
           oys2Pays += vitBonus;
-          bonusHtml += `<tr style="background: #fdf2e9; font-size: 0.85rem;"><td>🏃 AIA Vitality (+10% ${T('贈送保額')})</td><td style="color: #95a5a6;">--</td><td style="color: #e67e22; font-weight:bold;">+$${vitBonus.toLocaleString('en-US')}</td></tr>`;
+          bonusHtml += `<tr style="background: #fdf2e9; font-size: 0.85rem;"><td>🏃 AIA Vitality (+10% ${T('首賠贈送保額')})</td><td style="color: #95a5a6;">--</td><td style="color: #e67e22; font-weight:bold;">+$${vitBonus.toLocaleString('en-US')}</td></tr>`;
       }
       compClaimState.totalSCE += scePays; 
       compClaimState.totalOYS2 += oys2Pays;
@@ -1401,28 +1420,33 @@
       document.getElementById('totalClaimOYS2').innerText = formatMoney(compClaimState.totalOYS2);
   }
   // ==========================================
-  // 🎁 保費優惠計算與後台連動邏輯 (v3.30)
+  // 🎁 保費優惠計算與後台/前台連動邏輯 (v3.31)
   // ==========================================
   let promoSettings = {
       oys2Y2Months: 2,
-      oys2Y3Months: 0
+      oys2Y3Months: 0,
+      sceY2Months: 0,
+      sceY3Months: 0
   };
   function toggleDiscountBox() {
       const box = document.getElementById('discountBox');
       const txt = document.getElementById('discountToggleText');
       if (box.style.display === 'none' || !box.style.display) {
           box.style.display = 'block';
-          txt.innerText = T('隱藏限時保費優惠');
+          txt.innerText = T('保費優惠');
           calculatePromoDiscount();
       } else {
           box.style.display = 'none';
-          txt.innerText = T('查看限時保費優惠 (已按 7.8 匯率自動換算港幣)');
+          txt.innerText = T('保費優惠');
       }
   }
   function saveAdminPromoSettings() {
       promoSettings.oys2Y2Months = parseFloat(document.getElementById('adminOys2Y2Months').value) || 0;
       promoSettings.oys2Y3Months = parseFloat(document.getElementById('adminOys2Y3Months').value) || 0;
+      promoSettings.sceY2Months = parseFloat(document.getElementById('adminSceY2Months').value) || 0;
+      promoSettings.sceY3Months = parseFloat(document.getElementById('adminSceY3Months').value) || 0;
       localStorage.setItem('ava_promo_settings', JSON.stringify(promoSettings));
+      syncPromoInputs();
       alert("✅ 保費優惠設定已成功儲存！");
       calculatePromoDiscount();
   }
@@ -1433,8 +1457,24 @@
               promoSettings = JSON.parse(saved);
               if (document.getElementById('adminOys2Y2Months')) document.getElementById('adminOys2Y2Months').value = promoSettings.oys2Y2Months;
               if (document.getElementById('adminOys2Y3Months')) document.getElementById('adminOys2Y3Months').value = promoSettings.oys2Y3Months;
+              if (document.getElementById('adminSceY2Months')) document.getElementById('adminSceY2Months').value = promoSettings.sceY2Months;
+              if (document.getElementById('adminSceY3Months')) document.getElementById('adminSceY3Months').value = promoSettings.sceY3Months;
           } catch(e){}
       }
+      syncPromoInputs();
+  }
+  function syncPromoInputs() {
+      if (document.getElementById('oys2FrontY2Months')) document.getElementById('oys2FrontY2Months').value = promoSettings.oys2Y2Months;
+      if (document.getElementById('oys2FrontY3Months')) document.getElementById('oys2FrontY3Months').value = promoSettings.oys2Y3Months;
+      if (document.getElementById('sceFrontY2Months')) document.getElementById('sceFrontY2Months').value = promoSettings.sceY2Months || 0;
+      if (document.getElementById('sceFrontY3Months')) document.getElementById('sceFrontY3Months').value = promoSettings.sceY3Months || 0;
+  }
+  function updatePromoFromFrontend() {
+      promoSettings.oys2Y2Months = parseFloat(document.getElementById('oys2FrontY2Months').value) || 0;
+      promoSettings.oys2Y3Months = parseFloat(document.getElementById('oys2FrontY3Months').value) || 0;
+      promoSettings.sceY2Months = parseFloat(document.getElementById('sceFrontY2Months').value) || 0;
+      promoSettings.sceY3Months = parseFloat(document.getElementById('sceFrontY3Months').value) || 0;
+      calculatePromoDiscount();
   }
   function calculatePromoDiscount() {
       const rateHKD = 7.8;
@@ -1451,16 +1491,27 @@
       const sceCouponTier = parseFloat(document.getElementById('sceCouponTier').value) || 25;
       const sceCouponCount = parseInt(document.getElementById('sceCouponCount').value) || 0;
       const sceY1DiscountHKD = Math.round(sceCouponTier * sceCouponCount * rateHKD);
-      const sceTotalSavedHKD = sceY1DiscountHKD;
+      
+      const sceMonthlyHkdPrem = sceHkdPrem / 12;
+      const sceY2DiscountHKD = Math.round(sceMonthlyHkdPrem * (promoSettings.sceY2Months || 0));
+      const sceY3DiscountHKD = (promoSettings.sceY3Months || 0) > 0 ? Math.round(sceMonthlyHkdPrem * promoSettings.sceY3Months) : 0;
+      const sceTotalSavedHKD = sceY1DiscountHKD + sceY2DiscountHKD + sceY3DiscountHKD;
       const sceNetY1HKD = Math.max(0, Math.round(sceHkdPrem - sceY1DiscountHKD));
+      
+      let sceY2Row = (promoSettings.sceY2Months || 0) > 0 ? `<div>• <b>${T('第 2 年保費回贈')}：</b>${promoSettings.sceY2Months} ${T('個月回贈')} $\\rightarrow$ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY2DiscountHKD.toLocaleString()}</span></div>` : "";
+      let sceY3Row = (promoSettings.sceY3Months || 0) > 0 ? `<div>• <b>${T('第 3 年保費回贈')}：</b>${promoSettings.sceY3Months} ${T('個月回贈')} $\\rightarrow$ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY3DiscountHKD.toLocaleString()}</span></div>` : "";
+      
       let sceHtml = `
-          <div>• <b>首年原保費 (HKD)：</b>HK$${Math.round(sceHkdPrem).toLocaleString()}</div>
-          <div>• <b>第 1 年優惠折扣：</b>使用 ${sceCouponCount} 張 $${sceCouponTier} 美金券 $\\rightarrow$ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY1DiscountHKD.toLocaleString()}</span></div>
-          <div>• <b>首年實際淨保費 (HKD)：</b><span style="color:#2980b9; font-weight:bold; font-size:1.1rem;">HK$${sceNetY1HKD.toLocaleString()}</span></div>
+          <div>• <b>${T('首年原保費 (HKD)')}：</b>HK$${Math.round(sceHkdPrem).toLocaleString()}</div>
+          <div>• <b>${T('第 1 年優惠折扣')}：</b>${T('使用')} ${sceCouponCount} ${T('張')} $${sceCouponTier} ${T('美金券')} $\\rightarrow$ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY1DiscountHKD.toLocaleString()}</span></div>
+          <div>• <b>${T('首年實際淨保費 (HKD)')}：</b><span style="color:#2980b9; font-weight:bold; font-size:1.1rem;">HK$${sceNetY1HKD.toLocaleString()}</span></div>
+          ${sceY2Row}
+          ${sceY3Row}
           <hr style="margin:10px 0; border:none; border-top:1px dashed #ccc;">
-          <div>💰 <b>總共自動計算節省 (HKD)：</b><span style="color:#e74c3c; font-weight:bold; font-size:1.15rem;">HK$${sceTotalSavedHKD.toLocaleString()}</span></div>
+          <div>💰 <b>${T('總共自動計算節省 (HKD)')}：</b><span style="color:#e74c3c; font-weight:bold; font-size:1.15rem;">HK$${sceTotalSavedHKD.toLocaleString()}</span></div>
       `;
-      document.getElementById('scePromoDetails').innerHTML = T(sceHtml);
+      document.getElementById('scePromoDetails').innerHTML = sceHtml;
+      
       // 2. OYS2 優惠計算
       const oys2UsdSum = getNumVal('oys2Sum');
       const oys2StartAge = getAgeVal('oys2StartAge', 0);
@@ -1476,24 +1527,27 @@
       const oys2Y1DiscountHKD = Math.round(oys2CouponTier * oys2CouponCount * rateHKD);
       
       const monthlyHkdPrem = oys2HkdPrem / 12;
-      const oys2Y2DiscountHKD = Math.round(monthlyHkdPrem * promoSettings.oys2Y2Months);
-      const oys2Y3DiscountHKD = promoSettings.oys2Y3Months > 0 ? Math.round(monthlyHkdPrem * promoSettings.oys2Y3Months) : 0;
+      const oys2Y2DiscountHKD = Math.round(monthlyHkdPrem * (promoSettings.oys2Y2Months || 0));
+      const oys2Y3DiscountHKD = (promoSettings.oys2Y3Months || 0) > 0 ? Math.round(monthlyHkdPrem * promoSettings.oys2Y3Months) : 0;
       const oys2TotalSavedHKD = oys2Y1DiscountHKD + oys2Y2DiscountHKD + oys2Y3DiscountHKD;
       const oys2NetY1HKD = Math.max(0, Math.round(oys2HkdPrem - oys2Y1DiscountHKD));
-      let oys2Y3Row = promoSettings.oys2Y3Months > 0 ? `<div>• <b>第 3 年回贈：</b>${promoSettings.oys2Y3Months} 個月回贈 $\\rightarrow$ <span style="color:#e74c3c; font-weight:bold;">-HK$${oys2Y3DiscountHKD.toLocaleString()}</span></div>` : "";
+      
+      let oys2Y2Row = (promoSettings.oys2Y2Months || 0) > 0 ? `<div>• <b>${T('第 2 年保費回贈')}：</b>${promoSettings.oys2Y2Months} ${T('個月回贈')} $\\rightarrow$ <span style="color:#e74c3c; font-weight:bold;">-HK$${oys2Y2DiscountHKD.toLocaleString()}</span></div>` : "";
+      let oys2Y3Row = (promoSettings.oys2Y3Months || 0) > 0 ? `<div>• <b>${T('第 3 年保費回贈')}：</b>${promoSettings.oys2Y3Months} ${T('個月回贈')} $\\rightarrow$ <span style="color:#e74c3c; font-weight:bold;">-HK$${oys2Y3DiscountHKD.toLocaleString()}</span></div>` : "";
+      
       let oys2Html = `
-          <div>• <b>首年原保費 (HKD)：</b>HK$${Math.round(oys2HkdPrem).toLocaleString()}</div>
-          <div>• <b>第 1 年優惠折扣：</b>使用 ${oys2CouponCount} 張 $${oys2CouponTier} 美金券 $\\rightarrow$ <span style="color:#e74c3c; font-weight:bold;">-HK$${oys2Y1DiscountHKD.toLocaleString()}</span></div>
-          <div>• <b>首年實際淨保費 (HKD)：</b><span style="color:#27ae60; font-weight:bold; font-size:1.1rem;">HK$${oys2NetY1HKD.toLocaleString()}</span></div>
-          ${promoSettings.oys2Y2Months > 0 ? `<div>• <b>第 2 年回贈：</b>${promoSettings.oys2Y2Months} 個月回贈 $\\rightarrow$ <span style="color:#e74c3c; font-weight:bold;">-HK$${oys2Y2DiscountHKD.toLocaleString()}</span></div>` : ''}
+          <div>• <b>${T('首年原保費 (HKD)')}：</b>HK$${Math.round(oys2HkdPrem).toLocaleString()}</div>
+          <div>• <b>${T('第 1 年優惠折扣')}：</b>${T('使用')} ${oys2CouponCount} ${T('張')} $${oys2CouponTier} ${T('美金券')} $\\rightarrow$ <span style="color:#e74c3c; font-weight:bold;">-HK$${oys2Y1DiscountHKD.toLocaleString()}</span></div>
+          <div>• <b>${T('首年實際淨保費 (HKD)')}：</b><span style="color:#27ae60; font-weight:bold; font-size:1.1rem;">HK$${oys2NetY1HKD.toLocaleString()}</span></div>
+          ${oys2Y2Row}
           ${oys2Y3Row}
           <hr style="margin:10px 0; border:none; border-top:1px dashed #ccc;">
-          <div>💰 <b>總共自動計算節省 (HKD)：</b><span style="color:#e74c3c; font-weight:bold; font-size:1.15rem;">HK$${oys2TotalSavedHKD.toLocaleString()}</span></div>
+          <div>💰 <b>${T('總共自動計算節省 (HKD)')}：</b><span style="color:#e74c3c; font-weight:bold; font-size:1.15rem;">HK$${oys2TotalSavedHKD.toLocaleString()}</span></div>
       `;
-      document.getElementById('oys2PromoDetails').innerHTML = T(oys2Html);
+      document.getElementById('oys2PromoDetails').innerHTML = oys2Html;
   }
   // ==========================================
-  // 📱 專屬二維碼分享與 URL 參數連動 (v3.30)
+  // 📱 專屬二維碼分享與 URL 參數連動 (v3.31)
   // ==========================================
   function generateShareQRCode() {
       const clientName = document.getElementById('shareClientName').value.trim() || "尊貴客戶";
@@ -1503,7 +1557,6 @@
       const gender = document.getElementById('compareGender').value || "M";
       const sceTargetAge = document.getElementById('sceTargetAge').value || "65";
       const payTerm = document.getElementById('oys2PayTerm').value || "pay25";
-      // 構建輕量化 URL 參數
       const params = new URLSearchParams({
           client: clientName,
           msg: customMsg,
@@ -1520,7 +1573,6 @@
       document.getElementById('shareInfoSceTerm').innerText = `${T("保障至")} ${sceTargetAge} ${T("歲")}`;
       document.getElementById('shareInfoPromoTotal').innerText = T("已包含限時保費回贈與折扣優惠試算");
       
-      // 清空舊二維碼
       const container = document.getElementById('qrcodeContainer');
       container.innerHTML = "";
       
