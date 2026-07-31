@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v3.31)</title>
+<title>生活應急保險庫 (v3.32)</title>
 <!-- ⚡ 圖片預加載 -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
@@ -236,7 +236,7 @@
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v3.31</span>
+          生活應急保險庫 <span class="version-badge">v3.32</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
@@ -818,6 +818,10 @@
   if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
   const storage = firebase.storage();
   
+  // 全局變數：記錄精算對比表中首年實際年繳保費 (USD)
+  let calculatedFirstYearSCE = 0;
+  let calculatedFirstYearOYS2 = 0;
+  
   window.onload = () => {
       loadPromoSettings();
       checkUrlParamsAndInit();
@@ -1329,18 +1333,29 @@
       const sceTargetAge = getAgeVal('sceTargetAge', 65); 
       const sceSum = getNumVal('sceSum');
       let sceTotal = 0; let sceHtml = ""; let lastSceRowAge = -1;
+      
+      // 未滿 18 歲限制 Vitality 判定
+      const isSceVitalityEligible = isVitality && sceStartAge >= 18;
+      
       for (let age = sceStartAge; age < sceTargetAge; age++) {
           let pricingAge = sceStartAge + Math.floor((age - sceStartAge) / 5) * 5;
           let rate = getRateFromData("SCE", region, gender, pricingAge, smoker, null); 
           if (rate === null) continue;
           
           let prem = rate * (sceSum / 1000); 
-          if (isVitality) { prem = prem * 0.90; }
+          if (isSceVitalityEligible) { prem = prem * 0.90; }
+          
+          if (age === sceStartAge) {
+              calculatedFirstYearSCE = prem; // 記錄精算表首年保費 (USD)
+          }
           
           sceTotal += prem;
           if ((age - sceStartAge) % 5 === 0 || age === sceTargetAge - 1) {
               if (lastSceRowAge !== age) { 
-                  let vitalityBadge = isVitality ? ` <span style="font-size:0.75rem; color:#e67e22;">(${T('Vitality 9折')})</span>` : "";
+                  let vitalityBadge = "";
+                  if (isVitality) {
+                      vitalityBadge = isSceVitalityEligible ? ` <span style="font-size:0.75rem; color:#e67e22;">(${T('Vitality 9折')})</span>` : ` <span style="font-size:0.75rem; color:#95a5a6;">(${T('未滿18歲無法適用Vitality')})</span>`;
+                  }
                   sceHtml += `<tr><td>${age} ${T('歲')}</td><td>${T('第')} ${age - sceStartAge + 1} ${T('年')}</td><td><span style="color:#2980b9; font-weight:bold;">$${Math.round(prem).toLocaleString()}</span>${vitalityBadge}</td></tr>`; 
                   lastSceRowAge = age; 
               }
@@ -1348,6 +1363,7 @@
       }
       document.getElementById('sceBreakdownBody').innerHTML = sceHtml || `<tr><td colspan="3" style="color:#e74c3c;">${T('無對應精算數據')}</td></tr>`; 
       document.getElementById('sceTotalPremium').innerText = formatMoney(sceTotal);
+      
       // OYS2 算費
       const oys2StartAge = getAgeVal('oys2StartAge', 0); 
       const oys2PayTerm = document.getElementById('oys2PayTerm').value; 
@@ -1359,12 +1375,16 @@
       
       if (oys2Rate !== null) {
           let oys2Prem = oys2Rate * (oys2Sum / 1000);
+          calculatedFirstYearOYS2 = oys2Prem; // 記錄精算表首年保費 (USD)
+          
           for (let year = 1; year <= oys2MaxYears; year++) {
               oys2Total += oys2Prem; let age = oys2StartAge + year - 1;
               if (year === 1 || year % 5 === 0 || year === oys2MaxYears) { 
                   oys2Html += `<tr><td>${age} ${T('歲')}</td><td>${T('第')} ${year} ${T('年')}</td><td><span style="color:#27ae60; font-weight:bold;">$${Math.round(oys2Prem).toLocaleString()}</span></td></tr>`; 
               }
           }
+      } else {
+          calculatedFirstYearOYS2 = 0;
       }
       document.getElementById('oys2BreakdownBody').innerHTML = oys2Html || `<tr><td colspan="3" style="color:#e74c3c;">${T('無對應精算數據')}</td></tr>`; 
       document.getElementById('oys2TotalPremium').innerText = formatMoney(oys2Total);
@@ -1402,8 +1422,9 @@
           oys2Pays += bonusAmt;
           bonusHtml += `<tr style="background: #eafaf1; font-size: 0.85rem;"><td>🎁 ${T('首 10 年升級')} (+${bonusRate * 100}%)</td><td style="color: #95a5a6;">--</td><td style="color: #27ae60; font-weight:bold;">+$${bonusAmt.toLocaleString('en-US')}</td></tr>`;
       }
-      // Vitality 額外 10% 贈送保額，嚴格限制只在「第 1 次理賠」觸發
-      if (isVitality && compClaimState.count === 1) {
+      
+      // Vitality 額外 10% 贈送保額，嚴格限制只喺「第 1 次理賠」且投保人滿 18 歲時觸發
+      if (isVitality && compClaimState.count === 1 && oys2StartAge >= 18) {
           let vitBonus = oys2Sum * 0.10;
           oys2Pays += vitBonus;
           bonusHtml += `<tr style="background: #fdf2e9; font-size: 0.85rem;"><td>🏃 AIA Vitality (+10% ${T('首賠贈送保額')})</td><td style="color: #95a5a6;">--</td><td style="color: #e67e22; font-weight:bold;">+$${vitBonus.toLocaleString('en-US')}</td></tr>`;
@@ -1420,7 +1441,7 @@
       document.getElementById('totalClaimOYS2').innerText = formatMoney(compClaimState.totalOYS2);
   }
   // ==========================================
-  // 🎁 保費優惠計算與後台/前台連動邏輯 (v3.31)
+  // 🎁 保費優惠計算與對應精算對比表 (v3.32)
   // ==========================================
   let promoSettings = {
       oys2Y2Months: 2,
@@ -1479,15 +1500,8 @@
   function calculatePromoDiscount() {
       const rateHKD = 7.8;
       
-      // 1. SCE 優惠計算
-      const sceUsdSum = getNumVal('sceSum');
-      const sceStartAge = getAgeVal('sceStartAge', 0);
-      const sceGender = document.getElementById('compareGender').value;
-      const sceRegion = document.getElementById('compareRegion').value;
-      const sceSmoker = document.getElementById('compareSmoker').value;
-      const sceRate = getRateFromData("SCE", sceRegion, sceGender, sceStartAge, sceSmoker, null) || 0;
-      const sceUsdPrem = sceRate * (sceUsdSum / 1000);
-      const sceHkdPrem = sceUsdPrem * rateHKD;
+      // 1. SCE 優惠計算 (直接連動對比表算出之 calculatedFirstYearSCE)
+      const sceHkdPrem = calculatedFirstYearSCE * rateHKD;
       const sceCouponTier = parseFloat(document.getElementById('sceCouponTier').value) || 25;
       const sceCouponCount = parseInt(document.getElementById('sceCouponCount').value) || 0;
       const sceY1DiscountHKD = Math.round(sceCouponTier * sceCouponCount * rateHKD);
@@ -1498,12 +1512,12 @@
       const sceTotalSavedHKD = sceY1DiscountHKD + sceY2DiscountHKD + sceY3DiscountHKD;
       const sceNetY1HKD = Math.max(0, Math.round(sceHkdPrem - sceY1DiscountHKD));
       
-      let sceY2Row = (promoSettings.sceY2Months || 0) > 0 ? `<div>• <b>${T('第 2 年保費回贈')}：</b>${promoSettings.sceY2Months} ${T('個月回贈')} $\\rightarrow$ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY2DiscountHKD.toLocaleString()}</span></div>` : "";
-      let sceY3Row = (promoSettings.sceY3Months || 0) > 0 ? `<div>• <b>${T('第 3 年保費回贈')}：</b>${promoSettings.sceY3Months} ${T('個月回贈')} $\\rightarrow$ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY3DiscountHKD.toLocaleString()}</span></div>` : "";
+      let sceY2Row = (promoSettings.sceY2Months || 0) > 0 ? `<div>• <b>${T('第 2 年保費回贈')}：</b>${promoSettings.sceY2Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY2DiscountHKD.toLocaleString()}</span></div>` : "";
+      let sceY3Row = (promoSettings.sceY3Months || 0) > 0 ? `<div>• <b>${T('第 3 年保費回贈')}：</b>${promoSettings.sceY3Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY3DiscountHKD.toLocaleString()}</span></div>` : "";
       
       let sceHtml = `
           <div>• <b>${T('首年原保費 (HKD)')}：</b>HK$${Math.round(sceHkdPrem).toLocaleString()}</div>
-          <div>• <b>${T('第 1 年優惠折扣')}：</b>${T('使用')} ${sceCouponCount} ${T('張')} $${sceCouponTier} ${T('美金券')} $\\rightarrow$ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY1DiscountHKD.toLocaleString()}</span></div>
+          <div>• <b>${T('第 1 年優惠折扣')}：</b>${T('使用')} ${sceCouponCount} ${T('張')} $${sceCouponTier} ${T('美金券')} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY1DiscountHKD.toLocaleString()}</span></div>
           <div>• <b>${T('首年實際淨保費 (HKD)')}：</b><span style="color:#2980b9; font-weight:bold; font-size:1.1rem;">HK$${sceNetY1HKD.toLocaleString()}</span></div>
           ${sceY2Row}
           ${sceY3Row}
@@ -1512,16 +1526,8 @@
       `;
       document.getElementById('scePromoDetails').innerHTML = sceHtml;
       
-      // 2. OYS2 優惠計算
-      const oys2UsdSum = getNumVal('oys2Sum');
-      const oys2StartAge = getAgeVal('oys2StartAge', 0);
-      const oys2PayTerm = document.getElementById('oys2PayTerm').value;
-      const oys2Gender = document.getElementById('compareGender').value;
-      const oys2Region = document.getElementById('compareRegion').value;
-      const oys2Smoker = document.getElementById('compareSmoker').value;
-      const oys2Rate = getRateFromData("OYS2", oys2Region, oys2Gender, oys2StartAge, oys2Smoker, oys2PayTerm) || 0;
-      const oys2UsdPrem = oys2Rate * (oys2UsdSum / 1000);
-      const oys2HkdPrem = oys2UsdPrem * rateHKD;
+      // 2. OYS2 優惠計算 (直接連動對比表算出之 calculatedFirstYearOYS2)
+      const oys2HkdPrem = calculatedFirstYearOYS2 * rateHKD;
       const oys2CouponTier = parseFloat(document.getElementById('oys2CouponTier').value) || 63;
       const oys2CouponCount = parseInt(document.getElementById('oys2CouponCount').value) || 0;
       const oys2Y1DiscountHKD = Math.round(oys2CouponTier * oys2CouponCount * rateHKD);
@@ -1532,12 +1538,12 @@
       const oys2TotalSavedHKD = oys2Y1DiscountHKD + oys2Y2DiscountHKD + oys2Y3DiscountHKD;
       const oys2NetY1HKD = Math.max(0, Math.round(oys2HkdPrem - oys2Y1DiscountHKD));
       
-      let oys2Y2Row = (promoSettings.oys2Y2Months || 0) > 0 ? `<div>• <b>${T('第 2 年保費回贈')}：</b>${promoSettings.oys2Y2Months} ${T('個月回贈')} $\\rightarrow$ <span style="color:#e74c3c; font-weight:bold;">-HK$${oys2Y2DiscountHKD.toLocaleString()}</span></div>` : "";
-      let oys2Y3Row = (promoSettings.oys2Y3Months || 0) > 0 ? `<div>• <b>${T('第 3 年保費回贈')}：</b>${promoSettings.oys2Y3Months} ${T('個月回贈')} $\\rightarrow$ <span style="color:#e74c3c; font-weight:bold;">-HK$${oys2Y3DiscountHKD.toLocaleString()}</span></div>` : "";
+      let oys2Y2Row = (promoSettings.oys2Y2Months || 0) > 0 ? `<div>• <b>${T('第 2 年保費回贈')}：</b>${promoSettings.oys2Y2Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${oys2Y2DiscountHKD.toLocaleString()}</span></div>` : "";
+      let oys2Y3Row = (promoSettings.oys2Y3Months || 0) > 0 ? `<div>• <b>${T('第 3 年保費回贈')}：</b>${promoSettings.oys2Y3Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${oys2Y3DiscountHKD.toLocaleString()}</span></div>` : "";
       
       let oys2Html = `
           <div>• <b>${T('首年原保費 (HKD)')}：</b>HK$${Math.round(oys2HkdPrem).toLocaleString()}</div>
-          <div>• <b>${T('第 1 年優惠折扣')}：</b>${T('使用')} ${oys2CouponCount} ${T('張')} $${oys2CouponTier} ${T('美金券')} $\\rightarrow$ <span style="color:#e74c3c; font-weight:bold;">-HK$${oys2Y1DiscountHKD.toLocaleString()}</span></div>
+          <div>• <b>${T('第 1 年優惠折扣')}：</b>${T('使用')} ${oys2CouponCount} ${T('張')} $${oys2CouponTier} ${T('美金券')} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${oys2Y1DiscountHKD.toLocaleString()}</span></div>
           <div>• <b>${T('首年實際淨保費 (HKD)')}：</b><span style="color:#27ae60; font-weight:bold; font-size:1.1rem;">HK$${oys2NetY1HKD.toLocaleString()}</span></div>
           ${oys2Y2Row}
           ${oys2Y3Row}
@@ -1547,7 +1553,7 @@
       document.getElementById('oys2PromoDetails').innerHTML = oys2Html;
   }
   // ==========================================
-  // 📱 專屬二維碼分享與 URL 參數連動 (v3.31)
+  // 📱 專屬二維碼分享與 URL 參數連動 (v3.32)
   // ==========================================
   function generateShareQRCode() {
       const clientName = document.getElementById('shareClientName').value.trim() || "尊貴客戶";
