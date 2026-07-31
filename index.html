@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v3.36)</title>
+<title>生活應急保險庫 (v3.37)</title>
 <!-- ⚡ 圖片預加載 -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
@@ -217,7 +217,7 @@
         <!-- 後台頁面 1: 理賠規則控制頁 -->
         <div id="admin-page-rules" class="admin-page active">
             <div style="background:#eaf2f8; padding:10px; border-radius:6px; margin-bottom:12px; font-size:0.85rem; color:#2980b9;">
-                💡 提示：此處可動態修改多重理賠上限、等候期及比例。編輯後點擊儲存，將即時同步至 Google Sheet「理賠規則」分頁並全網套用[span_5](start_span)[span_5](end_span)。
+                💡 提示：此處可動態修改多重理賠上限、等候期及比例。編輯後點擊儲存，將即時同步至 Google Sheet「理賠規則」分頁並全網套用[span_3](start_span)[span_3](end_span)。
             </div>
             <table class="admin-table" id="adminRulesTable">
                 <thead>
@@ -235,7 +235,7 @@
             </table>
             <div style="display:flex; gap:10px; margin-top:10px;">
                 <button onclick="addAdminRuleRow()" style="background:#27ae60; color:white; border:none; padding:8px 15px; border-radius:4px; font-size:0.9rem; cursor:pointer;">➕ 新增規則 Row</button>
-                <button id="btnSaveRules" onclick="saveAdminRulesToGAS()" style="background:#3498db; color:white; border:none; padding:8px 15px; border-radius:4px; font-size:0.9rem; font-weight:bold; cursor:pointer; flex:1;">💾 儲存並同步至 Google Sheet[span_6](start_span)[span_6](end_span)</button>
+                <button id="btnSaveRules" onclick="saveAdminRulesToGAS()" style="background:#3498db; color:white; border:none; padding:8px 15px; border-radius:4px; font-size:0.9rem; font-weight:bold; cursor:pointer; flex:1;">💾 儲存並同步至 Google Sheet[span_4](start_span)[span_4](end_span)</button>
             </div>
         </div>
         
@@ -253,7 +253,7 @@
             <label><b>上傳證明檔案 (JPG/PNG/PDF)</b></label>
             <input type="file" id="adminFiles" class="admin-input" multiple accept=".pdf,.jpg,.jpeg,.png">
             
-            <button id="adminSubmitBtn" onclick="submitCase()" style="width:100%; padding:12px; background:#3498db; color:white; font-size:1.1rem; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-top: 10px;">📤 儲存案例並同步至 Google Sheet[span_7](start_span)[span_7](end_span)</button>
+            <button id="adminSubmitBtn" onclick="submitCase()" style="width:100%; padding:12px; background:#3498db; color:white; font-size:1.1rem; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-top: 10px;">📤 儲存案例並同步至 Google Sheet[span_5](start_span)[span_5](end_span)</button>
             
             <hr style="margin: 20px 0; border-top: 1px dashed #ccc;">
             <h3 style="margin-top:0;">🗑️ 現有案例列表 (點擊刪除)</h3>
@@ -266,7 +266,7 @@
   <div class="header">
       <h1>
           生活應急保險庫 
-          <span class="version-badge" onclick="openAdminModal()" title="點擊直接進入雲端後台">v3.36</span>
+          <span class="version-badge" onclick="openAdminModal()" title="點擊直接進入雲端後台">v3.37</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
@@ -285,7 +285,7 @@
     <div class="main-grid">
       <div class="config-panel">
           
-        <div class="hypno-card" id="hypno1" onclick="openHypnoModal('ask')">
+        <div class="hypno-card customer-hide-card" id="hypno1" onclick="openHypnoModal('ask')">
             <div class="hypno-header">
                 <div class="hypno-title"><span>💡</span> 想請教你一個問題... (點擊展開)</div>
                 <div class="hypno-arrow">👉</div>
@@ -661,7 +661,7 @@
   <div id="page-cases" class="tab-content info-page-container" style="background:#f4f9fc;">
       <div class="info-section">
           <h2 id="casesTitle" class="dark-title" style="font-size: 1.6rem; color: #2c3e50; text-align:center; cursor:pointer;" onclick="openAdminModal()">📜 賠償案例庫</h2>
-          <p style="color:#666; text-align:center; font-size:0.9rem;">真實理賠數據展示，跨裝置與 Google Sheet 即時同步[span_8](start_span)[span_8](end_span)。</p>
+          <p style="color:#666; text-align:center; font-size:0.9rem;">真實理賠數據展示，跨裝置與 Google Sheet 即時同步[span_6](start_span)[span_6](end_span)。</p>
       </div>
       
       <div id="frontendCasesList">
@@ -822,9 +822,9 @@
                   <h4 style="margin-top:0; color:#34495e;">補強 A：簡護危疾保 (SCE)</h4>
                   <div class="input-group" style="margin-bottom:8px;">
                       <label style="flex:none; font-size:0.85rem;">首年折扣券面額：</label>
-                      <select id="sceCouponTier" style="width:110px;" onchange="calculatePromoDiscount()">
-                          <option value="195">$25 USD (HK$195)</option>
-                          <option value="491">$63 USD (HK$491)</option>
+                      <select id="sceCouponTier" style="width:120px;" onchange="calculatePromoDiscount()">
+                          <option value="195">HK$195 折扣券</option>
+                          <option value="491">HK$491 折扣券</option>
                       </select>
                   </div>
                   <div class="input-group" style="margin-bottom:8px;">
@@ -848,8 +848,9 @@
                   <h4 style="margin-top:0; color:#27ae60;">補強 B：愛伴航2 (OYS2)</h4>
                   <div class="input-group" style="margin-bottom:8px;">
                       <label style="flex:none; font-size:0.85rem;">首年折扣券面額：</label>
-                      <select id="oys2CouponTier" style="width:110px;" onchange="calculatePromoDiscount()">
-                          <option value="491" selected>$63 USD (HK$491)</option>
+                      <select id="oys2CouponTier" style="width:120px;" onchange="calculatePromoDiscount()">
+                          <option value="491" selected>HK$491 折扣券</option>
+                          <option value="195">HK$195 折扣券</option>
                       </select>
                   </div>
                   <div class="input-group" style="margin-bottom:8px;">
@@ -891,7 +892,7 @@
   if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
   const storage = firebase.storage();
   
-  // 🟢 動態理賠規則預設值 (連動 GAS Google Sheet「理賠規則」分頁)[span_9](start_span)[span_9](end_span)
+  // 🟢 動態理賠規則預設值 (連動 GAS Google Sheet「理賠規則」分頁)[span_7](start_span)[span_7](end_span)
   let claimRulesConfig = {
       Max_Cancer_Total_Pct: 600,
       Max_Cancer_New: 6,
@@ -909,7 +910,6 @@
       Cancer_OptionB_Monthly_Pct: 5
   };
   
-  // 記錄後台規則陣列 (用於後台表格顯示)
   let rawAdminRulesList = [];
   
   window.onload = () => {
@@ -919,7 +919,7 @@
           document.getElementById('loginOverlay').style.display = 'none';
           document.getElementById('mainContainer').style.display = 'block';
           loadCases();
-          loadClaimRulesFromGAS(); // 自動載入雲端理賠規則[span_10](start_span)[span_10](end_span)
+          loadClaimRulesFromGAS();
       }
       fetchPremiumRates();
   };
@@ -952,10 +952,9 @@
   }
 
   // ==========================================
-  // ⚙️ 後台管理 Modal 控制 & 雙導航切換 (免密碼進後台)
+  // ⚙️ 後台管理 Modal 控制 & 雙導航切換
   // ==========================================
   function openAdminModal() {
-      // 只要首次登入驗證通過，點擊 Version Badge 可直接開啟後台，無需二次輸入密碼
       document.getElementById('adminModal').style.display = 'flex';
       renderAdminRulesTable();
   }
@@ -967,7 +966,7 @@
       document.getElementById('admin-page-' + tabName).classList.add('active');
   }
 
-  // 1. 從 GAS 下載「理賠規則」[span_11](start_span)[span_11](end_span)
+  // 1. 從 GAS 下載「理賠規則」[span_8](start_span)[span_8](end_span)
   async function loadClaimRulesFromGAS() {
       try {
           const response = await fetch(GAS_CASE_URL + "?type=claim_rules", { method: "GET", redirect: "follow" });
@@ -993,7 +992,6 @@
       if (!tbody) return;
       
       let html = "";
-      // 若尚未下載資料，用預設值組裝
       let displayList = rawAdminRulesList.length > 0 ? rawAdminRulesList : Object.keys(claimRulesConfig).map(k => ({
           Rule_Key: k, Rule_Name: k, Value_Num: claimRulesConfig[k], Unit_Type: 'Num', Description: ''
       }));
@@ -1011,7 +1009,6 @@
       tbody.innerHTML = html;
   }
 
-  // 3. 後台動態新增 Row
   function addAdminRuleRow() {
       const tbody = document.getElementById('adminRulesTbody');
       const tr = document.createElement('tr');
@@ -1025,14 +1022,12 @@
       tbody.appendChild(tr);
   }
 
-  // 4. 後台刪除 Row
   function deleteAdminRuleRow(btn) {
       if (confirm("確定要在雲端數據表中移除此項規則嗎？")) {
           btn.closest('tr').remove();
       }
   }
 
-  // 5. 儲存理賠規則至 GAS Google Sheet[span_12](start_span)[span_12](end_span)
   async function saveAdminRulesToGAS() {
       const btn = document.getElementById('btnSaveRules');
       btn.innerText = "⏳ 儲存中...";
@@ -1082,7 +1077,7 @@
   }
 
   // ==========================================
-  // 後台案例同步 (對接 GAS)[span_13](start_span)[span_13](end_span)
+  // 後台案例同步 (對接 GAS)[span_9](start_span)[span_9](end_span)
   // ==========================================
   async function submitCase() {
       let disease = document.getElementById('adminDisease').value.trim();
@@ -1457,20 +1452,15 @@
       updateUI();
   }
   
-  // 🟢 癌症選項 A/B 動態互扣邏輯 (根據上限總 % 智能扣減剩餘月份)
   function manualClaimCancerMonthly() { 
       if(!state.isCriticalClaimed) { alert(T("需先啟動嚴重危疾")); return; } 
       
-      let totalCancerMaxPct = claimRulesConfig.Max_Cancer_Total_Pct || 600; // 總賠償上限 (例如 600%)
-      let optionBMonthlyPct = claimRulesConfig.Cancer_OptionB_Monthly_Pct || 5; // 每月 5%
+      let totalCancerMaxPct = claimRulesConfig.Max_Cancer_Total_Pct || 600; 
+      let optionBMonthlyPct = claimRulesConfig.Cancer_OptionB_Monthly_Pct || 5; 
       
-      // 已使用的選項 A 扣減百分比 (新單癌症次數 * 100%)
       let optionAUsedPct = state.cancerCountNew * 100;
-      // 剩餘給選項 B 的百分比上限
       let remainPctForB = Math.max(0, totalCancerMaxPct - optionAUsedPct);
-      // 計算剩餘最多可發放月份 (四捨五入)
       let maxMonthsAllowed = Math.round(remainPctForB / optionBMonthlyPct);
-      // 按產品基礎硬上限 (最多 100 個月)
       maxMonthsAllowed = Math.min(100, maxMonthsAllowed);
       
       if (state.cancerMonthsPaid >= maxMonthsAllowed) {
@@ -1558,7 +1548,6 @@
           document.getElementById('cancerWaitInfo').innerText = T(`系統提示：預計下一次 ${nxt} 歲`); 
       } else if (!state.isCriticalClaimed) { document.getElementById('cancerWaitInfo').innerText = T("自動對比等候期"); } 
       
-      // 動態對扣後的選項 B 月數標示
       let totalCancerMaxPct = claimRulesConfig.Max_Cancer_Total_Pct || 600;
       let optionBMonthlyPct = claimRulesConfig.Cancer_OptionB_Monthly_Pct || 5;
       let optionAUsedPct = state.cancerCountNew * 100;
@@ -1734,7 +1723,7 @@
   }
 
   // ==========================================
-  // 🎁 保費優惠計算 (直抓精算表 DOM 與固定港幣扣減)
+  // 🎁 保費優惠計算 (連動精算表 DOM 與固定港幣扣減)
   // ==========================================
   let promoSettings = {
       oys2Y2Months: 2,
@@ -1797,21 +1786,22 @@
   }
   
   function calculatePromoDiscount() {
+      // 核心連動：直接精準解析 DOM 文字，避免逗號導致數字拼接過大
       let sceFirstYearUSD = 0;
       let oys2FirstYearUSD = 0;
       
-      const sceFirstRowCell = document.querySelector('#sceBreakdownBody tr:first-child td:nth-child(3)');
-      if (sceFirstRowCell) {
-          const rawTxt = sceFirstRowCell.innerText.replace(/[^0-9.]/g, '');
-          sceFirstYearUSD = parseFloat(rawTxt) || 0;
+      const sceCell = document.querySelector('#sceBreakdownBody tr:first-child td:nth-child(3)');
+      if (sceCell) {
+          const match = sceCell.innerText.match(/[\d,]+/);
+          if (match) sceFirstYearUSD = parseFloat(match[0].replace(/,/g, '')) || 0;
       }
-      const oys2FirstRowCell = document.querySelector('#oys2BreakdownBody tr:first-child td:nth-child(3)');
-      if (oys2FirstRowCell) {
-          const rawTxt = oys2FirstRowCell.innerText.replace(/[^0-9.]/g, '');
-          oys2FirstYearUSD = parseFloat(rawTxt) || 0;
+      const oys2Cell = document.querySelector('#oys2BreakdownBody tr:first-child td:nth-child(3)');
+      if (oys2Cell) {
+          const match = oys2Cell.innerText.match(/[\d,]+/);
+          if (match) oys2FirstYearUSD = parseFloat(match[0].replace(/,/g, '')) || 0;
       }
 
-      // 1. SCE 優惠計算
+      // 1. SCE 優惠計算 (港幣純淨扣減)
       const sceHkdPrem = sceFirstYearUSD * 7.8;
       const sceCouponTierHKD = parseFloat(document.getElementById('sceCouponTier').value) || 195;
       const sceCouponCount = parseInt(document.getElementById('sceCouponCount').value) || 0;
@@ -1823,7 +1813,7 @@
       const sceTotalSavedHKD = sceY1DiscountHKD + sceY2DiscountHKD + sceY3DiscountHKD;
       const sceNetY1HKD = Math.max(0, Math.round(sceHkdPrem - sceY1DiscountHKD));
       
-      let sceCouponLabel = sceCouponTierHKD === 195 ? "$25 美金 (HK$195)" : "$63 美金 (HK$491)";
+      let sceCouponLabel = sceCouponTierHKD === 195 ? "HK$195 折扣券" : "HK$491 折扣券";
       let sceY2Row = (promoSettings.sceY2Months || 0) > 0 ? `<div>• <b>${T('第 2 年保費回贈')}：</b>${promoSettings.sceY2Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY2DiscountHKD.toLocaleString()}</span></div>` : "";
       let sceY3Row = (promoSettings.sceY3Months || 0) > 0 ? `<div>• <b>${T('第 3 年保費回贈')}：</b>${promoSettings.sceY3Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY3DiscountHKD.toLocaleString()}</span></div>` : "";
       
@@ -1850,7 +1840,7 @@
       const oys2TotalSavedHKD = oys2Y1DiscountHKD + oys2Y2DiscountHKD + oys2Y3DiscountHKD;
       const oys2NetY1HKD = Math.max(0, Math.round(oys2HkdPrem - oys2Y1DiscountHKD));
       
-      let oys2CouponLabel = oys2CouponTierHKD === 195 ? "$25 美金 (HK$195)" : "$63 美金 (HK$491)";
+      let oys2CouponLabel = oys2CouponTierHKD === 195 ? "HK$195 折扣券" : "HK$491 折扣券";
       let oys2Y2Row = (promoSettings.oys2Y2Months || 0) > 0 ? `<div>• <b>${T('第 2 年保費回贈')}：</b>${promoSettings.oys2Y2Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${oys2Y2DiscountHKD.toLocaleString()}</span></div>` : "";
       let oys2Y3Row = (promoSettings.oys2Y3Months || 0) > 0 ? `<div>• <b>${T('第 3 年保費回贈')}：</b>${promoSettings.oys2Y3Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${oys2Y3DiscountHKD.toLocaleString()}</span></div>` : "";
       
@@ -1928,8 +1918,7 @@
       container.innerHTML = "";
       
       if (typeof QRCode !== 'undefined') {
-          const tempDiv = document.createElement('div');
-          new QRCode(tempDiv, {
+          new QRCode(container, {
               text: shareUrl,
               width: 180,
               height: 180,
@@ -1937,14 +1926,6 @@
               colorLight : "#ffffff",
               correctLevel : QRCode.CorrectLevel.M
           });
-          setTimeout(() => {
-              const imgEl = tempDiv.querySelector('img');
-              if (imgEl) {
-                  container.appendChild(imgEl);
-              } else {
-                  container.innerHTML = tempDiv.innerHTML;
-              }
-          }, 100);
       } else {
           container.innerHTML = `<div style="padding:10px; border:1px solid #ccc;"><a href="${shareUrl}" target="_blank">${shareUrl}</a></div>`;
       }
