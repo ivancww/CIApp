@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v3.33)</title>
+<title>生活應急保險庫 (v3.34)</title>
 <!-- ⚡ 圖片預加載 -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
@@ -240,7 +240,7 @@
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v3.33</span>
+          生活應急保險庫 <span class="version-badge">v3.34</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
@@ -250,7 +250,7 @@
       <button class="nav-tab" id="tab-btn-child" onclick="switchPage('child')">👶 兒童疾病保障專頁</button>
       <button class="nav-tab" id="tab-btn-diseases" onclick="switchPage('diseases')">📜 102種危疾/輕疾明細</button>
       <button class="nav-tab" id="tab-btn-cases" onclick="switchPage('cases')">📂 賠償案例</button>
-      <button class="nav-tab" id="tab-btn-compare" onclick="switchPage('compare')">⚖️ 補強方案大比拼</button>
+      <button class="nav-tab" id="tab-btn-compare" onclick="switchPage('compare')"><span id="compareTabTitle">⚖️ 補強方案大比拼</span></button>
       <button class="nav-tab" id="tab-btn-share" onclick="switchPage('share')">📱 專屬二維碼分享</button>
   </div>
   
@@ -691,10 +691,10 @@
           </div>
       </div>
   </div>
-  <!-- 分頁 6: 補強方案大比拼 -->
+  <!-- 分頁 6: 補強方案大比拼 / 保費參考 -->
   <div id="page-compare" class="tab-content info-page-container">
       <div class="info-section">
-          <h2 class="dark-title" style="font-size: 1.6rem; color: #2980b9; text-align: center;">⚖️ 補強方案對比：簡護危疾保 (SCE) vs 愛伴航2 (OYS2)</h2>
+          <h2 class="dark-title" id="pageCompareHeaderTitle" style="font-size: 1.6rem; color: #2980b9; text-align: center;">⚖️ 補強方案對比：簡護危疾保 (SCE) vs 愛伴航2 (OYS2)</h2>
           <p style="text-align:center; color:#7f8c8d; font-size:0.9rem;">基於相同設定，對比「定期危疾」與「儲蓄危疾」的長遠保費走勢及多次理賠槓桿。</p>
       </div>
       <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd;">
@@ -1377,10 +1377,6 @@
           let prem = rate * (sceSum / 1000); 
           if (isSceVitalityEligible) { prem = prem * 0.90; }
           
-          if (age === sceStartAge) {
-              calculatedFirstYearSCE = prem; // 記錄精算表首年實際金額 (USD)
-          }
-          
           sceTotal += prem;
           if ((age - sceStartAge) % 5 === 0 || age === sceTargetAge - 1) {
               if (lastSceRowAge !== age) { 
@@ -1407,7 +1403,6 @@
       
       if (oys2Rate !== null) {
           let oys2Prem = oys2Rate * (oys2Sum / 1000);
-          calculatedFirstYearOYS2 = oys2Prem; // 記錄精算表首年實際金額 (USD)
           
           for (let year = 1; year <= oys2MaxYears; year++) {
               oys2Total += oys2Prem; let age = oys2StartAge + year - 1;
@@ -1415,8 +1410,6 @@
                   oys2Html += `<tr><td>${age} ${T('歲')}</td><td>${T('第')} ${year} ${T('年')}</td><td><span style="color:#27ae60; font-weight:bold;">$${Math.round(oys2Prem).toLocaleString()}</span></td></tr>`; 
               }
           }
-      } else {
-          calculatedFirstYearOYS2 = 0;
       }
       document.getElementById('oys2BreakdownBody').innerHTML = oys2Html || `<tr><td colspan="3" style="color:#e74c3c;">${T('無對應精算數據')}</td></tr>`; 
       document.getElementById('oys2TotalPremium').innerText = formatMoney(oys2Total);
@@ -1473,7 +1466,7 @@
       document.getElementById('totalClaimOYS2').innerText = formatMoney(compClaimState.totalOYS2);
   }
   // ==========================================
-  // 🎁 保費優惠計算與對應精算對比表 (v3.33)
+  // 🎁 保費優惠計算 (DOM 直抓上方對比表金額 v3.34)
   // ==========================================
   let promoSettings = {
       oys2Y2Months: 2,
@@ -1532,8 +1525,23 @@
   function calculatePromoDiscount() {
       const rateHKD = 7.8;
       
-      // 1. SCE 優惠計算 (直接連動對比表算出之 calculatedFirstYearSCE)
-      const sceHkdPrem = calculatedFirstYearSCE * rateHKD;
+      // 核心直抓：由上方精算表格 DOM 直接獲取第 1 列之實際年繳保費文字並轉為數值 (USD)
+      let sceFirstYearUSD = 0;
+      let oys2FirstYearUSD = 0;
+      
+      const sceFirstRowCell = document.querySelector('#sceBreakdownBody tr:first-child td:nth-child(3)');
+      if (sceFirstRowCell) {
+          const rawTxt = sceFirstRowCell.innerText.replace(/[^0-9.]/g, '');
+          sceFirstYearUSD = parseFloat(rawTxt) || 0;
+      }
+      const oys2FirstRowCell = document.querySelector('#oys2BreakdownBody tr:first-child td:nth-child(3)');
+      if (oys2FirstRowCell) {
+          const rawTxt = oys2FirstRowCell.innerText.replace(/[^0-9.]/g, '');
+          oys2FirstYearUSD = parseFloat(rawTxt) || 0;
+      }
+
+      // 1. SCE 優惠計算
+      const sceHkdPrem = sceFirstYearUSD * rateHKD;
       const sceCouponTier = parseFloat(document.getElementById('sceCouponTier').value) || 25;
       const sceCouponCount = parseInt(document.getElementById('sceCouponCount').value) || 0;
       const sceY1DiscountHKD = Math.round(sceCouponTier * sceCouponCount * rateHKD);
@@ -1558,8 +1566,8 @@
       `;
       document.getElementById('scePromoDetails').innerHTML = sceHtml;
       
-      // 2. OYS2 優惠計算 (直接連動對比表算出之 calculatedFirstYearOYS2)
-      const oys2HkdPrem = calculatedFirstYearOYS2 * rateHKD;
+      // 2. OYS2 優惠計算
+      const oys2HkdPrem = oys2FirstYearUSD * rateHKD;
       const oys2CouponTier = parseFloat(document.getElementById('oys2CouponTier').value) || 63;
       const oys2CouponCount = parseInt(document.getElementById('oys2CouponCount').value) || 0;
       const oys2Y1DiscountHKD = Math.round(oys2CouponTier * oys2CouponCount * rateHKD);
@@ -1585,7 +1593,7 @@
       document.getElementById('oys2PromoDetails').innerHTML = oys2Html;
   }
   // ==========================================
-  // 📱 專屬二維碼分享與 URL 參數動態控制 (v3.33)
+  // 📱 專屬二維碼分享與 URL 參數動態控制 (v3.34)
   // ==========================================
   function toggleCompareShareOptions() {
       const isChecked = document.getElementById('chkShareCompare').checked;
@@ -1661,9 +1669,6 @@
   }
   function copyShareLink() {
       generateShareQRCode();
-      const shareCardTitle = document.getElementById('shareCardTitle').innerText;
-      const urlParams = new URLSearchParams(window.location.search);
-      // 從分享卡片獲取生成的最後 URL
       const clientName = document.getElementById('shareClientName').value.trim() || "尊貴客戶";
       const customMsg = document.getElementById('shareCustomMsg').value.trim() || "這是專屬你的危疾保障資料";
       const params = new URLSearchParams({
@@ -1694,7 +1699,18 @@
               alert(`🎉 歡迎！${client ? client + '，' : ''}${msg ? msg : ''}`);
           }
           
-          // 客戶存取控制 (按 URL 參數動態隱藏/顯示選單與欄位)
+          // 📱 客戶存取控制 (專屬視角優化 v3.34)
+          // 1. 移走分享頁與賠償案例頁
+          if (document.getElementById('tab-btn-share')) document.getElementById('tab-btn-share').style.display = 'none';
+          if (document.getElementById('tab-btn-cases')) document.getElementById('tab-btn-cases').style.display = 'none';
+          
+          // 2. 將對比頁名稱改為「保費參考」
+          if (document.getElementById('compareTabTitle')) document.getElementById('compareTabTitle').innerText = '📑 保費參考';
+          if (document.getElementById('pageCompareHeaderTitle')) document.getElementById('pageCompareHeaderTitle').innerText = '📑 保費參考資料';
+          
+          // 3. 隱藏理賠實戰推演區，只保留保費表與保費優惠
+          if (document.getElementById('compareClaimSection')) document.getElementById('compareClaimSection').style.display = 'none';
+          
           const sBasic = urlParams.get('s_basic');
           const sComp = urlParams.get('s_comp');
           const cMode = urlParams.get('c_mode');
