@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v3.31)</title>
+<title>生活應急保險庫 (v3.33)</title>
 <!-- ⚡ 圖片預加載 -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
@@ -48,17 +48,17 @@
   .tab-content { display: none; }
   .tab-content.active { display: block; }
   
-  /* ⚖️ 左右雙欄排版，確保固定相對定位 */
+  /* ⚖️ 確保 Honor Magic V5 展開屏與 iPad 正確呈現雙欄，斷點調整至 600px */
   .main-grid { display: grid; grid-template-columns: 1fr 1.25fr; gap: 0; align-items: flex-start; border-radius: 0 0 12px 12px; position: relative; }
-  @media (max-width: 768px) { .main-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 600px) { .main-grid { grid-template-columns: 1fr; } }
   
   .config-panel { background: #f8f9fa; padding: 20px; border-right: 1px solid #eee; border-radius: 0 0 0 12px; }
   .analysis-panel { background: #fff; padding: 20px; position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; display: flex; flex-direction: column; border-radius: 0 0 12px 0; scroll-behavior: smooth; position: relative; }
-  @media (max-width: 768px) { .analysis-panel { position: static; max-height: none; overflow-y: visible; } }
+  @media (max-width: 600px) { .analysis-panel { position: static; max-height: none; overflow-y: visible; } }
   
-  /* 📱 平板/折疊螢幕雙欄獨立顯示 */
+  /* 📱 平板/對摺螢幕雙欄佈局斷點修復 */
   .fold-split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
-  @media (max-width: 768px) { .fold-split-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 600px) { .fold-split-grid { grid-template-columns: 1fr; } }
   
   .hypno-card { background: #fff; border: 1px solid #dcdde1; border-radius: 8px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; transition: 0.2s; }
   .hypno-card:hover { border-color: var(--blue-base); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
@@ -100,8 +100,8 @@
   .status-value { font-size: 1.2rem; font-weight: bold; color: #2c3e50; transition: all 0.3s; } .status-value.red { color: #e74c3c; }
   .editable-age { width: 60px !important; text-align: center; padding: 5px; border: 1px solid #bdc3c7; background: #fff; font-weight: bold; font-size: 1.4rem; color: #2c3e50; border-radius: 6px; cursor: pointer; }
   
-  /* 🛡️ 遮罩限定在右側分析面板內，避免溢出覆蓋全頁 */
-  .overlay-mask { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.98); z-index: 50; display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center; border-radius: 0 0 12px 0; }
+  /* 🛡️ 遮罩嚴格限定在右側分析面板（.analysis-panel）內，絕不溢出到其他 Tab */
+  .overlay-mask { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.98); z-index: 20; display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center; border-radius: 0 0 12px 0; }
   
   .controls-area { padding-top: 25px; margin-top: 25px; border-top: 2px solid #ddd; }
   .card { border: 1px solid #eee; border-left: 4px solid transparent; border-radius: 6px; padding: 15px; margin-bottom: 15px; background: white; transition: transform 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
@@ -144,7 +144,7 @@
   .info-table tr:nth-child(even) { background-color: #f9f9f9; }
   .highlight-box { background: #fff8e1; border: 1px solid #ffe082; padding: 15px; border-radius: 8px; color: #5d4037; line-height: 1.6; margin-top: 10px; }
   .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  @media (max-width: 768px) { .grid-2col { grid-template-columns: 1fr; } }
+  @media (max-width: 600px) { .grid-2col { grid-template-columns: 1fr; } }
   .case-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
   .case-title { font-size: 1.2rem; color: #e74c3c; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 10px; }
   .case-claim-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #eee; font-size: 0.95rem; color: #34495e;}
@@ -176,6 +176,7 @@
         <div id="login-msg"></div>
     </div>
 </div>
+
 <!-- 彈出圖文 Modal -->
 <div id="imageModal" class="modal-overlay" onclick="closeModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
@@ -186,6 +187,7 @@
         </div>
     </div>
 </div>
+
 <!-- 後台案例與優惠管理 Modal -->
 <div id="adminModal" class="admin-modal">
     <div class="admin-content">
@@ -230,13 +232,15 @@
         <div id="adminCasesList">載入中...</div>
     </div>
 </div>
+
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v3.31</span>
+          生活應急保險庫 <span class="version-badge">v3.33</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
+  
   <!-- 全局導航欄 -->
   <div class="tab-navigation">
       <button class="nav-tab active" onclick="switchPage('main')">📊 模擬賠償儀表板</button>
@@ -251,7 +255,6 @@
   <div id="page-main" class="tab-content active">
     <div class="main-grid">
       <div class="config-panel">
-          
         <div class="hypno-card" id="hypno1" onclick="openHypnoModal('ask')">
             <div class="hypno-header">
                 <div class="hypno-title"><span>💡</span> 想請教你一個問題... (點擊展開)</div>
@@ -356,11 +359,10 @@
                   <div class="action-row" style="background:#eafaf1; border-color:#d5f5e3;"><div class="acc-tag"><span>累計:</span><div id="accDementiaDisplay">$0</div></div><span id="dementiaYearDisplay" style="font-size:0.9em; color:#7f8c8d;">(0)</span></div>
               </div>
           </div>
-          
         </div>
       </div>
       
-      <!-- ⚖️ 右側：即時資產支撐分析面板 -->
+      <!-- ⚖️ 右側：即時資產支撐分析面板 (遮罩嚴格限定在內) -->
       <div class="analysis-panel">
         <div id="analysisOverlay" class="overlay-mask"><div class="overlay-content"><div style="font-size:3rem; margin-bottom:10px;">📊</div>請輸入左側資料並確認</div></div>
         
@@ -593,7 +595,7 @@
           </div>
           <button onclick="generateShareQRCode()" class="btn-confirm" style="background:#27ae60; margin-top:10px;">✨ 生成專屬 QR Code 及分享卡片</button>
       </div>
-      <!-- 二維碼與預覽卡片 -->
+      
       <div id="shareResultCard" style="display:none; max-width:600px; margin:25px auto 0; background:#fff; border:2px solid #27ae60; border-radius:12px; padding:25px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.1);">
           <h3 id="shareCardTitle" style="color:#2c3e50; margin-top:0;"></h3>
           <p id="shareCardSub" style="color:#7f8c8d; font-size:0.95rem; margin-bottom:20px;"></p>
@@ -739,6 +741,7 @@
       </div>
   </div>
 </div>
+
 <script>
   // ==========================================
   // API & Firebase 設定
@@ -799,12 +802,30 @@
   }
 
   // ==========================================
-  // ⚡ Google Sheet 動態同步：兒童疾病與危疾明細 (v3.31)
+  // ⚡ Google Sheet 動態同步 (自動相容結構)
   // ==========================================
+  function extractDataArray(res) {
+      if (!res) return [];
+      if (Array.isArray(res)) return res;
+      return res.childDiseases || res.criticalDiseases || res.casesData || res.data || [];
+  }
+
+  function getObjVal(obj, keys) {
+      for (let k of keys) {
+          for (let p in obj) {
+              if (p.trim().toLowerCase() === k.toLowerCase()) {
+                  return obj[p];
+              }
+          }
+      }
+      return "";
+  }
+
   async function loadChildDiseasesFromGS() {
       try {
           const res = await fetch(GAS_CASE_URL + "?type=child_diseases", { method: "GET", redirect: "follow" });
-          const data = await res.json();
+          const raw = await res.json();
+          const data = extractDataArray(raw);
           if (data && data.length > 0) {
               renderChildDiseases(data);
           }
@@ -818,11 +839,11 @@
       let noticeHtml = "";
       
       data.forEach(row => {
-          let secType = row.Section_Type || row.section_type || "";
-          let catName = row.Category_Name || row.category_name || "";
-          let diseaseList = row.Disease_List || row.disease_list || "";
-          let payoutRule = row.Payout_Rule || row.payout_rule || "";
-          let remarks = row.Remarks || row.remarks || "";
+          let secType = getObjVal(row, ['Section_Type', 'section_type']);
+          let catName = getObjVal(row, ['Category_Name', 'category_name']);
+          let diseaseList = getObjVal(row, ['Disease_List', 'disease_list']);
+          let payoutRule = getObjVal(row, ['Payout_Rule', 'payout_rule']);
+          let remarks = getObjVal(row, ['Remarks', 'remarks']);
 
           if (secType === 'Table') {
               tableHtml += `
@@ -847,7 +868,8 @@
   async function loadCriticalDiseasesFromGS() {
       try {
           const res = await fetch(GAS_CASE_URL + "?type=critical_diseases", { method: "GET", redirect: "follow" });
-          const data = await res.json();
+          const raw = await res.json();
+          const data = extractDataArray(raw);
           if (data && data.length > 0) {
               renderCriticalDiseases(data);
           }
@@ -861,11 +883,11 @@
       
       data.forEach(row => {
           let catKey = "";
-          let catName = row.Category || row.category || "";
-          let diseaseName = row.Disease_Name || row.disease_name || "";
-          let severity = row.Severity || row.severity || "";
-          let payoutPct = row.Payout_Pct || row.payout_pct || "";
-          let noteRemark = row.Note_Remark || row.note_remark || "";
+          let catName = String(getObjVal(row, ['Category', 'category']));
+          let diseaseName = String(getObjVal(row, ['Disease_Name', 'disease_name']));
+          let severity = String(getObjVal(row, ['Severity', 'severity']));
+          let payoutPct = String(getObjVal(row, ['Payout_Pct', 'payout_pct']));
+          let noteRemark = String(getObjVal(row, ['Note_Remark', 'note_remark']));
           
           if (catName.includes("第1類") || catName.includes("癌症")) catKey = "cat1";
           else if (catName.includes("第2類") || catName.includes("心臟")) catKey = "cat2";
@@ -986,7 +1008,8 @@
           document.getElementById('adminCasesList').innerHTML = `<div style="color:#95a5a6;">載入中...</div>`;
           
           const response = await fetch(GAS_CASE_URL + "?type=cases", { method: "GET", redirect: "follow" });
-          const claimsData = await response.json();
+          const raw = await response.json();
+          const claimsData = extractDataArray(raw);
           
           let html = ""; let adminHtml = "";
           
@@ -1324,6 +1347,7 @@
       if(state.isCriticalClaimed && !state.dementiaLumpSumClaimed) { document.getElementById('btnDementia').innerText = T("🚨 提取 100% 賠償"); } else { document.getElementById('btnDementia').innerText = T("👇 發放 1 年年金"); }
       updateBenefitValues(); updateBonusDisplay(); updateAnalysis();
   }
+
   // ==========================================
   // 大比拼精算邏輯
   // ==========================================
@@ -1659,7 +1683,7 @@
       ['邊樣先更緊要', '哪样才是最要紧的'],
       ['幾多', '多少'], ['邊個', '哪个'], ['點樣', '怎样'],
       ['我哋', '我们'], ['你哋', '你们'], ['佢哋', '他们'],
-      ['嘅', '的'], ['啲', '些'], ['咗', '了'], ['喺', '在'], ['咁', '那么']
+      ['嘅', '的'], ['啲', '些'], ['咗', '了'], ['喺', '在'], ['咁', '那麼']
   ];
 
   function T(str) {
