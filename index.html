@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v3.37)</title>
+<title>生活應急保險庫 (v3.38)</title>
 <!-- ⚡ 圖片預加載 -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
@@ -78,17 +78,19 @@
   
   /* ⚙️ 後台管理 Modal & 雙導航樣式 */
   .admin-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
-  .admin-content { background: #fff; padding: 25px; border-radius: 12px; width: 100%; max-width: 750px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+  .admin-content { background: #fff; padding: 25px; border-radius: 12px; width: 100%; max-width: 900px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
   .admin-nav { display: flex; gap: 10px; border-bottom: 2px solid #ddd; margin-bottom: 20px; }
   .admin-tab { padding: 10px 18px; font-weight: bold; color: #7f8c8d; cursor: pointer; border-bottom: 3px solid transparent; }
   .admin-tab.active { color: #2980b9; border-bottom-color: #2980b9; }
   .admin-page { display: none; }
   .admin-page.active { display: block; }
   .admin-input { width: 100%; padding: 8px 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.95rem; box-sizing: border-box;}
+  
+  /* 後台表格優化，加入 Description 欄位 */
   .admin-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-  .admin-table th, .admin-table td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 0.85rem; }
+  .admin-table th, .admin-table td { border: 1px solid #ddd; padding: 6px; text-align: left; font-size: 0.8rem; }
   .admin-table th { background: #f4f6f7; color: #2c3e50; }
-  .admin-table input { width: 100%; padding: 4px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 0.85rem; }
+  .admin-table input { width: 100%; padding: 4px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 0.8rem; }
   
   @keyframes flash-bg { 0% { background-color: rgba(46, 204, 113, 0.4); box-shadow: 0 0 15px rgba(46, 204, 113, 0.8); } 10% { background-color: rgba(46, 204, 113, 0.6); box-shadow: 0 0 20px rgba(46, 204, 113, 1); } 100% { background-color: #f0f3f4; box-shadow: none; } }
   @keyframes flash-text { 0% { color: #27ae60; transform: scale(1.1); text-shadow: 0 0 10px rgba(39, 174, 96, 0.5); } 10% { color: #e74c3c; transform: scale(1.2); text-shadow: 0 0 15px rgba(231, 76, 60, 0.8); } 100% { color: #e74c3c; transform: scale(1); text-shadow: none;} }
@@ -200,7 +202,7 @@
     </div>
 </div>
 
-<!-- ⚙️ 後台管理 Modal (雙導航頁：理賠規則 & 賠償個案) -->
+<!-- ⚙️ 後台管理 Modal (完整對應 A:Rule_Key, B:Rule_Name, C:Value_Num, D:Unit_Type, E:Description) -->
 <div id="adminModal" class="admin-modal">
     <div class="admin-content">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
@@ -208,7 +210,6 @@
             <button onclick="document.getElementById('adminModal').style.display='none'" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">✖</button>
         </div>
         
-        <!-- 後台內部導航 Tab -->
         <div class="admin-nav">
             <div class="admin-tab active" id="admin-tab-rules" onclick="switchAdminTab('rules')">📋 理賠規則頁 (動態控制)</div>
             <div class="admin-tab" id="admin-tab-cases" onclick="switchAdminTab('cases')">📂 賠償個案頁</div>
@@ -217,16 +218,17 @@
         <!-- 後台頁面 1: 理賠規則控制頁 -->
         <div id="admin-page-rules" class="admin-page active">
             <div style="background:#eaf2f8; padding:10px; border-radius:6px; margin-bottom:12px; font-size:0.85rem; color:#2980b9;">
-                💡 提示：此處可動態修改多重理賠上限、等候期及比例。編輯後點擊儲存，將即時同步至 Google Sheet「理賠規則」分頁並全網套用[span_3](start_span)[span_3](end_span)。
+                💡 提示：此處完整對應 Google Sheet「理賠規則」分頁之 A~E 欄。編輯後點擊儲存，將即時同步至雲端試算表並全網套用[span_0](start_span)[span_0](end_span)。
             </div>
             <table class="admin-table" id="adminRulesTable">
                 <thead>
                     <tr>
-                        <th style="width:25%;">Rule_Key</th>
-                        <th style="width:25%;">Rule_Name</th>
-                        <th style="width:15%;">Value_Num</th>
-                        <th style="width:15%;">Unit_Type</th>
-                        <th style="width:20%;">操作</th>
+                        <th style="width:20%;">Rule_Key (A)</th>
+                        <th style="width:22%;">Rule_Name (B)</th>
+                        <th style="width:12%;">Value_Num (C)</th>
+                        <th style="width:14%;">Unit_Type (D)</th>
+                        <th style="width:22%;">Description (E)</th>
+                        <th style="width:10%;">操作</th>
                     </tr>
                 </thead>
                 <tbody id="adminRulesTbody">
@@ -235,7 +237,7 @@
             </table>
             <div style="display:flex; gap:10px; margin-top:10px;">
                 <button onclick="addAdminRuleRow()" style="background:#27ae60; color:white; border:none; padding:8px 15px; border-radius:4px; font-size:0.9rem; cursor:pointer;">➕ 新增規則 Row</button>
-                <button id="btnSaveRules" onclick="saveAdminRulesToGAS()" style="background:#3498db; color:white; border:none; padding:8px 15px; border-radius:4px; font-size:0.9rem; font-weight:bold; cursor:pointer; flex:1;">💾 儲存並同步至 Google Sheet[span_4](start_span)[span_4](end_span)</button>
+                <button id="btnSaveRules" onclick="saveAdminRulesToGAS()" style="background:#3498db; color:white; border:none; padding:8px 15px; border-radius:4px; font-size:0.9rem; font-weight:bold; cursor:pointer; flex:1;">💾 儲存並同步至 Google Sheet[span_1](start_span)[span_1](end_span)</button>
             </div>
         </div>
         
@@ -253,7 +255,7 @@
             <label><b>上傳證明檔案 (JPG/PNG/PDF)</b></label>
             <input type="file" id="adminFiles" class="admin-input" multiple accept=".pdf,.jpg,.jpeg,.png">
             
-            <button id="adminSubmitBtn" onclick="submitCase()" style="width:100%; padding:12px; background:#3498db; color:white; font-size:1.1rem; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-top: 10px;">📤 儲存案例並同步至 Google Sheet[span_5](start_span)[span_5](end_span)</button>
+            <button id="adminSubmitBtn" onclick="submitCase()" style="width:100%; padding:12px; background:#3498db; color:white; font-size:1.1rem; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-top: 10px;">📤 儲存案例並同步至 Google Sheet[span_2](start_span)[span_2](end_span)</button>
             
             <hr style="margin: 20px 0; border-top: 1px dashed #ccc;">
             <h3 style="margin-top:0;">🗑️ 現有案例列表 (點擊刪除)</h3>
@@ -266,7 +268,7 @@
   <div class="header">
       <h1>
           生活應急保險庫 
-          <span class="version-badge" onclick="openAdminModal()" title="點擊直接進入雲端後台">v3.37</span>
+          <span class="version-badge" onclick="openAdminModal()" title="點擊直接進入雲端後台">v3.38</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
@@ -661,7 +663,7 @@
   <div id="page-cases" class="tab-content info-page-container" style="background:#f4f9fc;">
       <div class="info-section">
           <h2 id="casesTitle" class="dark-title" style="font-size: 1.6rem; color: #2c3e50; text-align:center; cursor:pointer;" onclick="openAdminModal()">📜 賠償案例庫</h2>
-          <p style="color:#666; text-align:center; font-size:0.9rem;">真實理賠數據展示，跨裝置與 Google Sheet 即時同步[span_6](start_span)[span_6](end_span)。</p>
+          <p style="color:#666; text-align:center; font-size:0.9rem;">真實理賠數據展示，跨裝置與 Google Sheet 即時同步[span_3](start_span)[span_3](end_span)。</p>
       </div>
       
       <div id="frontendCasesList">
@@ -892,7 +894,7 @@
   if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
   const storage = firebase.storage();
   
-  // 🟢 動態理賠規則預設值 (連動 GAS Google Sheet「理賠規則」分頁)[span_7](start_span)[span_7](end_span)
+  // 🟢 動態理賠規則預設值 (連動 GAS Google Sheet「理賠規則」分頁)[span_4](start_span)[span_4](end_span)
   let claimRulesConfig = {
       Max_Cancer_Total_Pct: 600,
       Max_Cancer_New: 6,
@@ -966,7 +968,7 @@
       document.getElementById('admin-page-' + tabName).classList.add('active');
   }
 
-  // 1. 從 GAS 下載「理賠規則」[span_8](start_span)[span_8](end_span)
+  // 1. 從 GAS 下載「理賠規則」並優先使用雲端真實文字[span_5](start_span)[span_5](end_span)
   async function loadClaimRulesFromGAS() {
       try {
           const response = await fetch(GAS_CASE_URL + "?type=claim_rules", { method: "GET", redirect: "follow" });
@@ -986,7 +988,7 @@
       }
   }
 
-  // 2. 渲染後台理賠規則表格
+  // 2. 渲染後台理賠規則表格 (完整含 Description 欄位)
   function renderAdminRulesTable() {
       const tbody = document.getElementById('adminRulesTbody');
       if (!tbody) return;
@@ -1003,6 +1005,7 @@
               <td><input type="text" value="${r.Rule_Name || ''}" class="rule-input-name"></td>
               <td><input type="number" value="${r.Value_Num !== undefined ? r.Value_Num : ''}" class="rule-input-val"></td>
               <td><input type="text" value="${r.Unit_Type || 'Num'}" class="rule-input-unit"></td>
+              <td><input type="text" value="${r.Description || ''}" class="rule-input-desc"></td>
               <td><button onclick="deleteAdminRuleRow(this)" style="background:#e74c3c; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">🗑️ 刪除</button></td>
           </tr>`;
       });
@@ -1013,10 +1016,11 @@
       const tbody = document.getElementById('adminRulesTbody');
       const tr = document.createElement('tr');
       tr.innerHTML = `
-          <td><input type="text" placeholder="例如: New_Rule_Key" class="rule-input-key"></td>
-          <td><input type="text" placeholder="規則說明" class="rule-input-name"></td>
+          <td><input type="text" placeholder="Rule_Key" class="rule-input-key"></td>
+          <td><input type="text" placeholder="規則名稱" class="rule-input-name"></td>
           <td><input type="number" value="0" class="rule-input-val"></td>
-          <td><input type="text" value="Percent" class="rule-input-unit"></td>
+          <td><input type="text" value="百分比" class="rule-input-unit"></td>
+          <td><input type="text" placeholder="詳細說明" class="rule-input-desc"></td>
           <td><button onclick="deleteAdminRuleRow(this)" style="background:#e74c3c; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">🗑️ 刪除</button></td>
       `;
       tbody.appendChild(tr);
@@ -1038,6 +1042,7 @@
       const names = document.querySelectorAll('.rule-input-name');
       const vals = document.querySelectorAll('.rule-input-val');
       const units = document.querySelectorAll('.rule-input-unit');
+      const descs = document.querySelectorAll('.rule-input-desc');
       
       for(let i = 0; i < keys.length; i++) {
           let k = keys[i].value.trim();
@@ -1047,7 +1052,7 @@
                   names[i].value.trim(),
                   parseFloat(vals[i].value) || 0,
                   units[i].value.trim() || 'Num',
-                  ''
+                  descs[i] ? descs[i].value.trim() : ''
               ]);
           }
       }
@@ -1077,7 +1082,7 @@
   }
 
   // ==========================================
-  // 後台案例同步 (對接 GAS)[span_9](start_span)[span_9](end_span)
+  // 後台案例同步 (對接 GAS)[span_6](start_span)[span_6](end_span)
   // ==========================================
   async function submitCase() {
       let disease = document.getElementById('adminDisease').value.trim();
@@ -1723,7 +1728,7 @@
   }
 
   // ==========================================
-  // 🎁 保費優惠計算 (連動精算表 DOM 與固定港幣扣減)
+  // 🎁 保費優惠計算 (取消 *7.8 換算，直接跟隨對比表第 1 年金額)
   // ==========================================
   let promoSettings = {
       oys2Y2Months: 2,
@@ -1786,72 +1791,70 @@
   }
   
   function calculatePromoDiscount() {
-      // 核心連動：直接精準解析 DOM 文字，避免逗號導致數字拼接過大
-      let sceFirstYearUSD = 0;
-      let oys2FirstYearUSD = 0;
+      // 直抓對比表第 1 列之金額 (原金額即可，完全移走 * 7.8 換算)
+      let sceFirstYearAmount = 0;
+      let oys2FirstYearAmount = 0;
       
       const sceCell = document.querySelector('#sceBreakdownBody tr:first-child td:nth-child(3)');
       if (sceCell) {
           const match = sceCell.innerText.match(/[\d,]+/);
-          if (match) sceFirstYearUSD = parseFloat(match[0].replace(/,/g, '')) || 0;
+          if (match) sceFirstYearAmount = parseFloat(match[0].replace(/,/g, '')) || 0;
       }
       const oys2Cell = document.querySelector('#oys2BreakdownBody tr:first-child td:nth-child(3)');
       if (oys2Cell) {
           const match = oys2Cell.innerText.match(/[\d,]+/);
-          if (match) oys2FirstYearUSD = parseFloat(match[0].replace(/,/g, '')) || 0;
+          if (match) oys2FirstYearAmount = parseFloat(match[0].replace(/,/g, '')) || 0;
       }
 
-      // 1. SCE 優惠計算 (港幣純淨扣減)
-      const sceHkdPrem = sceFirstYearUSD * 7.8;
+      // 1. SCE 優惠計算 (純數字扣減，不乘以 7.8)
       const sceCouponTierHKD = parseFloat(document.getElementById('sceCouponTier').value) || 195;
       const sceCouponCount = parseInt(document.getElementById('sceCouponCount').value) || 0;
       const sceY1DiscountHKD = sceCouponTierHKD * sceCouponCount;
       
-      const sceMonthlyHkdPrem = sceHkdPrem / 12;
-      const sceY2DiscountHKD = Math.round(sceMonthlyHkdPrem * (promoSettings.sceY2Months || 0));
-      const sceY3DiscountHKD = (promoSettings.sceY3Months || 0) > 0 ? Math.round(sceMonthlyHkdPrem * promoSettings.sceY3Months) : 0;
+      const sceMonthlyPrem = sceFirstYearAmount / 12;
+      const sceY2DiscountHKD = Math.round(sceMonthlyPrem * (promoSettings.sceY2Months || 0));
+      const sceY3DiscountHKD = (promoSettings.sceY3Months || 0) > 0 ? Math.round(sceMonthlyPrem * promoSettings.sceY3Months) : 0;
       const sceTotalSavedHKD = sceY1DiscountHKD + sceY2DiscountHKD + sceY3DiscountHKD;
-      const sceNetY1HKD = Math.max(0, Math.round(sceHkdPrem - sceY1DiscountHKD));
+      const sceNetY1HKD = Math.max(0, Math.round(sceFirstYearAmount - sceY1DiscountHKD));
       
       let sceCouponLabel = sceCouponTierHKD === 195 ? "HK$195 折扣券" : "HK$491 折扣券";
       let sceY2Row = (promoSettings.sceY2Months || 0) > 0 ? `<div>• <b>${T('第 2 年保費回贈')}：</b>${promoSettings.sceY2Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY2DiscountHKD.toLocaleString()}</span></div>` : "";
       let sceY3Row = (promoSettings.sceY3Months || 0) > 0 ? `<div>• <b>${T('第 3 年保費回贈')}：</b>${promoSettings.sceY3Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY3DiscountHKD.toLocaleString()}</span></div>` : "";
       
       let sceHtml = `
-          <div>• <b>${T('首年原保費 (HKD)')}：</b>HK$${Math.round(sceHkdPrem).toLocaleString()}</div>
+          <div>• <b>${T('首年原保費')}：</b>HK$${Math.round(sceFirstYearAmount).toLocaleString()}</div>
           <div>• <b>${T('第 1 年優惠折扣')}：</b>${T('使用')} ${sceCouponCount} ${T('張')} ${sceCouponLabel} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY1DiscountHKD.toLocaleString()}</span></div>
-          <div>• <b>${T('首年實際淨保費 (HKD)')}：</b><span style="color:#2980b9; font-weight:bold; font-size:1.1rem;">HK$${sceNetY1HKD.toLocaleString()}</span></div>
+          <div>• <b>${T('首年實際淨保費')}：</b><span style="color:#2980b9; font-weight:bold; font-size:1.1rem;">HK$${sceNetY1HKD.toLocaleString()}</span></div>
           ${sceY2Row}
           ${sceY3Row}
           <hr style="margin:10px 0; border:none; border-top:1px dashed #ccc;">
-          <div>💰 <b>${T('總共自動計算節省 (HKD)')}：</b><span style="color:#e74c3c; font-weight:bold; font-size:1.15rem;">HK$${sceTotalSavedHKD.toLocaleString()}</span></div>
+          <div>💰 <b>${T('總共自動計算節省')}：</b><span style="color:#e74c3c; font-weight:bold; font-size:1.15rem;">HK$${sceTotalSavedHKD.toLocaleString()}</span></div>
       `;
       document.getElementById('scePromoDetails').innerHTML = sceHtml;
       
       // 2. OYS2 優惠計算
-      const oys2HkdPrem = oys2FirstYearUSD * 7.8;
       const oys2CouponTierHKD = parseFloat(document.getElementById('oys2CouponTier').value) || 491;
       const oys2CouponCount = parseInt(document.getElementById('oys2CouponCount').value) || 0;
       const oys2Y1DiscountHKD = oys2CouponTierHKD * oys2CouponCount;
       
-      const monthlyHkdPrem = oys2HkdPrem / 12;
-      const oys2Y2DiscountHKD = Math.round(monthlyHkdPrem * (promoSettings.oys2Y2Months || 0));
-      const oys2Y3DiscountHKD = (promoSettings.oys2Y3Months || 0) > 0 ? Math.round(monthlyHkdPrem * promoSettings.oys2Y3Months) : 0;
+      const monthlyPrem = oys2FirstYearAmount / 12;
+      const oys2Y2DiscountHKD = Math.round(monthlyPrem * (promoSettings.oys2Y2Months || 0));
+      const oys2Y3DiscountHKD = (promoSettings.oys2Y3Months || 0) > 0 ? Math.round(monthlyPrem * promoSettings.oys2Y3Months) : 0;
       const oys2TotalSavedHKD = oys2Y1DiscountHKD + oys2Y2DiscountHKD + oys2Y3DiscountHKD;
-      const oys2NetY1HKD = Math.max(0, Math.round(oys2HkdPrem - oys2Y1DiscountHKD));
+      const oys2NetY1HKD = Math.max(0, Math.round(oys2FirstYearAmount - oys2Y1DiscountHKD));
       
       let oys2CouponLabel = oys2CouponTierHKD === 195 ? "HK$195 折扣券" : "HK$491 折扣券";
       let oys2Y2Row = (promoSettings.oys2Y2Months || 0) > 0 ? `<div>• <b>${T('第 2 年保費回贈')}：</b>${promoSettings.oys2Y2Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${oys2Y2DiscountHKD.toLocaleString()}</span></div>` : "";
       let oys2Y3Row = (promoSettings.oys2Y3Months || 0) > 0 ? `<div>• <b>${T('第 3 年保費回贈')}：</b>${promoSettings.oys2Y3Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${oys2Y3DiscountHKD.toLocaleString()}</span></div>` : "";
       
       let oys2Html = `
-          <div>• <b>${T('首年原保費 (HKD)')}：</b>HK$${Math.round(oys2HkdPrem).toLocaleString()}</div>
+          <div>• <b>${T('首年原保費')}：</b>HK$${Math.round(oys2FirstYearAmount).toLocaleString()}</div>
           <div>• <b>${T('第 1 年優惠折扣')}：</b>${T('使用')} ${oys2CouponCount} ${T('張')} ${oys2CouponLabel} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${oys2Y1DiscountHKD.toLocaleString()}</span></div>
-          <div>• <b>${T('首年實際淨保費 (HKD)')}：</b><span style="color:#27ae60; font-weight:bold; font-size:1.1rem;">HK$${oys2NetY1HKD.toLocaleString()}</span></div>
+          <div>• <b>${T('首年實際淨保費')}：</b><span style="color:#27ae60; font-weight:bold; font-size:1.1rem;">HK$${oys2NetY1HKD.toLocaleString()}</span></div>
           ${oys2Y2Row}
           ${oys2Y3Row}
           <hr style="margin:10px 0; border:none; border-top:1px dashed #ccc;">
-          <div>💰 <b>${T('總共自動計算節省 (HKD)')}：</b><span style="color:#e74c3c; font-weight:bold; font-size:1.15rem;">HK$${oys2TotalSavedHKD.toLocaleString()}</span></div>
+          <div>💰 <b>${T('總共自動計算節省')}：</b><span style="color:#e74c3c; font-weight:bold; font-size:1.15rem;">HK$${oys2TotalSavedHKD.toLocaleString()}</span></div>
       `;
       document.getElementById('oys2PromoDetails').innerHTML = oys2Html;
   }
