@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v3.32)</title>
+<title>生活應急保險庫 (v3.33)</title>
 <!-- ⚡ 圖片預加載 -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
@@ -158,6 +158,10 @@
   .breakdown-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; }
   .breakdown-table th { background: #f8f9fa; padding: 8px; text-align: center; border-bottom: 2px solid #ddd; color: #555; }
   .breakdown-table td { padding: 8px; text-align: center; border-bottom: 1px solid #f1f2f6; color: #2c3e50; }
+  .share-checkbox-group { background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; margin-bottom: 20px; text-align: left; }
+  .share-checkbox-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-weight: bold; color: #2c3e50; cursor: pointer; }
+  .share-checkbox-item:last-child { margin-bottom: 0; }
+  .share-sub-select { margin-left: 28px; margin-top: 5px; margin-bottom: 10px; font-size: 0.85rem; }
 </style>
 </head>
 <body>
@@ -236,18 +240,18 @@
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
-          生活應急保險庫 <span class="version-badge">v3.32</span>
+          生活應急保險庫 <span class="version-badge">v3.33</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
   <!-- 全局導航欄 -->
   <div class="tab-navigation">
-      <button class="nav-tab active" onclick="switchPage('main')">📊 模擬賠償儀表板</button>
-      <button class="nav-tab" onclick="switchPage('child')">👶 兒童疾病保障專頁</button>
-      <button class="nav-tab" onclick="switchPage('diseases')">📜 102種危疾/輕疾明細</button>
-      <button class="nav-tab" onclick="switchPage('cases')">📂 賠償案例</button>
-      <button class="nav-tab" onclick="switchPage('compare')">⚖️ 補強方案大比拼</button>
-      <button class="nav-tab" onclick="switchPage('share')">📱 專屬二維碼分享</button>
+      <button class="nav-tab active" id="tab-btn-main" onclick="switchPage('main')">📊 模擬賠償儀表板</button>
+      <button class="nav-tab" id="tab-btn-child" onclick="switchPage('child')">👶 兒童疾病保障專頁</button>
+      <button class="nav-tab" id="tab-btn-diseases" onclick="switchPage('diseases')">📜 102種危疾/輕疾明細</button>
+      <button class="nav-tab" id="tab-btn-cases" onclick="switchPage('cases')">📂 賠償案例</button>
+      <button class="nav-tab" id="tab-btn-compare" onclick="switchPage('compare')">⚖️ 補強方案大比拼</button>
+      <button class="nav-tab" id="tab-btn-share" onclick="switchPage('share')">📱 專屬二維碼分享</button>
   </div>
   
   <!-- 分頁 1: 主頁儀表板 -->
@@ -630,7 +634,7 @@
   <div id="page-share" class="tab-content info-page-container">
       <div class="info-section" style="text-align:center;">
           <h2 class="dark-title" style="font-size: 1.6rem; color: #2980b9;">📱 生成專屬二維碼與客戶方案</h2>
-          <p style="color:#666; font-size:0.9rem;">輸入客戶名字並生成專屬 QR Code，客戶以手機掃描即可帶走試算結果。</p>
+          <p style="color:#666; font-size:0.9rem;">自訂勾選客戶可查閱的專屬內容，並生成專屬 QR Code / 分享連結。</p>
       </div>
       <div style="max-width:600px; margin:0 auto; background:#f8f9fa; border:1px solid #e0e0e0; border-radius:12px; padding:20px; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
           <div class="input-group" style="margin-bottom:15px;">
@@ -641,6 +645,35 @@
               <label style="flex:none; width:110px; font-weight:bold; color:#2c3e50;">專屬迎賓文案</label>
               <input type="text" id="shareCustomMsg" value="這是專屬你的危疾保障資料" style="flex:1; text-align:left;" placeholder="自訂招呼語">
           </div>
+          
+          <!-- 動態勾選分享內容 -->
+          <div class="share-checkbox-group">
+              <div style="font-weight:bold; color:#34495e; margin-bottom:12px; border-bottom:1px solid #eee; padding-bottom:5px;">📋 選擇開放給客戶存取的內容：</div>
+              <label class="share-checkbox-item">
+                  <input type="checkbox" id="chkShareBasic" checked> 1. 基本資料 (歲數，性別)
+              </label>
+              <label class="share-checkbox-item">
+                  <input type="checkbox" id="chkShareCompare" checked onchange="toggleCompareShareOptions()"> 2. 保費對比表
+              </label>
+              <div id="shareCompareSubSelect" class="share-sub-select">
+                  <label style="font-size:0.85rem; color:#555;">對比顯示模式：</label>
+                  <select id="shareCompareMode" style="font-size:0.85rem; padding:3px 6px;">
+                      <option value="all" selected>全部對比 (SCE + OYS2)</option>
+                      <option value="sce">只顯示 SCE (簡護危疾保)</option>
+                      <option value="oys2">只顯示 OYS2 (愛伴航2)</option>
+                  </select>
+              </div>
+              <label class="share-checkbox-item">
+                  <input type="checkbox" id="chkSharePromo" checked> 3. 保費優惠與回贈
+              </label>
+              <label class="share-checkbox-item">
+                  <input type="checkbox" id="chkShareDiseases" checked> 4. 102種危疾/輕疾明細
+              </label>
+              <label class="share-checkbox-item">
+                  <input type="checkbox" id="chkShareChild" checked> 5. 兒童疾病保障專頁
+              </label>
+          </div>
+          
           <button onclick="generateShareQRCode()" class="btn-confirm" style="background:#27ae60; margin-top:10px;">✨ 生成專屬 QR Code 及分享卡片</button>
       </div>
       <!-- 二維碼與預覽卡片 -->
@@ -650,9 +683,8 @@
           <div id="qrcodeContainer" style="display:flex; justify-content:center; margin:20px 0;"></div>
           <div style="background:#f8f9fa; padding:15px; border-radius:8px; text-align:left; font-size:0.9rem; line-height:1.6; margin-bottom:15px; border:1px solid #eee;">
               <div><strong>📊 投保基本資料：</strong><span id="shareInfoAgeGender"></span></div>
-              <div><strong>⚖️ 簡護危疾保 (SCE) 保障期：</strong><span id="shareInfoSceTerm"></span></div>
-              <div><strong>⚖️ 愛伴航2 (OYS2) 保障期：</strong>終身保障</div>
-              <div><strong>💰 保費與節省總額：</strong><span id="shareInfoPromoTotal"></span></div>
+              <div><strong>⚖️ 方案對比範圍：</strong><span id="shareInfoCompareScope"></span></div>
+              <div><strong>💰 包含內容：</strong><span id="shareInfoPromoTotal"></span></div>
           </div>
           <div style="display:flex; gap:10px;">
               <button onclick="copyShareLink()" class="btn-blue" style="flex:1; justify-content:center;">📋 複製專屬連結</button>
@@ -673,8 +705,8 @@
               <div class="input-group" style="margin:0; border-left:2px solid var(--gold); padding-left:10px;"><label style="color:#d35400;">🏃 AIA Vitality</label><select id="compareVitality" onchange="calculateComparison()"><option value="no">未加入</option><option value="yes" selected>已加入 (SCE保費9折 / OYS2首賠額+10%)</option></select></div>
           </div>
       </div>
-      <div class="fold-split-grid">
-          <div class="compare-col compare-col-sce">
+      <div class="fold-split-grid" id="compareColumnsGrid">
+          <div class="compare-col compare-col-sce" id="colSCE">
               <h3 style="color: #34495e; text-align: center; margin-top:0;">補強A：簡護危疾保 (SCE)</h3>
               <div style="text-align:center; color:#7f8c8d; font-size:0.8rem; margin-bottom:15px;">特色：純保障，極低起步保費，每 5 年續保調整保費。</div>
               
@@ -694,7 +726,7 @@
                   <tfoot><tr><td colspan="2">累積總保費成本</td><td id="sceTotalPremium" style="font-size:1.1rem; color:#e74c3c;">$0</td></tr></tfoot>
               </table>
           </div>
-          <div class="compare-col compare-col-oys2">
+          <div class="compare-col compare-col-oys2" id="colOYS2">
               <h3 style="color: #27ae60; text-align: center; margin-top:0;">補強B：愛伴航2 (OYS2)</h3>
               <div style="text-align:center; color:#7f8c8d; font-size:0.8rem; margin-bottom:15px;">特色：終身儲蓄危疾，保費水平固定不變，含多重理賠。</div>
               
@@ -714,7 +746,7 @@
               </table>
           </div>
       </div>
-      <div class="info-section" style="margin-top: 30px;">
+      <div class="info-section" style="margin-top: 30px;" id="compareClaimSection">
           <div class="info-title" style="border-left-color: #e74c3c;">💰 保額（賠償金額）實戰推演</div>
           <div style="font-size:0.85rem; color:#7f8c8d; margin-bottom:15px;">請輸入首次確診歲數，並點擊下方按鈕，系統將自動按等候期推進歲數，推演出兩者多次理賠之極大差異。</div>
           
@@ -737,8 +769,8 @@
               <tfoot><tr style="background-color: #fcf3cf; font-weight: bold; font-size:1.1rem;"><td>總累計理賠金額</td><td id="totalClaimSCE">$0</td><td id="totalClaimOYS2">$0</td></tr></tfoot>
           </table>
       </div>
-      <!-- 🎁 保費優惠區塊 (按鈕統一為保費優惠，展開無頂部主題文字及匯率標籤) -->
-      <div style="margin-top:25px; text-align:center;">
+      <!-- 🎁 保費優惠區塊 -->
+      <div id="promoDiscountWrapper" style="margin-top:25px; text-align:center;">
           <button onclick="toggleDiscountBox()" style="width:100%; background:linear-gradient(135deg, #d35400, #e67e22); color:white; padding:12px 20px; font-size:1.05rem; font-weight:bold; border-radius:8px; box-shadow:0 4px 10px rgba(230,126,34,0.3); justify-content:center;">
               🎁 <span id="discountToggleText">保費優惠</span>
           </button>
@@ -746,7 +778,7 @@
       <div id="discountBox" style="display:none; margin-top:15px; background:#fffcf5; border:2px solid #f39c12; border-radius:10px; padding:20px; box-shadow:0 4px 15px rgba(0,0,0,0.05);">
           <div class="fold-split-grid">
               <!-- SCE 優惠 -->
-              <div style="background:#f8f9fa; border:1px solid #dcdde1; border-radius:8px; padding:15px;">
+              <div style="background:#f8f9fa; border:1px solid #dcdde1; border-radius:8px; padding:15px;" id="promoColSCE">
                   <h4 style="margin-top:0; color:#34495e;">補強 A：簡護危疾保 (SCE)</h4>
                   <div class="input-group" style="margin-bottom:8px;">
                       <label style="flex:none; font-size:0.85rem;">首年折扣券面額：</label>
@@ -772,7 +804,7 @@
                   </div>
               </div>
               <!-- OYS2 優惠 -->
-              <div style="background:#f4fdf7; border:1px solid #c8e6c9; border-radius:8px; padding:15px;">
+              <div style="background:#f4fdf7; border:1px solid #c8e6c9; border-radius:8px; padding:15px;" id="promoColOYS2">
                   <h4 style="margin-top:0; color:#27ae60;">補強 B：愛伴航2 (OYS2)</h4>
                   <div class="input-group" style="margin-bottom:8px;">
                       <label style="flex:none; font-size:0.85rem;">首年折扣券面額：</label>
@@ -1346,7 +1378,7 @@
           if (isSceVitalityEligible) { prem = prem * 0.90; }
           
           if (age === sceStartAge) {
-              calculatedFirstYearSCE = prem; // 記錄精算表首年保費 (USD)
+              calculatedFirstYearSCE = prem; // 記錄精算表首年實際金額 (USD)
           }
           
           sceTotal += prem;
@@ -1375,7 +1407,7 @@
       
       if (oys2Rate !== null) {
           let oys2Prem = oys2Rate * (oys2Sum / 1000);
-          calculatedFirstYearOYS2 = oys2Prem; // 記錄精算表首年保費 (USD)
+          calculatedFirstYearOYS2 = oys2Prem; // 記錄精算表首年實際金額 (USD)
           
           for (let year = 1; year <= oys2MaxYears; year++) {
               oys2Total += oys2Prem; let age = oys2StartAge + year - 1;
@@ -1390,7 +1422,7 @@
       document.getElementById('oys2TotalPremium').innerText = formatMoney(oys2Total);
       
       resetCompareClaims();
-      calculatePromoDiscount();
+      calculatePromoDiscount(); // 對比表一更新即刻連動更新下方保費優惠金額
   }
   function resetCompareClaims() {
       const startAge = getAgeVal('compareClaim1Age', 35);
@@ -1441,7 +1473,7 @@
       document.getElementById('totalClaimOYS2').innerText = formatMoney(compClaimState.totalOYS2);
   }
   // ==========================================
-  // 🎁 保費優惠計算與對應精算對比表 (v3.32)
+  // 🎁 保費優惠計算與對應精算對比表 (v3.33)
   // ==========================================
   let promoSettings = {
       oys2Y2Months: 2,
@@ -1553,8 +1585,12 @@
       document.getElementById('oys2PromoDetails').innerHTML = oys2Html;
   }
   // ==========================================
-  // 📱 專屬二維碼分享與 URL 參數連動 (v3.32)
+  // 📱 專屬二維碼分享與 URL 參數動態控制 (v3.33)
   // ==========================================
+  function toggleCompareShareOptions() {
+      const isChecked = document.getElementById('chkShareCompare').checked;
+      document.getElementById('shareCompareSubSelect').style.display = isChecked ? 'block' : 'none';
+  }
   function generateShareQRCode() {
       const clientName = document.getElementById('shareClientName').value.trim() || "尊貴客戶";
       const customMsg = document.getElementById('shareCustomMsg').value.trim() || "這是專屬你的危疾保障資料";
@@ -1563,6 +1599,15 @@
       const gender = document.getElementById('compareGender').value || "M";
       const sceTargetAge = document.getElementById('sceTargetAge').value || "65";
       const payTerm = document.getElementById('oys2PayTerm').value || "pay25";
+      
+      // 取得勾選狀態
+      const shareBasic = document.getElementById('chkShareBasic').checked ? '1' : '0';
+      const shareCompare = document.getElementById('chkShareCompare').checked ? '1' : '0';
+      const compareMode = document.getElementById('shareCompareMode').value;
+      const sharePromo = document.getElementById('chkSharePromo').checked ? '1' : '0';
+      const shareDiseases = document.getElementById('chkShareDiseases').checked ? '1' : '0';
+      const shareChild = document.getElementById('chkShareChild').checked ? '1' : '0';
+      
       const params = new URLSearchParams({
           client: clientName,
           msg: customMsg,
@@ -1570,14 +1615,32 @@
           gender: gender,
           sceAge: sceTargetAge,
           term: payTerm,
+          s_basic: shareBasic,
+          s_comp: shareCompare,
+          c_mode: compareMode,
+          s_promo: sharePromo,
+          s_dis: shareDiseases,
+          s_child: shareChild,
           shared: 'true'
       });
       const shareUrl = window.location.origin + window.location.pathname + '?' + params.toString();
       document.getElementById('shareCardTitle').innerText = `${clientName}，${customMsg}`;
       document.getElementById('shareCardSub').innerText = T("請使用手機掃描下方二維碼，隨時查閱專屬危疾試算與保費折扣。");
       document.getElementById('shareInfoAgeGender').innerText = `${startAge} ${T("歲")} | ${gender === 'M' ? T("男") : T("女")}`;
-      document.getElementById('shareInfoSceTerm').innerText = `${T("保障至")} ${sceTargetAge} ${T("歲")}`;
-      document.getElementById('shareInfoPromoTotal').innerText = T("已包含限時保費回贈與折扣優惠試算");
+      
+      let modeText = "不展示對比";
+      if (shareCompare === '1') {
+          if (compareMode === 'all') modeText = "完整對比 (SCE + OYS2)";
+          if (compareMode === 'sce') modeText = "只看 SCE (簡護危疾保)";
+          if (compareMode === 'oys2') modeText = "只看 OYS2 (愛伴航2)";
+      }
+      document.getElementById('shareInfoCompareScope').innerText = T(modeText);
+      
+      let contentsArr = [];
+      if (sharePromo === '1') contentsArr.push("保費優惠與回贈");
+      if (shareDiseases === '1') contentsArr.push("102種危疾明細");
+      if (shareChild === '1') contentsArr.push("兒童疾病保障");
+      document.getElementById('shareInfoPromoTotal').innerText = T(contentsArr.join("、") || "自訂專屬視角");
       
       const container = document.getElementById('qrcodeContainer');
       container.innerHTML = "";
@@ -1597,9 +1660,23 @@
       document.getElementById('shareResultCard').style.display = 'block';
   }
   function copyShareLink() {
+      generateShareQRCode();
+      const shareCardTitle = document.getElementById('shareCardTitle').innerText;
+      const urlParams = new URLSearchParams(window.location.search);
+      // 從分享卡片獲取生成的最後 URL
       const clientName = document.getElementById('shareClientName').value.trim() || "尊貴客戶";
       const customMsg = document.getElementById('shareCustomMsg').value.trim() || "這是專屬你的危疾保障資料";
-      const params = new URLSearchParams({ client: clientName, msg: customMsg, shared: 'true' });
+      const params = new URLSearchParams({
+          client: clientName,
+          msg: customMsg,
+          s_basic: document.getElementById('chkShareBasic').checked ? '1' : '0',
+          s_comp: document.getElementById('chkShareCompare').checked ? '1' : '0',
+          c_mode: document.getElementById('shareCompareMode').value,
+          s_promo: document.getElementById('chkSharePromo').checked ? '1' : '0',
+          s_dis: document.getElementById('chkShareDiseases').checked ? '1' : '0',
+          s_child: document.getElementById('chkShareChild').checked ? '1' : '0',
+          shared: 'true'
+      });
       const shareUrl = window.location.origin + window.location.pathname + '?' + params.toString();
       
       navigator.clipboard.writeText(shareUrl).then(() => {
@@ -1615,6 +1692,32 @@
           const msg = urlParams.get('msg');
           if (client || msg) {
               alert(`🎉 歡迎！${client ? client + '，' : ''}${msg ? msg : ''}`);
+          }
+          
+          // 客戶存取控制 (按 URL 參數動態隱藏/顯示選單與欄位)
+          const sBasic = urlParams.get('s_basic');
+          const sComp = urlParams.get('s_comp');
+          const cMode = urlParams.get('c_mode');
+          const sPromo = urlParams.get('s_promo');
+          const sDis = urlParams.get('s_dis');
+          const sChild = urlParams.get('s_child');
+          
+          if (sChild === '0') { document.getElementById('tab-btn-child').style.display = 'none'; }
+          if (sDis === '0') { document.getElementById('tab-btn-diseases').style.display = 'none'; }
+          if (sComp === '0') { 
+              document.getElementById('tab-btn-compare').style.display = 'none'; 
+          } else {
+              if (cMode === 'sce') {
+                  if(document.getElementById('colOYS2')) document.getElementById('colOYS2').style.display = 'none';
+                  if(document.getElementById('promoColOYS2')) document.getElementById('promoColOYS2').style.display = 'none';
+              } else if (cMode === 'oys2') {
+                  if(document.getElementById('colSCE')) document.getElementById('colSCE').style.display = 'none';
+                  if(document.getElementById('promoColSCE')) document.getElementById('promoColSCE').style.display = 'none';
+              }
+          }
+          if (sPromo === '0') {
+              if(document.getElementById('promoDiscountWrapper')) document.getElementById('promoDiscountWrapper').style.display = 'none';
+              if(document.getElementById('discountBox')) document.getElementById('discountBox').style.display = 'none';
           }
       }
   }
