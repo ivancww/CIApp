@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>生活應急保險庫 (v3.39)</title>
+<title>生活應急保險庫 (v3.40)</title>
 <!-- ⚡ 圖片預加載 -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
@@ -20,20 +20,21 @@
     --color-assets: #34495e; --color-assets-safe: #f1c40f;
     --color-existing: #5dade2; --color-term: #bdc3c7; --color-upgrade: #e67e22;
     --bg: #fdfbf7; --info-bg: #e8f4f8; --info-text: #2980b9;
-    --pink-border: #f8a5c2; /* 🌸 淺粉紅色外框 */
+    --pink-border: #f8a5c2;
   }
   
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #ecf0f1; color: #333; margin: 0; padding: 20px; -webkit-tap-highlight-color: transparent; }
   
-  /* 🌸 全局可輸入資料外框改為淺粉紅色 */
+  /* 🌸 全局可輸入資料外框改為粉紅色虛線 */
   input[type="text"], input[type="number"], input[type="password"], select {
-    border: 2px solid var(--pink-border) !important;
+    border: 2px dashed var(--pink-border) !important;
     border-radius: 6px;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
   input[type="text"]:focus, input[type="number"]:focus, input[type="password"]:focus, select:focus {
     border-color: #e84393 !important;
+    border-style: dashed !important;
     box-shadow: 0 0 6px rgba(232, 67, 147, 0.4);
   }
 
@@ -62,11 +63,11 @@
   .tab-content { display: none; }
   .tab-content.active { display: block; }
   .main-grid { display: grid; grid-template-columns: 1fr 1.25fr; gap: 0; align-items: flex-start; border-radius: 0 0 12px 12px; }
-  @media (max-width: 600px) { .main-grid { grid-template-columns: 1fr; align-items: stretch; } }
+  @media (max-width: 850px) { .main-grid { grid-template-columns: 1fr; align-items: stretch; } }
   
   .config-panel { background: #f8f9fa; padding: 20px; border-right: 1px solid #eee; border-radius: 0 0 0 12px; }
   .analysis-panel { background: #fff; padding: 20px; position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; display: flex; flex-direction: column; border-radius: 0 0 12px 0; scroll-behavior: smooth; }
-  @media (max-width: 600px) { .analysis-panel { position: static; max-height: none; overflow-y: visible; } }
+  @media (max-width: 850px) { .analysis-panel { position: static; max-height: none; overflow-y: visible; } }
   
   .fold-split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
   @media (max-width: 600px) { .fold-split-grid { grid-template-columns: 1fr; } }
@@ -91,18 +92,8 @@
   
   /* ⚙️ 後台管理 Modal */
   .admin-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
-  .admin-content { background: #fff; padding: 25px; border-radius: 12px; width: 100%; max-width: 900px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-  .admin-nav { display: flex; gap: 10px; border-bottom: 2px solid #ddd; margin-bottom: 20px; }
-  .admin-tab { padding: 10px 18px; font-weight: bold; color: #7f8c8d; cursor: pointer; border-bottom: 3px solid transparent; }
-  .admin-tab.active { color: #2980b9; border-bottom-color: #2980b9; }
-  .admin-page { display: none; }
-  .admin-page.active { display: block; }
+  .admin-content { background: #fff; padding: 25px; border-radius: 12px; width: 100%; max-width: 700px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
   .admin-input { width: 100%; padding: 8px 10px; margin-bottom: 10px; border-radius: 5px; font-size: 0.95rem; box-sizing: border-box;}
-  
-  .admin-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-  .admin-table th, .admin-table td { border: 1px solid #ddd; padding: 6px; text-align: left; font-size: 0.8rem; }
-  .admin-table th { background: #f4f6f7; color: #2c3e50; }
-  .admin-table input { width: 100%; padding: 4px; border-radius: 4px; box-sizing: border-box; font-size: 0.8rem; }
   
   @keyframes flash-bg { 0% { background-color: rgba(46, 204, 113, 0.4); box-shadow: 0 0 15px rgba(46, 204, 113, 0.8); } 10% { background-color: rgba(46, 204, 113, 0.6); box-shadow: 0 0 20px rgba(46, 204, 113, 1); } 100% { background-color: #f0f3f4; box-shadow: none; } }
   @keyframes flash-text { 0% { color: #27ae60; transform: scale(1.1); text-shadow: 0 0 10px rgba(39, 174, 96, 0.5); } 10% { color: #e74c3c; transform: scale(1.2); text-shadow: 0 0 15px rgba(231, 76, 60, 0.8); } 100% { color: #e74c3c; transform: scale(1); text-shadow: none;} }
@@ -216,46 +207,15 @@
         </div>
     </div>
 </div>
-<!-- ⚙️ 後台管理 Modal -->
+<!-- ⚙️ 後台管理 Modal (⚡ 移除理賠規則表，僅保留賠償個案上傳) -->
 <div id="adminModal" class="admin-modal">
     <div class="admin-content">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h2 style="margin:0; color:#2c3e50;">⚙️ 雲端管理中心</h2>
+            <h2 style="margin:0; color:#2c3e50;">📂 賠償個案雲端管理</h2>
             <button onclick="document.getElementById('adminModal').style.display='none'" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">✖</button>
         </div>
         
-        <div class="admin-nav">
-            <div class="admin-tab active" id="admin-tab-rules" onclick="switchAdminTab('rules')">📋 理賠規則頁 (動態控制)</div>
-            <div class="admin-tab" id="admin-tab-cases" onclick="switchAdminTab('cases')">📂 賠償個案頁</div>
-        </div>
-        
-        <!-- 後台頁面 1: 理賠規則控制頁 -->
-        <div id="admin-page-rules" class="admin-page active">
-            <div style="background:#eaf2f8; padding:10px; border-radius:6px; margin-bottom:12px; font-size:0.85rem; color:#2980b9;">
-                💡 提示：此處完整對應 Google Sheet「理賠規則」分頁之 A~E 欄。編輯後點擊儲存，將即時同步至雲端試算表並全網套用。
-            </div>
-            <table class="admin-table" id="adminRulesTable">
-                <thead>
-                    <tr>
-                        <th style="width:20%;">Rule_Key (A)</th>
-                        <th style="width:22%;">Rule_Name (B)</th>
-                        <th style="width:12%;">Value_Num (C)</th>
-                        <th style="width:14%;">Unit_Type (D)</th>
-                        <th style="width:22%;">Description (E)</th>
-                        <th style="width:10%;">操作</th>
-                    </tr>
-                </thead>
-                <tbody id="adminRulesTbody">
-                </tbody>
-            </table>
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <button onclick="addAdminRuleRow()" style="background:#27ae60; color:white; border:none; padding:8px 15px; border-radius:4px; font-size:0.9rem; cursor:pointer;">➕ 新增規則 Row</button>
-                <button id="btnSaveRules" onclick="saveAdminRulesToGAS()" style="background:#3498db; color:white; border:none; padding:8px 15px; border-radius:4px; font-size:0.9rem; font-weight:bold; cursor:pointer; flex:1;">💾 儲存並同步至 Google Sheet[span_7](start_span)[span_7](end_span)</button>
-            </div>
-        </div>
-        
-        <!-- 後台頁面 2: 賠償個案管理頁 -->
-        <div id="admin-page-cases" class="admin-page">
+        <div>
             <label><b>確診疾病名稱</b></label>
             <input type="text" id="adminDisease" class="admin-input" placeholder="例如：乳癌、心臟病">
             
@@ -276,11 +236,12 @@
         </div>
     </div>
 </div>
+
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
           生活應急保險庫 
-          <span class="version-badge" onclick="openAdminModal()" title="點擊直接進入雲端後台">v3.39</span>
+          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟個案管理">v3.40</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
@@ -294,7 +255,7 @@
       <button class="nav-tab" id="tab-btn-share" onclick="switchPage('share')">📱 專屬二維碼分享</button>
   </div>
   
-  <!-- 分頁 1: 主頁儀表板 -->
+  <!-- 分頁 1: 主頁儀表板 (⚡ 資產支撐表移回右側 analysis-panel，左側保持控制區) -->
   <div id="page-main" class="tab-content active">
     <div class="main-grid">
       <div class="config-panel">
@@ -404,12 +365,12 @@
               </div>
           </div>
           
-          <div class="card heart"><h3>5. 心臟病/中風 <span class="tag">B1+舊</span></h3><div class="btn-group"><div class="action-row"><button class="btn-purple" onclick="claimHeartStroke()">❤️ 復發賠償</button><div class="amount-display"><span class="amount-label">款:</span><span id="valHeart">$0</span></div><div class="age-record"><span class="age-label">歲:</span><span id="ageHeart">--</span></div></div></div></div><div class="action-row" style="background:#fcf5ff; border-color:#ebdef0;"><div class="acc-tag"><span>累計:</span><div id="accHeartDisplay">$0</div></div><span id="heartCountDisplay" style="font-size:0.9em; color:#7f8c8d;">(0/3)</span></div></div>
+          <div class="card heart"><h3>5. 心臟病/中風 <span class="tag">B1+舊</span></h3><div class="btn-group"><div class="action-row"><button class="btn-purple" onclick="claimHeartStroke()">❤️ 復發賠償</button><div class="amount-display"><span class="amount-label">款:</span><span id="valHeart">$0</span></div><div class="age-record"><span class="age-label">歲:</span><span id="ageHeart">--</span></div></div></div><div class="action-row" style="background:#fcf5ff; border-color:#ebdef0;"><div class="acc-tag"><span>累計:</span><div id="accHeartDisplay">$0</div></div><span id="heartCountDisplay" style="font-size:0.9em; color:#7f8c8d;">(0/3)</span></div></div>
           
           <div class="card dementia">
               <h3>6. 腦退化 <span class="tag">只用B1</span></h3>
               <div class="btn-group">
-                  <div class="action-row"><button class="btn-green" id="btnDementia" onclick="manualClaimDementia()">🚨 提取 100% 賠償</button><div class="amount-display"><span class="amount-label">發放:</span><span id="valDementia">$0</span></div><div class="age-record"><span class="age-label">歲:</span><span id="ageDementia">--</span></div></div></div>
+                  <div class="action-row"><button class="btn-green" id="btnDementia" onclick="manualClaimDementia()">🚨 提取 100% 賠償</button><div class="amount-display"><span class="amount-label">發放:</span><span id="valDementia">$0</span></div><div class="age-record"><span class="age-label">歲:</span><span id="ageDementia">--</span></div></div>
                   <div class="action-row" style="background:#eafaf1; border-color:#d5f5e3;"><div class="acc-tag"><span>累計:</span><div id="accDementiaDisplay">$0</div></div><span id="dementiaYearDisplay" style="font-size:0.9em; color:#7f8c8d;">(0)</span></div>
               </div>
           </div>
@@ -417,6 +378,7 @@
         </div>
       </div>
       
+      <!-- ⚡ 右側即時資產支撐分析面板 -->
       <div class="analysis-panel">
         <div id="analysisOverlay" class="overlay-mask"><div class="overlay-content"><div style="font-size:3rem; margin-bottom:10px;">📊</div>請輸入左側資料並確認</div></div>
         
@@ -482,30 +444,19 @@
     </div>
   </div>
   
-  <!-- 分頁 2: 兒童疾病保障專頁 (⚡ 修改：資料橫向展開及向下呈現，取消50/50左右分欄) -->
+  <!-- 分頁 2: 兒童疾病保障專頁 -->
   <div id="page-child" class="tab-content info-page-container">
       <div class="info-section">
           <h2 class="dark-title" style="font-size: 1.6rem; color: #2980b9;">👶 「愛伴航」兒童疾病及家長身故豁免保障全覽</h2>
           <p style="color:#666;">由懷孕期第22週起至出生後提供終身守護。以下為兒童專屬權益及理賠核心明細：</p>
       </div>
 
-      <!-- 全寬度縱向展開區塊 -->
       <div class="info-section">
           <div class="info-title" style="border-left-color: #e74c3c;">🔥 關鍵保障：父母身故豁免繳付保費保障</div>
           <div class="highlight-box">
               <strong>保障核心機制：</strong><br>
               當保單已生效滿 <strong>2 年</strong>或以上，若受保子女的父母（須為保單持有人或第二持有人，且投保時年齡為 <strong>50 歲或以下</strong>），不幸於 <strong>75 歲前身故</strong>，基本保單未來的獨立保費餘額將會被<strong>全數豁免</strong>，直至受保子女年滿 <strong>25 歲</strong>為止。在此期間，子女的保障及保單價值完全不受任何影響，讓愛得以延續。
           </div>
-      </div>
-
-      <div class="info-section">
-          <div class="info-title" style="border-left-color: #f39c12;">⚠️ 兒童理賠重要注意事項</div>
-          <ul style="line-height: 1.8; color: #444; padding-left: 20px;">
-              <li><strong>額度共用限制：</strong>「專注力不足/過度活躍症(ADHD)」、「妥瑞症」以及嚴重兒童疾病下的「自閉症」，此三項疾病的總應付賠償額<strong>合共不能超過原有保額的 20%</strong>（上限50,000美元）。</li>
-              <li><strong>出生首90日保障打折：</strong>如果受保子女在出生後 <strong>90 日之內</strong>確診疾病或入住深切治療病房，所有受保疾病賠償額或深切治療保障賠償<strong>僅支付應付金額的 20%</strong>。</li>
-              <li><strong>首180日身故限制：</strong>如初生子女於出生後 <strong>180 日或之內</strong>不幸身故，身故賠償將按「已付基本保費總和」或「現時保額與可用升級保障餘額總和的 20%」兩者之較高者支付。</li>
-              <li><strong>保單存續期限：</strong>必須在受保子女出生後、且在首個保單週年日前 14 日或之前，呈交出世紙核證真實副本，否則保單會於首個保單週年日自動終止。</li>
-          </ul>
       </div>
 
       <div class="info-section">
@@ -557,6 +508,17 @@
                   </tr>
               </tbody>
           </table>
+      </div>
+
+      <!-- ⚡ 修改：圖片圈選之內容已順利移動至專頁最底部 -->
+      <div class="info-section" style="margin-top:30px;">
+          <div class="info-title" style="border-left-color: #f39c12;">⚠️ 兒童理賠重要注意事項</div>
+          <ul style="line-height: 1.8; color: #444; padding-left: 20px;">
+              <li><strong>額度共用限制：</strong>「專注力不足/過度活躍症(ADHD)」、「妥瑞症」以及嚴重兒童疾病下的「自閉症」，此三項疾病的總應付賠償額<strong>合共不能超過原有保額的 20%</strong>（上限50,000美元）。</li>
+              <li><strong>出生首90日保障打折：</strong>如果受保子女在出生後 <strong>90 日之內</strong>確診疾病或入住深切治療病房，所有受保疾病賠償額或深切治療保障賠償<strong>僅支付應付金額的 20%</strong>。</li>
+              <li><strong>首180日身故限制：</strong>如初生子女於出生後 <strong>180 日或之內</strong>不幸身故，身故賠償將按「已付基本保費總和」或「現時保額與可用升級保障餘額總和的 20%」兩者之較高者支付。</li>
+              <li><strong>保單存續期限：</strong>必須在受保子女出生後、且在首個保單週年日前 14 日或之前，呈交出世紙核證真實副本，否則保單會於首個保單週年日自動終止。</li>
+          </ul>
       </div>
   </div>
   
@@ -655,7 +617,6 @@
           </div>
       </div>
 
-      <!-- ⚡ 修改：深切治療保障 (ICU) 改為整個橫向展開獨立呈現在最底部 -->
       <div class="info-section" style="margin-top:25px;">
         <div class="info-title" style="font-size:1.4rem; border-left-color:#e74c3c;">⚠️ 深切治療保障 (ICU) <span class="tag" style="background: #e74c3c; color: white; float: right; font-size:0.8rem; padding:4px 10px;">只限補強B (oys2)</span></div>
         <div class="highlight-box" style="background:#fff5f5; border-color:#fadbd8;">
@@ -693,6 +654,7 @@
           <div style="text-align:center; color:#95a5a6; padding:30px;">正在從 Google Sheet 下載數據與附件...</div>
       </div>
   </div>
+
   <!-- 分頁 5: 📱 專屬二維碼分享 -->
   <div id="page-share" class="tab-content info-page-container">
       <div class="info-section" style="text-align:center;">
@@ -754,6 +716,7 @@
           </div>
       </div>
   </div>
+
   <!-- 分頁 6: 補強方案大比拼 / 保費參考 -->
   <div id="page-compare" class="tab-content info-page-container">
       <div class="info-section">
@@ -930,8 +893,6 @@
       Cancer_OptionB_Monthly_Pct: 5
   };
   
-  let rawAdminRulesList = [];
-  
   window.onload = () => {
       loadPromoSettings();
       checkUrlParamsAndInit();
@@ -939,7 +900,6 @@
           document.getElementById('loginOverlay').style.display = 'none';
           document.getElementById('mainContainer').style.display = 'block';
           loadCases();
-          loadClaimRulesFromGAS();
       }
       fetchPremiumRates();
   };
@@ -959,7 +919,6 @@
               document.getElementById('loginOverlay').style.display = 'none'; 
               document.getElementById('mainContainer').style.display = 'block';
               loadCases();
-              loadClaimRulesFromGAS();
               fetchPremiumRates();
           } else { 
               msg.innerText = "❌ 密碼錯誤！";
@@ -971,127 +930,8 @@
       }
   }
   
-  // ==========================================
-  // ⚙️ 後台管理 Modal 控制 & 雙導航切換
-  // ==========================================
   function openAdminModal() {
       document.getElementById('adminModal').style.display = 'flex';
-      renderAdminRulesTable();
-  }
-  
-  function switchAdminTab(tabName) {
-      document.querySelectorAll('.admin-tab').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.admin-page').forEach(el => el.classList.remove('active'));
-      document.getElementById('admin-tab-' + tabName).classList.add('active');
-      document.getElementById('admin-page-' + tabName).classList.add('active');
-  }
-  
-  async function loadClaimRulesFromGAS() {
-      try {
-          const response = await fetch(GAS_CASE_URL + "?type=claim_rules", { method: "GET", redirect: "follow" });
-          const data = await response.json();
-          if (data && Array.isArray(data) && data.length > 0) {
-              rawAdminRulesList = data;
-              data.forEach(item => {
-                  if (item.Rule_Key && item.Value_Num !== undefined) {
-                      claimRulesConfig[item.Rule_Key] = parseFloat(item.Value_Num) || 0;
-                  }
-              });
-              renderAdminRulesTable();
-              updateUI();
-          }
-      } catch(e) {
-          console.error("無法下載雲端理賠規則", e);
-      }
-  }
-  
-  function renderAdminRulesTable() {
-      const tbody = document.getElementById('adminRulesTbody');
-      if (!tbody) return;
-      
-      let html = "";
-      let displayList = rawAdminRulesList.length > 0 ? rawAdminRulesList : Object.keys(claimRulesConfig).map(k => ({
-          Rule_Key: k, Rule_Name: k, Value_Num: claimRulesConfig[k], Unit_Type: 'Num', Description: ''
-      }));
-      
-      displayList.forEach((r, idx) => {
-          html += `
-          <tr>
-              <td><input type="text" value="${r.Rule_Key || ''}" class="rule-input-key"></td>
-              <td><input type="text" value="${r.Rule_Name || ''}" class="rule-input-name"></td>
-              <td><input type="number" value="${r.Value_Num !== undefined ? r.Value_Num : ''}" class="rule-input-val"></td>
-              <td><input type="text" value="${r.Unit_Type || 'Num'}" class="rule-input-unit"></td>
-              <td><input type="text" value="${r.Description || ''}" class="rule-input-desc"></td>
-              <td><button onclick="deleteAdminRuleRow(this)" style="background:#e74c3c; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">🗑️ 刪除</button></td>
-          </tr>`;
-      });
-      tbody.innerHTML = html;
-  }
-  function addAdminRuleRow() {
-      const tbody = document.getElementById('adminRulesTbody');
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-          <td><input type="text" placeholder="Rule_Key" class="rule-input-key"></td>
-          <td><input type="text" placeholder="規則名稱" class="rule-input-name"></td>
-          <td><input type="number" value="0" class="rule-input-val"></td>
-          <td><input type="text" value="百分比" class="rule-input-unit"></td>
-          <td><input type="text" placeholder="詳細說明" class="rule-input-desc"></td>
-          <td><button onclick="deleteAdminRuleRow(this)" style="background:#e74c3c; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">🗑️ 刪除</button></td>
-      `;
-      tbody.appendChild(tr);
-  }
-  function deleteAdminRuleRow(btn) {
-      if (confirm("確定要在雲端數據表中移除此項規則嗎？")) {
-          btn.closest('tr').remove();
-      }
-  }
-  async function saveAdminRulesToGAS() {
-      const btn = document.getElementById('btnSaveRules');
-      btn.innerText = "⏳ 儲存中...";
-      btn.disabled = true;
-      
-      const rowsData = [];
-      const keys = document.querySelectorAll('.rule-input-key');
-      const names = document.querySelectorAll('.rule-input-name');
-      const vals = document.querySelectorAll('.rule-input-val');
-      const units = document.querySelectorAll('.rule-input-unit');
-      const descs = document.querySelectorAll('.rule-input-desc');
-      
-      for(let i = 0; i < keys.length; i++) {
-          let k = keys[i].value.trim();
-          if (k) {
-              rowsData.push([
-                  k,
-                  names[i].value.trim(),
-                  parseFloat(vals[i].value) || 0,
-                  units[i].value.trim() || 'Num',
-                  descs[i] ? descs[i].value.trim() : ''
-              ]);
-          }
-      }
-      
-      try {
-          await fetch(GAS_CASE_URL, {
-              method: 'POST',
-              mode: 'cors',
-              redirect: 'follow',
-              body: JSON.stringify({
-                  action: 'updateConfig',
-                  targetTab: '理賠規則',
-                  headers: ['Rule_Key', 'Rule_Name', 'Value_Num', 'Unit_Type', 'Description'],
-                  rows: rowsData
-              }),
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-          });
-          alert("✅ 理賠規則已成功更新至 Google Sheet 且跨裝置同步！");
-          loadClaimRulesFromGAS();
-      } catch(e) {
-          console.error(e);
-          alert("❌ 儲存失敗，請重試");
-      } finally {
-          btn.innerText = "💾 儲存並同步至 Google Sheet";
-          btn.disabled = false;
-      }
   }
   
   // ==========================================
@@ -1950,7 +1790,6 @@
       });
   }
   
-  // ⚡ 修改：客掃 QR Code 後自動帶入數據並直接啟動儀表板
   function checkUrlParamsAndInit() {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('shared') === 'true') {
@@ -1996,7 +1835,6 @@
               if(document.getElementById('discountBox')) document.getElementById('discountBox').style.display = 'none';
           }
 
-          // ⚡ 客人掃碼後，直接自動執行啟動儀表板，無需再按「確認資料並啟動」
           setTimeout(() => {
               confirmAndStart();
           }, 300);
@@ -2031,7 +1869,7 @@
       ['儲落嘅積蓄', '积攒的积蓄'],
       ['邊樣先更緊要', '哪样才是最要紧的'],
       ['幾多', '多少'], ['邊個', '哪个'], ['點樣', '怎样'],
-      ['我哋', '我们'], ['你哋', '你们'], ['佢哋', '他们'],
+      ['我哋', 'เรา/我们'], ['你哋', '你们'], ['佢哋', '他们'],
       ['嘅', '的'], ['啲', '些'], ['咗', '了'], ['喺', '在'], ['咁', '那么']
   ];
   function T(str) {
