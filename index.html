@@ -4,16 +4,18 @@
 <meta charset="UTF-8">
 <!-- ⚡ 強制指定寬度以適應 Honor Magic V5 及 iPad 大屏 -->
 <meta name="viewport" content="width=1024, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>生活應急保險庫 (v3.41)</title>
+<title>生活應急保險庫 (v3.42)</title>
 <!-- ⚡ 圖片預加載 -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5773.jpeg?alt=media&token=4abe322b-b474-4114-9104-4a1a53313929" as="image">
-<!-- Firebase & QRCode SDK -->
+<!-- Firebase & QRCode SDK & Chart.js (圖表庫) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
   :root {
     --primary: #2c3e50; --gold: #f1c40f; --accent: #e74c3c;
@@ -50,7 +52,6 @@
   #login-msg { margin-top: 15px; font-size: 0.9rem; color: #e74c3c; font-weight: bold; min-height: 20px; }
   .input-wrapper { position: relative; flex: 1; display: flex; }
   
-  /* ⚡ 大屏與折疊屏容器適應 */
   .container { max-width: 1280px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: none; }
   
   .header { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; padding: 20px; text-align: center; border-bottom: 6px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 12px 12px 0 0; position: relative; }
@@ -60,18 +61,16 @@
   .lang-btn { font-size: 0.8rem; background: #ecf0f1; color: #2c3e50; border: none; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-weight: bold; margin-left: 10px; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
   .lang-btn:hover { background: #bdc3c7; }
   .tab-navigation { display: flex; background: #34495e; border-bottom: 3px solid var(--gold); flex-wrap: wrap;}
-  .nav-tab { flex: 1; padding: 12px 8px; text-align: center; color: #bdc3c7; font-weight: bold; cursor: pointer; transition: all 0.2s; border: none; background: none; font-size: 0.95rem; min-width: 120px;}
+  .nav-tab { flex: 1; padding: 12px 8px; text-align: center; color: #bdc3c7; font-weight: bold; cursor: pointer; transition: all 0.2s; border: none; background: none; font-size: 0.95rem; min-width: 110px;}
   .nav-tab:hover { background: #2c3e50; color: #fff; }
   .nav-tab.active { background: #fff; color: #2c3e50; border-top: 4px solid var(--gold); margin-top: -4px; border-radius: 6px 6px 0 0; }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
   
-  /* ⚡ 雙欄佈局優化 */
   .main-grid { display: grid; grid-template-columns: 1fr 1.15fr; gap: 0; align-items: flex-start; border-radius: 0 0 12px 12px; }
   .config-panel { background: #f8f9fa; padding: 20px; border-right: 1px solid #eee; border-radius: 0 0 0 12px; }
   .analysis-panel { background: #fff; padding: 20px; position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow-y: auto; display: flex; flex-direction: column; border-radius: 0 0 12px 0; scroll-behavior: smooth; }
   
-  /* 📱 純手機直屏 (寬度小於 600px) 切換為單欄 */
   @media (max-width: 600px) { 
     .main-grid { grid-template-columns: 1fr; align-items: stretch; } 
     .analysis-panel { position: static; max-height: none; overflow-y: visible; }
@@ -100,8 +99,17 @@
   
   /* ⚙️ 後台管理 Modal */
   .admin-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
-  .admin-content { background: #fff; padding: 25px; border-radius: 12px; width: 100%; max-width: 700px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+  .admin-content { background: #fff; padding: 25px; border-radius: 12px; width: 100%; max-width: 900px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+  .admin-nav { display: flex; gap: 10px; border-bottom: 2px solid #ddd; margin-bottom: 20px; }
+  .admin-tab { padding: 10px 18px; font-weight: bold; color: #7f8c8d; cursor: pointer; border-bottom: 3px solid transparent; }
+  .admin-tab.active { color: #2980b9; border-bottom-color: #2980b9; }
+  .admin-page { display: none; }
+  .admin-page.active { display: block; }
   .admin-input { width: 100%; padding: 8px 10px; margin-bottom: 10px; border-radius: 5px; font-size: 0.95rem; box-sizing: border-box;}
+  .admin-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+  .admin-table th, .admin-table td { border: 1px solid #ddd; padding: 6px; text-align: left; font-size: 0.8rem; }
+  .admin-table th { background: #f4f6f7; color: #2c3e50; }
+  .admin-table input { width: 100%; padding: 4px; border-radius: 4px; box-sizing: border-box; font-size: 0.8rem; }
   
   @keyframes flash-bg { 0% { background-color: rgba(46, 204, 113, 0.4); box-shadow: 0 0 15px rgba(46, 204, 113, 0.8); } 10% { background-color: rgba(46, 204, 113, 0.6); box-shadow: 0 0 20px rgba(46, 204, 113, 1); } 100% { background-color: #f0f3f4; box-shadow: none; } }
   @keyframes flash-text { 0% { color: #27ae60; transform: scale(1.1); text-shadow: 0 0 10px rgba(39, 174, 96, 0.5); } 10% { color: #e74c3c; transform: scale(1.2); text-shadow: 0 0 15px rgba(231, 76, 60, 0.8); } 100% { color: #e74c3c; transform: scale(1); text-shadow: none;} }
@@ -191,6 +199,10 @@
   
   .badge-highlight-pink { background: #fd79a8; color: white; padding: 2px 8px; border-radius: 4px; font-weight: bold; display: inline-block; margin-left: 5px; }
   .badge-highlight-red { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 4px; font-weight: bold; display: inline-block; margin-left: 5px; }
+  
+  /* 💸 代價換取頁面專用卡片樣式 */
+  .cost-card { background: #fff; border-radius: 10px; padding: 18px; margin-bottom: 15px; border-left: 5px solid #e74c3c; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+  .cost-badge { background: #fadbd8; color: #c0392b; font-weight: bold; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; display: inline-block; margin-bottom: 8px; }
 </style>
 </head>
 <body>
@@ -214,15 +226,22 @@
         </div>
     </div>
 </div>
-<!-- ⚙️ 後台管理 Modal -->
+
+<!-- ⚙️ 後台管理 Modal (含雙分頁：個案管理 & 官方健康數據管理) -->
 <div id="adminModal" class="admin-modal">
     <div class="admin-content">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h2 style="margin:0; color:#2c3e50;">📂 賠償個案雲端管理</h2>
+            <h2 style="margin:0; color:#2c3e50;">⚙️ 雲端管理中心</h2>
             <button onclick="document.getElementById('adminModal').style.display='none'" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">✖</button>
         </div>
         
-        <div>
+        <div class="admin-nav">
+            <div class="admin-tab active" id="admin-tab-cases" onclick="switchAdminTab('cases')">📂 賠償個案管理</div>
+            <div class="admin-tab" id="admin-tab-health" onclick="switchAdminTab('health')">📊 官方健康數據管理 (AI)</div>
+        </div>
+        
+        <!-- 後台頁 1: 賠償個案管理 -->
+        <div id="admin-page-cases" class="admin-page active">
             <label><b>確診疾病名稱</b></label>
             <input type="text" id="adminDisease" class="admin-input" placeholder="例如：乳癌、心臟病">
             
@@ -241,6 +260,41 @@
             <h3 style="margin-top:0;">🗑️ 現有案例列表 (點擊刪除)</h3>
             <div id="adminCasesList">載入中...</div>
         </div>
+
+        <!-- 後台頁 2: 📊 官方健康數據管理 (Google Sheet: 健康數據) -->
+        <div id="admin-page-health" class="admin-page">
+            <div style="background:#eaf2f8; padding:12px; border-radius:6px; margin-bottom:12px; font-size:0.85rem; color:#2980b9; line-height:1.5;">
+                💡 <b>說明：</b> 點擊下方的「🤖 Gemini AI 上網檢查最新數據」，系統會自動檢索香港醫管局與衞生署最新發佈確診數據並自動填入表格。核對無誤後點擊儲存，將即時覆寫至 Google Sheet「健康數據」分頁並全網同步。
+            </div>
+            
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <button id="btnAiFetchHealth" onclick="triggerGeminiHealthAI()" style="background:linear-gradient(135deg, #8e44ad, #9b59b6); color:white; border:none; padding:10px 15px; border-radius:6px; font-weight:bold; cursor:pointer; flex:1;">🤖 Gemini AI 上網檢查最新數據</button>
+            </div>
+            
+            <div style="overflow-x:auto;">
+                <table class="admin-table" id="adminHealthTable">
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>疾病名稱</th>
+                            <th>年齡組別</th>
+                            <th>2014確診數</th>
+                            <th>2024確診數</th>
+                            <th>10年增幅(%)</th>
+                            <th>男比(%)</th>
+                            <th>女比(%)</th>
+                            <th>私院開支($)</th>
+                            <th>確診機率</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminHealthTbody">
+                        <tr><td colspan="10" style="text-align:center; color:#95a5a6;">正在從 Google Sheet 下載數據...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <button id="btnSaveHealthSheet" onclick="saveHealthDataToGAS()" style="width:100%; padding:12px; background:#27ae60; color:white; font-size:1.1rem; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:15px;">💾 儲存並同步至 Google Sheet「健康數據」</button>
+        </div>
     </div>
 </div>
 
@@ -248,13 +302,14 @@
   <div class="header">
       <h1>
           生活應急保險庫 
-          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟個案管理">v3.41</span>
+          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.42</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
-  <!-- 全局導航欄 -->
+  <!-- 全局導航欄 (⚡ 新增：代價換取) -->
   <div class="tab-navigation">
       <button class="nav-tab active" id="tab-btn-main" onclick="switchPage('main')">📊 模擬賠償儀表板</button>
+      <button class="nav-tab" id="tab-btn-cost" onclick="switchPage('cost')">💸 代價換取</button>
       <button class="nav-tab" id="tab-btn-child" onclick="switchPage('child')">👶 兒童疾病保障專頁</button>
       <button class="nav-tab" id="tab-btn-diseases" onclick="switchPage('diseases')">📜 102種危疾/輕疾明細</button>
       <button class="nav-tab" id="tab-btn-cases" onclick="switchPage('cases')">📂 賠償案例</button>
@@ -402,7 +457,14 @@
         </div>
         
         <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--blue-base); margin-bottom: 25px;">
-            <h4 style="margin: 0 0 15px 0; color: #2c3e50; text-align: center;">🛡️ 3年大病休養期</h4>
+            <!-- ⚡ 修改：主題旁增加「代價」按鈕，點擊轉至代價頁面 -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h4 style="margin: 0; color: #2c3e50;">🛡️ 3年大病休養期</h4>
+                <button onclick="switchPage('cost')" style="background:linear-gradient(135deg, #e74c3c, #c0392b); color:white; border:none; padding:5px 12px; border-radius:20px; font-weight:bold; font-size:0.8rem; min-width:auto; cursor:pointer; box-shadow:0 2px 5px rgba(231,76,60,0.3);">
+                    💸 代價分析
+                </button>
+            </div>
+            
             <div class="hypno-card customer-hide-card" style="background:#eaf2f8; border-color:#d4e6f1; margin-bottom:15px;" onclick="openHypnoModal('think')">
                 <div class="hypno-header" style="background:transparent; color:#2980b9;">
                     <div class="hypno-title"><span>💭</span> 不如我哋一齊想像一下... (點擊展開)</div>
@@ -449,6 +511,53 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- ⚡ 新增分頁: 💸 代價換取 (包含雙柱狀圖、官方統計明細與缺口分析) -->
+  <div id="page-cost" class="tab-content info-page-container">
+      <div class="info-section">
+          <h2 class="dark-title" style="font-size: 1.6rem; color: #c0392b; text-align: center;">💸 「拖延與不行動的代價」—— 香港官方健康數據與財務缺口實錄</h2>
+          <p style="text-align:center; color:#666; font-size:0.9rem;">基於香港醫院管理局（HK Cancer Registry）及衞生署數據，拆解大病對個人與家庭的隱形成本。</p>
+      </div>
+
+      <!-- 柱狀圖區塊 -->
+      <div class="info-section" style="background:#fdfefe; padding:20px; border-radius:10px; border:1px solid #e0e0e0; box-shadow:0 4px 10px rgba(0,0,0,0.03);">
+          <div class="info-title" style="border-left-color:#e74c3c;">📊 10年確診人數飆升趨勢（2014 vs 2024）</div>
+          <div style="height: 320px; position: relative;">
+              <canvas id="healthBarChart"></canvas>
+          </div>
+      </div>
+
+      <!-- 官方明細與確診機率卡片 -->
+      <div class="info-section">
+          <div class="info-title">🩺 主要重大疾病統計明細與罹患機率</div>
+          <div id="costCardsContainer" class="grid-2col">
+              <div style="text-align:center; color:#95a5a6; padding:20px;">載入健康數據中...</div>
+          </div>
+      </div>
+
+      <!-- 停工與私立開支對比 -->
+      <div class="info-section">
+          <div class="info-title" style="border-left-color:#d35400;">💰 大病爆發時的兩大核心財務代價</div>
+          <div class="grid-2col">
+              <div class="cost-card" style="border-left-color:#e74c3c;">
+                  <span class="cost-badge">代價一：收入中斷 (停工休養)</span>
+                  <h4 style="margin:5px 0 10px; color:#2c3e50;">3 年黃金休養期缺口</h4>
+                  <p style="font-size:0.9rem; color:#555; line-height:1.6;">
+                      嚴重危疾平均需要 <strong>2 至 3 年</strong> 休養期。假設月薪 HK$30,000，停工 3 年的淨收入損失高達：<br>
+                      <span style="font-size:1.4rem; font-weight:900; color:#e74c3c;">HK$ 1,080,000</span>
+                  </p>
+              </div>
+              <div class="cost-card" style="border-left-color:#8e44ad;">
+                  <span class="cost-badge" style="background:#ebdef0; color:#8e44ad;">代價二：私家醫院開支</span>
+                  <h4 style="margin:5px 0 10px; color:#2c3e50;">私私醫療與標靶藥物費用</h4>
+                  <p style="font-size:0.9rem; color:#555; line-height:1.6;">
+                      公立醫院非名冊藥物需自費；私家醫院免排隊，但治療癌症/通波仔費用約：<br>
+                      <span style="font-size:1.4rem; font-weight:900; color:#8e44ad;">HK$ 500,000 – 1,200,000+</span>
+                  </p>
+              </div>
+          </div>
+      </div>
   </div>
   
   <!-- 分頁 2: 兒童疾病保障專頁 -->
@@ -863,6 +972,7 @@
       </div>
   </div>
 </div>
+
 <script>
   // ==========================================
   // API & Firebase 設定
@@ -870,6 +980,11 @@
   const GAS_LOGIN_URL = "https://script.google.com/macros/s/AKfycbwmpVo8uGg8ZaC-oTFKdTdLAgCibw8FhD0UpcuMA6wWKwV0GWPWhO7hfFqL4NYRds2v/exec";
   const GAS_CASE_URL = "https://script.google.com/macros/s/AKfycbwvibk7PlwTzFKwEqQSvEF1syOiPRCAUDWVmvmVe6AmcBIi5TB8G9Zm-TniNb1Okp4IfA/exec";
   const GAS_COMPARE_RATES_URL = "https://script.google.com/macros/s/AKfycbwUKoJ7p9XMP3VKv4h_p5o95H0_TFIMzk2rM_JD_C5ZRsrlUCF8xWT7LrODnvntKDaRRQ/exec";
+  
+  // ⚡ 新增：健康數據與 Gemini API GAS 網址
+  const GAS_HEALTH_SHEET_URL = "https://script.google.com/macros/s/AKfycbxc5cYH9aIvlC_HeeLFXfxqbnAX4-oet-yBpHcxhNKJLmk0RVt7tr_eqK9mAItp9yVCZg/exec";
+  const GAS_GEMINI_AI_URL = "https://script.google.com/macros/s/AKfycbynjXedNssCG_V9vLZBT7bSVufIqVtDx2Sj50NOgz2CMOjZZJHi17n0RY5RXoKs9ighjQ/exec";
+
   const firebaseConfig = {
       apiKey: "AIzaSyDBA5Iitb8X0qmbVfjVdYWw-M2D_9ZhFIg",
       authDomain: "medical-and-ci.firebaseapp.com",
@@ -882,22 +997,28 @@
   const storage = firebase.storage();
   
   let claimRulesConfig = {
-      Max_Cancer_Total_Pct: 600,
-      Max_Cancer_New: 6,
-      Max_Cancer_Old: 3,
-      Max_Heart_Stroke: 3,
-      Cancer_Wait_New: 3,
-      Cancer_Wait_Old: 5,
-      Early_Claim_Pct: 20,
-      Child_ADHD_Pct: 20,
-      Child_Minor_Pct: 5,
-      Child_Severe_Pct: 20,
-      Bonus_Age30_Pct: 50,
-      Bonus_Age31_Pct: 35,
-      Dementia_Annuity_Pct: 6,
-      Cancer_OptionB_Monthly_Pct: 5
+      Max_Cancer_Total_Pct: 600, Max_Cancer_New: 6, Max_Cancer_Old: 3, Max_Heart_Stroke: 3,
+      Cancer_Wait_New: 3, Cancer_Wait_Old: 5, Early_Claim_Pct: 20, Child_ADHD_Pct: 20,
+      Child_Minor_Pct: 5, Child_Severe_Pct: 20, Bonus_Age30_Pct: 50, Bonus_Age31_Pct: 35,
+      Dementia_Annuity_Pct: 6, Cancer_OptionB_Monthly_Pct: 5
   };
   
+  // 本地預設健康數據（連線失敗時備用）
+  let globalHealthData = [
+      { Disease_Key: "breast_young", 疾病名稱: "乳癌", 年齡組別: "25-44歲", "2014確診數": 1020, "2024確診數": 1310, 十年總增幅_百分比: 28.4, 男性比例_百分比: 0.8, 女性比例_百分比: 99.2, 私家醫院平均開支_港幣: 1000000, 終身確診機率_百分比: "7.1%", 確診機率簡明描述: "每 14 名女性有 1 人患上" },
+      { Disease_Key: "colorectal_young", 疾病名稱: "大腸癌", 年齡組別: "25-44歲", "2014確診數": 310, "2024確診數": 375, 十年總增幅_百分比: 21.0, 男性比例_百分比: 54.7, 女性比例_百分比: 45.3, 私家醫院平均開支_港幣: 800000, 終身確診機率_百分比: "16.7%", 確診機率簡明描述: "每 6 人有 1 人患上危疾 (整體)" },
+      { Disease_Key: "lung_young", 疾病名稱: "肺癌", 年齡組別: "25-44歲", "2014確診數": 185, "2024確診數": 208, 十年總增幅_百分比: 12.4, 男性比例_百分比: 43.3, 女性比例_百分比: 56.7, 私家醫院平均開支_港幣: 1200000, 終身確診機率_百分比: "6.7%", 確診機率簡明描述: "每 15 人有 1 人患上" },
+      { Disease_Key: "heart_young", 疾病名稱: "急性心臟病", 年齡組別: "25-44歲", "2014確診數": 420, "2024確診數": 502, 十年總增幅_百分比: 19.5, 男性比例_百分比: 71.9, 女性比例_百分比: 28.1, 私家醫院平均開支_港幣: 400000, 終身確診機率_百分比: "20.0%", 確診機率簡明描述: "每 5 名男士有 1 人心血管異常" },
+      { Disease_Key: "stroke_young", 疾病名稱: "中風", 年齡組別: "25-44歲", "2014確診數": 280, "2024確診數": 329, 十年總增幅_百分比: 17.5, 男性比例_百分比: 62.9, 女性比例_百分比: 37.1, 私家醫院平均開支_港幣: 500000, 終身確診機率_百分比: "16.7%", 確診機率簡明描述: "每 6 人有 1 人一生中會中風" },
+      { Disease_Key: "lung_older", 疾病名稱: "肺癌", 年齡組別: "45-65歲", "2014確診數": 1820, "2024確診數": 2490, 十年總增幅_百分比: 36.8, 男性比例_百分比: 58.0, 女性比例_百分比: 42.0, 私家醫院平均開支_港幣: 1200000, 終身確診機率_百分比: "10.0%", 確診機率簡明描述: "每 10 人有 1 人在 65 歲前確診" },
+      { Disease_Key: "breast_older", 疾病名稱: "乳癌", 年齡組別: "45-65歲", "2014確診數": 2150, "2024確診數": 2778, 十年總增幅_百分比: 29.2, 男性比例_百分比: 0.6, 女性比例_百分比: 99.4, 私家醫院平均開支_港幣: 1000000, 終身確診機率_百分比: "7.1%", 確診機率簡明描述: "每 14 名女性有 1 人患上" },
+      { Disease_Key: "colorectal_older", 疾病名稱: "大腸癌", 年齡組別: "45-65歲", "2014確診數": 2010, "2024確診數": 2653, 十年總增幅_百分比: 32.0, 男性比例_百分比: 58.0, 女性比例_百分比: 42.0, 私家醫院平均開支_港幣: 800000, 終身確診機率_百分比: "16.7%", 確診機率簡明描述: "每 6 人有 1 人一生中患上" },
+      { Disease_Key: "heart_older", 疾病名稱: "急性心臟病", 年齡組別: "45-65歲", "2014確診數": 2850, "2024確診數": 3790, 十年總增幅_百分比: 33.0, 男性比例_百分比: 74.0, 女性比例_百分比: 26.0, 私家醫院平均開支_港幣: 500000, 終身確診機率_百分比: "25.0%", 確診機率簡明描述: "每 4 名中壯年有 1 人高危" },
+      { Disease_Key: "stroke_older", 疾病名稱: "中風", 年齡組別: "45-65歲", "2014確診數": 1920, "2024確診數": 2525, 十年總增幅_百分比: 31.5, 男性比例_百分比: 62.0, 女性比例_百分比: 38.0, 私家醫院平均開支_港幣: 600000, 終身確診機率_百分比: "16.7%", 確診機率簡明描述: "每 6 人有 1 人一生中會中風" }
+  ];
+  
+  let healthChartInstance = null;
+
   window.onload = () => {
       loadPromoSettings();
       checkUrlParamsAndInit();
@@ -905,6 +1026,7 @@
           document.getElementById('loginOverlay').style.display = 'none';
           document.getElementById('mainContainer').style.display = 'block';
           loadCases();
+          loadHealthDataFromGAS();
       }
       fetchPremiumRates();
   };
@@ -924,6 +1046,7 @@
               document.getElementById('loginOverlay').style.display = 'none'; 
               document.getElementById('mainContainer').style.display = 'block';
               loadCases();
+              loadHealthDataFromGAS();
               fetchPremiumRates();
           } else { 
               msg.innerText = "❌ 密碼錯誤！";
@@ -937,8 +1060,210 @@
   
   function openAdminModal() {
       document.getElementById('adminModal').style.display = 'flex';
+      renderAdminHealthTable();
   }
   
+  function switchAdminTab(tabName) {
+      document.querySelectorAll('.admin-tab').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.admin-page').forEach(el => el.classList.remove('active'));
+      document.getElementById('admin-tab-' + tabName).classList.add('active');
+      document.getElementById('admin-page-' + tabName).classList.add('active');
+  }
+
+  // ==========================================
+  // 📊 健康數據 GAS 互動 & Gemini AI 自動檢索
+  // ==========================================
+  async function loadHealthDataFromGAS() {
+      try {
+          const response = await fetch(GAS_HEALTH_SHEET_URL, { method: "GET", redirect: "follow" });
+          const data = await response.json();
+          if (data && data.healthData && Array.isArray(data.healthData) && data.healthData.length > 0) {
+              globalHealthData = data.healthData;
+              renderCostPage();
+              renderAdminHealthTable();
+          } else {
+              renderCostPage();
+              renderAdminHealthTable();
+          }
+      } catch(e) {
+          console.error("無法下載健康數據，切換至預設資料", e);
+          renderCostPage();
+          renderAdminHealthTable();
+      }
+  }
+
+  async function triggerGeminiHealthAI() {
+      const btn = document.getElementById('btnAiFetchHealth');
+      btn.innerText = "🤖 Gemini AI 聯網檢索中 (約需 5-10 秒)...";
+      btn.disabled = true;
+      try {
+          const response = await fetch(GAS_GEMINI_AI_URL, { method: "POST", redirect: "follow" });
+          const data = await response.json();
+          if (data.status === "success" && data.aiData && Array.isArray(data.aiData)) {
+              globalHealthData = data.aiData;
+              renderAdminHealthTable();
+              alert("✅ Gemini AI 聯網檢索完成！數據已帶入下方表格，請確認後點擊『儲存並同步』。");
+          } else {
+              alert("⚠️ AI 檢索失敗：" + (data.message || "未能抓取格式化數據"));
+          }
+      } catch(e) {
+          console.error(e);
+          alert("❌ 連線至 Gemini AI GAS 發生錯誤！");
+      } finally {
+          btn.innerText = "🤖 Gemini AI 上網檢查最新數據";
+          btn.disabled = false;
+      }
+  }
+
+  function renderAdminHealthTable() {
+      const tbody = document.getElementById('adminHealthTbody');
+      if (!tbody) return;
+      let html = "";
+      globalHealthData.forEach((row, idx) => {
+          html += `
+          <tr>
+              <td><input type="text" value="${row.Disease_Key || ''}" class="h-key"></td>
+              <td><input type="text" value="${row.疾病名稱 || ''}" class="h-name"></td>
+              <td><input type="text" value="${row.年齡組別 || ''}" class="h-age"></td>
+              <td><input type="number" value="${row['2014確診數'] || 0}" class="h-c2014"></td>
+              <td><input type="number" value="${row['2024確診數'] || 0}" class="h-c2024"></td>
+              <td><input type="number" step="0.1" value="${row.十年總增幅_百分比 || 0}" class="h-inc"></td>
+              <td><input type="number" step="0.1" value="${row.男性比例_百分比 || 0}" class="h-mratio"></td>
+              <td><input type="number" step="0.1" value="${row.女性比例_百分比 || 0}" class="h-fratio"></td>
+              <td><input type="number" value="${row.私家醫院平均開支_港幣 || 0}" class="h-cost"></td>
+              <td><input type="text" value="${row.確診機率簡明描述 || ''}" class="h-risk"></td>
+          </tr>`;
+      });
+      tbody.innerHTML = html;
+  }
+
+  async function saveHealthDataToGAS() {
+      const btn = document.getElementById('btnSaveHealthSheet');
+      btn.innerText = "⏳ 儲存中...";
+      btn.disabled = true;
+
+      const keys = document.querySelectorAll('.h-key');
+      const names = document.querySelectorAll('.h-name');
+      const ages = document.querySelectorAll('.h-age');
+      const c2014s = document.querySelectorAll('.h-c2014');
+      const c2024s = document.querySelectorAll('.h-c2024');
+      const incs = document.querySelectorAll('.h-inc');
+      const mratios = document.querySelectorAll('.h-mratio');
+      const fratios = document.querySelectorAll('.h-fratio');
+      const costs = document.querySelectorAll('.h-cost');
+      const risks = document.querySelectorAll('.h-risk');
+
+      const rowsData = [];
+      for(let i = 0; i < keys.length; i++) {
+          if (keys[i].value.trim()) {
+              rowsData.push([
+                  keys[i].value.trim(),
+                  names[i].value.trim(),
+                  ages[i].value.trim(),
+                  parseInt(c2014s[i].value) || 0,
+                  parseInt(c2024s[i].value) || 0,
+                  parseFloat(incs[i].value) || 0,
+                  parseFloat(mratios[i].value) || 0,
+                  parseFloat(fratios[i].value) || 0,
+                  parseInt(costs[i].value) || 0,
+                  risks[i].value.trim() ? "機率" : "",
+                  risks[i].value.trim()
+              ]);
+          }
+      }
+
+      try {
+          await fetch(GAS_HEALTH_SHEET_URL, {
+              method: 'POST',
+              mode: 'cors',
+              redirect: 'follow',
+              body: JSON.stringify({
+                  action: 'save_health_data',
+                  headers: ["Disease_Key", "疾病名稱", "年齡組別", "2014確診數", "2024確診數", "十年總增幅_百分比", "男性比例_百分比", "女性比例_百分比", "私家醫院平均開支_港幣", "終身確診機率_百分比", "確診機率簡明描述"],
+                  rows: rowsData
+              }),
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+          });
+          alert("✅ 健康數據已成功同步至 Google Sheet「健康數據」分頁且跨裝置生效！");
+          loadHealthDataFromGAS();
+      } catch(e) {
+          console.error(e);
+          alert("❌ 儲存失敗，請再試一次。");
+      } finally {
+          btn.innerText = "💾 儲存並同步至 Google Sheet「健康數據」";
+          btn.disabled = false;
+      }
+  }
+
+  // 渲染代價換取頁面 (包含 Bar Chart 與 卡片)
+  function renderCostPage() {
+      const container = document.getElementById('costCardsContainer');
+      if (!container) return;
+      
+      let html = "";
+      globalHealthData.forEach(item => {
+          let inc = item.十年總增幅_百分比 || item.Pct_Increase || 0;
+          let mRatio = item.男性比例_百分比 || item.Male_Ratio || 0;
+          let fRatio = item.女性比例_百分比 || item.Female_Ratio || 0;
+          let cost = item.私家醫院平均開支_港幣 || item.Avg_Cost_Private || 0;
+          let desc = item.確診機率簡明描述 || item.Lifetime_Risk || "";
+          
+          html += `
+          <div class="cost-card">
+              <span class="cost-badge">${item.年齡組別 || item.Age_Group} | ${item.疾病名稱 || item.Disease_Name}</span>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                  <strong style="font-size:1.1rem; color:#2c3e50;">10年確診增幅: <span style="color:#e74c3c;">+${inc}%</span></strong>
+                  <span style="font-size:0.85rem; background:#f0f3f4; padding:2px 8px; border-radius:12px; font-weight:bold; color:#34495e;">男 ${mRatio}% : 女 ${fRatio}%</span>
+              </div>
+              <div style="font-size:0.9rem; color:#555; margin-bottom:5px;">
+                  📌 <b>機率與風險：</b><span style="color:#c0392b; font-weight:bold;">${desc}</span>
+              </div>
+              <div style="font-size:0.85rem; color:#7f8c8d;">
+                  🏥 私院估算治療費: <b>$${Number(cost).toLocaleString()}</b>
+              </div>
+          </div>`;
+      });
+      container.innerHTML = html;
+
+      // 渲染柱狀圖
+      renderHealthChart();
+  }
+
+  function renderHealthChart() {
+      const ctx = document.getElementById('healthBarChart');
+      if (!ctx) return;
+
+      if (healthChartInstance) { healthChartInstance.destroy(); }
+
+      const labels = globalHealthData.map(d => `${d.疾病名稱 || d.Disease_Name} (${d.年齡組別 || d.Age_Group})`);
+      const data2014 = globalHealthData.map(d => d['2014確診數'] || d.Count_2014 || 0);
+      const data2024 = globalHealthData.map(d => d['2024確診數'] || d.Count_2024 || 0);
+
+      healthChartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: labels,
+              datasets: [
+                  { label: '2014 年確診數', data: data2014, backgroundColor: '#34495e' },
+                  { label: '2024 年確診數', data: data2024, backgroundColor: '#e74c3c' }
+              ]
+          },
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                  legend: { position: 'top' }
+              },
+              scales: {
+                  y: { beginAtZero: true }
+              }
+          }
+      });
+  }
+
+  // ==========================================
+  // 後台案例同步 (對接原有 GAS 連結)
+  // ==========================================
   async function submitCase() {
       let disease = document.getElementById('adminDisease').value.trim();
       let claimSeq = document.getElementById('adminClaimSeq').value.trim();
@@ -1062,6 +1387,9 @@
       }
   }
   
+  // ==========================================
+  // 儀表板全功能試算邏輯
+  // ==========================================
   let config = { sumExisting: 200000, sumTerm: 500000, sumWhole: 500000, sumUpgradeB: 500000, sumBasicPool: 1200000, existingMulti: false, existingCancerWait: 5, startAge: 0, assets: 500000, expense: 30000 };
   let state = { isConfirmed: false, balance: 1000000, totalPaid: 0, isCriticalClaimed: false, hasStartedCancerMonthly: false, cancerCountNew: 0, cancerCountOld: 0, nextClaimAge_New: Infinity, nextClaimAge_Old: Infinity, heartCount: 0, dementiaLumpSumClaimed: false, dementiaYearsPaid: 0, cancerMonthsPaid: 0, accEarly: 0, accCancerLump: 0, accCancerMonthly: 0, accHeart: 0, accDementia: 0, accChild: 0, currentAge: 30, claimCount: 0, bonusPaid: 0 };
   let historyStack = [];
@@ -1576,12 +1904,7 @@
       document.getElementById('totalClaimOYS2').innerText = formatMoney(compClaimState.totalOYS2);
   }
   
-  let promoSettings = {
-      oys2Y2Months: 2,
-      oys2Y3Months: 0,
-      sceY2Months: 0,
-      sceY3Months: 0
-  };
+  let promoSettings = { oys2Y2Months: 2, oys2Y3Months: 0, sceY2Months: 0, sceY3Months: 0 };
   
   function toggleDiscountBox() {
       const box = document.getElementById('discountBox');
@@ -1941,6 +2264,7 @@
       document.getElementById('page-' + pageId).classList.add('active');
       if (event && event.currentTarget) { event.currentTarget.classList.add('active'); }
       if(pageId === 'compare') { calculateComparison(); }
+      if(pageId === 'cost') { renderCostPage(); }
   }
 </script>
 </body>
