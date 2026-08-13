@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <!-- ⚡ 強制指定寬度以適應 Honor Magic V5 及 iPad 大屏 -->
 <meta name="viewport" content="width=1024, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>生活應急保險庫 (v3.43)</title>
-<!-- ⚡ 圖片預加載 -->
+<title>生活應急保險庫 (v3.44)</title>
+<!-- ⚡ 圖片預加載 (包含代價頁新增之催眠圖) -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5773.jpeg?alt=media&token=4abe322b-b474-4114-9104-4a1a53313929" as="image">
@@ -197,10 +197,9 @@
   .badge-highlight-pink { background: #fd79a8; color: white; padding: 2px 8px; border-radius: 4px; font-weight: bold; display: inline-block; margin-left: 5px; }
   .badge-highlight-red { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 4px; font-weight: bold; display: inline-block; margin-left: 5px; }
   
-  /* 💸 代價換取頁面專用卡片放大樣式 */
   .cost-card { background: #fff; border-radius: 12px; padding: 22px; margin-bottom: 20px; border-left: 6px solid #e74c3c; box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
   .cost-badge { background: #fadbd8; color: #c0392b; font-weight: bold; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem; display: inline-block; margin-bottom: 10px; }
-  .big-cost-card { background: #fff5f5; border: 2px solid #f5b7b1; border-left: 8px solid #e74c3c; border-radius: 14px; padding: 25px; box-shadow: 0 8px 20px rgba(231,76,60,0.12); margin-top: 20px; }
+  .big-cost-card { background: #fff5f5; border: 2px dashed #f5b7b1; border-left: 8px solid #e74c3c; border-radius: 14px; padding: 25px; box-shadow: 0 8px 20px rgba(231,76,60,0.12); margin-top: 20px; }
 </style>
 </head>
 <body>
@@ -214,7 +213,7 @@
         <div id="login-msg"></div>
     </div>
 </div>
-<!-- 彈出圖文 Modal -->
+<!-- 彈出圖文 Modal (兼具主頁與代價頁催眠秒開) -->
 <div id="imageModal" class="modal-overlay" onclick="closeModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-close" onclick="closeModal(event)">×</div>
@@ -225,7 +224,7 @@
     </div>
 </div>
 
-<!-- ⚙️ 後台管理 Modal (含雙分頁：個案管理 & 官方健康數據管理) -->
+<!-- ⚙️ 後台管理 Modal -->
 <div id="adminModal" class="admin-modal">
     <div class="admin-content">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
@@ -259,7 +258,7 @@
             <div id="adminCasesList">載入中...</div>
         </div>
 
-        <!-- 後台頁 2: 📊 官方健康數據管理 (Google Sheet: 健康數據) -->
+        <!-- 後台頁 2: 📊 官方健康數據管理 -->
         <div id="admin-page-health" class="admin-page">
             <div style="background:#eaf2f8; padding:12px; border-radius:6px; margin-bottom:12px; font-size:0.85rem; color:#2980b9; line-height:1.5;">
                 💡 <b>說明：</b> 點擊下方的「🤖 Gemini AI 上網檢查最新數據」，系統會自動檢索香港醫管局與衞生署最新發佈確診數據並自動填入表格。核對無誤後點擊儲存，將即時覆寫至 Google Sheet「健康數據」分頁並全網同步。
@@ -300,7 +299,7 @@
   <div class="header">
       <h1>
           生活應急保險庫 
-          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.43</span>
+          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.44</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
@@ -438,7 +437,7 @@
         </div>
       </div>
       
-      <!-- 右側即時資產支撐分析面板 -->
+      <!-- 右側即時資產支撐分析面板 (⚡ 第二張圖修改：已移走3年大病旁代價按鈕) -->
       <div class="analysis-panel">
         <div id="analysisOverlay" class="overlay-mask"><div class="overlay-content"><div style="font-size:3rem; margin-bottom:10px;">📊</div>請輸入左側資料並確認</div></div>
         
@@ -457,9 +456,6 @@
         <div style="background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--blue-base); margin-bottom: 25px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                 <h4 style="margin: 0; color: #2c3e50;">🛡️ 3年大病休養期</h4>
-                <button onclick="switchPage('cost')" style="background:linear-gradient(135deg, #e74c3c, #c0392b); color:white; border:none; padding:5px 12px; border-radius:20px; font-weight:bold; font-size:0.8rem; min-width:auto; cursor:pointer; box-shadow:0 2px 5px rgba(231,76,60,0.3);">
-                    🌱 代價分析
-                </button>
             </div>
             
             <div class="hypno-card customer-hide-card" style="background:#eaf2f8; border-color:#d4e6f1; margin-bottom:15px;" onclick="openHypnoModal('think')">
@@ -510,14 +506,14 @@
     </div>
   </div>
 
-  <!-- ⚡ 修改分頁: 🌱 代價換取 (第一/二/三張圖完全重構) -->
+  <!-- 分頁: 🌱 代價換取 (新增底部置中秒開催眠卡片) -->
   <div id="page-cost" class="tab-content info-page-container">
       <div class="info-section" style="text-align: center;">
           <h2 class="dark-title" style="font-size: 1.8rem; color: #c0392b; margin-bottom: 8px;">🌱 「不行動換取的無聲付出」</h2>
           <p style="color:#666; font-size:0.95rem; margin-top:0;">基於香港醫院管理局（HK Cancer Registry）及衞生署最新數據拆解。</p>
       </div>
 
-      <!-- 第一張圖修正：柱狀圖 + 「!」年齡控制與爆升高亮配色 -->
+      <!-- 第一張圖修正：柱狀圖 + 「!」年齡控制 -->
       <div class="info-section" style="background:#fdfefe; padding:22px; border-radius:12px; border:1px solid #e0e0e0; box-shadow:0 4px 12px rgba(0,0,0,0.03);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
               <div class="info-title" style="border-left-color:#e74c3c; margin:0;">
@@ -534,28 +530,25 @@
           </div>
       </div>
 
-      <!-- 第二張圖修正：跟隨年齡顯示 + 三大疾病分類 + 預設隱藏機率 -->
+      <!-- 第二張圖：主要疾病分類 -->
       <div class="info-section">
           <div class="info-title">🩺 主要重大疾病統計明細（分類精拆）</div>
           
-          <!-- 癌症類 (Cancer) -->
           <div style="margin-bottom:20px;">
               <h4 style="color:#e74c3c; border-bottom:2px solid #fadbd8; padding-bottom:5px; margin-bottom:12px;">🎀 癌症類 (Cancer)</h4>
               <div id="costCardsCancerContainer" class="grid-2col"></div>
           </div>
-          <!-- 心血管類 (Heart) -->
           <div style="margin-bottom:20px;">
               <h4 style="color:#8e44ad; border-bottom:2px solid #ebdef0; padding-bottom:5px; margin-bottom:12px;">❤️ 心血管疾病類 (Heart & Vascular)</h4>
               <div id="costCardsHeartContainer" class="grid-2col"></div>
           </div>
-          <!-- 腦神經類 (Stroke/Nervous) -->
           <div style="margin-bottom:20px;">
               <h4 style="color:#27ae60; border-bottom:2px solid #d5f5e3; padding-bottom:5px; margin-bottom:12px;">🧠 腦神經與中風類 (Neurological & Stroke)</h4>
               <div id="costCardsStrokeContainer" class="grid-2col"></div>
           </div>
       </div>
 
-      <!-- 第三張圖修正：移走代價二，保留代價一放大卡片，月薪手動輸入與即時試算 -->
+      <!-- 第三張圖：大病確診核心財務需要 -->
       <div class="info-section">
           <div class="info-title" style="border-left-color:#d35400;">💰 大病確診的核心財務需要</div>
           <div class="big-cost-card">
@@ -576,6 +569,16 @@
                   <div style="font-size:0.9rem; color:#7f8c8d; margin-top:5px;">
                       *此缺口尚未計算私家醫院化療、標靶治療及日常家庭開支（供樓/養家/子女學費）。
                   </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- ⚡ 新增：代價頁底部催眠式卡片 (置中彈出視窗，秒開) -->
+      <div class="info-section" style="margin-top:25px;">
+          <div class="hypno-card customer-hide-card" style="border-color:#e74c3c; border-left: 6px solid #e74c3c;" onclick="openHypnoModal('action')">
+              <div class="hypno-header" style="background:#fff5f5; color:#c0392b;">
+                  <div class="hypno-title"><span>💡</span> 拖延背後，真正承擔風險的到底係邊個？ (點擊展開)</div>
+                  <div class="hypno-arrow">👉</div>
               </div>
           </div>
       </div>
@@ -1036,7 +1039,7 @@
       { Disease_Key: "stroke_older", 疾病名稱: "中風", 年齡組別: "45-65歲", "2014確診數": 1920, "2024確診數": 2525, 十年總增幅_百分比: 31.5, 男性比例_百分比: 62.0, 女性比例_百分比: 38.0, 私家醫院平均開支_港幣: 600000, 終身確診機率_百分比: "16.7%", 確診機率簡明描述: "每 6 人有 1 人一生中會中風" }
   ];
   
-  let activeAgeFilter = 'all'; // 'all', '25-44', '45-65'
+  let activeAgeFilter = 'all';
   let healthChartInstance = null;
 
   window.onload = () => {
@@ -1118,7 +1121,6 @@
       btn.innerText = "🤖 Gemini AI 聯網檢索中 (約需 5-10 秒)...";
       btn.disabled = true;
       try {
-          // 強制使用 POST 並帶入 redirect: follow 解決無反應
           const response = await fetch(GAS_GEMINI_AI_URL, { 
               method: "POST", 
               mode: "cors",
@@ -1223,7 +1225,6 @@
       }
   }
 
-  // ⚡ 年齡篩選切換按鈕 (`!`)
   function toggleAgeFilter() {
       if (activeAgeFilter === 'all') { activeAgeFilter = '25-44'; }
       else if (activeAgeFilter === '25-44') { activeAgeFilter = '45-65'; }
@@ -1237,7 +1238,6 @@
       renderCostPage();
   }
 
-  // ⚡ 渲染代價換取頁面 (包含三分類、動態年齡篩選與預設隱藏機率)
   function renderCostPage() {
       const cancerContainer = document.getElementById('costCardsCancerContainer');
       const heartContainer = document.getElementById('costCardsHeartContainer');
@@ -1270,7 +1270,6 @@
                   <span style="font-size:0.85rem; background:#f0f3f4; padding:3px 10px; border-radius:12px; font-weight:bold; color:#34495e;">男 ${mRatio}% : 女 ${fRatio}%</span>
               </div>
               
-              <!-- ⚡ 機率與風險：預設隱藏，按鈕點擊後才顯示 -->
               <div style="margin-top:10px; margin-bottom:8px;">
                   <button onclick="document.getElementById('risk-box-${index}').style.display='block'; this.style.display='none';" class="btn-interactive" style="background:#fff3cd; color:#d35400; padding:6px 12px; font-size:0.85rem; font-weight:bold; cursor:pointer; width:100%; justify-content:center;">
                       🔒 點擊揭曉確診風險與機率
@@ -1300,11 +1299,9 @@
       heartContainer.innerHTML = htmlHeart || `<div style="color:#95a5a6; padding:10px;">無該年齡層相關數據</div>`;
       strokeContainer.innerHTML = htmlStroke || `<div style="color:#95a5a6; padding:10px;">無該年齡層相關數據</div>`;
 
-      // 渲染高亮爆升柱狀圖
       renderHealthChart();
   }
 
-  // ⚡ 柱狀圖：採用爆升感配色 (深藍 2014 vs 高亮極限紅 2024)
   function renderHealthChart() {
       const ctx = document.getElementById('healthBarChart');
       if (!ctx) return;
@@ -1343,7 +1340,6 @@
       });
   }
 
-  // ⚡ 計算「代價換取」頁面的手動輸入薪金與 3 年收入損失
   function calculateCostIncomeLoss() {
       const salaryInput = document.getElementById('costPageMonthlySalary');
       if (!salaryInput) return;
@@ -1353,7 +1349,7 @@
   }
 
   // ==========================================
-  // 後台案例同步 (對接原有 GAS 連結)
+  // 後台案例同步
   // ==========================================
   async function submitCase() {
       let disease = document.getElementById('adminDisease').value.trim();
@@ -2355,7 +2351,7 @@
       document.getElementById('page-' + pageId).classList.add('active');
       if (event && event.currentTarget) { event.currentTarget.classList.add('active'); }
       if(pageId === 'compare') { calculateComparison(); }
-      if(pageId === 'cost') { renderCostPage(); }
+      if(pageId === 'cost') { renderCostPage(); calculateCostIncomeLoss(); }
   }
 </script>
 </body>
