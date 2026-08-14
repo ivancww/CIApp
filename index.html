@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <!-- ⚡ 強制指定寬度以適應 Honor Magic V5 及 iPad 大屏 -->
 <meta name="viewport" content="width=1024, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>生活應急保險庫 (v3.52)</title>
+<title>生活應急保險庫 (v3.60)</title>
 <!-- Firebase & QRCode SDK & Chart.js -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -188,13 +188,11 @@
   .cost-badge { background: #fadbd8; color: #c0392b; font-weight: bold; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem; display: inline-block; margin-bottom: 10px; }
   .big-cost-card { background: #fff5f5; border: 2px dashed #f5b7b1; border-left: 8px solid #e74c3c; border-radius: 14px; padding: 25px; box-shadow: 0 8px 20px rgba(231,76,60,0.12); margin-top: 20px; }
   
-  /* ⚡ 代價頁大型催眠卡片 */
   .large-hypno-card { background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%); border: 2px dashed #e74c3c; border-left: 10px solid #c0392b; border-radius: 14px; padding: 25px 20px; margin-top: 20px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 8px 25px rgba(231,76,60,0.15); }
   .large-hypno-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(231,76,60,0.25); }
 </style>
 </head>
 <body>
-<!-- 🛡️ 登入介面 -->
 <div id="loginOverlay">
     <div class="login-box">
         <h2>🔒 生活應急保險庫系統</h2>
@@ -248,7 +246,7 @@
     </div>
 </div>
 
-<!-- ⚙️ 後台管理 Modal (支援年份設定) -->
+<!-- ⚙️ 後台管理 Modal -->
 <div id="adminModal" class="admin-modal">
     <div class="admin-content">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
@@ -277,6 +275,7 @@
         </div>
 
         <div id="admin-page-health" class="admin-page">
+            <!-- ⚡ 年份動態設定區 -->
             <div style="background:#f0f8ff; border:1px dashed #3498db; padding:12px; border-radius:8px; margin-bottom:15px; display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
                 <b style="color:#2980b9;">📅 趨勢圖表年份設定：</b>
                 <div style="display:flex; align-items:center; gap:5px;">
@@ -343,7 +342,7 @@
   <div class="header">
       <h1>
           生活應急保險庫 
-          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.52</span>
+          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.60</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
@@ -453,7 +452,7 @@
       </div>
 
       <div class="info-section" style="background:#fdfefe; padding:22px; border-radius:12px; border:1px solid #e0e0e0;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:gap; gap:10px;">
               <div class="info-title" style="border-left-color:#e74c3c; margin:0;" id="chartHeaderDynamicTitle">
                   📊 確診人數飆升趨勢 (<span id="spanStartYear">2014</span> vs <span id="spanEndYear">2024</span>)
               </div>
@@ -526,7 +525,7 @@
   const storage = firebase.storage();
 
   let globalHealthData = [];
-  // ⚡ 100% 依賴 Google Sheet，預設為空
+  // ⚡ 100% 依賴 Google Sheet，預設純為空，徹底杜絕程式碼內部寫死
   let dynamicHypnoNoPolicy = { key: "hypno_no_policy", title: "", text: "", imageUrl: "", category: "new_buyer" };
   let dynamicHypnoHasPolicy = { key: "hypno_has_policy", title: "", text: "", imageUrl: "", category: "upgrade_buyer" };
   let currentStartYear = "2014";
@@ -598,8 +597,8 @@
           if (data && data.healthData) globalHealthData = data.healthData;
           if (data && data.hypnoNoPolicy) dynamicHypnoNoPolicy = data.hypnoNoPolicy;
           if (data && data.hypnoHasPolicy) dynamicHypnoHasPolicy = data.hypnoHasPolicy;
-          if (data && data.startYear) currentStartYear = data.startYear;
-          if (data && data.endYear) currentEndYear = data.endYear;
+          if (data && data.startYear) currentStartYear = String(data.startYear);
+          if (data && data.endYear) currentEndYear = String(data.endYear);
           
           if(document.getElementById('spanStartYear')) document.getElementById('spanStartYear').innerText = currentStartYear;
           if(document.getElementById('spanEndYear')) document.getElementById('spanEndYear').innerText = currentEndYear;
