@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <!-- ⚡ 強制指定寬度以適應 Honor Magic V5 及 iPad 大屏 -->
 <meta name="viewport" content="width=1024, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>生活應急保險庫 (v3.44)</title>
-<!-- ⚡ 圖片預加載 (包含代價頁新增之催眠圖) -->
+<title>生活應急保險庫 (v3.45)</title>
+<!-- ⚡ 圖片預加載 (包含代價頁催眠圖) -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5773.jpeg?alt=media&token=4abe322b-b474-4114-9104-4a1a53313929" as="image">
@@ -29,13 +29,13 @@
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #ecf0f1; color: #333; margin: 0; padding: 15px; -webkit-tap-highlight-color: transparent; }
   
   /* 🌸 全局所有可輸入資料、手動按鈕、選單外框改為粉紅色虛線 */
-  input[type="text"], input[type="number"], input[type="password"], select, .btn-interactive {
+  input[type="text"], input[type="number"], input[type="password"], textarea, select, .btn-interactive {
     border: 2px dashed var(--pink-border) !important;
     border-radius: 6px;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
-  input[type="text"]:focus, input[type="number"]:focus, input[type="password"]:focus, select:focus {
+  input[type="text"]:focus, input[type="number"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
     border-color: #e84393 !important;
     border-style: dashed !important;
     box-shadow: 0 0 6px rgba(232, 67, 147, 0.4);
@@ -213,7 +213,7 @@
         <div id="login-msg"></div>
     </div>
 </div>
-<!-- 彈出圖文 Modal (兼具主頁與代價頁催眠秒開) -->
+<!-- 彈出圖文 Modal -->
 <div id="imageModal" class="modal-overlay" onclick="closeModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-close" onclick="closeModal(event)">×</div>
@@ -258,7 +258,7 @@
             <div id="adminCasesList">載入中...</div>
         </div>
 
-        <!-- 後台頁 2: 📊 官方健康數據管理 -->
+        <!-- 後台頁 2: 📊 官方健康數據管理 (含 A12 催眠圖文設定) -->
         <div id="admin-page-health" class="admin-page">
             <div style="background:#eaf2f8; padding:12px; border-radius:6px; margin-bottom:12px; font-size:0.85rem; color:#2980b9; line-height:1.5;">
                 💡 <b>說明：</b> 點擊下方的「🤖 Gemini AI 上網檢查最新數據」，系統會自動檢索香港醫管局與衞生署最新發佈確診數據並自動填入表格。核對無誤後點擊儲存，將即時覆寫至 Google Sheet「健康數據」分頁並全網同步。
@@ -289,8 +289,22 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- ⚡ A12 行催眠圖文管理區 -->
+            <div style="background:#fef5f5; border:1px dashed #f5b7b1; padding:15px; border-radius:8px; margin-top:20px; margin-bottom:15px;">
+                <h4 style="margin:0 0 10px; color:#c0392b;">💭 代價頁底部催眠圖文設定 (Google Sheet A12 行)</h4>
+                
+                <label style="font-size:0.85rem; font-weight:bold;">標題 (B12):</label>
+                <input type="text" id="adminHypnoTitle" class="admin-input" placeholder="例如：💡 拖延背後，真正承擔風險的到底係邊個？">
+                
+                <label style="font-size:0.85rem; font-weight:bold;">內文 (C12):</label>
+                <textarea id="adminHypnoText" class="admin-input" rows="3" style="resize:vertical;" placeholder="催眠感文案"></textarea>
+                
+                <label style="font-size:0.85rem; font-weight:bold;">圖片網址 (D12):</label>
+                <input type="text" id="adminHypnoImg" class="admin-input" placeholder="Firebase Storage 圖片 URL">
+            </div>
             
-            <button id="btnSaveHealthSheet" onclick="saveHealthDataToGAS()" style="width:100%; padding:12px; background:#27ae60; color:white; font-size:1.1rem; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:15px;">💾 儲存並同步至 Google Sheet「健康數據」</button>
+            <button id="btnSaveHealthSheet" onclick="saveHealthDataToGAS()" style="width:100%; padding:12px; background:#27ae60; color:white; font-size:1.1rem; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:10px;">💾 儲存並同步至 Google Sheet「健康數據」</button>
         </div>
     </div>
 </div>
@@ -299,7 +313,7 @@
   <div class="header">
       <h1>
           生活應急保險庫 
-          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.44</span>
+          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.45</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
@@ -437,7 +451,7 @@
         </div>
       </div>
       
-      <!-- 右側即時資產支撐分析面板 (⚡ 第二張圖修改：已移走3年大病旁代價按鈕) -->
+      <!-- 右側即時資產支撐分析面板 -->
       <div class="analysis-panel">
         <div id="analysisOverlay" class="overlay-mask"><div class="overlay-content"><div style="font-size:3rem; margin-bottom:10px;">📊</div>請輸入左側資料並確認</div></div>
         
@@ -506,14 +520,14 @@
     </div>
   </div>
 
-  <!-- 分頁: 🌱 代價換取 (新增底部置中秒開催眠卡片) -->
+  <!-- 分頁: 🌱 代價換取 (動態渲染 Google Sheet A12 行催眠圖文) -->
   <div id="page-cost" class="tab-content info-page-container">
       <div class="info-section" style="text-align: center;">
           <h2 class="dark-title" style="font-size: 1.8rem; color: #c0392b; margin-bottom: 8px;">🌱 「不行動換取的無聲付出」</h2>
           <p style="color:#666; font-size:0.95rem; margin-top:0;">基於香港醫院管理局（HK Cancer Registry）及衞生署最新數據拆解。</p>
       </div>
 
-      <!-- 第一張圖修正：柱狀圖 + 「!」年齡控制 -->
+      <!-- 第一張圖：柱狀圖 + 年齡切換 -->
       <div class="info-section" style="background:#fdfefe; padding:22px; border-radius:12px; border:1px solid #e0e0e0; box-shadow:0 4px 12px rgba(0,0,0,0.03);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
               <div class="info-title" style="border-left-color:#e74c3c; margin:0;">
@@ -530,7 +544,7 @@
           </div>
       </div>
 
-      <!-- 第二張圖：主要疾病分類 -->
+      <!-- 第二張圖：三類疾病明細 -->
       <div class="info-section">
           <div class="info-title">🩺 主要重大疾病統計明細（分類精拆）</div>
           
@@ -573,11 +587,11 @@
           </div>
       </div>
 
-      <!-- ⚡ 新增：代價頁底部催眠式卡片 (置中彈出視窗，秒開) -->
-      <div class="info-section" style="margin-top:25px;">
-          <div class="hypno-card customer-hide-card" style="border-color:#e74c3c; border-left: 6px solid #e74c3c;" onclick="openHypnoModal('action')">
+      <!-- ⚡ 動態渲染 Google Sheet A12 行催眠卡片 (置中 Modal 秒開) -->
+      <div class="info-section" style="margin-top:25px;" id="costHypnoBottomContainer">
+          <div class="hypno-card customer-hide-card" style="border-color:#e74c3c; border-left: 6px solid #e74c3c;" onclick="openCostDynamicHypnoModal()">
               <div class="hypno-header" style="background:#fff5f5; color:#c0392b;">
-                  <div class="hypno-title"><span>💡</span> 拖延背後，真正承擔風險的到底係邊個？ (點擊展開)</div>
+                  <div class="hypno-title"><span id="costHypnoTitleDisplay">💡 拖延背後，真正承擔風險的到底係邊個？</span> (點擊展開)</div>
                   <div class="hypno-arrow">👉</div>
               </div>
           </div>
@@ -627,7 +641,7 @@
                       <td><strong>嚴重兒童疾病保障<br>(共13種)</strong></td>
                       <td>
                         <span class="badge-highlight-red">🌟 特別關注</span>
-                        <strong style="color:#e74c3c; font-size:1.05rem;">自閉症 (Autism)</strong>、嚴重哮喘、植物人、因疾病或受傷引致智力障礙、俱心臟併發症的川崎病、成骨不全症第三型、風濕性心瓣疾病、嚴重型血友病、斯蒂爾病、一型青少年脊髓性肌肉萎縮症、威爾遜病等。
+                        <strong style="color:#e74c3c; font-size:1.05rem;">自閉症 (Autism)</strong>、嚴重哮喘、植物人、因疾病或受傷引致智力障礙、俱心臟併發症的川崎病、成骨不全症第三型、風濕性心瓣疾病、嚴重型血友病、斯蒂爾病、一型青少年脊髓性肌肉障礙症、威爾遜病等。
                       </td>
                       <td>每項疾病預支 <strong>20%</strong><br>(個人最高上限 50,000 美元)</td>
                   </tr>
@@ -1039,6 +1053,15 @@
       { Disease_Key: "stroke_older", 疾病名稱: "中風", 年齡組別: "45-65歲", "2014確診數": 1920, "2024確診數": 2525, 十年總增幅_百分比: 31.5, 男性比例_百分比: 62.0, 女性比例_百分比: 38.0, 私家醫院平均開支_港幣: 600000, 終身確診機率_百分比: "16.7%", 確診機率簡明描述: "每 6 人有 1 人一生中會中風" }
   ];
   
+  // ⚡ Google Sheet A12 行動態催眠內容預設值
+  let dynamicHypnoCostBottom = {
+      key: "hypno_cost_bottom",
+      title: "💡 拖延背後，真正承擔風險的到底係邊個？",
+      text: "其實我都明白，辛苦儲落嘅積蓄如果因一場大病失去大半，係好唔甘心... 但除咗唔甘心外，最重要係會影響埋家人生活，仔女學費，呢樣先更緊要，你話係唔係？",
+      imageUrl: "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5773.jpeg?alt=media&token=4abe322b-b474-4114-9104-4a1a53313929",
+      category: "hypnotic_card"
+  };
+
   let activeAgeFilter = 'all';
   let healthChartInstance = null;
 
@@ -1095,7 +1118,7 @@
   }
 
   // ==========================================
-  // 📊 健康數據 GAS & Gemini AI (修正超時與CORS無反應問題)
+  // 📊 健康數據與 Google Sheet A12 催眠內容對接
   // ==========================================
   async function loadHealthDataFromGAS() {
       try {
@@ -1103,12 +1126,12 @@
           const data = await response.json();
           if (data && data.healthData && Array.isArray(data.healthData) && data.healthData.length > 0) {
               globalHealthData = data.healthData;
-              renderCostPage();
-              renderAdminHealthTable();
-          } else {
-              renderCostPage();
-              renderAdminHealthTable();
           }
+          if (data && data.hypnoCostBottom) {
+              dynamicHypnoCostBottom = data.hypnoCostBottom;
+          }
+          renderCostPage();
+          renderAdminHealthTable();
       } catch(e) {
           console.error("無法下載健康數據，切換至預設資料", e);
           renderCostPage();
@@ -1132,9 +1155,9 @@
           if (data.status === "success" && data.aiData && Array.isArray(data.aiData)) {
               globalHealthData = data.aiData;
               renderAdminHealthTable();
-              alert("✅ Gemini AI 聯網檢索完成！數據已帶入下方表格，請確認後點擊『儲存並同步』。");
+              alert("✅ Gemini AI 聯網檢索完成！數據已帶入表格，請確認後點擊『儲存並同步』。");
           } else {
-              alert("⚠️ AI 檢索完成，請核對數據：" + (data.message || "已加載最新數據結構"));
+              alert("⚠️ AI 檢索完成，請核對數據：" + (data.message || "已加載最新數據"));
           }
       } catch(e) {
           console.error(e);
@@ -1149,7 +1172,7 @@
       const tbody = document.getElementById('adminHealthTbody');
       if (!tbody) return;
       let html = "";
-      globalHealthData.forEach((row, idx) => {
+      globalHealthData.forEach((row) => {
           html += `
           <tr>
               <td><input type="text" value="${row.Disease_Key || ''}" class="h-key"></td>
@@ -1165,6 +1188,11 @@
           </tr>`;
       });
       tbody.innerHTML = html;
+
+      // 同步載入 A12 催眠內容至後台輸入框
+      if (document.getElementById('adminHypnoTitle')) document.getElementById('adminHypnoTitle').value = dynamicHypnoCostBottom.title || "";
+      if (document.getElementById('adminHypnoText')) document.getElementById('adminHypnoText').value = dynamicHypnoCostBottom.text || "";
+      if (document.getElementById('adminHypnoImg')) document.getElementById('adminHypnoImg').value = dynamicHypnoCostBottom.imageUrl || "";
   }
 
   async function saveHealthDataToGAS() {
@@ -1202,6 +1230,15 @@
           }
       }
 
+      // 讀取 A12 欄位值
+      const hypnoCostBottomObj = {
+          key: "hypno_cost_bottom",
+          title: document.getElementById('adminHypnoTitle').value.trim() || dynamicHypnoCostBottom.title,
+          text: document.getElementById('adminHypnoText').value.trim() || dynamicHypnoCostBottom.text,
+          imageUrl: document.getElementById('adminHypnoImg').value.trim() || dynamicHypnoCostBottom.imageUrl,
+          category: "hypnotic_card"
+      };
+
       try {
           await fetch(GAS_HEALTH_SHEET_URL, {
               method: 'POST',
@@ -1210,11 +1247,12 @@
               body: JSON.stringify({
                   action: 'save_health_data',
                   headers: ["Disease_Key", "疾病名稱", "年齡組別", "2014確診數", "2024確診數", "十年總增幅_百分比", "男性比例_百分比", "女性比例_百分比", "私家醫院平均開支_港幣", "終身確診機率_百分比", "確診機率簡明描述"],
-                  rows: rowsData
+                  rows: rowsData,
+                  hypnoCostBottom: hypnoCostBottomObj
               }),
               headers: { 'Content-Type': 'text/plain;charset=utf-8' }
           });
-          alert("✅ 健康數據已成功同步至 Google Sheet「健康數據」分頁且跨裝置生效！");
+          alert("✅ 健康數據與 A12 催眠圖文已成功同步至 Google Sheet 且全網生效！");
           loadHealthDataFromGAS();
       } catch(e) {
           console.error(e);
@@ -1236,6 +1274,10 @@
       document.getElementById('currentAgeFilterLabel').innerText = labelText;
 
       renderCostPage();
+  }
+
+  function openCostDynamicHypnoModal() {
+      openModal(dynamicHypnoCostBottom.imageUrl, dynamicHypnoCostBottom.text);
   }
 
   function renderCostPage() {
@@ -1298,6 +1340,11 @@
       cancerContainer.innerHTML = htmlCancer || `<div style="color:#95a5a6; padding:10px;">無該年齡層相關數據</div>`;
       heartContainer.innerHTML = htmlHeart || `<div style="color:#95a5a6; padding:10px;">無該年齡層相關數據</div>`;
       strokeContainer.innerHTML = htmlStroke || `<div style="color:#95a5a6; padding:10px;">無該年齡層相關數據</div>`;
+
+      // 渲染 A12 催眠卡片標題
+      if (document.getElementById('costHypnoTitleDisplay')) {
+          document.getElementById('costHypnoTitleDisplay').innerText = dynamicHypnoCostBottom.title || "💡 拖延背後，真正承擔風險的到底係邊個？";
+      }
 
       renderHealthChart();
   }
@@ -2137,8 +2184,8 @@
       let modeText = "不展示對比";
       if (shareCompare === '1') {
           if (compareMode === 'all') modeText = "完整對比 (SCE + OYS2)";
-          if (compareMode === 'sce') modeText = "只看 SCE (簡護危疾保)";
-          if (compareMode === 'oys2') modeText = "只看 OYS2 (愛伴航2)";
+          if (compareMode === 'sce') modeText = "只顯示 SCE (簡護危疾保)";
+          if (compareMode === 'oys2') modeText = "只顯示 OYS2 (愛伴航2)";
       }
       document.getElementById('shareInfoCompareScope').innerText = T(modeText);
       
