@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <!-- ⚡ 強制指定寬度以適應 Honor Magic V5 及 iPad 大屏 -->
 <meta name="viewport" content="width=1024, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>生活應急保險庫 (v3.46)</title>
-<!-- ⚡ 圖片預加載 (包含催眠圖) -->
+<title>生活應急保險庫 (v3.47)</title>
+<!-- ⚡ 圖片預加載 -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5773.jpeg?alt=media&token=4abe322b-b474-4114-9104-4a1a53313929" as="image">
@@ -88,14 +88,21 @@
   .hypno-card.active .hypno-content { max-height: 800px; border-top: 1px solid #f1f2f6; }
   .hypno-card.active .hypno-arrow { transform: rotate(180deg); }
   .hypno-inner { padding: 15px; }
-  .modal-text-area { padding: 20px 25px; font-size: 1.05rem; color: #34495e; line-height: 1.6; border-bottom: 2px dashed #ecf0f1; background: #fdfdfd; border-radius: 8px 8px 0 0; }
-  .modal-img-area { background: #ecf0f1; display: flex; justify-content: center; align-items: center; padding: 0; border-radius: 0 0 8px 8px; }
-  .modal-img-area img { width: 100%; max-height: 60vh; object-fit: contain; display: block; border-radius: 0 0 8px 8px; }
-  .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; opacity: 0; animation: fadeIn 0.3s forwards; }
+  
+  /* 黑色背景置中彈出 Modal (雙頁滑動) */
+  .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 999999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; opacity: 0; animation: fadeIn 0.3s forwards; }
   @keyframes fadeIn { to { opacity: 1; } }
-  .modal-content { background: white; max-width: 550px; width: 100%; max-height: 90vh; border-radius: 12px; position: relative; animation: slideUp 0.3s forwards; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
+  .modal-content { background: #1e272e; color: #fff; max-width: 620px; width: 100%; max-height: 90vh; border-radius: 14px; position: relative; animation: slideUp 0.3s forwards; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 45px rgba(0,0,0,0.8); border: 1px solid #333; }
   @keyframes slideUp { from { transform: translateY(20px); } to { transform: translateY(0); } }
-  .modal-close { position: absolute; top: 10px; right: 15px; background: rgba(231, 76, 60, 0.1); color: #e74c3c; width: 32px; height: 32px; border-radius: 50%; font-size: 1.2rem; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; z-index: 10; }
+  .modal-close { position: absolute; top: 12px; right: 15px; background: rgba(255, 255, 255, 0.15); color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 1.2rem; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; z-index: 20; }
+  .modal-close:hover { background: #e74c3c; }
+  
+  /* 雙頁切換器樣式 */
+  .scenario-modal-page { display: none; padding: 25px; box-sizing: border-box; overflow-y: auto; max-height: 85vh; }
+  .scenario-modal-page.active { display: block; animation: fadeIn 0.4s; }
+  .page1-box { text-align: center; padding: 50px 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 280px; }
+  .page1-title { font-size: 1.5rem; line-height: 1.7; font-weight: 900; color: #f1c40f; letter-spacing: 0.5px; text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+  .page1-hint { margin-top: 30px; font-size: 0.9rem; color: #a4b0be; display: flex; align-items: center; gap: 8px; }
   
   /* ⚙️ 後台管理 Modal */
   .admin-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
@@ -200,6 +207,10 @@
   .cost-card { background: #fff; border-radius: 12px; padding: 22px; margin-bottom: 20px; border-left: 6px solid #e74c3c; box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
   .cost-badge { background: #fadbd8; color: #c0392b; font-weight: bold; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem; display: inline-block; margin-bottom: 10px; }
   .big-cost-card { background: #fff5f5; border: 2px dashed #f5b7b1; border-left: 8px solid #e74c3c; border-radius: 14px; padding: 25px; box-shadow: 0 8px 20px rgba(231,76,60,0.12); margin-top: 20px; }
+  
+  /* ⚡ 代價頁底部大型催眠卡片樣式 */
+  .large-hypno-card { background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%); border: 2px dashed #e74c3c; border-left: 10px solid #c0392b; border-radius: 14px; padding: 25px 20px; margin-top: 20px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 8px 25px rgba(231,76,60,0.15); }
+  .large-hypno-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(231,76,60,0.25); }
 </style>
 </head>
 <body>
@@ -213,18 +224,55 @@
         <div id="login-msg"></div>
     </div>
 </div>
-<!-- 彈出圖文 Modal -->
-<div id="imageModal" class="modal-overlay" onclick="closeModal(event)">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="modal-close" onclick="closeModal(event)">×</div>
-        <div id="modalTextContainer" class="modal-text-area" style="display:none;"></div>
-        <div class="modal-img-area">
-            <img id="modalImage" src="" alt="圖解說明">
+
+<!-- 彈出圖文 Modal (雙頁切換：第1頁黑底置中金句，第2頁內文+圖片) -->
+<div id="scenarioModal" class="modal-overlay" onclick="closeScenarioModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()" id="scenarioModalContent">
+        <div class="modal-close" onclick="closeScenarioModal(event)">×</div>
+        
+        <!-- 第 1 頁：黑底置中金句 -->
+        <div id="modalPage1" class="scenario-modal-page active">
+            <div class="page1-box">
+                <div class="page1-title" id="page1QuoteText">
+                    💡 想請教你一個問題：<br>今日呢個決定，將來背後究竟由邊個默默承擔？
+                </div>
+                <div class="page1-hint">
+                    <span>👆 向下滑動或點擊按鈕查看背後代價</span>
+                </div>
+                <button onclick="goToModalPage(2)" class="btn-interactive" style="background:#e74c3c; color:white; padding:10px 25px; font-size:1.05rem; font-weight:bold; margin-top:25px; cursor:pointer; justify-content:center;">
+                    查看背後代價 👉
+                </button>
+            </div>
+        </div>
+
+        <!-- 第 2 頁：內文 + 圖片 一齊呈現 -->
+        <div id="modalPage2" class="scenario-modal-page">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px dashed #444; padding-bottom:10px;">
+                <button onclick="goToModalPage(1)" style="background:#34495e; color:white; padding:4px 10px; font-size:0.8rem; border-radius:4px; min-width:auto; cursor:pointer;">
+                    👈 返回問題
+                </button>
+                <span style="font-size:0.85rem; color:#f1c40f; font-weight:bold;">深度剖析</span>
+            </div>
+            <div id="page2Text" style="font-size:1.05rem; color:#ecf0f1; line-height:1.7; margin-bottom:20px; background:rgba(0,0,0,0.3); padding:15px; border-radius:8px; border-left:4px solid #e74c3c;"></div>
+            <div style="text-align:center; border-radius:8px; overflow:hidden;">
+                <img id="page2Image" src="" alt="情景圖解" style="width:100%; max-height:48vh; object-fit:contain; border-radius:8px; display:block;">
+            </div>
         </div>
     </div>
 </div>
 
-<!-- ⚙️ 後台管理 Modal (含 A12 與 A13 雙情景催眠設定) -->
+<!-- 舊有一般圖文 Modal -->
+<div id="imageModal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()" style="background:#fff; color:#333;">
+        <div class="modal-close" onclick="closeModal(event)" style="color:#e74c3c; background:rgba(231,76,60,0.1);">×</div>
+        <div id="modalTextContainer" class="modal-text-area" style="display:none; color:#2c3e50;"></div>
+        <div class="modal-img-area">
+            <img id="modalImage" src="" alt="圖解說明" style="width:100%; max-height:60vh; object-fit:contain;">
+        </div>
+    </div>
+</div>
+
+<!-- ⚙️ 後台管理 Modal (含圖片上載) -->
 <div id="adminModal" class="admin-modal">
     <div class="admin-content">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
@@ -258,7 +306,7 @@
             <div id="adminCasesList">載入中...</div>
         </div>
 
-        <!-- 後台頁 2: 📊 官方健康數據管理 (雙情景催眠圖文) -->
+        <!-- 後台頁 2: 📊 官方健康數據管理 (支援圖片直接上傳) -->
         <div id="admin-page-health" class="admin-page">
             <div style="background:#eaf2f8; padding:12px; border-radius:6px; margin-bottom:12px; font-size:0.85rem; color:#2980b9; line-height:1.5;">
                 💡 <b>說明：</b> 點擊下方的「🤖 Gemini AI 上網檢查最新數據」，系統會自動檢索香港醫管局與衞生署最新發佈確診數據並自動填入表格。
@@ -297,8 +345,13 @@
                 <input type="text" id="adminHypnoTitleA" class="admin-input">
                 <label style="font-size:0.85rem; font-weight:bold;">內文 (C12):</label>
                 <textarea id="adminHypnoTextA" class="admin-input" rows="3" style="resize:vertical;"></textarea>
+                
                 <label style="font-size:0.85rem; font-weight:bold;">圖片網址 (D12):</label>
-                <input type="text" id="adminHypnoImgA" class="admin-input">
+                <div style="display:flex; gap:8px; margin-bottom:10px;">
+                    <input type="text" id="adminHypnoImgA" class="admin-input" style="margin-bottom:0;">
+                    <input type="file" id="uploadFileA" style="display:none;" accept="image/*" onchange="uploadScenarioImage('A')">
+                    <button onclick="document.getElementById('uploadFileA').click()" style="background:#e67e22; color:white; min-width:110px; padding:6px 10px; font-size:0.85rem; cursor:pointer;">📤 上載圖片</button>
+                </div>
             </div>
 
             <!-- 情景 B 管理區 (A13) -->
@@ -308,8 +361,13 @@
                 <input type="text" id="adminHypnoTitleB" class="admin-input">
                 <label style="font-size:0.85rem; font-weight:bold;">內文 (C13):</label>
                 <textarea id="adminHypnoTextB" class="admin-input" rows="3" style="resize:vertical;"></textarea>
+                
                 <label style="font-size:0.85rem; font-weight:bold;">圖片網址 (D13):</label>
-                <input type="text" id="adminHypnoImgB" class="admin-input">
+                <div style="display:flex; gap:8px; margin-bottom:10px;">
+                    <input type="text" id="adminHypnoImgB" class="admin-input" style="margin-bottom:0;">
+                    <input type="file" id="uploadFileB" style="display:none;" accept="image/*" onchange="uploadScenarioImage('B')">
+                    <button onclick="document.getElementById('uploadFileB').click()" style="background:#27ae60; color:white; min-width:110px; padding:6px 10px; font-size:0.85rem; cursor:pointer;">📤 上載圖片</button>
+                </div>
             </div>
             
             <button id="btnSaveHealthSheet" onclick="saveHealthDataToGAS()" style="width:100%; padding:12px; background:#27ae60; color:white; font-size:1.1rem; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:10px;">💾 儲存並同步至 Google Sheet「健康數據」</button>
@@ -321,7 +379,7 @@
   <div class="header">
       <h1>
           生活應急保險庫 
-          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.46</span>
+          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.47</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
@@ -336,7 +394,7 @@
       <button class="nav-tab" id="tab-btn-share" onclick="switchPage('share')">📱 專屬二維碼分享</button>
   </div>
   
-  <!-- 分頁 1: 主頁儀表板 -->
+  <!-- 分頁 1: 主頁儀表板 (⚡ 已完全移走三年大病旁代價按鈕) -->
   <div id="page-main" class="tab-content active">
     <div class="main-grid">
       <div class="config-panel">
@@ -528,7 +586,7 @@
     </div>
   </div>
 
-  <!-- 分頁: 🌱 代價換取 (支援雙情景自動/手動切換) -->
+  <!-- 分頁: 🌱 代價換取 (包含放大版雙情景催眠卡片) -->
   <div id="page-cost" class="tab-content info-page-container">
       <div class="info-section" style="text-align: center;">
           <h2 class="dark-title" style="font-size: 1.8rem; color: #c0392b; margin-bottom: 8px;">🌱 「不行動換取的無聲付出」</h2>
@@ -594,18 +652,26 @@
           </div>
       </div>
 
-      <!-- ⚡ 雙情景催眠卡片區塊 (支援手動/自動切換) -->
+      <!-- ⚡ 底部放大版雙情景催眠卡片 -->
       <div class="info-section" style="margin-top:25px;" id="costHypnoBottomContainer">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-              <span style="font-size:0.85rem; color:#7f8c8d; font-weight:bold;">當前情景判定：<span id="activeScenarioLabel" style="color:#c0392b;">未有危疾單 (從零建立)</span></span>
-              <button onclick="toggleScenarioManual()" class="btn-interactive" style="background:#f8f9fa; color:#2c3e50; padding:4px 10px; font-size:0.8rem; cursor:pointer;">
+              <span style="font-size:0.9rem; color:#7f8c8d; font-weight:bold;">當前情景判定：<span id="activeScenarioLabel" style="color:#c0392b; font-size:1rem;">未有危疾單 (從零建立)</span></span>
+              <button onclick="toggleScenarioManual()" class="btn-interactive" style="background:#f8f9fa; color:#2c3e50; padding:6px 12px; font-size:0.85rem; cursor:pointer;">
                   🔄 手動切換情景
               </button>
           </div>
-          <div class="hypno-card customer-hide-card" style="border-color:#e74c3c; border-left: 6px solid #e74c3c;" onclick="openCostDynamicHypnoModal()">
-              <div class="hypno-header" style="background:#fff5f5; color:#c0392b;">
-                  <div class="hypno-title"><span id="costHypnoTitleDisplay">💡 「想請教你一個問題：今日呢個決定，將來背後究竟由邊個默默承擔？」</span></div>
-                  <div class="hypno-arrow">👉</div>
+          
+          <!-- 放大版卡片 (點擊後進入置中黑底雙頁流程) -->
+          <div class="large-hypno-card customer-hide-card" onclick="openScenarioModalFlow()">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <div style="font-size:1.25rem; font-weight:bold; color:#c0392b; display:flex; align-items:center; gap:10px;">
+                      <span>💡</span>
+                      <span id="costHypnoTitleDisplay">想請教你一個問題：今日呢個決定，將來背後究竟由邊個默默承擔？</span>
+                  </div>
+                  <div style="font-size:1.4rem; color:#c0392b;">👉</div>
+              </div>
+              <div style="margin-top:8px; font-size:0.9rem; color:#7f8c8d;">
+                  （點擊深入思考：透視個人健康變數與家庭財務的隱形代價）
               </div>
           </div>
       </div>
@@ -1066,7 +1132,7 @@
       { Disease_Key: "stroke_older", 疾病名稱: "中風", 年齡組別: "45-65歲", "2014確診數": 1920, "2024確診數": 2525, 十年總增幅_百分比: 31.5, 男性比例_百分比: 62.0, 女性比例_百分比: 38.0, 私家醫院平均開支_港幣: 600000, 終身確診機率_百分比: "16.7%", 確診機率簡明描述: "每 6 人有 1 人一生中會中風" }
   ];
   
-  // ⚡ 雙情景預設資料 (A12: 未有單 / A13: 已有舊單)
+  // ⚡ 雙情景預設資料
   let dynamicHypnoNoPolicy = {
       key: "hypno_no_policy",
       title: "💡 「想請教你一個問題：今日呢個決定，將來背後究竟由邊個默默承擔？」",
@@ -1083,7 +1149,7 @@
       category: "upgrade_buyer"
   };
 
-  let currentScenario = 'A'; // 'A' (未有單) 或 'B' (已有舊單)
+  let currentScenario = 'A';
   let activeAgeFilter = 'all';
   let healthChartInstance = null;
 
@@ -1098,6 +1164,7 @@
       }
       fetchPremiumRates();
       calculateCostIncomeLoss();
+      setupSwipeListener();
   };
   
   async function checkLogin() {
@@ -1137,6 +1204,39 @@
       document.querySelectorAll('.admin-page').forEach(el => el.classList.remove('active'));
       document.getElementById('admin-tab-' + tabName).classList.add('active');
       document.getElementById('admin-page-' + tabName).classList.add('active');
+  }
+
+  // ⚡ 上載情景圖片到 Firebase Storage
+  async function uploadScenarioImage(scenarioType) {
+      const fileInput = document.getElementById(scenarioType === 'A' ? 'uploadFileA' : 'uploadFileB');
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const btn = fileInput.nextElementSibling;
+      const originalText = btn.innerText;
+      btn.innerText = "⏳ 上傳中...";
+      btn.disabled = true;
+
+      try {
+          const storageRef = storage.ref('scenario_images/' + Date.now() + '_' + file.name);
+          await storageRef.put(file);
+          const downloadURL = await storageRef.getDownloadURL();
+          
+          if (scenarioType === 'A') {
+              document.getElementById('adminHypnoImgA').value = downloadURL;
+              dynamicHypnoNoPolicy.imageUrl = downloadURL;
+          } else {
+              document.getElementById('adminHypnoImgB').value = downloadURL;
+              dynamicHypnoHasPolicy.imageUrl = downloadURL;
+          }
+          alert("✅ 圖片已成功上載至 Firebase，並自動填入網址！請記得點擊下方『儲存並同步』。");
+      } catch(e) {
+          console.error(e);
+          alert("❌ 圖片上載失敗，請重試！");
+      } finally {
+          btn.innerText = originalText;
+          btn.disabled = false;
+      }
   }
 
   // ==========================================
@@ -1214,7 +1314,6 @@
       });
       tbody.innerHTML = html;
 
-      // 載入 A12 / A13 到後台輸入框
       if (document.getElementById('adminHypnoTitleA')) document.getElementById('adminHypnoTitleA').value = dynamicHypnoNoPolicy.title || "";
       if (document.getElementById('adminHypnoTextA')) document.getElementById('adminHypnoTextA').value = dynamicHypnoNoPolicy.text || "";
       if (document.getElementById('adminHypnoImgA')) document.getElementById('adminHypnoImgA').value = dynamicHypnoNoPolicy.imageUrl || "";
@@ -1313,7 +1412,7 @@
       renderCostPage();
   }
 
-  // ⚡ 雙情景自動/手動切換與彈出
+  // ⚡ 雙情景切換邏輯
   function updateScenarioByExistingSum() {
       let ex = getNumVal('sumExisting');
       if (ex > 0) {
@@ -1331,7 +1430,7 @@
       }
       const activeObj = currentScenario === 'B' ? dynamicHypnoHasPolicy : dynamicHypnoNoPolicy;
       if (document.getElementById('costHypnoTitleDisplay')) {
-          document.getElementById('costHypnoTitleDisplay').innerText = activeObj.title || "💡 「想請教你一個問題：今日呢個決定，將來背後究竟由邊個默默承擔？」";
+          document.getElementById('costHypnoTitleDisplay').innerText = activeObj.title;
       }
   }
 
@@ -1348,9 +1447,47 @@
       document.getElementById('costHypnoTitleDisplay').innerText = activeObj.title;
   }
 
-  function openCostDynamicHypnoModal() {
+  // ⚡ 置中黑底雙頁流程 Modal 控制
+  function openScenarioModalFlow() {
       const activeObj = currentScenario === 'B' ? dynamicHypnoHasPolicy : dynamicHypnoNoPolicy;
-      openModal(activeObj.imageUrl, activeObj.text);
+      
+      // 填入第 1 頁金句
+      document.getElementById('page1QuoteText').innerHTML = activeObj.title.replace("💡 ", "💡 <br>");
+      
+      // 填入第 2 頁內文與圖片
+      document.getElementById('page2Text').innerHTML = activeObj.text;
+      document.getElementById('page2Image').src = activeObj.imageUrl;
+      
+      goToModalPage(1);
+      document.getElementById('scenarioModal').style.display = 'flex';
+  }
+
+  function goToModalPage(pageNum) {
+      document.querySelectorAll('.scenario-modal-page').forEach(p => p.classList.remove('active'));
+      document.getElementById('modalPage' + pageNum).classList.add('active');
+  }
+
+  function closeScenarioModal(e) {
+      if (e.target.id === 'scenarioModal' || e.target.classList.contains('modal-close')) {
+          document.getElementById('scenarioModal').style.display = 'none';
+      }
+  }
+
+  // 手勢滑動支援 (Swipe Up/Down)
+  function setupSwipeListener() {
+      let startY = 0;
+      const content = document.getElementById('scenarioModalContent');
+      if (!content) return;
+      content.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+      content.addEventListener('touchend', e => {
+          let endY = e.changedTouches[0].clientY;
+          let diffY = startY - endY;
+          if (diffY > 45) { // 向上滑動進入第2頁
+              goToModalPage(2);
+          } else if (diffY < -45 && document.getElementById('modalPage2').scrollTop === 0) { // 向下滑動返回第1頁
+              goToModalPage(1);
+          }
+      }, { passive: true });
   }
 
   function renderCostPage() {
