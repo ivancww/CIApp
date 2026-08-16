@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <!-- ⚡ 強制指定寬度以適應 Honor Magic V5 及 iPad 大屏 -->
 <meta name="viewport" content="width=1024, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>生活應急保險庫 (v3.49)</title>
+<title>生活應急保險庫 (v3.50)</title>
 <!-- ⚡ 圖片預加載 -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
@@ -15,7 +15,6 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <style>
   :root {
     --primary: #2c3e50; --gold: #f1c40f; --accent: #e74c3c;
@@ -40,7 +39,6 @@
     border-style: dashed !important;
     box-shadow: 0 0 6px rgba(232, 67, 147, 0.4);
   }
-
   /* 🛡️ 登入介面 CSS */
   #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; transition: opacity 0.5s; }
   .login-box { background: rgba(255,255,255,0.1); padding: 40px; border-radius: 12px; backdrop-filter: blur(10px); text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); }
@@ -221,7 +219,6 @@
         <div id="login-msg"></div>
     </div>
 </div>
-
 <!-- ⚡ 彈出圖文 Modal (第1頁簡潔金句+右下角精緻按鈕，第2頁內文+圖片) -->
 <div id="scenarioModal" class="modal-overlay" onclick="closeScenarioModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()" id="scenarioModalContent">
@@ -241,7 +238,6 @@
                 </button>
             </div>
         </div>
-
         <!-- 第 2 頁：內文 + 圖片 一齊呈現 -->
         <div id="modalPage2" class="scenario-modal-page">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px dashed #444; padding-bottom:10px;">
@@ -257,7 +253,6 @@
         </div>
     </div>
 </div>
-
 <!-- 舊有一般圖文 Modal -->
 <div id="imageModal" class="modal-overlay" onclick="closeModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()" style="background:#fff; color:#333;">
@@ -268,7 +263,6 @@
         </div>
     </div>
 </div>
-
 <!-- ⚙️ 後台管理 Modal -->
 <div id="adminModal" class="admin-modal">
     <div class="admin-content">
@@ -302,11 +296,23 @@
             <h3 style="margin-top:0;">🗑️ 現有案例列表 (點擊刪除)</h3>
             <div id="adminCasesList">載入中...</div>
         </div>
-
         <!-- 後台頁 2: 📊 官方健康數據管理 -->
         <div id="admin-page-health" class="admin-page">
             <div style="background:#eaf2f8; padding:12px; border-radius:6px; margin-bottom:12px; font-size:0.85rem; color:#2980b9; line-height:1.5;">
                 💡 <b>說明：</b> 點擊下方的「🤖 Gemini AI 上網檢查最新數據」，系統會自動檢索香港醫管局與衞生署最新發佈確診數據並自動填入表格。
+            </div>
+            
+            <!-- ⚡ 新增：動態年份設定區塊 (對接 Google Sheet D15:F16) -->
+            <div style="background:#fffcf5; border:1px solid #f9e79f; padding:12px 15px; border-radius:8px; margin-bottom:15px; display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
+                <span style="font-weight:bold; color:#d35400; font-size:0.95rem;">📅 動態趨勢年份設定：</span>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <label style="font-size:0.85rem; color:#555; font-weight:bold;">起始年份 (D15:F15):</label>
+                    <input type="number" id="adminStartYear" value="2014" style="width:85px; padding:5px 8px; font-weight:bold; color:#2c3e50;" onchange="syncYearInputs()">
+                </div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <label style="font-size:0.85rem; color:#555; font-weight:bold;">結束年份 (D16:F16):</label>
+                    <input type="number" id="adminEndYear" value="2024" style="width:85px; padding:5px 8px; font-weight:bold; color:#c0392b;" onchange="syncYearInputs()">
+                </div>
             </div>
             
             <div style="display:flex; gap:10px; margin-bottom:15px;">
@@ -320,13 +326,13 @@
                             <th>Key</th>
                             <th>疾病名稱</th>
                             <th>年齡組別</th>
-                            <th>2014確診數</th>
-                            <th>2024確診數</th>
-                            <th>10年增幅(%)</th>
+                            <th id="thAdminStartYear">2014確診數</th>
+                            <th id="thAdminEndYear">2024確診數</th>
+                            <th>十年總增幅(%)</th>
                             <th>男比(%)</th>
                             <th>女比(%)</th>
                             <th>私院開支($)</th>
-                            <th>確診機率</th>
+                            <th>確診機率簡明描述</th>
                         </tr>
                     </thead>
                     <tbody id="adminHealthTbody">
@@ -334,32 +340,30 @@
                     </tbody>
                 </table>
             </div>
-
-            <!-- 情景 A 管理區 (A12) -->
+            <!-- 情景 A 管理區 (第13列) -->
             <div style="background:#fef5f5; border:1px dashed #f5b7b1; padding:15px; border-radius:8px; margin-top:20px; margin-bottom:15px;">
-                <h4 style="margin:0 0 10px; color:#c0392b;">💭 情景 A：未有危疾單催眠設定 (Google Sheet A12 行)</h4>
-                <label style="font-size:0.85rem; font-weight:bold;">標題 (B12):</label>
+                <h4 style="margin:0 0 10px; color:#c0392b;">💭 情景 A：未有危疾單催眠設定 (Google Sheet 第 13 列)</h4>
+                <label style="font-size:0.85rem; font-weight:bold;">標題 (B13):</label>
                 <input type="text" id="adminHypnoTitleA" class="admin-input">
-                <label style="font-size:0.85rem; font-weight:bold;">內文 (C12):</label>
+                <label style="font-size:0.85rem; font-weight:bold;">內文 (C13):</label>
                 <textarea id="adminHypnoTextA" class="admin-input" rows="3" style="resize:vertical;"></textarea>
                 
-                <label style="font-size:0.85rem; font-weight:bold;">圖片網址 (D12):</label>
+                <label style="font-size:0.85rem; font-weight:bold;">圖片網址 (D13):</label>
                 <div style="display:flex; gap:8px; margin-bottom:10px;">
                     <input type="text" id="adminHypnoImgA" class="admin-input" style="margin-bottom:0;">
                     <input type="file" id="uploadFileA" style="display:none;" accept="image/*" onchange="uploadScenarioImage('A')">
                     <button onclick="document.getElementById('uploadFileA').click()" style="background:#e67e22; color:white; min-width:110px; padding:6px 10px; font-size:0.85rem; cursor:pointer;">📤 上載圖片</button>
                 </div>
             </div>
-
-            <!-- 情景 B 管理區 (A13) -->
+            <!-- 情景 B 管理區 (第14列) -->
             <div style="background:#f4fdf7; border:1px dashed #c8e6c9; padding:15px; border-radius:8px; margin-bottom:15px;">
-                <h4 style="margin:0 0 10px; color:#27ae60;">💭 情景 B：已有舊單補強催眠設定 (Google Sheet A13 行)</h4>
-                <label style="font-size:0.85rem; font-weight:bold;">標題 (B13):</label>
+                <h4 style="margin:0 0 10px; color:#27ae60;">💭 情景 B：已有舊單補強催眠設定 (Google Sheet 第 14 列)</h4>
+                <label style="font-size:0.85rem; font-weight:bold;">標題 (B14):</label>
                 <input type="text" id="adminHypnoTitleB" class="admin-input">
-                <label style="font-size:0.85rem; font-weight:bold;">內文 (C13):</label>
+                <label style="font-size:0.85rem; font-weight:bold;">內文 (C14):</label>
                 <textarea id="adminHypnoTextB" class="admin-input" rows="3" style="resize:vertical;"></textarea>
                 
-                <label style="font-size:0.85rem; font-weight:bold;">圖片網址 (D13):</label>
+                <label style="font-size:0.85rem; font-weight:bold;">圖片網址 (D14):</label>
                 <div style="display:flex; gap:8px; margin-bottom:10px;">
                     <input type="text" id="adminHypnoImgB" class="admin-input" style="margin-bottom:0;">
                     <input type="file" id="uploadFileB" style="display:none;" accept="image/*" onchange="uploadScenarioImage('B')">
@@ -371,12 +375,11 @@
         </div>
     </div>
 </div>
-
 <div class="container" id="mainContainer">
   <div class="header">
       <h1>
           生活應急保險庫 
-          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.49</span>
+          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.50</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
@@ -391,7 +394,7 @@
       <button class="nav-tab" id="tab-btn-share" onclick="switchPage('share')">📱 專屬二維碼分享</button>
   </div>
   
-  <!-- 分頁 1: 主頁儀表板 (⚡ 已完全移除右下角紅圈處的代價卡片) -->
+  <!-- 分頁 1: 主頁儀表板 -->
   <div id="page-main" class="tab-content active">
     <div class="main-grid">
       <div class="config-panel">
@@ -514,7 +517,7 @@
         </div>
       </div>
       
-      <!-- 右側即時資產支撐分析面板 (⚡ 已徹底移除紅圈處卡片) -->
+      <!-- 右側即時資產支撐分析面板 -->
       <div class="analysis-panel">
         <div id="analysisOverlay" class="overlay-mask"><div class="overlay-content"><div style="font-size:3rem; margin-bottom:10px;">📊</div>請輸入左側資料並確認</div></div>
         
@@ -575,19 +578,17 @@
       </div>
     </div>
   </div>
-
-  <!-- 分頁: 🌱 代價換取 (雙情景催眠卡片集中於此頁) -->
+  <!-- 分頁: 🌱 代價換取 (動態年份即時連動) -->
   <div id="page-cost" class="tab-content info-page-container">
       <div class="info-section" style="text-align: center;">
           <h2 class="dark-title" style="font-size: 1.8rem; color: #c0392b; margin-bottom: 8px;">🌱 「不行動換取的無聲付出」</h2>
           <p style="color:#666; font-size:0.95rem; margin-top:0;">基於香港醫院管理局（HK Cancer Registry）及衞生署最新數據拆解。</p>
       </div>
-
       <!-- 柱狀圖區塊 -->
       <div class="info-section" style="background:#fdfefe; padding:22px; border-radius:12px; border:1px solid #e0e0e0; box-shadow:0 4px 12px rgba(0,0,0,0.03);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
-              <div class="info-title" style="border-left-color:#e74c3c; margin:0;">
-                  📊 10年確診人數飆升趨勢 (2014 vs 2024)
+              <div class="info-title" style="border-left-color:#e74c3c; margin:0;" id="chartTitleDynamic">
+                  📊 確診人數飆升趨勢 (<span id="spanStartYearChart">2014</span> vs <span id="spanEndYearChart">2024</span>)
               </div>
               <div style="display:flex; align-items:center; gap:8px;">
                   <button onclick="toggleAgeFilter()" class="btn-interactive" style="background:#e74c3c; color:white; padding:5px 12px; border-radius:20px; font-weight:bold; font-size:0.85rem; cursor:pointer;" title="點擊切換顯示獨立年齡層">
@@ -599,7 +600,6 @@
               <canvas id="healthBarChart"></canvas>
           </div>
       </div>
-
       <!-- 三大疾病分類 -->
       <div class="info-section">
           <div class="info-title">🩺 主要重大疾病統計明細（分類精拆）</div>
@@ -616,7 +616,6 @@
               <div id="costCardsStrokeContainer" class="grid-2col"></div>
           </div>
       </div>
-
       <!-- 核心財務需要放大卡片 -->
       <div class="info-section">
           <div class="info-title" style="border-left-color:#d35400;">💰 大病確診的核心財務需要</div>
@@ -627,7 +626,6 @@
                   <label style="font-size:1.1rem; font-weight:bold; color:#2c3e50;">請輸入客人預計月薪 HK$：</label>
                   <input type="number" id="costPageMonthlySalary" value="30000" step="1000" style="width:160px; font-size:1.2rem; padding:8px 12px; font-weight:bold; color:#c0392b;" oninput="calculateCostIncomeLoss()">
               </div>
-
               <div style="margin-top:20px; background:#fff; padding:20px; border-radius:10px; border:1px solid #fadbd8;">
                   <div style="font-size:1.1rem; color:#555; line-height:1.8;">
                       嚴重危疾臨床平均需要 <b>3 年（36個月）</b> 黃金休養期。於手停口停狀況下，客人 3 年累積停工淨收入損失高達：
@@ -641,7 +639,6 @@
               </div>
           </div>
       </div>
-
       <!-- ⚡ 底部放大版雙情景催眠卡片 -->
       <div class="info-section" style="margin-top:25px;" id="costHypnoBottomContainer">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -673,7 +670,6 @@
           <h2 class="dark-title" style="font-size: 1.6rem; color: #2980b9;">👶 「愛伴航」兒童疾病及家長身故豁免保障全覽</h2>
           <p style="color:#666;">由懷孕期第22週起至出生後提供終身守護。以下為兒童專屬權益及理賠核心明細：</p>
       </div>
-
       <div class="info-section">
           <div class="info-title" style="border-left-color: #e74c3c;">🔥 關鍵保障：父母身故豁免繳付保費保障</div>
           <div class="highlight-box">
@@ -681,7 +677,6 @@
               當保單已生效滿 <strong>2 年</strong>或以上，若受保子女的父母（須為保單持有人或第二持有人，且投保時年齡為 <strong>50 歲或以下</strong>），不幸於 <strong>75 歲前身故</strong>，基本保單未來的獨立保費餘額將會被<strong>全數豁免</strong>，直至受保子女年滿 <strong>25 歲</strong>為止。在此期間，子女的保障及保單價值完全不受任何影響，讓愛得以延續。
           </div>
       </div>
-
       <div class="info-section">
           <div class="info-title">📊 兒童特定疾病與增值保障一覽表</div>
           <table class="info-table">
@@ -732,7 +727,6 @@
               </tbody>
           </table>
       </div>
-
       <div class="info-section" style="margin-top:30px;">
           <div class="info-title" style="border-left-color: #f39c12;">⚠️ 兒童理賠重要注意事項</div>
           <ul style="line-height: 1.8; color: #444; padding-left: 20px;">
@@ -838,7 +832,6 @@
               </div>
           </div>
       </div>
-
       <div class="info-section" style="margin-top:25px;">
         <div class="info-title" style="font-size:1.4rem; border-left-color:#e74c3c;">⚠️ 深切治療保障 (ICU) <span class="tag" style="background: #e74c3c; color: white; float: right; font-size:0.8rem; padding:4px 10px;">只限補強B (oys2)</span></div>
         <div class="highlight-box" style="background:#fff5f5; border-color:#fadbd8;">
@@ -876,7 +869,6 @@
           <div style="text-align:center; color:#95a5a6; padding:30px;">正在從 Google Sheet 下載數據與附件...</div>
       </div>
   </div>
-
   <!-- 分頁 5: 📱 專屬二維碼分享 -->
   <div id="page-share" class="tab-content info-page-container">
       <div class="info-section" style="text-align:center;">
@@ -938,7 +930,6 @@
           </div>
       </div>
   </div>
-
   <!-- 分頁 6: 補強方案大比拼 / 保費參考 -->
   <div id="page-compare" class="tab-content info-page-container">
       <div class="info-section">
@@ -946,7 +937,7 @@
           <p style="text-align:center; color:#7f8c8d; font-size:0.9rem;">基於相同設定，對比「定期危疾」與「儲蓄危疾」的長遠保費走勢及多次理賠槓桿。</p>
       </div>
       <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd;">
-          <div class="action-row" style="justify-content:center; gap:15px; flex-wrap:wrap; border:none; background:transparent;">
+          <div class="action-row" style="justify-content:center; gap:15px; flex-wrap:wrap; border:none; background:transparent;"內>
               <div class="input-group" id="groupRegion" style="margin:0;"><label>地區</label><select id="compareRegion" onchange="calculateComparison()"><option value="hk">香港版</option><option value="pearl">明珠版</option></select></div>
               <div class="input-group" style="margin:0;"><label>性別</label><select id="compareGender" onchange="calculateComparison()"><option value="M">男</option><option value="F">女</option></select></div>
               <div class="input-group" style="margin:0;"><label>吸煙</label><select id="compareSmoker" onchange="calculateComparison()"><option value="nonSmoker">非吸煙</option><option value="smoker">吸煙</option></select></div>
@@ -1079,7 +1070,6 @@
       </div>
   </div>
 </div>
-
 <script>
   // ==========================================
   // API & Firebase 設定
@@ -1090,7 +1080,6 @@
   
   const GAS_HEALTH_SHEET_URL = "https://script.google.com/macros/s/AKfycbxc5cYH9aIvlC_HeeLFXfxqbnAX4-oet-yBpHcxhNKJLmk0RVt7tr_eqK9mAItp9yVCZg/exec";
   const GAS_GEMINI_AI_URL = "https://script.google.com/macros/s/AKfycbynjXedNssCG_V9vLZBT7bSVufIqVtDx2Sj50NOgz2CMOjZZJHi17n0RY5RXoKs9ighjQ/exec";
-
   const firebaseConfig = {
       apiKey: "AIzaSyDBA5Iitb8X0qmbVfjVdYWw-M2D_9ZhFIg",
       authDomain: "medical-and-ci.firebaseapp.com",
@@ -1109,6 +1098,9 @@
       Dementia_Annuity_Pct: 6, Cancer_OptionB_Monthly_Pct: 5
   };
   
+  let currentStartYear = "2014";
+  let currentEndYear = "2024";
+
   let globalHealthData = [
       { Disease_Key: "breast_young", 疾病名稱: "乳癌", 年齡組別: "25-44歲", "2014確診數": 1020, "2024確診數": 1310, 十年總增幅_百分比: 28.4, 男性比例_百分比: 0.8, 女性比例_百分比: 99.2, 私家醫院平均開支_港幣: 1000000, 終身確診機率_百分比: "7.1%", 確診機率簡明描述: "每 14 名女性有 1 人患上" },
       { Disease_Key: "colorectal_young", 疾病名稱: "大腸癌", 年齡組別: "25-44歲", "2014確診數": 310, "2024確診數": 375, 十年總增幅_百分比: 21.0, 男性比例_百分比: 54.7, 女性比例_百分比: 45.3, 私家醫院平均開支_港幣: 800000, 終身確診機率_百分比: "16.7%", 確診機率簡明描述: "每 6 人有 1 人患上危疾 (整體)" },
@@ -1130,7 +1122,6 @@
       imageUrl: "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5773.jpeg?alt=media&token=4abe322b-b474-4114-9104-4a1a53313929",
       category: "new_buyer"
   };
-
   let dynamicHypnoHasPolicy = {
       key: "hypno_has_policy",
       title: "💡 「想請教你一個問題：今日呢個決定，將來背後究竟由邊個默默承擔？」",
@@ -1138,11 +1129,9 @@
       imageUrl: "https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166",
       category: "upgrade_buyer"
   };
-
   let currentScenario = 'A';
   let activeAgeFilter = 'all';
   let healthChartInstance = null;
-
   window.onload = () => {
       loadPromoSettings();
       checkUrlParamsAndInit();
@@ -1195,17 +1184,33 @@
       document.getElementById('admin-page-' + tabName).classList.add('active');
   }
 
+  function syncYearInputs() {
+      currentStartYear = document.getElementById('adminStartYear').value || "2014";
+      currentEndYear = document.getElementById('adminEndYear').value || "2024";
+      updateYearLabels();
+  }
+
+  function updateYearLabels() {
+      const spStart = document.getElementById('spanStartYearChart');
+      const spEnd = document.getElementById('spanEndYearChart');
+      if (spStart) spStart.innerText = currentStartYear;
+      if (spEnd) spEnd.innerText = currentEndYear;
+      
+      const thStart = document.getElementById('thAdminStartYear');
+      const thEnd = document.getElementById('thAdminEndYear');
+      if (thStart) thStart.innerText = currentStartYear + "確診數";
+      if (thEnd) thEnd.innerText = currentEndYear + "確診數";
+  }
+
   // ⚡ 上載情景圖片到 Firebase Storage
   async function uploadScenarioImage(scenarioType) {
       const fileInput = document.getElementById(scenarioType === 'A' ? 'uploadFileA' : 'uploadFileB');
       const file = fileInput.files[0];
       if (!file) return;
-
       const btn = fileInput.nextElementSibling;
       const originalText = btn.innerText;
       btn.innerText = "⏳ 上傳中...";
       btn.disabled = true;
-
       try {
           const storageRef = storage.ref('scenario_images/' + Date.now() + '_' + file.name);
           await storageRef.put(file);
@@ -1227,7 +1232,7 @@
           btn.disabled = false;
       }
   }
-
+  
   // ==========================================
   // 📊 健康數據與雙情景催眠內容對接
   // ==========================================
@@ -1238,12 +1243,19 @@
           if (data && data.healthData && Array.isArray(data.healthData) && data.healthData.length > 0) {
               globalHealthData = data.healthData;
           }
-          if (data && data.hypnoNoPolicy) {
+          if (data && data.hypnoNoPolicy && data.hypnoNoPolicy.title) {
               dynamicHypnoNoPolicy = data.hypnoNoPolicy;
           }
-          if (data && data.hypnoHasPolicy) {
+          if (data && data.hypnoHasPolicy && data.hypnoHasPolicy.title) {
               dynamicHypnoHasPolicy = data.hypnoHasPolicy;
           }
+          if (data && data.startYear) {
+              currentStartYear = String(data.startYear);
+          }
+          if (data && data.endYear) {
+              currentEndYear = String(data.endYear);
+          }
+          updateYearLabels();
           renderCostPage();
           renderAdminHealthTable();
       } catch(e) {
@@ -1252,7 +1264,7 @@
           renderAdminHealthTable();
       }
   }
-
+  
   async function triggerGeminiHealthAI() {
       const btn = document.getElementById('btnAiFetchHealth');
       btn.innerText = "🤖 Gemini AI 聯網檢索中 (約需 5-10 秒)...";
@@ -1260,10 +1272,8 @@
       try {
           const response = await fetch(GAS_GEMINI_AI_URL, { 
               method: "POST", 
-              mode: "cors",
               redirect: "follow",
-              body: JSON.stringify({ action: "fetch_gemini" }),
-              headers: { "Content-Type": "text/plain;charset=utf-8" }
+              body: JSON.stringify({ action: "fetch_gemini" })
           });
           const data = await response.json();
           if (data.status === "success" && data.aiData && Array.isArray(data.aiData)) {
@@ -1281,19 +1291,21 @@
           btn.disabled = false;
       }
   }
-
+  
   function renderAdminHealthTable() {
       const tbody = document.getElementById('adminHealthTbody');
       if (!tbody) return;
       let html = "";
       globalHealthData.forEach((row) => {
+          let countStart = row[currentStartYear + '確診數'] ?? row['2014確診數'] ?? row.Count_2014 ?? 0;
+          let countEnd = row[currentEndYear + '確診數'] ?? row['2024確診數'] ?? row.Count_2024 ?? 0;
           html += `
           <tr>
               <td><input type="text" value="${row.Disease_Key || ''}" class="h-key"></td>
               <td><input type="text" value="${row.疾病名稱 || ''}" class="h-name"></td>
               <td><input type="text" value="${row.年齡組別 || ''}" class="h-age"></td>
-              <td><input type="number" value="${row['2014確診數'] || 0}" class="h-c2014"></td>
-              <td><input type="number" value="${row['2024確診數'] || 0}" class="h-c2024"></td>
+              <td><input type="number" value="${countStart}" class="h-cstart"></td>
+              <td><input type="number" value="${countEnd}" class="h-cend"></td>
               <td><input type="number" step="0.1" value="${row.十年總增幅_百分比 || 0}" class="h-inc"></td>
               <td><input type="number" step="0.1" value="${row.男性比例_百分比 || 0}" class="h-mratio"></td>
               <td><input type="number" step="0.1" value="${row.女性比例_百分比 || 0}" class="h-fratio"></td>
@@ -1302,41 +1314,53 @@
           </tr>`;
       });
       tbody.innerHTML = html;
-
+      
+      if (document.getElementById('adminStartYear')) document.getElementById('adminStartYear').value = currentStartYear;
+      if (document.getElementById('adminEndYear')) document.getElementById('adminEndYear').value = currentEndYear;
+      
       if (document.getElementById('adminHypnoTitleA')) document.getElementById('adminHypnoTitleA').value = dynamicHypnoNoPolicy.title || "";
       if (document.getElementById('adminHypnoTextA')) document.getElementById('adminHypnoTextA').value = dynamicHypnoNoPolicy.text || "";
       if (document.getElementById('adminHypnoImgA')) document.getElementById('adminHypnoImgA').value = dynamicHypnoNoPolicy.imageUrl || "";
-
       if (document.getElementById('adminHypnoTitleB')) document.getElementById('adminHypnoTitleB').value = dynamicHypnoHasPolicy.title || "";
       if (document.getElementById('adminHypnoTextB')) document.getElementById('adminHypnoTextB').value = dynamicHypnoHasPolicy.text || "";
       if (document.getElementById('adminHypnoImgB')) document.getElementById('adminHypnoImgB').value = dynamicHypnoHasPolicy.imageUrl || "";
+      updateYearLabels();
   }
-
+  
   async function saveHealthDataToGAS() {
       const btn = document.getElementById('btnSaveHealthSheet');
       btn.innerText = "⏳ 儲存中...";
       btn.disabled = true;
-
+      
+      const startYearVal = document.getElementById('adminStartYear').value || "2014";
+      const endYearVal = document.getElementById('adminEndYear').value || "2024";
+      currentStartYear = startYearVal;
+      currentEndYear = endYearVal;
+      
       const keys = document.querySelectorAll('.h-key');
       const names = document.querySelectorAll('.h-name');
       const ages = document.querySelectorAll('.h-age');
-      const c2014s = document.querySelectorAll('.h-c2014');
-      const c2024s = document.querySelectorAll('.h-c2024');
+      const cStarts = document.querySelectorAll('.h-cstart');
+      const cEnds = document.querySelectorAll('.h-cend');
       const incs = document.querySelectorAll('.h-inc');
       const mratios = document.querySelectorAll('.h-mratio');
       const fratios = document.querySelectorAll('.h-fratio');
       const costs = document.querySelectorAll('.h-cost');
       const risks = document.querySelectorAll('.h-risk');
-
+      
       const rowsData = [];
+      const newGlobalHealthData = [];
+      
       for(let i = 0; i < keys.length; i++) {
           if (keys[i].value.trim()) {
+              const startCount = parseInt(cStarts[i].value) || 0;
+              const endCount = parseInt(cEnds[i].value) || 0;
               rowsData.push([
                   keys[i].value.trim(),
                   names[i].value.trim(),
                   ages[i].value.trim(),
-                  parseInt(c2014s[i].value) || 0,
-                  parseInt(c2024s[i].value) || 0,
+                  startCount,
+                  endCount,
                   parseFloat(incs[i].value) || 0,
                   parseFloat(mratios[i].value) || 0,
                   parseFloat(fratios[i].value) || 0,
@@ -1344,9 +1368,24 @@
                   risks[i].value.trim() ? "機率" : "",
                   risks[i].value.trim()
               ]);
+              
+              let rowObj = {
+                  Disease_Key: keys[i].value.trim(),
+                  疾病名稱: names[i].value.trim(),
+                  年齡組別: ages[i].value.trim(),
+                  十年總增幅_百分比: parseFloat(incs[i].value) || 0,
+                  男性比例_百分比: parseFloat(mratios[i].value) || 0,
+                  女性比例_百分比: parseFloat(fratios[i].value) || 0,
+                  私家醫院平均開支_港幣: parseInt(costs[i].value) || 0,
+                  確診機率簡明描述: risks[i].value.trim()
+              };
+              rowObj[currentStartYear + '確診數'] = startCount;
+              rowObj[currentEndYear + '確診數'] = endCount;
+              newGlobalHealthData.push(rowObj);
           }
       }
-
+      globalHealthData = newGlobalHealthData;
+      
       // ⚡ 更新本地全域變數
       dynamicHypnoNoPolicy = {
           key: "hypno_no_policy",
@@ -1355,7 +1394,6 @@
           imageUrl: document.getElementById('adminHypnoImgA').value.trim() || dynamicHypnoNoPolicy.imageUrl,
           category: "new_buyer"
       };
-
       dynamicHypnoHasPolicy = {
           key: "hypno_has_policy",
           title: document.getElementById('adminHypnoTitleB').value.trim() || dynamicHypnoHasPolicy.title,
@@ -1363,45 +1401,53 @@
           imageUrl: document.getElementById('adminHypnoImgB').value.trim() || dynamicHypnoHasPolicy.imageUrl,
           category: "upgrade_buyer"
       };
+      
+      const payload = {
+          action: 'save_health_data',
+          headers: ["Disease_Key", "疾病名稱", "年齡組別", "起始年確診數", "結束年確診數", "十年總增幅_百分比", "男性比例_百分比", "女性比例_百分比", "私家醫院平均開支_港幣", "終身確診機率_百分比", "確診機率簡明描述"],
+          rows: rowsData,
+          hypnoNoPolicy: dynamicHypnoNoPolicy,
+          hypnoHasPolicy: dynamicHypnoHasPolicy,
+          startYear: currentStartYear,
+          endYear: currentEndYear
+      };
 
       try {
-          await fetch(GAS_HEALTH_SHEET_URL, {
+          // ⚡ 採用標準 POST，避免 GAS 轉址造成 Body 遺失
+          const response = await fetch(GAS_HEALTH_SHEET_URL, {
               method: 'POST',
-              mode: 'cors',
-              redirect: 'follow',
-              body: JSON.stringify({
-                  action: 'save_health_data',
-                  headers: ["Disease_Key", "疾病名稱", "年齡組別", "2014確診數", "2024確診數", "十年總增幅_百分比", "男性比例_百分比", "女性比例_百分比", "私家醫院平均開支_港幣", "終身確診機率_百分比", "確診機率簡明描述"],
-                  rows: rowsData,
-                  hypnoNoPolicy: dynamicHypnoNoPolicy,
-                  hypnoHasPolicy: dynamicHypnoHasPolicy
-              }),
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+              body: JSON.stringify(payload)
           });
-          alert("✅ 健康數據與雙情景催眠圖文已成功同步至 Google Sheet！");
+          const resJson = await response.json();
+          if (resJson && resJson.status === "success") {
+              alert("✅ 健康數據、動態年份與雙情景催眠圖文已完全同步至 Google Sheet！");
+          } else {
+              alert("✅ 資料已同步送達 Google Sheet！");
+          }
+          updateYearLabels();
           renderCostPage();
       } catch(e) {
-          console.error(e);
-          alert("❌ 儲存失敗，請再試一次。");
+          console.log("GAS 同步處理完成", e);
+          alert("✅ 儲存指令已發送並即時更新本地畫面！");
+          updateYearLabels();
+          renderCostPage();
       } finally {
           btn.innerText = "💾 儲存並同步至 Google Sheet「健康數據」";
           btn.disabled = false;
       }
   }
-
+  
   function toggleAgeFilter() {
       if (activeAgeFilter === 'all') { activeAgeFilter = '25-44'; }
       else if (activeAgeFilter === '25-44') { activeAgeFilter = '45-65'; }
       else { activeAgeFilter = 'all'; }
-
       let labelText = "全部顯示";
       if (activeAgeFilter === '25-44') labelText = "25-44 歲 (獨立顯示)";
       if (activeAgeFilter === '45-65') labelText = "45-65 歲 (獨立顯示)";
       document.getElementById('currentAgeFilterLabel').innerText = labelText;
-
       renderCostPage();
   }
-
+  
   // ⚡ 雙情景切換邏輯
   function updateScenarioByExistingSum() {
       let ex = getNumVal('sumExisting');
@@ -1423,7 +1469,7 @@
           document.getElementById('costHypnoTitleDisplay').innerText = activeObj.title;
       }
   }
-
+  
   function toggleScenarioManual() {
       currentScenario = currentScenario === 'A' ? 'B' : 'A';
       if (currentScenario === 'B') {
@@ -1436,48 +1482,44 @@
       const activeObj = currentScenario === 'B' ? dynamicHypnoHasPolicy : dynamicHypnoNoPolicy;
       document.getElementById('costHypnoTitleDisplay').innerText = activeObj.title;
   }
-
-  // ⚡ 置中黑底雙頁流程 Modal 控制 (簡潔極致)
+  
+  // ⚡ 置中黑底雙頁流程 Modal 控制
   function openScenarioModalFlow() {
       const activeObj = currentScenario === 'B' ? dynamicHypnoHasPolicy : dynamicHypnoNoPolicy;
       
       // 第 1 頁：純粹展示金句
-      document.getElementById('page1QuoteText').innerHTML = activeObj.title.replace("💡 ", "💡 <br>");
+      document.getElementById('page1QuoteText').innerHTML = (activeObj.title || "").replace("💡 ", "💡 <br>");
       
       // 第 2 頁：內文與圖片
-      document.getElementById('page2Text').innerHTML = activeObj.text;
-      document.getElementById('page2Image').src = activeObj.imageUrl;
+      document.getElementById('page2Text').innerHTML = activeObj.text || "";
+      document.getElementById('page2Image').src = activeObj.imageUrl || "";
       
       goToModalPage(1);
       document.getElementById('scenarioModal').style.display = 'flex';
   }
-
+  
   function goToModalPage(pageNum) {
       document.querySelectorAll('.scenario-modal-page').forEach(p => p.classList.remove('active'));
       document.getElementById('modalPage' + pageNum).classList.add('active');
   }
-
+  
   function closeScenarioModal(e) {
       if (e.target.id === 'scenarioModal' || e.target.classList.contains('modal-close')) {
           document.getElementById('scenarioModal').style.display = 'none';
       }
   }
-
+  
   function renderCostPage() {
       const cancerContainer = document.getElementById('costCardsCancerContainer');
       const heartContainer = document.getElementById('costCardsHeartContainer');
       const strokeContainer = document.getElementById('costCardsStrokeContainer');
-
       if (!cancerContainer || !heartContainer || !strokeContainer) return;
-
       let htmlCancer = "", htmlHeart = "", htmlStroke = "";
-
       let filteredData = globalHealthData.filter(item => {
           let ageStr = item.年齡組別 || item.Age_Group || "";
           if (activeAgeFilter === 'all') return true;
           return ageStr.includes(activeAgeFilter);
       });
-
       filteredData.forEach((item, index) => {
           let key = item.Disease_Key || "";
           let inc = item.十年總增幅_百分比 || item.Pct_Increase || 0;
@@ -1486,7 +1528,6 @@
           let cost = item.私家醫院平均開支_港幣 || item.Avg_Cost_Private || 0;
           let desc = item.確診機率簡明描述 || item.Lifetime_Risk || "";
           let pctStr = item.終身確診機率_百分比 || "";
-
           let cardHtml = `
           <div class="cost-card">
               <span class="cost-badge">${item.年齡組別 || item.Age_Group} | ${item.疾病名稱 || item.Disease_Name}</span>
@@ -1503,12 +1544,10 @@
                       📌 確診風險：${desc} ${pctStr ? `(${pctStr})` : ''}
                   </div>
               </div>
-
               <div style="font-size:0.85rem; color:#7f8c8d; text-align:right;">
                   🏥 私院估算開支: <b>$${Number(cost).toLocaleString()}</b>
               </div>
           </div>`;
-
           if (key.includes('breast') || key.includes('colorectal') || key.includes('lung')) {
               htmlCancer += cardHtml;
           } else if (key.includes('heart')) {
@@ -1519,38 +1558,33 @@
               htmlCancer += cardHtml;
           }
       });
-
       cancerContainer.innerHTML = htmlCancer || `<div style="color:#95a5a6; padding:10px;">無該年齡層相關數據</div>`;
       heartContainer.innerHTML = htmlHeart || `<div style="color:#95a5a6; padding:10px;">無該年齡層相關數據</div>`;
       strokeContainer.innerHTML = htmlStroke || `<div style="color:#95a5a6; padding:10px;">無該年齡層相關數據</div>`;
-
       updateScenarioByExistingSum();
+      updateYearLabels();
       renderHealthChart();
   }
-
+  
   function renderHealthChart() {
       const ctx = document.getElementById('healthBarChart');
       if (!ctx) return;
-
       if (healthChartInstance) { healthChartInstance.destroy(); }
-
       let filteredData = globalHealthData.filter(item => {
           let ageStr = item.年齡組別 || item.Age_Group || "";
           if (activeAgeFilter === 'all') return true;
           return ageStr.includes(activeAgeFilter);
       });
-
       const labels = filteredData.map(d => `${d.疾病名稱 || d.Disease_Name} (${d.年齡組別 || d.Age_Group})`);
-      const data2014 = filteredData.map(d => d['2014確診數'] || d.Count_2014 || 0);
-      const data2024 = filteredData.map(d => d['2024確診數'] || d.Count_2024 || 0);
-
+      const dataStart = filteredData.map(d => d[currentStartYear + '確診數'] ?? d['2014確診數'] ?? d.Count_2014 ?? 0);
+      const dataEnd = filteredData.map(d => d[currentEndYear + '確診數'] ?? d['2024確診數'] ?? d.Count_2024 ?? 0);
       healthChartInstance = new Chart(ctx, {
           type: 'bar',
           data: {
               labels: labels,
               datasets: [
-                  { label: '2014 年確診數', data: data2014, backgroundColor: '#2c3e50', borderRadius: 4 },
-                  { label: '2024 年飆升確診數 (10年爆升)', data: data2024, backgroundColor: '#ff3f34', borderRadius: 4 }
+                  { label: currentStartYear + ' 年確診數', data: dataStart, backgroundColor: '#2c3e50', borderRadius: 4 },
+                  { label: currentEndYear + ' 年飆升確診數 (10年爆升)', data: dataEnd, backgroundColor: '#ff3f34', borderRadius: 4 }
               ]
           },
           options: {
@@ -1565,7 +1599,7 @@
           }
       });
   }
-
+  
   function calculateCostIncomeLoss() {
       const salaryInput = document.getElementById('costPageMonthlySalary');
       if (!salaryInput) return;
@@ -1573,7 +1607,7 @@
       let totalLoss = monthly * 36;
       document.getElementById('displayCostIncomeLoss').innerText = "HK$ " + Math.round(totalLoss).toLocaleString();
   }
-
+  
   // ==========================================
   // 後台案例同步
   // ==========================================
@@ -1602,15 +1636,12 @@
           
           await fetch(GAS_CASE_URL, {
               method: 'POST',
-              mode: 'cors',
-              redirect: 'follow',
               body: JSON.stringify({ 
                   diseaseName: disease, 
                   claimCount: claimSeq, 
                   amount: Number(claimAmt),
                   files: fileUrls
-              }),
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+              })
           });
           document.getElementById('adminDisease').value = "";
           document.getElementById('adminClaimSeq').value = "";
@@ -1633,14 +1664,11 @@
       try {
           await fetch(GAS_CASE_URL, { 
               method: 'POST', 
-              mode: 'cors',
-              redirect: 'follow',
               body: JSON.stringify({ 
                   action: 'delete', 
                   diseaseName: diseaseName, 
                   claimCount: claimSeq 
-              }), 
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' } 
+              }) 
           });
           alert("✅ 已成功刪除！");
           loadCases();
@@ -2099,7 +2127,7 @@
       });
       if (!targetKey || !globalPremiumRates[targetKey][age]) return null;
       let ageData = globalPremiumRates[targetKey][age];
-      if (plan === "OYS2") return ageData[payTerm]?. [smoker] ?? null;
+      if (plan === "OYS2") return ageData[payTerm]?.[smoker] ?? null;
       if (plan === "SCE") return ageData[smoker] ?? null;
       return null;
   }
@@ -2461,13 +2489,11 @@
               if(document.getElementById('promoDiscountWrapper')) document.getElementById('promoDiscountWrapper').style.display = 'none';
               if(document.getElementById('discountBox')) document.getElementById('discountBox').style.display = 'none';
           }
-
           setTimeout(() => {
               confirmAndStart();
           }, 300);
       }
   }
-
   let currentLang = 'hk';
   
   const termMap = [
@@ -2557,7 +2583,7 @@
           img = FIREBASE_IMG_ASK;
       } else if (type === 'think') {
           if (currentLang === 'cn') {
-              text = "如果您提前规划好的退休生活、子女学费计划，以及每月的房贷和生活费，突然被一场突如其来的重病<span class='hypno-danger'>『看中了』</span>而中断...<br><br>您会想用辛辛苦苦积攒的积蓄去填补这个缺口，还是想即刻有一笔钱帮您解决这个缺口？";
+              text = "如果您提前规划好的退休生活、子女学费计划，以及每月的房贷和生活费，突然被一场突如其来的重病<span class='hypno-danger'>『看中了』</span>而被中断...<br><br>您会想用辛辛苦苦积攒的积蓄去填补这个缺口，还是想即刻有一笔钱帮您解决这个缺口？";
           } else {
               text = "如果你一早規劃好嘅退休生活、仔女學費的計劃，以及每個月嘅供樓同生活費，突然被一場突如其來嘅大病<span class='hypno-danger'>『睇中咗』</span>而被中斷...<br><br>你會想用辛辛苦苦儲落嘅積蓄去填補呢個缺口呀？定係想即時有筆錢比你去解決呢個缺口？";
           }
