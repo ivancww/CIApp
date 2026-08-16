@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <!-- ⚡ 強制指定寬度以適應 Honor Magic V5 及 iPad 大屏 -->
 <meta name="viewport" content="width=1024, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>生活應急保險庫 (v3.53)</title>
+<title>生活應急保險庫 (v3.54)</title>
 <!-- ⚡ 圖片預加載 -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
@@ -403,7 +403,7 @@
   <div class="header">
       <h1>
           生活應急保險庫 
-          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.53</span>
+          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.54</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
@@ -1609,9 +1609,7 @@
       let cardIdx = 0;
 
       if (activeAgeFilter === 'all') {
-          // ⚡ 當「全部顯示」時，同類疾病左右並列配對（25-44歲在左，45-65歲在右）
-          
-          // 1. 癌症類 (乳癌、大腸癌、肺癌 各自左右成對)
+          // ⚡ 1. 癌症類 (乳癌、大腸癌、肺癌 各自左右成對)
           const cancerPairs = [
               { youngKey: 'breast_young', olderKey: 'breast_older', matchName: '乳癌' },
               { youngKey: 'colorectal_young', olderKey: 'colorectal_older', matchName: '大腸癌' },
@@ -1624,13 +1622,13 @@
               if (olderItem) htmlCancer += buildSingleCostCard(olderItem, cardIdx++);
           });
 
-          // 2. 心血管類 (急性心臟病 左右成對)
+          // ⚡ 2. 心血管類 (急性心臟病 左右成對)
           let heartYoung = globalHealthData.find(d => (d.Disease_Key === 'heart_young') || ((d.疾病名稱||'').includes('心臟') && (d.年齡組別||'').includes('25-44')));
           let heartOlder = globalHealthData.find(d => (d.Disease_Key === 'heart_older') || ((d.疾病名稱||'').includes('心臟') && (d.年齡組別||'').includes('45-65')));
           if (heartYoung) htmlHeart += buildSingleCostCard(heartYoung, cardIdx++);
           if (heartOlder) htmlHeart += buildSingleCostCard(heartOlder, cardIdx++);
 
-          // 3. 腦神經類 (中風 左右成對)
+          // ⚡ 3. 腦神經類 (中風 左右成對)
           let strokeYoung = globalHealthData.find(d => (d.Disease_Key === 'stroke_young') || ((d.疾病名稱||'').includes('中風') && (d.年齡組別||'').includes('25-44')));
           let strokeOlder = globalHealthData.find(d => (d.Disease_Key === 'stroke_older') || ((d.疾病名稱||'').includes('中風') && (d.年齡組別||'').includes('45-65')));
           if (strokeYoung) htmlStroke += buildSingleCostCard(strokeYoung, cardIdx++);
@@ -1667,17 +1665,38 @@
       renderHealthChart();
   }
   
+  // ⚡ 棒形圖（Chart.js）同步左右並排與專屬色彩對齊
   function renderHealthChart() {
       const ctx = document.getElementById('healthBarChart');
       if (!ctx) return;
       if (healthChartInstance) { healthChartInstance.destroy(); }
-      let filteredData = globalHealthData.filter(item => {
-          let ageStr = item.年齡組別 || item.Age_Group || "";
-          if (activeAgeFilter === 'all') return true;
-          return ageStr.includes(activeAgeFilter);
-      });
-      const labels = filteredData.map(d => `${d.疾病名稱 || d.Disease_Name} (${d.年齡組別 || d.Age_Group})`);
-      const dataStart = filteredData.map(d => {
+
+      let orderedData = [];
+
+      if (activeAgeFilter === 'all') {
+          // 按 5 大疾病成對排列：乳癌(幼/壯)、大腸癌(幼/壯)、肺癌(幼/壯)、心臟(幼/壯)、中風(幼/壯)
+          const diseasePairs = [
+              { youngKey: 'breast_young', olderKey: 'breast_older', matchName: '乳癌' },
+              { youngKey: 'colorectal_young', olderKey: 'colorectal_older', matchName: '大腸癌' },
+              { youngKey: 'lung_young', olderKey: 'lung_older', matchName: '肺癌' },
+              { youngKey: 'heart_young', olderKey: 'heart_older', matchName: '心臟' },
+              { youngKey: 'stroke_young', olderKey: 'stroke_older', matchName: '中風' }
+          ];
+          diseasePairs.forEach(p => {
+              let y = globalHealthData.find(d => d.Disease_Key === p.youngKey || ((d.疾病名稱||'').includes(p.matchName) && (d.年齡組別||'').includes('25-44')));
+              let o = globalHealthData.find(d => d.Disease_Key === p.olderKey || ((d.疾病名稱||'').includes(p.matchName) && (d.年齡組別||'').includes('45-65')));
+              if (y) orderedData.push(y);
+              if (o) orderedData.push(o);
+          });
+      } else {
+          orderedData = globalHealthData.filter(item => {
+              let ageStr = item.年齡組別 || item.Age_Group || "";
+              return ageStr.includes(activeAgeFilter);
+          });
+      }
+
+      const labels = orderedData.map(d => `${d.疾病名稱 || d.Disease_Name} (${d.年齡組別 || d.Age_Group})`);
+      const dataStart = orderedData.map(d => {
           let keys = Object.keys(d);
           for (let k of keys) {
               if (k.includes(currentStartYear) || k.includes('起始年') || k.includes('起始') || k.includes('2014')) {
@@ -1687,7 +1706,7 @@
           }
           return d.Count_2014 || 0;
       });
-      const dataEnd = filteredData.map(d => {
+      const dataEnd = orderedData.map(d => {
           let keys = Object.keys(d);
           for (let k of keys) {
               if (k.includes(currentEndYear) || k.includes('結束年') || k.includes('結束') || k.includes('2024')) {
@@ -1697,20 +1716,40 @@
           }
           return d.Count_2024 || 0;
       });
+
       healthChartInstance = new Chart(ctx, {
           type: 'bar',
           data: {
               labels: labels,
               datasets: [
-                  { label: currentStartYear + ' 年確診數', data: dataStart, backgroundColor: '#2c3e50', borderRadius: 4 },
-                  { label: currentEndYear + ' 年飆升確診數 (10年爆升)', data: dataEnd, backgroundColor: '#ff3f34', borderRadius: 4 }
+                  { 
+                      label: currentStartYear + ' 年確診數', 
+                      data: dataStart, 
+                      backgroundColor: '#34495e', 
+                      borderRadius: 4 
+                  },
+                  { 
+                      label: currentEndYear + ' 年飆升確診數', 
+                      data: dataEnd, 
+                      backgroundColor: '#e74c3c', 
+                      borderRadius: 4 
+                  }
               ]
           },
           options: {
               responsive: true,
               maintainAspectRatio: false,
               plugins: {
-                  legend: { position: 'top' }
+                  legend: { position: 'top' },
+                  tooltip: {
+                      callbacks: {
+                          afterLabel: function(context) {
+                              let item = orderedData[context.dataIndex];
+                              let inc = item.十年總增幅_百分比 || 0;
+                              return `十年總增幅: +${inc}%`;
+                          }
+                      }
+                  }
               },
               scales: {
                   y: { beginAtZero: true }
