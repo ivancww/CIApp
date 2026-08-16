@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <!-- ⚡ 強制指定寬度以適應 Honor Magic V5 及 iPad 大屏 -->
 <meta name="viewport" content="width=1024, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>生活應急保險庫 (v3.52)</title>
+<title>生活應急保險庫 (v3.53)</title>
 <!-- ⚡ 圖片預加載 -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
@@ -200,8 +200,32 @@
   .badge-highlight-pink { background: #fd79a8; color: white; padding: 2px 8px; border-radius: 4px; font-weight: bold; display: inline-block; margin-left: 5px; }
   .badge-highlight-red { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 4px; font-weight: bold; display: inline-block; margin-left: 5px; }
   
-  .cost-card { background: #fff; border-radius: 12px; padding: 22px; margin-bottom: 20px; border-left: 6px solid #e74c3c; box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
-  .cost-badge { background: #fadbd8; color: #c0392b; font-weight: bold; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem; display: inline-block; margin-bottom: 10px; }
+  /* 基礎卡片樣式 */
+  .cost-card { background: #fff; border-radius: 12px; padding: 22px; margin-bottom: 20px; border-left: 8px solid #e74c3c; box-shadow: 0 6px 16px rgba(0,0,0,0.06); transition: transform 0.2s, box-shadow 0.2s; }
+  .cost-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+  .cost-badge { font-weight: bold; padding: 5px 12px; border-radius: 6px; font-size: 0.95rem; display: inline-block; margin-bottom: 10px; }
+  
+  /* 🎨 5種疾病專屬卡片顏色樣式 (使用 class 強制鎖定顏色) */
+  .cost-card-breast { border-left-color: #e84393 !important; }
+  .cost-card-breast .cost-badge { background: #fde8f1 !important; color: #e84393 !important; }
+  .cost-card-breast .inc-text { color: #e84393 !important; }
+  
+  .cost-card-colorectal { border-left-color: #e67e22 !important; }
+  .cost-card-colorectal .cost-badge { background: #fdf2e9 !important; color: #e67e22 !important; }
+  .cost-card-colorectal .inc-text { color: #e67e22 !important; }
+
+  .cost-card-lung { border-left-color: #4b6584 !important; }
+  .cost-card-lung .cost-badge { background: #f1f2f6 !important; color: #4b6584 !important; }
+  .cost-card-lung .inc-text { color: #4b6584 !important; }
+
+  .cost-card-heart { border-left-color: #8e44ad !important; }
+  .cost-card-heart .cost-badge { background: #f4ecf7 !important; color: #8e44ad !important; }
+  .cost-card-heart .inc-text { color: #8e44ad !important; }
+
+  .cost-card-stroke { border-left-color: #c0392b !important; }
+  .cost-card-stroke .cost-badge { background: #fadbd8 !important; color: #c0392b !important; }
+  .cost-card-stroke .inc-text { color: #c0392b !important; }
+
   .big-cost-card { background: #fff5f5; border: 2px dashed #f5b7b1; border-left: 8px solid #e74c3c; border-radius: 14px; padding: 25px; box-shadow: 0 8px 20px rgba(231,76,60,0.12); margin-top: 20px; }
   
   .large-hypno-card { background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%); border: 2px dashed #e74c3c; border-left: 10px solid #c0392b; border-radius: 14px; padding: 25px 20px; margin-top: 20px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 8px 25px rgba(231,76,60,0.15); }
@@ -379,7 +403,7 @@
   <div class="header">
       <h1>
           生活應急保險庫 
-          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.52</span>
+          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.53</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
@@ -1523,22 +1547,16 @@
       }
   }
   
-  // 🎨 疾病專屬配色配置器
-  function getDiseaseColorConfig(key, name) {
+  // 🎨 獲取疾病專屬 CSS Class
+  function getDiseaseCardClass(key, name) {
       let k = (key || "").toLowerCase();
       let n = name || "";
-      if (k.includes('breast') || n.includes('乳癌')) {
-          return { primary: '#e84393', bg: '#fde8f1', name: '乳癌' };
-      } else if (k.includes('colorectal') || n.includes('腸癌')) {
-          return { primary: '#e67e22', bg: '#fdf2e9', name: '大腸癌' };
-      } else if (k.includes('lung') || n.includes('肺癌')) {
-          return { primary: '#4b6584', bg: '#f1f2f6', name: '肺癌' };
-      } else if (k.includes('heart') || n.includes('心臟')) {
-          return { primary: '#8e44ad', bg: '#f4ecf7', name: '急性心臟病' };
-      } else if (k.includes('stroke') || n.includes('中風')) {
-          return { primary: '#c0392b', bg: '#fadbd8', name: '中風' };
-      }
-      return { primary: '#e74c3c', bg: '#fadbd8', name: n || '重大疾病' };
+      if (k.includes('breast') || n.includes('乳癌')) return 'cost-card-breast';
+      if (k.includes('colorectal') || n.includes('腸癌')) return 'cost-card-colorectal';
+      if (k.includes('lung') || n.includes('肺癌')) return 'cost-card-lung';
+      if (k.includes('heart') || n.includes('心臟')) return 'cost-card-heart';
+      if (k.includes('stroke') || n.includes('中風')) return 'cost-card-stroke';
+      return '';
   }
 
   function buildSingleCostCard(item, index) {
@@ -1550,12 +1568,12 @@
       let cost = item.私家醫院平均開支_港幣 || item.Avg_Cost_Private || 0;
       let desc = item.確診機率簡明描述 || item.Lifetime_Risk || "";
       let pctStr = item.終身確診機率_百分比 || "";
-      let theme = getDiseaseColorConfig(key, name);
+      let colorClass = getDiseaseCardClass(key, name);
 
       return `
-      <div class="cost-card" style="border-left: 6px solid ${theme.primary}; background: #fff;">
+      <div class="cost-card ${colorClass}">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-              <span class="cost-badge" style="background:${theme.bg}; color:${theme.primary}; margin-bottom:0;">
+              <span class="cost-badge">
                   ${item.年齡組別 || item.Age_Group} | ${name}
               </span>
               <span style="font-size:0.85rem; background:#f0f3f4; padding:3px 10px; border-radius:12px; font-weight:bold; color:#34495e;">
@@ -1564,14 +1582,14 @@
           </div>
           <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
               <strong style="font-size:1.05rem; color:#2c3e50;">10年確診增幅:</strong>
-              <span style="color:${theme.primary}; font-size:1.35rem; font-weight:900;">+${inc}%</span>
+              <span class="inc-text" style="font-size:1.35rem; font-weight:900;">+${inc}%</span>
           </div>
           
           <div style="margin-top:8px; margin-bottom:8px;">
               <button onclick="document.getElementById('risk-box-${index}').style.display='block'; this.style.display='none';" class="btn-interactive" style="background:#fff3cd; color:#d35400; padding:6px 12px; font-size:0.85rem; font-weight:bold; cursor:pointer; width:100%; justify-content:center;">
                   🔒 點擊揭曉確診風險與機率
               </button>
-              <div id="risk-box-${index}" style="display:none; background:#fef9e7; padding:10px; border-radius:6px; border:1px solid #f9e79f; font-size:0.95rem; color:${theme.primary}; font-weight:bold; margin-top:5px;">
+              <div id="risk-box-${index}" style="display:none; background:#fef9e7; padding:10px; border-radius:6px; border:1px solid #f9e79f; font-size:0.95rem; font-weight:bold; margin-top:5px; color:#2c3e50;">
                   📌 確診風險：${desc} ${pctStr ? `(${pctStr})` : ''}
               </div>
           </div>
@@ -1588,59 +1606,46 @@
       if (!cancerContainer || !heartContainer || !strokeContainer) return;
       
       let htmlCancer = "", htmlHeart = "", htmlStroke = "";
+      let cardIdx = 0;
 
       if (activeAgeFilter === 'all') {
-          // ⚡ 當「全部顯示」時，同類疾病左右並列配對呈現
-          const diseaseOrderList = [
-              { keyMatch: 'breast', nameMatch: '乳癌', category: 'cancer' },
-              { keyMatch: 'colorectal', nameMatch: '大腸癌', category: 'cancer' },
-              { keyMatch: 'lung', nameMatch: '肺癌', category: 'cancer' },
-              { keyMatch: 'heart', nameMatch: '急性心臟病', category: 'heart' },
-              { keyMatch: 'stroke', nameMatch: '中風', category: 'stroke' }
+          // ⚡ 當「全部顯示」時，同類疾病左右並列配對（25-44歲在左，45-65歲在右）
+          
+          // 1. 癌症類 (乳癌、大腸癌、肺癌 各自左右成對)
+          const cancerPairs = [
+              { youngKey: 'breast_young', olderKey: 'breast_older', matchName: '乳癌' },
+              { youngKey: 'colorectal_young', olderKey: 'colorectal_older', matchName: '大腸癌' },
+              { youngKey: 'lung_young', olderKey: 'lung_older', matchName: '肺癌' }
           ];
-
-          let pairedCancerHtml = "";
-          let pairedHeartHtml = "";
-          let pairedStrokeHtml = "";
-          let cardIdx = 0;
-
-          diseaseOrderList.forEach(dTarget => {
-              let itemYoung = globalHealthData.find(item => {
-                  let k = (item.Disease_Key || "").toLowerCase();
-                  let n = item.疾病名稱 || "";
-                  let age = item.年齡組別 || "";
-                  return (k.includes(dTarget.keyMatch) || n.includes(dTarget.nameMatch)) && (k.includes('young') || age.includes('25-44'));
-              });
-              let itemOlder = globalHealthData.find(item => {
-                  let k = (item.Disease_Key || "").toLowerCase();
-                  let n = item.疾病名稱 || "";
-                  let age = item.年齡組別 || "";
-                  return (k.includes(dTarget.keyMatch) || n.includes(dTarget.nameMatch)) && (k.includes('older') || age.includes('45-65'));
-              });
-
-              let cardYoungHtml = itemYoung ? buildSingleCostCard(itemYoung, cardIdx++) : "";
-              let cardOlderHtml = itemOlder ? buildSingleCostCard(itemOlder, cardIdx++) : "";
-
-              let pairedBlock = (cardYoungHtml || cardOlderHtml) ? (cardYoungHtml + cardOlderHtml) : "";
-
-              if (dTarget.category === 'cancer') pairedCancerHtml += pairedBlock;
-              if (dTarget.category === 'heart') pairedHeartHtml += pairedBlock;
-              if (dTarget.category === 'stroke') pairedStrokeHtml += pairedBlock;
+          cancerPairs.forEach(pair => {
+              let youngItem = globalHealthData.find(d => (d.Disease_Key === pair.youngKey) || ((d.疾病名稱||'').includes(pair.matchName) && (d.年齡組別||'').includes('25-44')));
+              let olderItem = globalHealthData.find(d => (d.Disease_Key === pair.olderKey) || ((d.疾病名稱||'').includes(pair.matchName) && (d.年齡組別||'').includes('45-65')));
+              if (youngItem) htmlCancer += buildSingleCostCard(youngItem, cardIdx++);
+              if (olderItem) htmlCancer += buildSingleCostCard(olderItem, cardIdx++);
           });
 
-          htmlCancer = pairedCancerHtml;
-          htmlHeart = pairedHeartHtml;
-          htmlStroke = pairedStrokeHtml;
+          // 2. 心血管類 (急性心臟病 左右成對)
+          let heartYoung = globalHealthData.find(d => (d.Disease_Key === 'heart_young') || ((d.疾病名稱||'').includes('心臟') && (d.年齡組別||'').includes('25-44')));
+          let heartOlder = globalHealthData.find(d => (d.Disease_Key === 'heart_older') || ((d.疾病名稱||'').includes('心臟') && (d.年齡組別||'').includes('45-65')));
+          if (heartYoung) htmlHeart += buildSingleCostCard(heartYoung, cardIdx++);
+          if (heartOlder) htmlHeart += buildSingleCostCard(heartOlder, cardIdx++);
+
+          // 3. 腦神經類 (中風 左右成對)
+          let strokeYoung = globalHealthData.find(d => (d.Disease_Key === 'stroke_young') || ((d.疾病名稱||'').includes('中風') && (d.年齡組別||'').includes('25-44')));
+          let strokeOlder = globalHealthData.find(d => (d.Disease_Key === 'stroke_older') || ((d.疾病名稱||'').includes('中風') && (d.年齡組別||'').includes('45-65')));
+          if (strokeYoung) htmlStroke += buildSingleCostCard(strokeYoung, cardIdx++);
+          if (strokeOlder) htmlStroke += buildSingleCostCard(strokeOlder, cardIdx++);
+
       } else {
           // 獨立顯示單一年齡層
           let filteredData = globalHealthData.filter(item => {
               let ageStr = item.年齡組別 || item.Age_Group || "";
               return ageStr.includes(activeAgeFilter);
           });
-          filteredData.forEach((item, index) => {
+          filteredData.forEach((item) => {
               let key = (item.Disease_Key || "").toLowerCase();
               let name = item.疾病名稱 || "";
-              let cardHtml = buildSingleCostCard(item, index);
+              let cardHtml = buildSingleCostCard(item, cardIdx++);
               if (key.includes('breast') || key.includes('colorectal') || key.includes('lung') || name.includes('癌')) {
                   htmlCancer += cardHtml;
               } else if (key.includes('heart') || name.includes('心臟')) {
