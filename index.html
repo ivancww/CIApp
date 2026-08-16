@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <!-- ⚡ 強制指定寬度以適應 Honor Magic V5 及 iPad 大屏 -->
 <meta name="viewport" content="width=1024, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>生活應急保險庫 (v3.50)</title>
+<title>生活應急保險庫 (v3.51)</title>
 <!-- ⚡ 圖片預加載 -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
@@ -200,7 +200,8 @@
   .badge-highlight-pink { background: #fd79a8; color: white; padding: 2px 8px; border-radius: 4px; font-weight: bold; display: inline-block; margin-left: 5px; }
   .badge-highlight-red { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 4px; font-weight: bold; display: inline-block; margin-left: 5px; }
   
-  .cost-card { background: #fff; border-radius: 12px; padding: 22px; margin-bottom: 20px; border-left: 6px solid #e74c3c; box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
+  .cost-card { background: #fff; border-radius: 12px; padding: 22px; margin-bottom: 20px; border-left: 6px solid #e74c3c; box-shadow: 0 6px 16px rgba(0,0,0,0.06); transition: transform 0.2s, box-shadow 0.2s; }
+  .cost-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
   .cost-badge { background: #fadbd8; color: #c0392b; font-weight: bold; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem; display: inline-block; margin-bottom: 10px; }
   .big-cost-card { background: #fff5f5; border: 2px dashed #f5b7b1; border-left: 8px solid #e74c3c; border-radius: 14px; padding: 25px; box-shadow: 0 8px 20px rgba(231,76,60,0.12); margin-top: 20px; }
   
@@ -302,7 +303,7 @@
                 💡 <b>說明：</b> 點擊下方的「🤖 Gemini AI 上網檢查最新數據」，系統會自動檢索香港醫管局與衞生署最新發佈確診數據並自動填入表格。
             </div>
             
-            <!-- ⚡ 新增：動態年份設定區塊 (對接 Google Sheet D15:F16) -->
+            <!-- ⚡ 動態年份設定區塊 (對接 Google Sheet D15:F16) -->
             <div style="background:#fffcf5; border:1px solid #f9e79f; padding:12px 15px; border-radius:8px; margin-bottom:15px; display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
                 <span style="font-weight:bold; color:#d35400; font-size:0.95rem;">📅 動態趨勢年份設定：</span>
                 <div style="display:flex; align-items:center; gap:6px;">
@@ -379,7 +380,7 @@
   <div class="header">
       <h1>
           生活應急保險庫 
-          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.50</span>
+          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.51</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
@@ -937,7 +938,7 @@
           <p style="text-align:center; color:#7f8c8d; font-size:0.9rem;">基於相同設定，對比「定期危疾」與「儲蓄危疾」的長遠保費走勢及多次理賠槓桿。</p>
       </div>
       <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd;">
-          <div class="action-row" style="justify-content:center; gap:15px; flex-wrap:wrap; border:none; background:transparent;"內>
+          <div class="action-row" style="justify-content:center; gap:15px; flex-wrap:wrap; border:none; background:transparent;">
               <div class="input-group" id="groupRegion" style="margin:0;"><label>地區</label><select id="compareRegion" onchange="calculateComparison()"><option value="hk">香港版</option><option value="pearl">明珠版</option></select></div>
               <div class="input-group" style="margin:0;"><label>性別</label><select id="compareGender" onchange="calculateComparison()"><option value="M">男</option><option value="F">女</option></select></div>
               <div class="input-group" style="margin:0;"><label>吸煙</label><select id="compareSmoker" onchange="calculateComparison()"><option value="nonSmoker">非吸煙</option><option value="smoker">吸煙</option></select></div>
@@ -1413,7 +1414,6 @@
       };
 
       try {
-          // ⚡ 採用標準 POST，避免 GAS 轉址造成 Body 遺失
           const response = await fetch(GAS_HEALTH_SHEET_URL, {
               method: 'POST',
               body: JSON.stringify(payload)
@@ -1509,58 +1509,141 @@
       }
   }
   
+  // 🎨 疾病專屬配色配置器
+  function getDiseaseColorConfig(key, name) {
+      let k = (key || "").toLowerCase();
+      let n = name || "";
+      if (k.includes('breast') || n.includes('乳癌')) {
+          return { primary: '#e84393', bg: '#fde8f1', lightText: '#d63031', name: '乳癌' };
+      } else if (k.includes('colorectal') || n.includes('腸癌')) {
+          return { primary: '#e67e22', bg: '#fdf2e9', lightText: '#d35400', name: '大腸癌' };
+      } else if (k.includes('lung') || n.includes('肺癌')) {
+          return { primary: '#4b6584', bg: '#f1f2f6', lightText: '#2c3e50', name: '肺癌' };
+      } else if (k.includes('heart') || n.includes('心臟')) {
+          return { primary: '#8e44ad', bg: '#f4ecf7', lightText: '#6c5ce7', name: '急性心臟病' };
+      } else if (k.includes('stroke') || n.includes('中風')) {
+          return { primary: '#c0392b', bg: '#fadbd8', lightText: '#e74c3c', name: '中風' };
+      }
+      return { primary: '#e74c3c', bg: '#fadbd8', lightText: '#c0392b', name: n || '重大疾病' };
+  }
+
+  function buildSingleCostCard(item, index) {
+      let key = item.Disease_Key || "";
+      let name = item.疾病名稱 || item.Disease_Name || "";
+      let inc = item.十年總增幅_百分比 || item.Pct_Increase || 0;
+      let mRatio = item.男性比例_百分比 || item.Male_Ratio || 0;
+      let fRatio = item.女性比例_百分比 || item.Female_Ratio || 0;
+      let cost = item.私家醫院平均開支_港幣 || item.Avg_Cost_Private || 0;
+      let desc = item.確診機率簡明描述 || item.Lifetime_Risk || "";
+      let pctStr = item.終身確診機率_百分比 || "";
+      let theme = getDiseaseColorConfig(key, name);
+
+      return `
+      <div class="cost-card" style="border-left: 6px solid ${theme.primary}; background: #fff;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span class="cost-badge" style="background:${theme.bg}; color:${theme.primary}; margin-bottom:0;">
+                  ${item.年齡組別 || item.Age_Group} | ${name}
+              </span>
+              <span style="font-size:0.85rem; background:#f0f3f4; padding:3px 10px; border-radius:12px; font-weight:bold; color:#34495e;">
+                  男 ${mRatio}% : 女 ${fRatio}%
+              </span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+              <strong style="font-size:1.05rem; color:#2c3e50;">10年確診增幅:</strong>
+              <span style="color:${theme.primary}; font-size:1.35rem; font-weight:900;">+${inc}%</span>
+          </div>
+          
+          <div style="margin-top:8px; margin-bottom:8px;">
+              <button onclick="document.getElementById('risk-box-${index}').style.display='block'; this.style.display='none';" class="btn-interactive" style="background:#fff3cd; color:#d35400; padding:6px 12px; font-size:0.85rem; font-weight:bold; cursor:pointer; width:100%; justify-content:center;">
+                  🔒 點擊揭曉確診風險與機率
+              </button>
+              <div id="risk-box-${index}" style="display:none; background:#fef9e7; padding:10px; border-radius:6px; border:1px solid #f9e79f; font-size:0.95rem; color:${theme.primary}; font-weight:bold; margin-top:5px;">
+                  📌 確診風險：${desc} ${pctStr ? `(${pctStr})` : ''}
+              </div>
+          </div>
+          <div style="font-size:0.85rem; color:#7f8c8d; text-align:right; margin-top:5px;">
+              🏥 私院估算開支: <b style="color:#2c3e50;">$${Number(cost).toLocaleString()}</b>
+          </div>
+      </div>`;
+  }
+
   function renderCostPage() {
       const cancerContainer = document.getElementById('costCardsCancerContainer');
       const heartContainer = document.getElementById('costCardsHeartContainer');
       const strokeContainer = document.getElementById('costCardsStrokeContainer');
       if (!cancerContainer || !heartContainer || !strokeContainer) return;
+      
       let htmlCancer = "", htmlHeart = "", htmlStroke = "";
-      let filteredData = globalHealthData.filter(item => {
-          let ageStr = item.年齡組別 || item.Age_Group || "";
-          if (activeAgeFilter === 'all') return true;
-          return ageStr.includes(activeAgeFilter);
-      });
-      filteredData.forEach((item, index) => {
-          let key = item.Disease_Key || "";
-          let inc = item.十年總增幅_百分比 || item.Pct_Increase || 0;
-          let mRatio = item.男性比例_百分比 || item.Male_Ratio || 0;
-          let fRatio = item.女性比例_百分比 || item.Female_Ratio || 0;
-          let cost = item.私家醫院平均開支_港幣 || item.Avg_Cost_Private || 0;
-          let desc = item.確診機率簡明描述 || item.Lifetime_Risk || "";
-          let pctStr = item.終身確診機率_百分比 || "";
-          let cardHtml = `
-          <div class="cost-card">
-              <span class="cost-badge">${item.年齡組別 || item.Age_Group} | ${item.疾病名稱 || item.Disease_Name}</span>
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                  <strong style="font-size:1.15rem; color:#2c3e50;">10年確診增幅: <span style="color:#e74c3c; font-size:1.3rem;">+${inc}%</span></strong>
-                  <span style="font-size:0.85rem; background:#f0f3f4; padding:3px 10px; border-radius:12px; font-weight:bold; color:#34495e;">男 ${mRatio}% : 女 ${fRatio}%</span>
-              </div>
-              
-              <div style="margin-top:10px; margin-bottom:8px;">
-                  <button onclick="document.getElementById('risk-box-${index}').style.display='block'; this.style.display='none';" class="btn-interactive" style="background:#fff3cd; color:#d35400; padding:6px 12px; font-size:0.85rem; font-weight:bold; cursor:pointer; width:100%; justify-content:center;">
-                      🔒 點擊揭曉確診風險與機率
-                  </button>
-                  <div id="risk-box-${index}" style="display:none; background:#fef9e7; padding:10px; border-radius:6px; border:1px solid #f9e79f; font-size:0.95rem; color:#c0392b; font-weight:bold; margin-top:5px;">
-                      📌 確診風險：${desc} ${pctStr ? `(${pctStr})` : ''}
-                  </div>
-              </div>
-              <div style="font-size:0.85rem; color:#7f8c8d; text-align:right;">
-                  🏥 私院估算開支: <b>$${Number(cost).toLocaleString()}</b>
-              </div>
-          </div>`;
-          if (key.includes('breast') || key.includes('colorectal') || key.includes('lung')) {
-              htmlCancer += cardHtml;
-          } else if (key.includes('heart')) {
-              htmlHeart += cardHtml;
-          } else if (key.includes('stroke')) {
-              htmlStroke += cardHtml;
-          } else {
-              htmlCancer += cardHtml;
-          }
-      });
+
+      if (activeAgeFilter === 'all') {
+          // ⚡ 當「全部顯示」時，同類疾病左右並列配對呈現
+          const diseaseOrderList = [
+              { keyMatch: 'breast', nameMatch: '乳癌', category: 'cancer' },
+              { keyMatch: 'colorectal', nameMatch: '大腸癌', category: 'cancer' },
+              { keyMatch: 'lung', nameMatch: '肺癌', category: 'cancer' },
+              { keyMatch: 'heart', nameMatch: '急性心臟病', category: 'heart' },
+              { keyMatch: 'stroke', nameMatch: '中風', category: 'stroke' }
+          ];
+
+          let pairedCancerHtml = "";
+          let pairedHeartHtml = "";
+          let pairedStrokeHtml = "";
+          let cardIdx = 0;
+
+          diseaseOrderList.forEach(dTarget => {
+              // 抓出 25-44歲 (young) 與 45-65歲 (older)
+              let itemYoung = globalHealthData.find(item => {
+                  let k = (item.Disease_Key || "").toLowerCase();
+                  let n = item.疾病名稱 || "";
+                  let age = item.年齡組別 || "";
+                  return (k.includes(dTarget.keyMatch) || n.includes(dTarget.nameMatch)) && (k.includes('young') || age.includes('25-44'));
+              });
+              let itemOlder = globalHealthData.find(item => {
+                  let k = (item.Disease_Key || "").toLowerCase();
+                  let n = item.疾病名稱 || "";
+                  let age = item.年齡組別 || "";
+                  return (k.includes(dTarget.keyMatch) || n.includes(dTarget.nameMatch)) && (k.includes('older') || age.includes('45-65'));
+              });
+
+              let cardYoungHtml = itemYoung ? buildSingleCostCard(itemYoung, cardIdx++) : "";
+              let cardOlderHtml = itemOlder ? buildSingleCostCard(itemOlder, cardIdx++) : "";
+
+              let pairedBlock = (cardYoungHtml || cardOlderHtml) ? (cardYoungHtml + cardOlderHtml) : "";
+
+              if (dTarget.category === 'cancer') pairedCancerHtml += pairedBlock;
+              if (dTarget.category === 'heart') pairedHeartHtml += pairedBlock;
+              if (dTarget.category === 'stroke') pairedStrokeHtml += pairedBlock;
+          });
+
+          htmlCancer = pairedCancerHtml;
+          htmlHeart = pairedHeartHtml;
+          htmlStroke = pairedStrokeHtml;
+      } else {
+          // 獨立顯示單一年齡層
+          let filteredData = globalHealthData.filter(item => {
+              let ageStr = item.年齡組別 || item.Age_Group || "";
+              return ageStr.includes(activeAgeFilter);
+          });
+          filteredData.forEach((item, index) => {
+              let key = (item.Disease_Key || "").toLowerCase();
+              let name = item.疾病名稱 || "";
+              let cardHtml = buildSingleCostCard(item, index);
+              if (key.includes('breast') || key.includes('colorectal') || key.includes('lung') || name.includes('癌')) {
+                  htmlCancer += cardHtml;
+              } else if (key.includes('heart') || name.includes('心臟')) {
+                  htmlHeart += cardHtml;
+              } else if (key.includes('stroke') || name.includes('中風')) {
+                  htmlStroke += cardHtml;
+              } else {
+                  htmlCancer += cardHtml;
+              }
+          });
+      }
+
       cancerContainer.innerHTML = htmlCancer || `<div style="color:#95a5a6; padding:10px;">無該年齡層相關數據</div>`;
       heartContainer.innerHTML = htmlHeart || `<div style="color:#95a5a6; padding:10px;">無該年齡層相關數據</div>`;
       strokeContainer.innerHTML = htmlStroke || `<div style="color:#95a5a6; padding:10px;">無該年齡層相關數據</div>`;
+      
       updateScenarioByExistingSum();
       updateYearLabels();
       renderHealthChart();
@@ -2309,8 +2392,8 @@
       const sceNetY1HKD = Math.max(0, Math.round(sceFirstYearAmount - sceY1DiscountHKD));
       
       let sceCouponLabel = sceCouponTierHKD === 195 ? "HK$195 折扣券" : "HK$491 折扣券";
-      let sceY2Row = (promoSettings.sceY2Months || 0) > 0 ? `<div>• <b>${T('第 2 年保費回贈')}：</b>${promoSettings.sceY2Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY2DiscountHKD.toLocaleString()}</span></div>` : "";
-      let sceY3Row = (promoSettings.sceY3Months || 0) > 0 ? `<div>• <b>${T('第 3 年保費回贈')}：</b>${promoSettings.sceY3Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY3DiscountHKD.toLocaleString()}</span></div>` : "";
+      let sceY2Row = (promoSettings.sceY2Months || 0) > 0 ? `<div>• <b>${T('第 2 年保費回贈')}：</b>${promoSettings.sceY2Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;"\>-HK$${sceY2DiscountHKD.toLocaleString()}</span></div>` : "";
+      let sceY3Row = (promoSettings.sceY3Months || 0) > 0 ? `<div>• <b>${T('第 3 年保費回贈')}：</b>${promoSettings.sceY3Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;"\>-HK$${sceY3DiscountHKD.toLocaleString()}</span></div>` : "";
       
       let sceHtml = `
           <div>• <b>${T('首年原保費')}：</b>HK$${Math.round(sceFirstYearAmount).toLocaleString()}</div>
