@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <!-- ⚡ 強制指定寬度以適應 Honor Magic V5 及 iPad 大屏 -->
 <meta name="viewport" content="width=1024, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>生活應急保險庫 (v3.51)</title>
+<title>生活應急保險庫 (v3.52)</title>
 <!-- ⚡ 圖片預加載 -->
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5774.jpeg?alt=media&token=9fb10e70-f778-4c69-bb6b-7c47351bec80" as="image">
 <link rel="preload" href="https://firebasestorage.googleapis.com/v0/b/medical-and-ci.firebasestorage.app/o/ci%20pic%2FIMG_5770.jpeg?alt=media&token=f995674f-1638-45d4-a509-9e1f2ac74166" as="image">
@@ -200,8 +200,7 @@
   .badge-highlight-pink { background: #fd79a8; color: white; padding: 2px 8px; border-radius: 4px; font-weight: bold; display: inline-block; margin-left: 5px; }
   .badge-highlight-red { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 4px; font-weight: bold; display: inline-block; margin-left: 5px; }
   
-  .cost-card { background: #fff; border-radius: 12px; padding: 22px; margin-bottom: 20px; border-left: 6px solid #e74c3c; box-shadow: 0 6px 16px rgba(0,0,0,0.06); transition: transform 0.2s, box-shadow 0.2s; }
-  .cost-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+  .cost-card { background: #fff; border-radius: 12px; padding: 22px; margin-bottom: 20px; border-left: 6px solid #e74c3c; box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
   .cost-badge { background: #fadbd8; color: #c0392b; font-weight: bold; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem; display: inline-block; margin-bottom: 10px; }
   .big-cost-card { background: #fff5f5; border: 2px dashed #f5b7b1; border-left: 8px solid #e74c3c; border-radius: 14px; padding: 25px; box-shadow: 0 8px 20px rgba(231,76,60,0.12); margin-top: 20px; }
   
@@ -303,7 +302,7 @@
                 💡 <b>說明：</b> 點擊下方的「🤖 Gemini AI 上網檢查最新數據」，系統會自動檢索香港醫管局與衞生署最新發佈確診數據並自動填入表格。
             </div>
             
-            <!-- ⚡ 動態年份設定區塊 (對接 Google Sheet D15:F16) -->
+            <!-- 動態年份設定區塊 -->
             <div style="background:#fffcf5; border:1px solid #f9e79f; padding:12px 15px; border-radius:8px; margin-bottom:15px; display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
                 <span style="font-weight:bold; color:#d35400; font-size:0.95rem;">📅 動態趨勢年份設定：</span>
                 <div style="display:flex; align-items:center; gap:6px;">
@@ -380,7 +379,7 @@
   <div class="header">
       <h1>
           生活應急保險庫 
-          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.51</span>
+          <span class="version-badge" onclick="openAdminModal()" title="點擊開啟管理中心">v3.52</span>
           <button id="langToggleBtn" class="lang-btn" onclick="toggleLang()">简</button>
       </h1>
   </div>
@@ -1103,16 +1102,16 @@
   let currentEndYear = "2024";
 
   let globalHealthData = [
-      { Disease_Key: "breast_young", 疾病名稱: "乳癌", 年齡組別: "25-44歲", "2014確診數": 1020, "2024確診數": 1310, 十年總增幅_百分比: 28.4, 男性比例_百分比: 0.8, 女性比例_百分比: 99.2, 私家醫院平均開支_港幣: 1000000, 終身確診機率_百分比: "7.1%", 確診機率簡明描述: "每 14 名女性有 1 人患上" },
-      { Disease_Key: "colorectal_young", 疾病名稱: "大腸癌", 年齡組別: "25-44歲", "2014確診數": 310, "2024確診數": 375, 十年總增幅_百分比: 21.0, 男性比例_百分比: 54.7, 女性比例_百分比: 45.3, 私家醫院平均開支_港幣: 800000, 終身確診機率_百分比: "16.7%", 確診機率簡明描述: "每 6 人有 1 人患上危疾 (整體)" },
-      { Disease_Key: "lung_young", 疾病名稱: "肺癌", 年齡組別: "25-44歲", "2014確診數": 185, "2024確診數": 208, 十年總增幅_百分比: 12.4, 男性比例_百分比: 43.3, 女性比例_百分比: 56.7, 私家醫院平均開支_港幣: 1200000, 終身確診機率_百分比: "6.7%", 確診機率簡明描述: "每 15 人有 1 人患上" },
-      { Disease_Key: "heart_young", 疾病名稱: "急性心臟病", 年齡組別: "25-44歲", "2014確診數": 420, "2024確診數": 502, 十年總增幅_百分比: 19.5, 男性比例_百分比: 71.9, 女性比例_百分比: 28.1, 私家醫院平均開支_港幣: 400000, 終身確診機率_百分比: "20.0%", 確診機率簡明描述: "每 5 名男士有 1 人心血管異常" },
-      { Disease_Key: "stroke_young", 疾病名稱: "中風", 年齡組別: "25-44歲", "2014確診數": 280, "2024確診數": 329, 十年總增幅_百分比: 17.5, 男性比例_百分比: 62.9, 女性比例_百分比: 37.1, 私家醫院平均開支_港幣: 500000, 終身確診機率_百分比: "16.7%", 確診機率簡明描述: "每 6 人有 1 人一生中會中風" },
-      { Disease_Key: "lung_older", 疾病名稱: "肺癌", 年齡組別: "45-65歲", "2014確診數": 1820, "2024確診數": 2490, 十年總增幅_百分比: 36.8, 男性比例_百分比: 58.0, 女性比例_百分比: 42.0, 私家醫院平均開支_港幣: 1200000, 終身確診機率_百分比: "10.0%", 確診機率簡明描述: "每 10 人有 1 人在 65 歲前確診" },
-      { Disease_Key: "breast_older", 疾病名稱: "乳癌", 年齡組別: "45-65歲", "2014確診數": 2150, "2024確診數": 2778, 十年總增幅_百分比: 29.2, 男性比例_百分比: 0.6, 女性比例_百分比: 99.4, 私家醫院平均開支_港幣: 1000000, 終身確診機率_百分比: "7.1%", 確診機率簡明描述: "每 14 名女性有 1 人患上" },
-      { Disease_Key: "colorectal_older", 疾病名稱: "大腸癌", 年齡組別: "45-65歲", "2014確診數": 2010, "2024確診數": 2653, 十年總增幅_百分比: 32.0, 男性比例_百分比: 58.0, 女性比例_百分比: 42.0, 私家醫院平均開支_港幣: 800000, 終身確診機率_百分比: "16.7%", 確診機率簡明描述: "每 6 人有 1 人一生中患上" },
-      { Disease_Key: "heart_older", 疾病名稱: "急性心臟病", 年齡組別: "45-65歲", "2014確診數": 2850, "2024確診數": 3790, 十年總增幅_百分比: 33.0, 男性比例_百分比: 74.0, 女性比例_百分比: 26.0, 私家醫院平均開支_港幣: 500000, 終身確診機率_百分比: "25.0%", 確診機率簡明描述: "每 4 名中壯年有 1 人高危" },
-      { Disease_Key: "stroke_older", 疾病名稱: "中風", 年齡組別: "45-65歲", "2014確診數": 1920, "2024確診數": 2525, 十年總增幅_百分比: 31.5, 男性比例_百分比: 62.0, 女性比例_百分比: 38.0, 私家醫院平均開支_港幣: 600000, 終身確診機率_百分比: "16.7%", 確診機率簡明描述: "每 6 人有 1 人一生中會中風" }
+      { Disease_Key: "breast_young", 疾病名稱: "乳癌", 年齡組別: "25-44歲", "起始年確診數": 1020, "結束年確診數": 1310, "2014確診數": 1020, "2024確診數": 1310, 十年總增幅_百分比: 28.4, 男性比例_百分比: 0.8, 女性比例_百分比: 99.2, 私家醫院平均開支_港幣: 1000000, 終身確診機率_百分比: "7.1%", 確診機率簡明描述: "每 14 名女性有 1 人患上" },
+      { Disease_Key: "colorectal_young", 疾病名稱: "大腸癌", 年齡組別: "25-44歲", "起始年確診數": 310, "結束年確診數": 375, "2014確診數": 310, "2024確診數": 375, 十年總增幅_百分比: 21.0, 男性比例_百分比: 54.7, 女性比例_百分比: 45.3, 私家醫院平均開支_港幣: 800000, 終身確診機率_百分比: "16.7%", 確診機率簡明描述: "每 6 人有 1 人患上危疾 (整體)" },
+      { Disease_Key: "lung_young", 疾病名稱: "肺癌", 年齡組別: "25-44歲", "起始年確診數": 185, "結束年確診數": 208, "2014確診數": 185, "2024確診數": 208, 十年總增幅_百分比: 12.4, 男性比例_百分比: 43.3, 女性比例_百分比: 56.7, 私家醫院平均開支_港幣: 1200000, 終身確診機率_百分比: "6.7%", 確診機率簡明描述: "每 15 人有 1 人患上" },
+      { Disease_Key: "heart_young", 疾病名稱: "急性心臟病", 年齡組別: "25-44歲", "起始年確診數": 420, "結束年確診數": 502, "2014確診數": 420, "2024確診數": 502, 十年總增幅_百分比: 19.5, 男性比例_百分比: 71.9, 女性比例_百分比: 28.1, 私家醫院平均開支_港幣: 400000, 終身確診機率_百分比: "20.0%", 確診機率簡明描述: "每 5 名男士有 1 人心血管異常" },
+      { Disease_Key: "stroke_young", 疾病名稱: "中風", 年齡組別: "25-44歲", "起始年確診數": 280, "結束年確診數": 329, "2014確診數": 280, "2024確診數": 329, 十年總增幅_百分比: 17.5, 男性比例_百分比: 62.9, 女性比例_百分比: 37.1, 私家醫院平均開支_港幣: 500000, 終身確診機率_百分比: "16.7%", 確診機率簡明描述: "每 6 人有 1 人一生中會中風" },
+      { Disease_Key: "lung_older", 疾病名稱: "肺癌", 年齡組別: "45-65歲", "起始年確診數": 1820, "結束年確診數": 2490, "2014確診數": 1820, "2024確診數": 2490, 十年總增幅_百分比: 36.8, 男性比例_百分比: 58.0, 女性比例_百分比: 42.0, 私家醫院平均開支_港幣: 1200000, 終身確診機率_百分比: "10.0%", 確診機率簡明描述: "每 10 人有 1 人在 65 歲前確診" },
+      { Disease_Key: "breast_older", 疾病名稱: "乳癌", 年齡組別: "45-65歲", "起始年確診數": 2150, "結束年確診數": 2778, "2014確診數": 2150, "2024確診數": 2778, 十年總增幅_百分比: 29.2, 男性比例_百分比: 0.6, 女性比例_百分比: 99.4, 私家醫院平均開支_港幣: 1000000, 終身確診機率_百分比: "7.1%", 確診機率簡明描述: "每 14 名女性有 1 人患上" },
+      { Disease_Key: "colorectal_older", 疾病名稱: "大腸癌", 年齡組別: "45-65歲", "起始年確診數": 2010, "結束年確診數": 2653, "2014確診數": 2010, "2024確診數": 2653, 十年總增幅_百分比: 32.0, 男性比例_百分比: 58.0, 女性比例_百分比: 42.0, 私家醫院平均開支_港幣: 800000, 終身確診機率_百分比: "16.7%", 確診機率簡明描述: "每 6 人有 1 人一生中患上" },
+      { Disease_Key: "heart_older", 疾病名稱: "急性心臟病", 年齡組別: "45-65歲", "起始年確診數": 2850, "結束年確診數": 3790, "2014確診數": 2850, "2024確診數": 3790, 十年總增幅_百分比: 33.0, 男性比例_百分比: 74.0, 女性比例_百分比: 26.0, 私家醫院平均開支_港幣: 500000, 終身確診機率_百分比: "25.0%", 確診機率簡明描述: "每 4 名中壯年有 1 人高危" },
+      { Disease_Key: "stroke_older", 疾病名稱: "中風", 年齡組別: "45-65歲", "起始年確診數": 1920, "結束年確診數": 2525, "2014確診數": 1920, "2024確診數": 2525, 十年總增幅_百分比: 31.5, 男性比例_百分比: 62.0, 女性比例_百分比: 38.0, 私家醫院平均開支_港幣: 600000, 終身確診機率_百分比: "16.7%", 確診機率簡明描述: "每 6 人有 1 人一生中會中風" }
   ];
   
   // ⚡ 雙情景預設資料
@@ -1298,8 +1297,21 @@
       if (!tbody) return;
       let html = "";
       globalHealthData.forEach((row) => {
-          let countStart = row[currentStartYear + '確診數'] ?? row['2014確診數'] ?? row.Count_2014 ?? 0;
-          let countEnd = row[currentEndYear + '確診數'] ?? row['2024確診數'] ?? row.Count_2024 ?? 0;
+          let countStart = 0;
+          let countEnd = 0;
+          
+          let keys = Object.keys(row);
+          keys.forEach(k => {
+              if (k.includes(currentStartYear) || k.includes('起始年') || k.includes('起始') || k.includes('2014')) {
+                  if (countStart === 0 && !isNaN(parseInt(row[k]))) countStart = parseInt(row[k]);
+              }
+              if (k.includes(currentEndYear) || k.includes('結束年') || k.includes('結束') || k.includes('2024')) {
+                  if (countEnd === 0 && !isNaN(parseInt(row[k]))) countEnd = parseInt(row[k]);
+              }
+          });
+          if (countStart === 0 && row.Count_2014) countStart = row.Count_2014;
+          if (countEnd === 0 && row.Count_2024) countEnd = row.Count_2024;
+          
           html += `
           <tr>
               <td><input type="text" value="${row.Disease_Key || ''}" class="h-key"></td>
@@ -1378,7 +1390,9 @@
                   男性比例_百分比: parseFloat(mratios[i].value) || 0,
                   女性比例_百分比: parseFloat(fratios[i].value) || 0,
                   私家醫院平均開支_港幣: parseInt(costs[i].value) || 0,
-                  確診機率簡明描述: risks[i].value.trim()
+                  確診機率簡明描述: risks[i].value.trim(),
+                  起始年確診數: startCount,
+                  結束年確診數: endCount
               };
               rowObj[currentStartYear + '確診數'] = startCount;
               rowObj[currentEndYear + '確診數'] = endCount;
@@ -1514,17 +1528,17 @@
       let k = (key || "").toLowerCase();
       let n = name || "";
       if (k.includes('breast') || n.includes('乳癌')) {
-          return { primary: '#e84393', bg: '#fde8f1', lightText: '#d63031', name: '乳癌' };
+          return { primary: '#e84393', bg: '#fde8f1', name: '乳癌' };
       } else if (k.includes('colorectal') || n.includes('腸癌')) {
-          return { primary: '#e67e22', bg: '#fdf2e9', lightText: '#d35400', name: '大腸癌' };
+          return { primary: '#e67e22', bg: '#fdf2e9', name: '大腸癌' };
       } else if (k.includes('lung') || n.includes('肺癌')) {
-          return { primary: '#4b6584', bg: '#f1f2f6', lightText: '#2c3e50', name: '肺癌' };
+          return { primary: '#4b6584', bg: '#f1f2f6', name: '肺癌' };
       } else if (k.includes('heart') || n.includes('心臟')) {
-          return { primary: '#8e44ad', bg: '#f4ecf7', lightText: '#6c5ce7', name: '急性心臟病' };
+          return { primary: '#8e44ad', bg: '#f4ecf7', name: '急性心臟病' };
       } else if (k.includes('stroke') || n.includes('中風')) {
-          return { primary: '#c0392b', bg: '#fadbd8', lightText: '#e74c3c', name: '中風' };
+          return { primary: '#c0392b', bg: '#fadbd8', name: '中風' };
       }
-      return { primary: '#e74c3c', bg: '#fadbd8', lightText: '#c0392b', name: n || '重大疾病' };
+      return { primary: '#e74c3c', bg: '#fadbd8', name: n || '重大疾病' };
   }
 
   function buildSingleCostCard(item, index) {
@@ -1591,7 +1605,6 @@
           let cardIdx = 0;
 
           diseaseOrderList.forEach(dTarget => {
-              // 抓出 25-44歲 (young) 與 45-65歲 (older)
               let itemYoung = globalHealthData.find(item => {
                   let k = (item.Disease_Key || "").toLowerCase();
                   let n = item.疾病名稱 || "";
@@ -1659,8 +1672,26 @@
           return ageStr.includes(activeAgeFilter);
       });
       const labels = filteredData.map(d => `${d.疾病名稱 || d.Disease_Name} (${d.年齡組別 || d.Age_Group})`);
-      const dataStart = filteredData.map(d => d[currentStartYear + '確診數'] ?? d['2014確診數'] ?? d.Count_2014 ?? 0);
-      const dataEnd = filteredData.map(d => d[currentEndYear + '確診數'] ?? d['2024確診數'] ?? d.Count_2024 ?? 0);
+      const dataStart = filteredData.map(d => {
+          let keys = Object.keys(d);
+          for (let k of keys) {
+              if (k.includes(currentStartYear) || k.includes('起始年') || k.includes('起始') || k.includes('2014')) {
+                  let val = parseInt(d[k]);
+                  if (!isNaN(val)) return val;
+              }
+          }
+          return d.Count_2014 || 0;
+      });
+      const dataEnd = filteredData.map(d => {
+          let keys = Object.keys(d);
+          for (let k of keys) {
+              if (k.includes(currentEndYear) || k.includes('結束年') || k.includes('結束') || k.includes('2024')) {
+                  let val = parseInt(d[k]);
+                  if (!isNaN(val)) return val;
+              }
+          }
+          return d.Count_2024 || 0;
+      });
       healthChartInstance = new Chart(ctx, {
           type: 'bar',
           data: {
@@ -2392,8 +2423,8 @@
       const sceNetY1HKD = Math.max(0, Math.round(sceFirstYearAmount - sceY1DiscountHKD));
       
       let sceCouponLabel = sceCouponTierHKD === 195 ? "HK$195 折扣券" : "HK$491 折扣券";
-      let sceY2Row = (promoSettings.sceY2Months || 0) > 0 ? `<div>• <b>${T('第 2 年保費回贈')}：</b>${promoSettings.sceY2Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;"\>-HK$${sceY2DiscountHKD.toLocaleString()}</span></div>` : "";
-      let sceY3Row = (promoSettings.sceY3Months || 0) > 0 ? `<div>• <b>${T('第 3 年保費回贈')}：</b>${promoSettings.sceY3Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;"\>-HK$${sceY3DiscountHKD.toLocaleString()}</span></div>` : "";
+      let sceY2Row = (promoSettings.sceY2Months || 0) > 0 ? `<div>• <b>${T('第 2 年保費回贈')}：</b>${promoSettings.sceY2Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY2DiscountHKD.toLocaleString()}</span></div>` : "";
+      let sceY3Row = (promoSettings.sceY3Months || 0) > 0 ? `<div>• <b>${T('第 3 年保費回贈')}：</b>${promoSettings.sceY3Months} ${T('個月回贈')} ➔ <span style="color:#e74c3c; font-weight:bold;">-HK$${sceY3DiscountHKD.toLocaleString()}</span></div>` : "";
       
       let sceHtml = `
           <div>• <b>${T('首年原保費')}：</b>HK$${Math.round(sceFirstYearAmount).toLocaleString()}</div>
