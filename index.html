@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.4.4)</title>
+<title>確診危疾生活儲備規劃 (v9.4.6)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -50,16 +50,19 @@
   .grid-btn { padding: 14px 10px; text-align: center; border-radius: 10px; border: 2px dashed var(--pink-border); background: #fff; font-weight: 700; font-size: 13.5px; cursor: pointer; line-height: 1.4; transition: 0.2s; user-select: none; }
   .grid-btn * { pointer-events: none; }
   .grid-btn.selected { background: var(--primary-light); border-color: var(--primary); border-style: solid; color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
+  
   .asset-input-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; border: 2px dashed var(--pink-border); border-radius: 10px; margin-bottom: 8px; background: #fff; transition: 0.2s; }
   .asset-input-row.selected { background: var(--primary-light); border-color: var(--primary); border-style: solid; box-shadow: 0 0 0 1px var(--primary); }
   .asset-left-area { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; color: #2c3e50; cursor: pointer; flex: 1; user-select: none; }
   .asset-left-area input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
   .asset-input-val { width: 140px !important; text-align: right; margin-top: 0 !important; }
+  
   .nav-btn-group { display: flex; gap: 10px; margin-top: 22px; }
   .btn-primary { background: var(--primary); color: #fff; border: none; padding: 14px 20px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; flex: 1; text-align: center; }
   .btn-secondary { background: #f1f5f9; border: 1px solid var(--border); color: #333; padding: 14px 20px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; }
   .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   @media (max-width: 600px) { .grid-2col, .grid-2x2 { grid-template-columns: 1fr; } }
+  
   .compare-side-card { border-radius: 12px; padding: 16px; border: 1.5px solid var(--border); background: #fff; display: flex; flex-direction: column; }
   .compare-side-card.sce { border-top: 5px solid #34495e; background: #fafafa; }
   .compare-side-card.oys2 { border-top: 5px solid #27ae60; background: #fdfefe; }
@@ -101,8 +104,10 @@
   .media-card-title { margin-top: 3px; font-size: 11px; font-weight: 700; color: #1e293b; text-align: center; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .vitality-toggle-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
   .vitality-details-box { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #bfdbfe; font-size: 12px; color: #334155; line-height: 1.6; }
-  .admin-modal-box { background: #eef2f5; border-radius: 16px; width: 95vw; max-width: 880px; max-height: 92vh; overflow-y: auto; padding: 20px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+  
+  .admin-modal-box { background: #f1f5f9; border-radius: 16px; width: 95vw; max-width: 880px; max-height: 90vh; overflow-y: auto; padding: 20px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; flex-direction: column; }
   .admin-top-bar { display: flex; justify-content: space-between; align-items: center; background: #1e3a8a; color: #fff; padding: 12px 18px; border-radius: 12px; margin-bottom: 16px; font-weight: bold; font-size: 15px; }
+  .admin-section-card { background: #fff; border-radius: 10px; border: 1.5px solid #cbd5e1; padding: 14px; margin-bottom: 14px; }
   select, input[type="text"], input[type="number"], textarea { width: 100%; padding: 8px; font-size: 13.5px; border-radius: 8px; border: 2px dashed var(--pink-border); background: #fff; font-weight: 700; color: #333; outline: none; margin-top: 4px; box-sizing: border-box; }
 </style>
 </head>
@@ -111,7 +116,7 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge">v9.4.4</span>
+      <span class="v-badge">v9.4.6</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
@@ -162,7 +167,6 @@
       </div>
     </div>
     
-    <!-- 02 黃色部份：只顯示資金承托月份 -->
     <div class="yellow-red-alert-box" id="b-duration-box">
       📊 資金承托分析：<br>
       目前危疾保障 (<span id="b-ci-text">$300K</span>) ÷ 每月生活需要 (<span id="b-exp-text">$40K</span>) ➔ 可維持約 <span id="b-months-support" style="text-decoration:underline; font-size:18px;">7.5</span> 個月。
@@ -171,7 +175,6 @@
     <h4 style="margin: 18px 0 8px 0; color: #2c3e50; font-size: 14.5px;">❓ 生活現金流缺口，你會先動用邊筆資產去填補？(可多選並輸入金額)</h4>
     <div id="assets-list-container"></div>
     
-    <!-- 02 藍色資產表：顯示算式及扣減結果 -->
     <div class="stat-grid-box" style="margin-top:10px; background:#fff; border:2px solid var(--primary);">
       <div class="stat-row">
         <span>計劃動用資產總額：</span>
@@ -541,12 +544,15 @@
 <!-- ⚙️ 後台管理面板 -->
 <div class="modal-overlay" id="adminModalOverlay">
   <div class="admin-modal-box">
-    <button type="button" class="modal-close-btn" onclick="closeAdminModal()">×</button>
     <div class="admin-top-bar">
       <span>⚙️ CIApp 所見即所得雲端後台</span>
-      <button type="button" class="btn-primary" style="padding:6px 14px; font-size:12px; background:#10b981;" onclick="saveAllAdminData()">💾 儲存並同步至 Google Sheet</button>
+      <div style="display:flex; gap:8px;">
+        <button type="button" class="btn-primary" style="padding:6px 14px; font-size:12px; background:#10b981;" onclick="saveAllAdminData()">💾 儲存並同步至 Google Sheet</button>
+        <button type="button" style="background:#64748b; color:#fff; border:none; border-radius:6px; padding:6px 12px; cursor:pointer; font-weight:bold;" onclick="closeAdminModal()">關閉</button>
+      </div>
     </div>
-    <div style="display:flex; gap:8px; margin-bottom:12px;">
+    <div style="margin-bottom:14px;">
+      <label style="font-size:12px; font-weight:bold; color:#475569;">選擇要編輯的模式：</label>
       <select id="adminRoleSelect" style="font-weight:bold;" onchange="renderAdminVisualLayout()">
         <option value="adult" selected>👨‍👩‍👧 編輯：成人模式 (01～06)</option>
         <option value="child">👶 編輯：兒童模式 (01～06)</option>
@@ -610,7 +616,7 @@
     totalNeed: 1440000,
     existingCI: 300000,
     netGap: 1140000,
-    goals: ['家庭生活質素', '積蓄與資產'],
+    goals: [], // 由 URL 或預設動態載入
     totalChosenAssets: 500000,
     simStartAge: 20,
     simClaimAge: 25,
@@ -626,6 +632,8 @@
     oys2PayPeriod: 18,
     annualPremMap: { sce: 1425, oys2: 19204 }
   };
+
+  let hasUrlLosses = false;
 
   function parseNum(val) {
     if (typeof val === 'number') return val;
@@ -681,6 +689,25 @@
     recalculateAll();
   }
 
+  // 01 頁按鈕智慧匹配邏輯 (精準對接 Health Protection URL 帶過來的 losses)
+  function isGoalMatched(optTitle, optKey, lossesArray) {
+    if (!lossesArray || lossesArray.length === 0) return false;
+    for (let rawLoss of lossesArray) {
+      let loss = String(rawLoss).trim();
+      if (!loss) continue;
+      // 1. 完全相同
+      if (optTitle === loss || optKey === loss) return true;
+      // 2. 包含字眼模糊匹配
+      if (loss.includes('陪伴') && optTitle.includes('陪伴')) return true;
+      if ((loss.includes('醫療') || loss.includes('治療')) && (optTitle.includes('醫療') || optTitle.includes('治療'))) return true;
+      if (loss.includes('教育') && optTitle.includes('教育')) return true;
+      if ((loss.includes('資產') || loss.includes('積蓄')) && (optTitle.includes('資產') || optTitle.includes('積蓄'))) return true;
+      if (loss.includes('生活') && optTitle.includes('生活')) return true;
+      if (loss.includes('退休') && optTitle.includes('退休')) return true;
+    }
+    return false;
+  }
+
   function renderDynamicTextsAndOptions() {
     const roleKey = ciState.isChildMode ? 'child' : 'adult';
     const pages = (dbData.pages && dbData.pages.length > 0) ? dbData.pages.filter(p => p.role === roleKey) : defaultDatabase.pages.filter(p => p.role === roleKey);
@@ -697,6 +724,7 @@
           sub.style.display = 'none';
         } else {
           sub.innerText = p.subtitle;
+          sub.style.display = 'block';
         }
       }
     });
@@ -706,17 +734,25 @@
       const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
       const opts = allOpts.filter(o => o.pageId === 'step_ci_1' && (o.role === roleKey || o.role === 'common')).sort((a,b)=>a.order-b.order);
       let gHtml = '';
+      
       opts.forEach(o => {
-        const isSel = String(o.isDefaultSelected).toUpperCase() === 'TRUE';
+        let isSel = false;
+        if (hasUrlLosses && ciState.goals.length > 0) {
+          isSel = isGoalMatched(o.title, o.optionKey, ciState.goals);
+        } else {
+          isSel = String(o.isDefaultSelected).toUpperCase() === 'TRUE';
+        }
         gHtml += `<button type="button" class="grid-btn ${isSel ? 'selected' : ''}" data-goal-key="${o.optionKey}" data-goal="${o.title}">${o.icon || '🎯'}<br>${o.title}</button>`;
       });
       goalsGrid.innerHTML = gHtml;
+      
       goalsGrid.querySelectorAll('.grid-btn').forEach(b => {
         b.addEventListener('click', function() {
           this.classList.toggle('selected');
           syncGoalDisplay();
         });
       });
+      syncGoalDisplay();
     }
 
     const assetContainer = document.getElementById('assets-list-container');
@@ -728,13 +764,14 @@
       let aHtml = '';
       listToRender.forEach(o => {
         const isSel = String(o.isDefaultSelected).toUpperCase() === 'TRUE';
+        const initVal = isSel ? '500,000' : '0';
         aHtml += `
           <div class="asset-input-row ${isSel ? 'selected' : ''}" id="row-asset-${o.optionKey}">
             <div class="asset-left-area" data-asset="${o.optionKey}">
               <input type="checkbox" id="chk-asset-${o.optionKey}" ${isSel ? 'checked' : ''}>
               <span>${o.icon || '💰'} ${o.title}</span>
             </div>
-            <input type="text" id="val-asset-${o.optionKey}" class="asset-input-val" value="${isSel ? '500,000' : '0'}">
+            <input type="text" id="val-asset-${o.optionKey}" class="asset-input-val" value="${initVal}">
           </div>`;
       });
       assetContainer.innerHTML = aHtml;
@@ -743,32 +780,46 @@
   }
 
   function bindAssetEvents() {
-    const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
-    const aOpts = allOpts.filter(o => o.pageId === 'step_ci_2');
-    
-    aOpts.forEach(o => {
-      const k = o.optionKey;
-      const leftArea = document.querySelector(`.asset-left-area[data-asset="${k}"]`);
-      const valInput = document.getElementById('val-asset-' + k);
-      const chk = document.getElementById('chk-asset-' + k);
+    const rows = document.querySelectorAll('.asset-input-row');
+    rows.forEach(row => {
+      const chk = row.querySelector('input[type="checkbox"]');
+      const valInput = row.querySelector('.asset-input-val');
+      const leftArea = row.querySelector('.asset-left-area');
 
-      if (leftArea && chk) {
+      if (leftArea && chk && valInput) {
         leftArea.onclick = function(e) {
-          if (e.target.type !== 'checkbox') {
+          if (e.target !== chk) {
             chk.checked = !chk.checked;
           }
+          if (!chk.checked) {
+            valInput.value = '0';
+          } else if (parseNum(valInput.value) === 0) {
+            valInput.value = '500,000';
+          }
+          row.classList.toggle('selected', chk.checked);
           updateAllAssets();
         };
-        chk.onchange = function() {
+
+        chk.onclick = function(e) {
+          e.stopPropagation();
+          if (!this.checked) {
+            valInput.value = '0';
+          } else if (parseNum(valInput.value) === 0) {
+            valInput.value = '500,000';
+          }
+          row.classList.toggle('selected', this.checked);
           updateAllAssets();
         };
-      }
-      if (valInput && chk) {
+
         valInput.oninput = function() {
           let num = parseNum(this.value);
           this.value = num.toLocaleString();
           if (num > 0) {
             chk.checked = true;
+            row.classList.add('selected');
+          } else {
+            chk.checked = false;
+            row.classList.remove('selected');
           }
           updateAllAssets();
         };
@@ -814,27 +865,23 @@
 
   function updateAllAssets() {
     let sum = 0;
-    const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
-    const aOpts = allOpts.filter(o => o.pageId === 'step_ci_2');
-
-    aOpts.forEach(o => {
-      const k = o.optionKey;
-      const chk = document.getElementById('chk-asset-' + k);
-      const valInput = document.getElementById('val-asset-' + k);
-      const row = document.getElementById('row-asset-' + k);
+    const rows = document.querySelectorAll('.asset-input-row');
+    rows.forEach(row => {
+      const chk = row.querySelector('input[type="checkbox"]');
+      const valInput = row.querySelector('.asset-input-val');
       if (chk && valInput) {
-        const isChecked = chk.checked;
-        if (row) row.classList.toggle('selected', isChecked);
-        if (isChecked) sum += parseNum(valInput.value);
+        if (chk.checked) {
+          sum += parseNum(valInput.value);
+        }
       }
     });
 
     ciState.totalChosenAssets = sum;
     const remainGap = Math.max(0, ciState.netGap - sum);
+    
     document.getElementById('b-asset-total-display').innerText = 'HK$ ' + sum.toLocaleString();
     document.getElementById('b-asset-remain-gap').innerText = 'HK$ ' + remainGap.toLocaleString();
     
-    // 02 藍色算式顯示
     const formulaEl = document.getElementById('b-asset-formula-text');
     if (formulaEl) {
       formulaEl.innerText = `(生活缺口 HK$ ${ciState.netGap.toLocaleString()} － 計劃動用資產 HK$ ${sum.toLocaleString()})`;
@@ -853,7 +900,6 @@
     }
   }
 
-  // 03 核心精算：依 (確診歲數 - 投保歲數) <= 10 計算，贈送比率嚴格對接 Google Sheet 設定
   function runStage3Calculation() {
     const startAgeEl = document.getElementById('c-input-start-age');
     const claimAgeEl = document.getElementById('c-input-claim-age');
@@ -865,7 +911,6 @@
     const sceSum = ciState.sceSum;
     const oys2Sum = ciState.oys2Sum;
 
-    // Google Sheet 系統設定加贈率
     const rawRateUnder30 = dbData.config["成人_30歲以下加贈率"] || 0.50;
     const rawRateOver31 = dbData.config["成人_31歲以上加贈率"] || 0.35;
     const rawChildRate = dbData.config["兒童_首十年加贈率"] || 0.50;
@@ -874,10 +919,8 @@
     const rateOver31 = typeof rawRateOver31 === 'string' ? parseFloat(rawRateOver31) : Number(rawRateOver31);
     const childRate = typeof rawChildRate === 'string' ? parseFloat(rawChildRate) : Number(rawChildRate);
 
-    // 依投保歲數判定 Google Sheet 設定的加贈比例
     const bonusRate = isChild ? childRate : ((ciState.simStartAge <= 30) ? rateUnder30 : rateOver31);
     
-    // 嚴格依照：確診年齡 - 受保年齡 計算，10年內有加贈，超過10年則沒有
     const elapsed = ciState.simClaimAge - ciState.simStartAge;
     const isWithin10Years = (elapsed >= 0 && elapsed <= 10);
 
@@ -976,13 +1019,11 @@
     return 0;
   }
 
-  // 05 方案與保費
   function calculateCIPremium() {
     const age = parseInt(document.getElementById('ci-calc-age').value, 10) || 20;
     const gender = document.getElementById('ci-calc-gender').value || 'M';
     const period = ciState.oys2PayPeriod;
 
-    // 17 歲或以下自動隱藏 AIA Vitality
     const vitalityWrap = document.getElementById('vitality-wrap-box');
     const vitalityChk = document.getElementById('ci-calc-vitality');
     if (age <= 17) {
@@ -1098,7 +1139,9 @@
     document.querySelectorAll('#goal-options-grid .grid-btn.selected').forEach(btn => {
       ciState.goals.push(btn.getAttribute('data-goal'));
     });
-    if (ciState.goals.length === 0) ciState.goals = [ciState.isChildMode ? '全天候全職陪伴' : '家庭生活質素'];
+    if (ciState.goals.length === 0) {
+      ciState.goals = [ciState.isChildMode ? '全天候全職陪伴' : '家庭生活質素'];
+    }
     const txt = ciState.goals.join('、');
     const fGoals = document.getElementById('f-confirm-goals');
     if (fGoals) fGoals.innerText = txt;
@@ -1164,7 +1207,6 @@
     document.getElementById('mediaDrawerOverlay').style.display = 'none';
   }
 
-  // 04 多重時間線推演按鈕
   function renderMultiButtonsFromRules() {
     const topContainer = document.getElementById('topMultiBtnContainer');
     const botContainer = document.getElementById('botEmojiBtnContainer');
@@ -1310,7 +1352,6 @@
     runStage3Calculation();
   }
 
-  // 後台管理面板
   function openAdminModal() {
     document.getElementById('adminModalOverlay').style.display = 'flex';
     renderAdminVisualLayout();
@@ -1329,15 +1370,19 @@
     pages.forEach((p) => {
       const realPIdx = dbData.pages.findIndex(item => item.pageId === p.pageId && item.role === p.role);
       html += `
-        <div class="stage-card" style="display:block; margin-bottom:16px;">
+        <div class="admin-section-card">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span class="stage-tag">步驟 ${p.stepOrder} 標籤：</span>
-            <input type="text" data-adm-page-tag="${realPIdx}" value="${p.tagName}" style="width:200px; margin-top:0;">
+            <strong style="color:var(--primary); font-size:14px;">步驟 ${p.stepOrder} 頁面文案設定</strong>
+            <input type="text" data-adm-page-tag="${realPIdx}" value="${p.tagName}" style="width:180px; margin-top:0;" placeholder="步驟標籤">
           </div>
-          <label style="font-size:11.5px; font-weight:bold; margin-top:6px; display:block;">主標題：</label>
-          <input type="text" data-adm-page-title="${realPIdx}" value="${p.title}" style="font-size:16px; font-weight:800; color:var(--primary);">
-          <label style="font-size:11.5px; font-weight:bold; margin-top:6px; display:block;">副標題說明：</label>
-          <textarea data-adm-page-sub="${realPIdx}" style="min-height:50px;">${p.subtitle}</textarea>`;
+          <div style="margin-top:8px;">
+            <label style="font-size:12px; font-weight:bold; color:#475569;">主標題：</label>
+            <input type="text" data-adm-page-title="${realPIdx}" value="${p.title}" style="font-weight:bold; color:var(--primary);">
+          </div>
+          <div style="margin-top:8px;">
+            <label style="font-size:12px; font-weight:bold; color:#475569;">副標題說明：</label>
+            <textarea data-adm-page-sub="${realPIdx}" style="min-height:50px;">${p.subtitle}</textarea>
+          </div>`;
 
       if (p.stepOrder === 1) {
         const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
@@ -1454,6 +1499,32 @@
   }
 
   document.addEventListener('DOMContentLoaded', function() {
+    // 接收 Health Protection 動態 URL 參數
+    const p = new URLSearchParams(window.location.search);
+    if ((p.has('role') && p.get('role') === 'child') || (p.has('type') && p.get('type') === 'child')) {
+      ciState.isChildMode = true;
+    }
+    if (p.has('expense')) ciState.monthlyExp = Number(p.get('expense')) || (ciState.isChildMode ? 30000 : 40000);
+    if (p.has('months')) ciState.months = Number(p.get('months')) || (ciState.isChildMode ? 24 : 36);
+    if (p.has('existing')) ciState.existingCI = Number(p.get('existing')) || 0;
+    
+    // 解析 losses 參數並標記有 URL 帶入
+    if (p.has('losses') && p.get('losses').trim()) {
+      hasUrlLosses = true;
+      ciState.goals = p.get('losses').split(',').map(s => s.trim());
+    }
+    
+    if (p.has('alertMsg')) {
+      const noticeBox = document.getElementById('f-soft-notice-box');
+      if (noticeBox && p.get('alertMsg').trim()) {
+        noticeBox.innerHTML = `⚠️ <strong>規劃提醒：</strong>${p.get('alertMsg')}`;
+      }
+    }
+
+    document.getElementById('a-monthly-exp-input').value = ciState.monthlyExp.toLocaleString();
+    document.getElementById('a-months-input').value = ciState.months;
+    document.getElementById('b-ci-input').value = ciState.existingCI.toLocaleString();
+
     renderDynamicTextsAndOptions();
     renderMultiButtonsFromRules();
 
@@ -1537,25 +1608,6 @@
       const el = document.getElementById(id);
       if (el) el.addEventListener('input', calculateCIPromo);
     });
-
-    const p = new URLSearchParams(window.location.search);
-    if ((p.has('role') && p.get('role') === 'child') || (p.has('type') && p.get('type') === 'child')) {
-      ciState.isChildMode = true;
-    }
-    if (p.has('expense')) ciState.monthlyExp = Number(p.get('expense')) || 40000;
-    if (p.has('months')) ciState.months = Number(p.get('months')) || 36;
-    if (p.has('existing')) ciState.existingCI = Number(p.get('existing')) || 300000;
-    if (p.has('losses')) ciState.goals = p.get('losses').split(',');
-    if (p.has('alertMsg')) {
-      const noticeBox = document.getElementById('f-soft-notice-box');
-      if (noticeBox && p.get('alertMsg').trim()) {
-        noticeBox.innerHTML = `⚠️ <strong>規劃提醒：</strong>${p.get('alertMsg')}`;
-      }
-    }
-
-    document.getElementById('a-monthly-exp-input').value = ciState.monthlyExp.toLocaleString();
-    document.getElementById('a-months-input').value = ciState.months;
-    document.getElementById('b-ci-input').value = ciState.existingCI.toLocaleString();
 
     syncAllFromGASCentral();
   });
