@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.4.6)</title>
+<title>確診危疾生活儲備規劃 (v9.4.7)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -105,9 +105,32 @@
   .vitality-toggle-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
   .vitality-details-box { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #bfdbfe; font-size: 12px; color: #334155; line-height: 1.6; }
   
-  .admin-modal-box { background: #f1f5f9; border-radius: 16px; width: 95vw; max-width: 880px; max-height: 90vh; overflow-y: auto; padding: 20px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; flex-direction: column; }
-  .admin-top-bar { display: flex; justify-content: space-between; align-items: center; background: #1e3a8a; color: #fff; padding: 12px 18px; border-radius: 12px; margin-bottom: 16px; font-weight: bold; font-size: 15px; }
-  .admin-section-card { background: #fff; border-radius: 10px; border: 1.5px solid #cbd5e1; padding: 14px; margin-bottom: 14px; }
+  /* 🌟 全螢幕後台控制台 CSS 🌟 */
+  #adminFullScreenModal {
+    display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: #f1f5f9; z-index: 9999999; flex-direction: column; overflow: hidden;
+  }
+  .admin-header-nav {
+    background: #1e3a8a; color: #fff; padding: 12px 16px; display: flex;
+    justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+  }
+  .admin-tab-bar {
+    display: flex; gap: 8px; background: #e2e8f0; padding: 8px 16px; border-bottom: 1px solid #cbd5e1; flex-shrink: 0; overflow-x: auto;
+  }
+  .admin-tab-btn {
+    padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 800; border: none; background: #fff; color: #475569; cursor: pointer; white-space: nowrap;
+  }
+  .admin-tab-btn.active {
+    background: #1e3a8a; color: #fff;
+  }
+  .admin-scroll-body {
+    flex: 1; overflow-y: auto; padding: 16px; max-width: 900px; width: 100%; margin: 0 auto; -webkit-overflow-scrolling: touch;
+  }
+  .admin-card-section {
+    background: #fff; border-radius: 12px; border: 1.5px solid #cbd5e1; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+  }
+  .admin-label { font-size: 12px; font-weight: 800; color: #475569; margin-top: 8px; display: block; }
   select, input[type="text"], input[type="number"], textarea { width: 100%; padding: 8px; font-size: 13.5px; border-radius: 8px; border: 2px dashed var(--pink-border); background: #fff; font-weight: 700; color: #333; outline: none; margin-top: 4px; box-sizing: border-box; }
 </style>
 </head>
@@ -116,7 +139,7 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge">v9.4.6</span>
+      <span class="v-badge">v9.4.7</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
@@ -541,24 +564,69 @@
   </div>
 </div>
 
-<!-- ⚙️ 後台管理面板 -->
-<div class="modal-overlay" id="adminModalOverlay">
-  <div class="admin-modal-box">
-    <div class="admin-top-bar">
-      <span>⚙️ CIApp 所見即所得雲端後台</span>
-      <div style="display:flex; gap:8px;">
-        <button type="button" class="btn-primary" style="padding:6px 14px; font-size:12px; background:#10b981;" onclick="saveAllAdminData()">💾 儲存並同步至 Google Sheet</button>
-        <button type="button" style="background:#64748b; color:#fff; border:none; border-radius:6px; padding:6px 12px; cursor:pointer; font-weight:bold;" onclick="closeAdminModal()">關閉</button>
+<!-- ⚙️ 全螢幕所見即所得後台管理系統 (徹底解決手機端截斷問題) -->
+<div id="adminFullScreenModal">
+  <div class="admin-header-nav">
+    <span style="font-weight:800; font-size:15px;">⚙️ CIApp 雲端後台管理控制台</span>
+    <div style="display:flex; gap:8px;">
+      <button type="button" class="btn-primary" style="padding:6px 14px; font-size:12px; background:#10b981;" onclick="saveAllAdminData()">💾 儲存同步至 Google Sheet</button>
+      <button type="button" style="background:#64748b; color:#fff; border:none; border-radius:6px; padding:6px 12px; cursor:pointer; font-weight:bold;" onclick="closeAdminModal()">關閉</button>
+    </div>
+  </div>
+  
+  <div class="admin-tab-bar">
+    <button type="button" class="admin-tab-btn active" onclick="switchAdminTab('pages', this)">📄 頁面文案與按鈕</button>
+    <button type="button" class="admin-tab-btn" onclick="switchAdminTab('config', this)">⚙️ 系統參數設定</button>
+    <button type="button" class="admin-tab-btn" onclick="switchAdminTab('firebase', this)">🔥 Firebase 案例/圖片管理</button>
+  </div>
+
+  <div class="admin-scroll-body">
+    <!-- 分頁 1：頁面文案與按鈕 -->
+    <div id="adminTabPagesSection">
+      <div style="margin-bottom:14px;">
+        <label style="font-size:12px; font-weight:bold; color:#475569;">切換編輯模式：</label>
+        <select id="adminRoleSelect" style="font-weight:bold;" onchange="renderAdminVisualLayout()">
+          <option value="adult" selected>👨‍👩‍👧 編輯：成人模式 (01～06)</option>
+          <option value="child">👶 編輯：兒童模式 (01～06)</option>
+        </select>
+      </div>
+      <div id="adminVisualContainer"></div>
+    </div>
+
+    <!-- 分頁 2：系統參數設定 -->
+    <div id="adminTabConfigSection" style="display:none;">
+      <div class="admin-card-section" id="adminConfigContainer"></div>
+    </div>
+
+    <!-- 分頁 3：Firebase 圖片/案例上傳 -->
+    <div id="adminTabFirebaseSection" style="display:none;">
+      <div class="admin-card-section">
+        <h3 style="color:var(--primary); margin:0 0 10px 0; font-size:16px;">🔥 上傳保障文件／理賠案例到 Firebase</h3>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div>
+            <label class="admin-label">歸屬分類：</label>
+            <select id="uploadCategorySelect">
+              <option value="102">🧑 102種疾病保障 (102)</option>
+              <option value="child">👶 兒童特定疾病保障 (child)</option>
+              <option value="case">📑 真實理賠案例庫 (case)</option>
+            </select>
+          </div>
+          <div>
+            <label class="admin-label">案例／文件名稱：</label>
+            <input type="text" id="uploadFileTitle" placeholder="例如：肺癌第3期理賠個案">
+          </div>
+          <div>
+            <label class="admin-label">選擇圖片或 PDF 文件：</label>
+            <input type="file" id="uploadFileInput" accept="image/*,.pdf" style="border:none; padding:4px 0;">
+          </div>
+          <button type="button" class="btn-primary" id="btnUploadToFirebase" style="background:#0284c7; margin-top:8px;" onclick="uploadFileToFirebase()">🚀 開始上傳並新增至中央庫</button>
+        </div>
+      </div>
+      <div class="admin-card-section">
+        <h4 style="margin:0 0 10px 0; color:#475569;">已上載之項目一覽：</h4>
+        <div id="adminUploadedItemsList"></div>
       </div>
     </div>
-    <div style="margin-bottom:14px;">
-      <label style="font-size:12px; font-weight:bold; color:#475569;">選擇要編輯的模式：</label>
-      <select id="adminRoleSelect" style="font-weight:bold;" onchange="renderAdminVisualLayout()">
-        <option value="adult" selected>👨‍👩‍👧 編輯：成人模式 (01～06)</option>
-        <option value="child">👶 編輯：兒童模式 (01～06)</option>
-      </select>
-    </div>
-    <div id="adminVisualContainer"></div>
   </div>
 </div>
 
@@ -616,7 +684,7 @@
     totalNeed: 1440000,
     existingCI: 300000,
     netGap: 1140000,
-    goals: [], // 由 URL 或預設動態載入
+    goals: [],
     totalChosenAssets: 500000,
     simStartAge: 20,
     simClaimAge: 25,
@@ -689,15 +757,12 @@
     recalculateAll();
   }
 
-  // 01 頁按鈕智慧匹配邏輯 (精準對接 Health Protection URL 帶過來的 losses)
   function isGoalMatched(optTitle, optKey, lossesArray) {
     if (!lossesArray || lossesArray.length === 0) return false;
     for (let rawLoss of lossesArray) {
       let loss = String(rawLoss).trim();
       if (!loss) continue;
-      // 1. 完全相同
       if (optTitle === loss || optKey === loss) return true;
-      // 2. 包含字眼模糊匹配
       if (loss.includes('陪伴') && optTitle.includes('陪伴')) return true;
       if ((loss.includes('醫療') || loss.includes('治療')) && (optTitle.includes('醫療') || optTitle.includes('治療'))) return true;
       if (loss.includes('教育') && optTitle.includes('教育')) return true;
@@ -1352,15 +1417,27 @@
     runStage3Calculation();
   }
 
+  // ======================== 🌟 全新全螢幕後台控制台邏輯 🌟 ========================
   function openAdminModal() {
-    document.getElementById('adminModalOverlay').style.display = 'flex';
+    document.getElementById('adminFullScreenModal').style.display = 'flex';
     renderAdminVisualLayout();
+    renderAdminConfigLayout();
+    renderAdminFirebaseList();
   }
 
   function closeAdminModal() {
-    document.getElementById('adminModalOverlay').style.display = 'none';
+    document.getElementById('adminFullScreenModal').style.display = 'none';
   }
 
+  function switchAdminTab(tabKey, btn) {
+    document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('adminTabPagesSection').style.display = (tabKey === 'pages') ? 'block' : 'none';
+    document.getElementById('adminTabConfigSection').style.display = (tabKey === 'config') ? 'block' : 'none';
+    document.getElementById('adminTabFirebaseSection').style.display = (tabKey === 'firebase') ? 'block' : 'none';
+  }
+
+  // 分頁 1：渲染 01～06 頁面文案與按鈕
   function renderAdminVisualLayout() {
     const container = document.getElementById('adminVisualContainer');
     const selectedRole = document.getElementById('adminRoleSelect').value;
@@ -1370,24 +1447,25 @@
     pages.forEach((p) => {
       const realPIdx = dbData.pages.findIndex(item => item.pageId === p.pageId && item.role === p.role);
       html += `
-        <div class="admin-section-card">
+        <div class="admin-card-section">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <strong style="color:var(--primary); font-size:14px;">步驟 ${p.stepOrder} 頁面文案設定</strong>
+            <strong style="color:var(--primary); font-size:15px;">步驟 ${p.stepOrder} 頁面文案設定</strong>
             <input type="text" data-adm-page-tag="${realPIdx}" value="${p.tagName}" style="width:180px; margin-top:0;" placeholder="步驟標籤">
           </div>
           <div style="margin-top:8px;">
-            <label style="font-size:12px; font-weight:bold; color:#475569;">主標題：</label>
+            <label class="admin-label">主標題：</label>
             <input type="text" data-adm-page-title="${realPIdx}" value="${p.title}" style="font-weight:bold; color:var(--primary);">
           </div>
           <div style="margin-top:8px;">
-            <label style="font-size:12px; font-weight:bold; color:#475569;">副標題說明：</label>
+            <label class="admin-label">副標題說明：</label>
             <textarea data-adm-page-sub="${realPIdx}" style="min-height:50px;">${p.subtitle}</textarea>
           </div>`;
 
+      // 01 頁 4 大守護項目
       if (p.stepOrder === 1) {
         const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
         const opts = allOpts.filter(o => o.pageId === 'step_ci_1' && (o.role === selectedRole || o.role === 'common')).sort((a,b)=>a.order-b.order);
-        html += `<h4 style="margin:12px 0 6px 0; font-size:13px; color:#2c3e50;">🔘 4 大守護項目按鈕：</h4><div class="grid-2x2">`;
+        html += `<h4 style="margin:14px 0 6px 0; font-size:13px; color:#2c3e50;">🔘 4 大守護項目按鈕：</h4><div class="grid-2x2">`;
         opts.forEach((o) => {
           const realOIdx = dbData.options.findIndex(item => item.optionKey === o.optionKey && item.role === o.role);
           html += `
@@ -1401,10 +1479,11 @@
         html += `</div>`;
       }
 
+      // 02 頁資產填補項目
       if (p.stepOrder === 2) {
         const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
         const aOpts = allOpts.filter(o => o.pageId === 'step_ci_2').sort((a,b)=>a.order-b.order);
-        html += `<h4 style="margin:12px 0 6px 0; font-size:13px; color:#2c3e50;">💰 02 頁填補資產項目：</h4><div style="display:flex; flex-direction:column; gap:6px;">`;
+        html += `<h4 style="margin:14px 0 6px 0; font-size:13px; color:#2c3e50;">💰 02 頁填補資產項目：</h4><div style="display:flex; flex-direction:column; gap:6px;">`;
         aOpts.forEach((o) => {
           const realOIdx = dbData.options.findIndex(item => item.optionKey === o.optionKey && item.pageId === 'step_ci_2');
           html += `
@@ -1421,6 +1500,110 @@
     container.innerHTML = html;
   }
 
+  // 分頁 2：渲染系統設定參數
+  function renderAdminConfigLayout() {
+    const container = document.getElementById('adminConfigContainer');
+    if (!container) return;
+    let html = '<h3 style="color:var(--primary); margin:0 0 12px 0;">⚙️ 系統參數與贈送加贈比例</h3><div class="grid-2col">';
+    for (const [k, v] of Object.entries(dbData.config)) {
+      html += `
+        <div>
+          <label class="admin-label">${k}</label>
+          <input type="text" data-adm-config-key="${k}" value="${v}">
+        </div>`;
+    }
+    html += '</div>';
+    container.innerHTML = html;
+  }
+
+  // 分頁 3：Firebase 圖片/文件列表
+  function renderAdminFirebaseList() {
+    const container = document.getElementById('adminUploadedItemsList');
+    if (!container) return;
+    let html = '';
+    ['102', 'child', 'case'].forEach(cat => {
+      const items = cloudAppDatabase[cat] || [];
+      const catTitle = cat === '102' ? '🧑 102種疾病保障' : (cat === 'child' ? '👶 兒童特定疾病' : '📑 真實理賠案例');
+      html += `<h5 style="margin:12px 0 6px 0; color:var(--primary); font-size:13px;">${catTitle} (${items.length} 件)：</h5><div style="display:flex; flex-direction:column; gap:6px;">`;
+      items.forEach((item, idx) => {
+        html += `
+          <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; padding:8px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:12.5px;">
+            <span><strong>${item.title}</strong> (${item.type})</span>
+            <div style="display:flex; gap:6px;">
+              <a href="${item.url}" target="_blank" style="color:#0284c7; font-weight:bold; text-decoration:none;">預覽 ↗</a>
+              <button type="button" style="background:#fee2e2; color:#dc2626; border:none; border-radius:4px; padding:2px 6px; cursor:pointer;" onclick="deleteFirebaseItem('${cat}', ${idx})">刪除</button>
+            </div>
+          </div>`;
+      });
+      if (items.length === 0) html += '<div style="font-size:12px; color:#94a3b8;">暫無上傳資料</div>';
+      html += '</div>';
+    });
+    container.innerHTML = html;
+  }
+
+  // Firebase 上傳核心
+  async function uploadFileToFirebase() {
+    const fileInput = document.getElementById('uploadFileInput');
+    const titleInput = document.getElementById('uploadFileTitle');
+    const catSelect = document.getElementById('uploadCategorySelect');
+    const file = fileInput.files[0];
+    const title = titleInput.value.trim();
+    const cat = catSelect.value;
+
+    if (!file) { alert('請先選擇要上傳的圖片或 PDF 檔案！'); return; }
+    if (!title) { alert('請輸入案例或文件標題！'); return; }
+
+    const btn = document.getElementById('btnUploadToFirebase');
+    btn.innerText = '⏳ 上傳至 Firebase 中...';
+    btn.disabled = true;
+
+    try {
+      const isPdf = file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf';
+      const ext = file.name.split('.').pop();
+      const storageRef = storage.ref(`ci_uploads/${cat}_${Date.now()}.${ext}`);
+      const snapshot = await storageRef.put(file);
+      const downloadURL = await snapshot.ref.getDownloadURL();
+
+      const newItem = {
+        title: title,
+        type: isPdf ? 'pdf' : 'image',
+        url: downloadURL
+      };
+
+      if (!cloudAppDatabase[cat]) cloudAppDatabase[cat] = [];
+      cloudAppDatabase[cat].push(newItem);
+
+      // 新增至 cases 清單供同步至 Google Sheet
+      if (!Array.isArray(dbData.cases)) dbData.cases = [];
+      dbData.cases.push({
+        category: cat,
+        diseaseName: title,
+        filesJson: JSON.stringify([newItem])
+      });
+
+      alert('✅ 檔案已成功上傳至 Firebase 並新增到清單！請點擊右上角「儲存同步至 Google Sheet」使改動永久生效。');
+      fileInput.value = '';
+      titleInput.value = '';
+      renderAdminFirebaseList();
+    } catch(err) {
+      alert('❌ 上傳失敗：' + err.message);
+    } finally {
+      btn.innerText = '🚀 開始上傳並新增至中央庫';
+      btn.disabled = false;
+    }
+  }
+
+  function deleteFirebaseItem(cat, idx) {
+    if (!confirm('確定刪除此項目？')) return;
+    const removed = cloudAppDatabase[cat].splice(idx, 1);
+    if (Array.isArray(dbData.cases)) {
+      const cIdx = dbData.cases.findIndex(c => c.category === cat && c.diseaseName === removed[0]?.title);
+      if (cIdx !== -1) dbData.cases.splice(cIdx, 1);
+    }
+    renderAdminFirebaseList();
+  }
+
+  // 儲存全部後台設定
   async function saveAllAdminData() {
     document.querySelectorAll('[data-adm-page-tag]').forEach(inp => {
       const idx = Number(inp.dataset.admPageTag);
@@ -1442,12 +1625,22 @@
       const idx = Number(inp.dataset.admOptIcon);
       if (dbData.options[idx]) dbData.options[idx].icon = inp.value;
     });
+    document.querySelectorAll('[data-adm-config-key]').forEach(inp => {
+      const key = inp.dataset.admConfigKey;
+      dbData.config[key] = inp.value;
+    });
 
     try {
       await fetch(GAS_CENTRAL_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ action: "saveAllAdmin", pages: dbData.pages, options: dbData.options, config: dbData.config })
+        body: JSON.stringify({
+          action: "saveAllAdmin",
+          pages: dbData.pages,
+          options: dbData.options,
+          config: dbData.config,
+          cases: dbData.cases
+        })
       });
       alert("✅ 所見即所得後台設定已成功同步至 Google Sheet！");
       renderDynamicTextsAndOptions();
@@ -1457,6 +1650,7 @@
     }
   }
 
+  // ======================== 雲端同步與初始化 ========================
   window.onGASDataLoaded = function(json) {
     if (json && json.status === "success") {
       dbData = json;
@@ -1471,8 +1665,10 @@
           let parsed = null;
           try { parsed = JSON.parse(row.filesJson); } catch(e) {}
           if (Array.isArray(parsed) && parsed.length > 0) {
+            if (!cloudAppDatabase[cat]) cloudAppDatabase[cat] = [];
             cloudAppDatabase[cat].push(parsed[0]);
           } else {
+            if (!cloudAppDatabase[cat]) cloudAppDatabase[cat] = [];
             cloudAppDatabase[cat].push({ title: row.diseaseName, type: "image", url: "https://via.placeholder.com/150x80" });
           }
         });
@@ -1499,7 +1695,6 @@
   }
 
   document.addEventListener('DOMContentLoaded', function() {
-    // 接收 Health Protection 動態 URL 參數
     const p = new URLSearchParams(window.location.search);
     if ((p.has('role') && p.get('role') === 'child') || (p.has('type') && p.get('type') === 'child')) {
       ciState.isChildMode = true;
@@ -1508,7 +1703,6 @@
     if (p.has('months')) ciState.months = Number(p.get('months')) || (ciState.isChildMode ? 24 : 36);
     if (p.has('existing')) ciState.existingCI = Number(p.get('existing')) || 0;
     
-    // 解析 losses 參數並標記有 URL 帶入
     if (p.has('losses') && p.get('losses').trim()) {
       hasUrlLosses = true;
       ciState.goals = p.get('losses').split(',').map(s => s.trim());
