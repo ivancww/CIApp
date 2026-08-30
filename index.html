@@ -2,8 +2,8 @@
 <html lang="zh-HK">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.5.2)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+<title>確診危疾生活儲備規劃 (v9.5.3)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -98,19 +98,23 @@
   .modal-box { background: #fff; border-radius: 16px; width: 95vw; max-width: 900px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; position: relative; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
   .modal-close-btn { position: absolute; top: 12px; right: 14px; background: #f1f5f9; border: none; font-size: 20px; font-weight: bold; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; }
   
+  .case-selector-bar {
+    background: #f0f7ff; border: 1px solid #cce5ff; border-radius: 10px; padding: 8px 12px; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
   .grid-5x5-slider {
     display: grid;
     grid-template-columns: repeat(5, minmax(130px, 1fr));
     gap: 10px;
     padding: 10px 4px;
     overflow-y: auto;
-    max-height: 65vh;
+    max-height: 60vh;
     justify-content: center;
     align-content: start;
     -webkit-overflow-scrolling: touch;
   }
   @media (max-width: 680px) {
-    .grid-5x5-slider { grid-template-columns: repeat(2, 1fr); max-height: 70vh; }
+    .grid-5x5-slider { grid-template-columns: repeat(2, 1fr); max-height: 65vh; }
   }
   .media-card-item {
     border: 1.5px solid var(--border); border-radius: 10px; background: #f8fafc;
@@ -183,7 +187,7 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge">v9.5.2</span>
+      <span class="v-badge">v9.5.3</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
@@ -587,11 +591,18 @@
   </div>
 </div>
 
-<!-- 🌟 5x5 置中抽屜彈窗（已移走黃色框） 🌟 -->
+<!-- 🌟 5x5 置中抽屜彈窗（支援二級案例切換） 🌟 -->
 <div class="modal-overlay" id="mediaDrawerOverlay">
   <div class="modal-box">
     <button type="button" class="modal-close-btn" onclick="closeMediaDrawer()">×</button>
     <h3 id="drawerCategoryTitle" style="margin:0 0 8px 0; color:var(--primary); font-size:17px;">保障資料一覽</h3>
+    
+    <!-- 📍 案例分組下拉選單（僅在有多個 Case 時顯示） -->
+    <div class="case-selector-bar" id="caseSelectorBar" style="display:none;">
+      <span style="font-size:12.5px; font-weight:bold; color:var(--primary); white-space:nowrap;">📍 選擇查看案例：</span>
+      <select id="caseDropdownSelect" onchange="renderCaseGallery(this.value)" style="flex:1; margin-top:0; font-size:13px;"></select>
+    </div>
+
     <div style="font-size:12px; color:#64748b; margin-bottom:6px; text-align:center;">👈 點擊圖片直接全螢幕置中開啟（支援左右滑動預覽）：</div>
     <div class="grid-5x5-slider" id="drawerMediaGrid"></div>
   </div>
@@ -604,7 +615,6 @@
     <button type="button" class="viewer-close-btn" onclick="closeDocViewer()">✕</button>
   </div>
   <div class="viewer-content-wrap" id="viewerContentArea">
-    <!-- 左右導航鍵 -->
     <button type="button" class="viewer-nav-btn viewer-nav-left" onclick="navigateViewer(-1)">❮</button>
     <div id="viewerBody" style="display:flex; justify-content:center; align-items:center; width:100%; height:100%;"></div>
     <button type="button" class="viewer-nav-btn viewer-nav-right" onclick="navigateViewer(1)">❯</button>
@@ -658,14 +668,14 @@
           <div>
             <label class="admin-label">歸屬分類：</label>
             <select id="uploadCategorySelect">
+              <option value="case">📑 真實理賠案例庫 (case)</option>
               <option value="102">🧑 102種疾病保障 (102)</option>
               <option value="child">👶 兒童特定疾病保障 (child)</option>
-              <option value="case">📑 真實理賠案例庫 (case)</option>
             </select>
           </div>
           <div>
             <label class="admin-label">案例／文件名稱：</label>
-            <input type="text" id="uploadFileTitle" placeholder="例如：肺癌第3期理賠個案 / 保障條款">
+            <input type="text" id="uploadFileTitle" placeholder="例如：乳癌首次及第二次賠償 / 肺癌標靶">
           </div>
           <div>
             <label class="admin-label">選擇圖片或 PDF 文件 (可多選，最多10個)：</label>
@@ -675,7 +685,7 @@
         </div>
       </div>
       <div class="admin-card-section">
-        <h4 style="margin:0 0 10px 0; color:#475569;">已上載之項目一覽：</h4>
+        <h4 style="margin:0 0 10px 0; color:#475569;">已上載之案例一覽：</h4>
         <div id="adminUploadedItemsList"></div>
       </div>
     </div>
@@ -740,7 +750,10 @@
     ]
   };
   let dbData = { config: { ...defaultDatabase.config }, pages: defaultDatabase.pages, options: defaultDatabase.options, rates: {}, cases: [], rules: defaultDatabase.rules };
+  
+  // 🌟 二級案例庫結構：按 Category 分組，包含多個獨立 Case 物件 🌟
   let cloudAppDatabase = { "102": [], "child": [], "case": [], rules: defaultDatabase.rules };
+  
   const ciState = {
     isChildMode: false,
     monthlyExp: 40000,
@@ -766,7 +779,7 @@
   };
   let hasUrlLosses = false;
   
-  // 🌟 免下載左右滑動預覽器狀態 🌟
+  // 🌟 全螢幕免下載左右滑動預覽器 🌟
   let currentViewerList = [];
   let currentViewerIndex = 0;
   let touchStartX = 0;
@@ -1259,21 +1272,51 @@
     document.getElementById('promoOys2TotalSaved').innerText = 'HK$ ' + oys2TotalSaved.toLocaleString();
   }
   
-  // 🌟 抽屜彈窗（已徹底移走黃色框） 🌟
+  // 🌟 5x5 置中抽屜彈窗（支援二級案例下拉選擇 + 免下載預覽） 🌟
+  let currentDrawerCategory = 'case';
   function openMediaDrawer(categoryKey) {
+    currentDrawerCategory = categoryKey;
     const overlay = document.getElementById('mediaDrawerOverlay');
     const titleEl = document.getElementById('drawerCategoryTitle');
-    const gridEl = document.getElementById('drawerMediaGrid');
+    const selectorBar = document.getElementById('caseSelectorBar');
+    const dropSelect = document.getElementById('caseDropdownSelect');
     overlay.style.display = 'flex';
     
     if (categoryKey === '102') titleEl.innerText = '🧑 102 種嚴重／早期危疾保障一覽';
     else if (categoryKey === 'child') titleEl.innerText = '👶 兒童及青少年專屬特定疾病保障';
     else if (categoryKey === 'case') titleEl.innerText = '📑 真實危疾索償賠償案例庫';
     
-    const items = cloudAppDatabase[categoryKey] || [];
-    currentViewerList = items;
+    const caseList = cloudAppDatabase[categoryKey] || [];
+    
+    if (caseList.length > 1) {
+      selectorBar.style.display = 'flex';
+      let optionsHtml = '';
+      caseList.forEach((c, idx) => {
+        const fileCount = (c.files && c.files.length > 0) ? `(${c.files.length}張)` : '';
+        optionsHtml += `<option value="${idx}">📍 案例 ${idx + 1}：${c.caseName} ${fileCount}</option>`;
+      });
+      dropSelect.innerHTML = optionsHtml;
+      renderCaseGallery(0);
+    } else {
+      selectorBar.style.display = 'none';
+      renderCaseGallery(0);
+    }
+  }
+
+  function renderCaseGallery(caseIndex) {
+    const gridEl = document.getElementById('drawerMediaGrid');
+    const caseList = cloudAppDatabase[currentDrawerCategory] || [];
+    const currentCase = caseList[Number(caseIndex)] || caseList[0];
+    
+    if (!currentCase || !currentCase.files || currentCase.files.length === 0) {
+      gridEl.innerHTML = '<div style="grid-column: 1 / -1; text-align:center; padding:35px; color:#94a3b8;">暫無上載之文件</div>';
+      currentViewerList = [];
+      return;
+    }
+    
+    currentViewerList = currentCase.files;
     let html = '';
-    items.forEach((item, idx) => {
+    currentCase.files.forEach((item, idx) => {
       if (item.type === 'pdf') {
         html += `
           <div class="media-card-item" onclick="openDocViewer(${idx})">
@@ -1288,14 +1331,14 @@
           </div>`;
       }
     });
-    if (items.length === 0) html = '<div style="grid-column: 1 / -1; text-align:center; padding:30px; color:#94a3b8;">暫無上載之文件</div>';
     gridEl.innerHTML = html;
   }
+
   function closeMediaDrawer() {
     document.getElementById('mediaDrawerOverlay').style.display = 'none';
   }
 
-  // 🌟 免下載直接置中大圖/檔案左右滑動預覽器邏輯 🌟
+  // 🌟 免下載直接置中大圖/檔案左右滑動預覽器 🌟
   function openDocViewer(index) {
     if (!currentViewerList || currentViewerList.length === 0) return;
     currentViewerIndex = index;
@@ -1324,7 +1367,6 @@
     }
   }
 
-  // 支援手機左右滑動（Swipe）手勢
   const viewerArea = document.getElementById('viewerContentArea');
   if (viewerArea) {
     viewerArea.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, false);
@@ -1338,7 +1380,7 @@
     if (touchEndX > touchStartX + 45) navigateViewer(-1);
   }
 
-  // 🌟 04 頁多重賠償推進邏輯 (完美支援腦退化 100% + 6% 年金) 🌟
+  // 🌟 04 頁多重賠償推進邏輯 (支援腦退化 100% + 6% 年金) 🌟
   function renderMultiButtonsFromRules() {
     const topContainer = document.getElementById('topMultiBtnContainer');
     const botContainer = document.getElementById('botEmojiBtnContainer');
@@ -1565,7 +1607,6 @@
     container.innerHTML = html;
   }
   
-  // 🌟 渲染 04 頁多重賠償規則編輯介面 (直接連動 rules) 🌟
   function renderAdminRulesLayout() {
     const container = document.getElementById('adminRulesContainer');
     if (!container) return;
@@ -1575,7 +1616,7 @@
       html += `
         <div style="background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <strong style="color:var(--primary); font-size:14px;">${rule.emoji || '🛡️'} ${rule.name} (鍵值: ${rule.claimKey})</strong>
+            <strong style="color:var(--primary); font-size:14px;">${rule.emoji || '🛡️'} ${rule.name} (鍵名: ${rule.claimKey})</strong>
             <input type="text" style="width:90px;" data-adm-rule-color="${idx}" value="${rule.color}" placeholder="色碼">
           </div>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
@@ -1605,29 +1646,24 @@
     const container = document.getElementById('adminUploadedItemsList');
     if (!container) return;
     let html = '';
-    ['102', 'child', 'case'].forEach(cat => {
-      const items = cloudAppDatabase[cat] || [];
-      const catTitle = cat === '102' ? '🧑 102種疾病保障' : (cat === 'child' ? '👶 兒童特定疾病' : '📑 真實理賠案例');
-      html += `<h5 style="margin:12px 0 6px 0; color:var(--primary); font-size:13px;">${catTitle} (${items.length} 件)：</h5><div style="display:flex; flex-direction:column; gap:6px;">`;
-      items.forEach((item, idx) => {
+    ['case', '102', 'child'].forEach(cat => {
+      const cases = cloudAppDatabase[cat] || [];
+      const catTitle = cat === 'case' ? '📑 真實理賠案例庫' : (cat === '102' ? '🧑 102種疾病保障' : '👶 兒童特定疾病');
+      html += `<h5 style="margin:12px 0 6px 0; color:var(--primary); font-size:13px;">${catTitle} (${cases.length} 個 Case)：</h5><div style="display:flex; flex-direction:column; gap:8px;">`;
+      cases.forEach((cItem, cIdx) => {
+        const fCount = (cItem.files || []).length;
         html += `
-          <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; padding:8px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:12.5px;">
-            <span><strong>${item.title}</strong> (${item.type})</span>
-            <div style="display:flex; gap:6px;">
-              <a href="javascript:void(0)" onclick="openViewerFromUrl('${item.url}', '${item.title}', '${item.type}')" style="color:#0284c7; font-weight:bold; text-decoration:none;">預覽 ↗</a>
-              <button type="button" style="background:#fee2e2; color:#dc2626; border:none; border-radius:4px; padding:2px 6px; cursor:pointer;" onclick="deleteFirebaseItem('${cat}', ${idx})">刪除</button>
+          <div style="background:#f8fafc; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span><strong>📍 ${cItem.caseName}</strong> (${fCount} 個檔案)</span>
+              <button type="button" style="background:#fee2e2; color:#dc2626; border:none; border-radius:4px; padding:2px 8px; cursor:pointer;" onclick="deleteAdminCaseItem('${cat}', ${cIdx})">刪除此Case</button>
             </div>
           </div>`;
       });
-      if (items.length === 0) html += '<div style="font-size:12px; color:#94a3b8;">暫無上傳資料</div>';
+      if (cases.length === 0) html += '<div style="font-size:12px; color:#94a3b8;">暫無上傳資料</div>';
       html += '</div>';
     });
     container.innerHTML = html;
-  }
-
-  function openViewerFromUrl(url, title, type) {
-    currentViewerList = [{ url, title, type }];
-    openDocViewer(0);
   }
   
   async function uploadFileToFirebase() {
@@ -1647,9 +1683,7 @@
     btn.disabled = true;
     
     try {
-      if (!cloudAppDatabase[cat]) cloudAppDatabase[cat] = [];
-      if (!Array.isArray(dbData.cases)) dbData.cases = [];
-      
+      const uploadedFiles = [];
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const isPdf = file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf';
@@ -1659,21 +1693,34 @@
         const snapshot = await storageRef.put(file);
         const downloadURL = await snapshot.ref.getDownloadURL();
         
-        const itemTitle = files.length > 1 ? `${baseTitle} (頁/圖 ${i + 1})` : baseTitle;
-        const newItem = {
-          title: itemTitle,
+        uploadedFiles.push({
+          title: files.length > 1 ? `${baseTitle} (頁/圖 ${i + 1})` : baseTitle,
           type: isPdf ? 'pdf' : 'image',
           url: downloadURL
-        };
-        cloudAppDatabase[cat].push(newItem);
-        dbData.cases.push({
-          category: cat,
-          diseaseName: itemTitle,
-          filesJson: JSON.stringify([newItem])
         });
       }
       
-      alert(`✅ 成功上傳 ${files.length} 個檔案至 Firebase！請點擊右上角「💾 儲存同步至 Google Sheet」使改動永久生效。`);
+      const newCase = {
+        category: cat,
+        caseName: baseTitle,
+        files: uploadedFiles,
+        filesJson: JSON.stringify(uploadedFiles)
+      };
+      
+      if (!cloudAppDatabase[cat]) cloudAppDatabase[cat] = [];
+      cloudAppDatabase[cat].push(newCase);
+      
+      if (!Array.isArray(dbData.cases)) dbData.cases = [];
+      dbData.cases.push({
+        category: cat,
+        diseaseName: baseTitle,
+        claimCount: "最新上載",
+        amount: "100%",
+        date: new Date().toLocaleDateString('zh-HK'),
+        filesJson: JSON.stringify(uploadedFiles)
+      });
+      
+      alert(`✅ 成功建立案例【${baseTitle}】並上傳 ${files.length} 個檔案至 Firebase！請點擊右上角「💾 儲存同步至 Google Sheet」使改動永久生效。`);
       fileInput.value = '';
       titleInput.value = '';
       renderAdminFirebaseList();
@@ -1685,11 +1732,11 @@
     }
   }
   
-  function deleteFirebaseItem(cat, idx) {
-    if (!confirm('確定刪除此項目？')) return;
+  function deleteAdminCaseItem(cat, idx) {
+    if (!confirm('確定刪除此案例及包含的所有檔案？')) return;
     const removed = cloudAppDatabase[cat].splice(idx, 1);
     if (Array.isArray(dbData.cases)) {
-      const cIdx = dbData.cases.findIndex(c => c.category === cat && c.diseaseName === removed[0]?.title);
+      const cIdx = dbData.cases.findIndex(c => c.category === cat && c.diseaseName === removed[0]?.caseName);
       if (cIdx !== -1) dbData.cases.splice(cIdx, 1);
     }
     renderAdminFirebaseList();
@@ -1768,20 +1815,31 @@
       cloudAppDatabase["child"] = [];
       cloudAppDatabase["case"] = [];
       cloudAppDatabase.rules = (json.rules && json.rules.length > 0) ? json.rules : defaultDatabase.rules;
+      
+      // 🌟 解析 Google Sheet 案例封包為二級 Case 陣列 🌟
       if (Array.isArray(json.cases)) {
         json.cases.forEach(row => {
           const cat = String(row.category || '').trim();
-          let parsed = null;
-          try { parsed = JSON.parse(row.filesJson); } catch(e) {}
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            if (!cloudAppDatabase[cat]) cloudAppDatabase[cat] = [];
-            cloudAppDatabase[cat].push(parsed[0]);
-          } else {
-            if (!cloudAppDatabase[cat]) cloudAppDatabase[cat] = [];
-            cloudAppDatabase[cat].push({ title: row.diseaseName, type: "image", url: "https://via.placeholder.com/150x80" });
+          let parsedFiles = null;
+          try { parsedFiles = JSON.parse(row.filesJson); } catch(e) {}
+          
+          let filesList = [];
+          if (Array.isArray(parsedFiles) && parsedFiles.length > 0) {
+            filesList = parsedFiles;
+          } else if (row.diseaseName) {
+            filesList = [{ title: row.diseaseName, type: "image", url: "https://via.placeholder.com/150x80" }];
           }
+          
+          if (!cloudAppDatabase[cat]) cloudAppDatabase[cat] = [];
+          cloudAppDatabase[cat].push({
+            caseName: row.diseaseName || '未命名案例',
+            category: cat,
+            files: filesList,
+            filesJson: row.filesJson || '[]'
+          });
         });
       }
+      
       document.getElementById('sync-status-badge').innerHTML = '✅ 中央庫已同步';
       document.getElementById('sync-status-badge').className = 'status-ok';
       
