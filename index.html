@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.4.2)</title>
+<title>確診危疾生活儲備規劃 (v9.4.4)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -111,7 +111,7 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge">v9.4.2</span>
+      <span class="v-badge">v9.4.4</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
@@ -162,23 +162,32 @@
       </div>
     </div>
     
+    <!-- 02 黃色部份：只顯示資金承托月份 -->
     <div class="yellow-red-alert-box" id="b-duration-box">
-      📊 <strong>資金承托與缺口分析：</strong><br>
-      • <strong>缺口公式：</strong>所需總儲備 (<span id="b-exp-total-text">HK$ 1,440,000</span>) － 現有危疾 (<span id="b-ci-text2">HK$ 300,000</span>) ＝ <strong>HK$ <span id="b-gap-formula-val">1,140,000</span></strong><br>
-      • <strong>承托分析：</strong>目前危疾保障 (<span id="b-ci-text">$300K</span>) ÷ 每月生活需要 (<span id="b-exp-text">$40K</span>) ➔ 可維持約 <span id="b-months-support" style="text-decoration:underline; font-size:18px;">7.5</span> 個月。
+      📊 資金承托分析：<br>
+      目前危疾保障 (<span id="b-ci-text">$300K</span>) ÷ 每月生活需要 (<span id="b-exp-text">$40K</span>) ➔ 可維持約 <span id="b-months-support" style="text-decoration:underline; font-size:18px;">7.5</span> 個月。
     </div>
+
     <h4 style="margin: 18px 0 8px 0; color: #2c3e50; font-size: 14.5px;">❓ 生活現金流缺口，你會先動用邊筆資產去填補？(可多選並輸入金額)</h4>
     <div id="assets-list-container"></div>
-    <div class="stat-grid-box" style="margin-top:10px; background:#fff; border-color:var(--primary);">
+    
+    <!-- 02 藍色資產表：顯示算式及扣減結果 -->
+    <div class="stat-grid-box" style="margin-top:10px; background:#fff; border:2px solid var(--primary);">
       <div class="stat-row">
         <span>計劃動用資產總額：</span>
         <strong style="color:var(--primary); font-size:17px;" id="b-asset-total-display">HK$ 500,000</strong>
       </div>
-      <div class="stat-row">
-        <span>扣除資產後剩餘生活缺口：</span>
-        <strong style="color:var(--danger); font-size:17px;" id="b-asset-remain-gap">HK$ 640,000</strong>
+      <div class="stat-row total" style="color:var(--danger); border-top:1.5px dashed var(--border); margin-top:8px; padding-top:8px;">
+        <div>
+          <span>扣除資產後剩餘生活缺口：</span>
+          <div style="font-size:11.5px; color:#64748b; font-weight:normal;" id="b-asset-formula-text">
+            (缺口 HK$ 1,140,000 － 資產 HK$ 500,000)
+          </div>
+        </div>
+        <strong style="color:var(--danger); font-size:18px;" id="b-asset-remain-gap">HK$ 640,000</strong>
       </div>
     </div>
+
     <div class="nav-btn-group">
       <button type="button" class="btn-secondary" data-nav="to-1">← 返回目標設定</button>
       <button type="button" class="btn-primary" data-nav="to-3">下一步：補充儲備缺口及守護資產 →</button>
@@ -208,12 +217,12 @@
     </div>
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
       <div>
-        <label style="font-size:12px; font-weight:bold; color:var(--danger);">🔴 受保人投保年齡：</label>
-        <input type="number" id="c-input-start-age" value="20" min="0" max="80" style="border-color:#dc2626;">
+        <label style="font-size:12px; font-weight:bold; color:var(--primary);">受保人投保年齡：</label>
+        <input type="number" id="c-input-start-age" value="20" min="0" max="80">
       </div>
       <div>
         <label style="font-size:12px; font-weight:bold;">假設確診歲數：</label>
-        <input type="number" id="c-input-claim-age" value="45" min="0" max="100">
+        <input type="number" id="c-input-claim-age" value="25" min="0" max="100">
       </div>
     </div>
     <div class="grid-2col">
@@ -357,8 +366,8 @@
         <button type="button" class="prem-mode-btn" id="btn-ci-monthly" data-mode="monthly">月繳 (+6%)</button>
       </div>
     </div>
-    <h2 class="stage-title" id="ui-title-5">選擇合適你的方案</h2>
-    <p class="stage-desc" id="ui-subtitle-5">可自由單選或同時安排兩套方案，系統已連動 03 港幣保額並以每 HK$7,800 精算保費：</p>
+    <h2 class="stage-title" id="ui-title-5" style="margin-bottom:15px;">選擇合適你的方案</h2>
+
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
       <div>
         <label style="font-size:12px; font-weight:bold;">受保人年齡</label>
@@ -397,7 +406,7 @@
         <input type="checkbox" id="chk-plan-sce">
         <h4 style="margin:0 0 4px 0; color:#34495e;">方案 A ｜ 簡護危疾保 (SCE)</h4>
         <div style="font-size:11.5px; color:#666; line-height:1.4;">純保障消費型，最長續保至 80 歲<br>保額：<strong id="plan-sum-sce-text">HK$ 780,000</strong></div>
-        <div style="font-size:18px; font-weight:900; color:var(--primary); margin-top:8px;" id="prem-sce-display">HK$ 1,583 /年</div>
+        <div style="font-size:18px; font-weight:900; color:var(--primary); margin-top:8px;" id="prem-sce-display">HK$ 1,425 /年</div>
       </div>
       <div class="plan-card selected" id="card-ci-oys2">
         <input type="checkbox" id="chk-plan-oys2" checked>
@@ -483,7 +492,7 @@
             <div><label style="font-size:11px; font-weight:bold;">第 3 年回贈 (月數)：</label><input type="number" id="promoSceY3" value="0" min="0" step="0.5"></div>
           </div>
           <div class="stat-grid-box" style="margin:8px 0 0 0; background:#f8fafc; padding:10px; font-size:12.5px;">
-            <div class="stat-row"><span>首年實繳保費：</span><strong id="promoSceNetY1">HK$ 1,583</strong></div>
+            <div class="stat-row"><span>首年實繳保費：</span><strong id="promoSceNetY1">HK$ 1,425</strong></div>
             <div class="stat-row" id="row-sce-y2-rebate" style="display:none;"><span>第 2 年回贈金額：</span><strong style="color:#059669;" id="promoSceRebateY2">HK$ 0</strong></div>
             <div class="stat-row" id="row-sce-y3-rebate" style="display:none;"><span>第 3 年回贈金額：</span><strong style="color:#059669;" id="promoSceRebateY3">HK$ 0</strong></div>
             <div class="stat-row total" style="color:#b45309; margin-top:6px; padding-top:6px;">
@@ -563,8 +572,8 @@
       { role: 'child', stepOrder: 3, pageId: 'step_ci_3', tagName: '03｜全面守護', title: '打造專屬兒童健康防護盾', subtitle: '包含兒童特定疾病預支與加贈升級，全面守護孩子黃金成長期：' },
       { role: 'adult', stepOrder: 4, pageId: 'step_ci_4', tagName: '04｜多重賠償時間線', title: '癌症復發、持續、擴散？腦退化？心臟病／中風？', subtitle: '對比單次保單完結後之風險注意，與 OYS2 延續至 85 歲之多重架構：' },
       { role: 'child', stepOrder: 4, pageId: 'step_ci_4', tagName: '04｜終身多重守護', title: '守護一生：癌症、心臟疾病與成長關鍵期', subtitle: '守護孩子由成長到成年，多重持續有效，無懼成長路上健康波折：' },
-      { role: 'adult', stepOrder: 5, pageId: 'step_ci_5', tagName: '05｜方案與保費', title: '選擇合適你的方案', subtitle: '可自由單選或同時安排兩套方案，系統已連動 03 港幣保額並以每 HK$7,800 精算保費：' },
-      { role: 'child', stepOrder: 5, pageId: 'step_ci_5', tagName: '05｜兒童專屬費率', title: '為孩子鎖定年輕健康低保費', subtitle: '越早投保保費越優惠，為子女建立終身穩固健康基石：' },
+      { role: 'adult', stepOrder: 5, pageId: 'step_ci_5', tagName: '05｜方案與保費', title: '選擇合適你的方案', subtitle: '' },
+      { role: 'child', stepOrder: 5, pageId: 'step_ci_5', tagName: '05｜兒童專屬費率', title: '為孩子鎖定年輕健康低保費', subtitle: '' },
       { role: 'adult', stepOrder: 6, pageId: 'step_ci_6', tagName: '06｜方案總結', title: '方案總結', subtitle: '以下為你專屬量身定制的生活防線規劃摘要：' },
       { role: 'child', stepOrder: 6, pageId: 'step_ci_6', tagName: '06｜守護清單', title: '兒童專屬健康防禦總結', subtitle: '以下為小朋友量身定制的全面照護與醫療守護摘要：' }
     ],
@@ -587,7 +596,7 @@
       { claimKey: "cancer_a", name: "癌症選項A (一筆過)", emoji: "🎗️", btnText: "🎗️ 癌症選項A (+3年)", maxCount: 6, waitYears: 3, isMonthly: false, color: "#d97706" },
       { claimKey: "cancer_b", name: "癌症選項B (每月津貼)", emoji: "💊", btnText: "💊 癌症選項B (5%/月)", maxCount: 100, waitYears: 1, isMonthly: true, color: "#0284c7" },
       { claimKey: "heart", name: "心臟病/中風", emoji: "❤️", btnText: "❤️ 心臟/中風 (+1年)", maxCount: 3, waitYears: 1, isMonthly: false, color: "#8e44ad" },
-      { claimKey: "dementia", name: "腦退化年金", emoji: "🧠", btnText: "🧠 腦退化年金 (+1年)", maxCount: 10, waitYears: 1, isMonthly: false, color: "#27ae60" }
+      { claimKey: "dementia", name: "腦退化年金", emoji: "🧠", btnText: "🧠 腦退化 (+1年)", maxCount: 11, waitYears: 1, isMonthly: false, color: "#27ae60" }
     ]
   };
 
@@ -604,10 +613,10 @@
     goals: ['家庭生活質素', '積蓄與資產'],
     totalChosenAssets: 500000,
     simStartAge: 20,
-    simClaimAge: 45,
+    simClaimAge: 25,
     sceSum: 780000,
     oys2Sum: 780000,
-    multiTimelineAge: 45,
+    multiTimelineAge: 25,
     oys2MultiPaid: 1170000,
     claimHistory: [],
     countsMap: {},
@@ -615,7 +624,7 @@
     chooseOys2: true,
     premiumMode: 'annual',
     oys2PayPeriod: 18,
-    annualPremMap: { sce: 1583, oys2: 19204 }
+    annualPremMap: { sce: 1425, oys2: 19204 }
   };
 
   function parseNum(val) {
@@ -653,7 +662,7 @@
     const defMonths = isChild ? parseNum(dbData.config["兒童_預設休養月數"] || 24) : parseNum(dbData.config["成人_預設休養月數"] || 36);
     const defExist = isChild ? parseNum(dbData.config["兒童_預設現有危疾"] || 0) : parseNum(dbData.config["成人_預設現有危疾"] || 300000);
     const defStart = isChild ? parseNum(dbData.config["兒童_預設投保年齡"] || 5) : parseNum(dbData.config["成人_預設投保年齡"] || 20);
-    const defClaim = isChild ? parseNum(dbData.config["兒童_預設確診年齡"] || 10) : parseNum(dbData.config["成人_預設確診年齡"] || 45);
+    const defClaim = isChild ? parseNum(dbData.config["兒童_預設確診年齡"] || 10) : (defStart + 5);
 
     ciState.monthlyExp = defExp;
     ciState.months = defMonths;
@@ -682,7 +691,14 @@
       const sub = document.getElementById(`ui-subtitle-${p.stepOrder}`);
       if (tag) tag.innerText = p.tagName;
       if (title) title.innerText = p.title;
-      if (sub) sub.innerText = p.subtitle;
+      if (sub) {
+        if (p.stepOrder === 5) {
+          sub.innerText = '';
+          sub.style.display = 'none';
+        } else {
+          sub.innerText = p.subtitle;
+        }
+      }
     });
 
     const goalsGrid = document.getElementById('goal-options-grid');
@@ -784,10 +800,6 @@
     document.getElementById('b-target-defense').innerText = 'HK$ ' + ciState.totalNeed.toLocaleString();
     document.getElementById('b-gap-val').innerText = 'HK$ ' + ciState.netGap.toLocaleString();
     
-    // 02 頁算式明確呈現
-    document.getElementById('b-exp-total-text').innerText = 'HK$ ' + ciState.totalNeed.toLocaleString();
-    document.getElementById('b-ci-text2').innerText = 'HK$ ' + ciState.existingCI.toLocaleString();
-    document.getElementById('b-gap-formula-val').innerText = ciState.netGap.toLocaleString();
     document.getElementById('b-ci-text').innerText = '$' + Math.round(ciState.existingCI/1000) + 'K';
     document.getElementById('b-exp-text').innerText = '$' + Math.round(ciState.monthlyExp/1000) + 'K';
     
@@ -821,6 +833,13 @@
     const remainGap = Math.max(0, ciState.netGap - sum);
     document.getElementById('b-asset-total-display').innerText = 'HK$ ' + sum.toLocaleString();
     document.getElementById('b-asset-remain-gap').innerText = 'HK$ ' + remainGap.toLocaleString();
+    
+    // 02 藍色算式顯示
+    const formulaEl = document.getElementById('b-asset-formula-text');
+    if (formulaEl) {
+      formulaEl.innerText = `(生活缺口 HK$ ${ciState.netGap.toLocaleString()} － 計劃動用資產 HK$ ${sum.toLocaleString()})`;
+    }
+
     document.getElementById('c-summary-assets').innerText = 'HK$ ' + sum.toLocaleString();
     document.getElementById('c-summary-remain-gap').innerText = 'HK$ ' + remainGap.toLocaleString();
     runStage3Calculation();
@@ -834,32 +853,33 @@
     }
   }
 
-  // 03 核心精算：依據紅圈受保人投保年齡 (<=30歲享有 50% 加贈)
+  // 03 核心精算：依 (確診歲數 - 投保歲數) <= 10 計算，贈送比率嚴格對接 Google Sheet 設定
   function runStage3Calculation() {
     const startAgeEl = document.getElementById('c-input-start-age');
     const claimAgeEl = document.getElementById('c-input-claim-age');
     if (!startAgeEl || !claimAgeEl) return;
     
     ciState.simStartAge = parseInt(startAgeEl.value, 10) || 20;
-    ciState.simClaimAge = parseInt(claimAgeEl.value, 10) || 45;
+    ciState.simClaimAge = parseInt(claimAgeEl.value, 10) || 25;
     const isChild = ciState.isChildMode;
     const sceSum = ciState.sceSum;
     const oys2Sum = ciState.oys2Sum;
 
     // Google Sheet 系統設定加贈率
-    const rawRateUnder30 = dbData.config["成人_30歲以下加贈率"] || dbData.config["30歲以下加贈率"] || 0.50;
-    const rawRateOver31 = dbData.config["成人_31歲以上加贈率"] || dbData.config["31歲以上加贈率"] || 0.35;
-    const rawChildRate = dbData.config["兒童_首十年加贈率"] || dbData.config["兒童加贈率"] || 0.50;
+    const rawRateUnder30 = dbData.config["成人_30歲以下加贈率"] || 0.50;
+    const rawRateOver31 = dbData.config["成人_31歲以上加贈率"] || 0.35;
+    const rawChildRate = dbData.config["兒童_首十年加贈率"] || 0.50;
 
     const rateUnder30 = typeof rawRateUnder30 === 'string' ? parseFloat(rawRateUnder30) : Number(rawRateUnder30);
     const rateOver31 = typeof rawRateOver31 === 'string' ? parseFloat(rawRateOver31) : Number(rawRateOver31);
     const childRate = typeof rawChildRate === 'string' ? parseFloat(rawChildRate) : Number(rawChildRate);
 
-    // 依據紅圈投保歲數判定
+    // 依投保歲數判定 Google Sheet 設定的加贈比例
     const bonusRate = isChild ? childRate : ((ciState.simStartAge <= 30) ? rateUnder30 : rateOver31);
     
-    // 首 10 年升級判定（以投保後 10 年內計算）
-    const isWithin10Years = (ciState.simStartAge <= 30) || (ciState.simClaimAge - ciState.simStartAge <= 10);
+    // 嚴格依照：確診年齡 - 受保年齡 計算，10年內有加贈，超過10年則沒有
+    const elapsed = ciState.simClaimAge - ciState.simStartAge;
+    const isWithin10Years = (elapsed >= 0 && elapsed <= 10);
 
     const chkOys2First = document.getElementById('chk-oys2-first')?.checked || false;
     const chkOys2Early = document.getElementById('chk-oys2-early')?.checked || false;
@@ -900,10 +920,10 @@
       document.getElementById('c-oys2-early-desc-line').innerHTML = `• 預支 20% ($${Math.round(oys2Sum*0.2).toLocaleString()}) ＋ 早期升級加贈 <strong style="color:#059669;">+HK$ ${earlyActualBonusAmt.toLocaleString()} (+${Math.round(bonusRate * 100)}%)</strong>`;
     } else {
       document.getElementById('c-oys2-claim-title-pct').innerText = (oys2FirstRemainPct === 0.8) ? '80% (已扣減早期預支)' : '100%';
-      document.getElementById('c-oys2-bonus-desc-line').innerHTML = `• ${Math.round(oys2FirstRemainPct * 100)}% 基本保額賠償<br>• 豁免餘下保費，多重持續有效`;
+      document.getElementById('c-oys2-bonus-desc-line').innerHTML = `• ${Math.round(oys2FirstRemainPct * 100)}% 基本保額賠償 (已過首 10 年升級期)<br>• 豁免餘下保費，多重持續有效`;
       document.getElementById('c-oys2-early-bonus-tag').style.display = 'none';
       document.getElementById('c-oys2-early-claim').innerText = 'HK$ ' + Math.round(oys2Sum * 0.2).toLocaleString();
-      document.getElementById('c-oys2-early-desc-line').innerText = '• 預支 20% 原有保額';
+      document.getElementById('c-oys2-early-desc-line').innerText = '• 預支 20% 原有保額 (無首 10 年加贈)';
     }
 
     const sceChildBlock = document.getElementById('c-sce-child-block');
@@ -956,7 +976,7 @@
     return 0;
   }
 
-  // 05 方案與保費（含 17 歲以下自動隱藏健康程式邏輯）
+  // 05 方案與保費
   function calculateCIPremium() {
     const age = parseInt(document.getElementById('ci-calc-age').value, 10) || 20;
     const gender = document.getElementById('ci-calc-gender').value || 'M';
@@ -1144,7 +1164,7 @@
     document.getElementById('mediaDrawerOverlay').style.display = 'none';
   }
 
-  // 04 多重時間線推演按鈕渲染與互斥邏輯
+  // 04 多重時間線推演按鈕
   function renderMultiButtonsFromRules() {
     const topContainer = document.getElementById('topMultiBtnContainer');
     const botContainer = document.getElementById('botEmojiBtnContainer');
@@ -1158,7 +1178,6 @@
       if (ciState.countsMap[rule.claimKey] === undefined) ciState.countsMap[rule.claimKey] = 0;
       let bText = rule.btnText || `${rule.emoji || '🛡️'} ${rule.name || '理賠項目'} (+${rule.waitYears || 1}年)`;
       
-      // 腦退化症賠過 1 次後文字自動轉為每年 6%
       if (rule.claimKey === 'dementia' && ciState.countsMap['dementia'] >= 1) {
         bText = `🧠 腦退化年金 (每年6%)`;
       }
@@ -1167,7 +1186,6 @@
       const bEmoji = rule.emoji || '🛡️';
       const bName = rule.name || '理賠項目';
 
-      // 互斥判斷：癌症B已點選，則禁用癌症A
       const isDisabled = (rule.claimKey === 'cancer_a' && (ciState.countsMap['cancer_b'] || 0) > 0);
 
       topHtml += `<button type="button" class="btn-multi-action" id="top-btn-${rule.claimKey}" style="background:${bColor};" ${isDisabled ? 'disabled' : ''} onclick="executeDynamicClaim('${rule.claimKey}')">${bText}</button>`;
@@ -1206,8 +1224,8 @@
       desc = `發放每月 5% 津貼 ($${amt.toLocaleString()})`;
     } else if (claimKey === 'dementia') {
       if (currentCount === 0) {
-        amt = Math.round(sum * 0.06);
-        desc = `發放 6% 腦退化年金 ($${amt.toLocaleString()})`;
+        amt = sum;
+        desc = `發放 100% 嚴重危疾賠償 ($${amt.toLocaleString()})`;
       } else {
         amt = Math.round(sum * 0.06);
         desc = `持續發放 每年 6% 腦退化年金 ($${amt.toLocaleString()})`;
@@ -1246,7 +1264,8 @@
     const rawRateOver31 = dbData.config["成人_31歲以上加贈率"] || 0.35;
     const rawChildRate = dbData.config["兒童_首十年加贈率"] || 0.50;
     const bonusRate = ciState.isChildMode ? Number(rawChildRate) : ((ciState.simStartAge <= 30) ? Number(rawRateUnder30) : Number(rawRateOver31));
-    const firstClaimVal = ciState.oys2Sum + (ciState.simStartAge <= 30 || ciState.simClaimAge - ciState.simStartAge <= 10 ? Math.round(ciState.oys2Sum * bonusRate) : 0);
+    const isWithin10 = (ciState.simClaimAge - ciState.simStartAge <= 10) && (ciState.simClaimAge >= ciState.simStartAge);
+    const firstClaimVal = ciState.oys2Sum + (isWithin10 ? Math.round(ciState.oys2Sum * bonusRate) : 0);
     
     let baseHtml = `
       <div class="timeline-mini-card" style="border-left:5px solid #27ae60 !important;">
@@ -1268,7 +1287,8 @@
     const rawRateOver31 = dbData.config["成人_31歲以上加贈率"] || 0.35;
     const rawChildRate = dbData.config["兒童_首十年加贈率"] || 0.50;
     const bonusRate = ciState.isChildMode ? Number(rawChildRate) : ((ciState.simStartAge <= 30) ? Number(rawRateUnder30) : Number(rawRateOver31));
-    const firstClaimVal = ciState.oys2Sum + (ciState.simStartAge <= 30 || ciState.simClaimAge - ciState.simStartAge <= 10 ? Math.round(ciState.oys2Sum * bonusRate) : 0);
+    const isWithin10 = (ciState.simClaimAge - ciState.simStartAge <= 10) && (ciState.simClaimAge >= ciState.simStartAge);
+    const firstClaimVal = ciState.oys2Sum + (isWithin10 ? Math.round(ciState.oys2Sum * bonusRate) : 0);
 
     document.getElementById('d-timeline-sce').innerHTML = `
       <div class="timeline-mini-card" style="border-left:5px solid #34495e !important;">
