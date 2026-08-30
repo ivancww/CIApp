@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.4.8)</title>
+<title>確診危疾生活儲備規劃 (v9.4.9)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -93,15 +93,39 @@
   .promo-box { background: #fffcf5; border: 1.5px solid #fde68a; border-radius: 10px; padding: 16px; margin-top: 14px; }
   .promo-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
   
+  /* 🌟 抽屜彈窗與 5x5 置中呈現樣式 🌟 */
   .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 999999; justify-content: center; align-items: center; padding: 12px; }
   .modal-box { background: #fff; border-radius: 16px; width: 95vw; max-width: 900px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; position: relative; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
   .modal-close-btn { position: absolute; top: 12px; right: 14px; background: #f1f5f9; border: none; font-size: 20px; font-weight: bold; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; }
-  .grid-5x5-slider { display: grid; grid-template-rows: repeat(5, 78px); grid-auto-flow: column; grid-auto-columns: minmax(130px, 155px); gap: 8px; padding: 8px 0; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
-  .media-card-item { scroll-snap-align: start; border: 1.5px solid var(--border); border-radius: 8px; background: #f8fafc; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 4px; cursor: pointer; transition: 0.15s; }
-  .media-card-item:hover { border-color: var(--primary); transform: scale(1.02); }
-  .media-card-item img { width: 100%; height: 45px; object-fit: cover; border-radius: 4px; }
-  .media-card-item .pdf-icon-box { width: 100%; height: 45px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #fee2e2; color: #b91c1c; font-size: 18px; border-radius: 4px; }
-  .media-card-title { margin-top: 3px; font-size: 11px; font-weight: 700; color: #1e293b; text-align: center; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  
+  .terms-clause-box {
+    background: #fffdf5; border: 1.5px solid #fde68a; border-left: 4px solid var(--accent);
+    padding: 10px 14px; border-radius: 8px; margin-bottom: 10px; font-size: 12.5px; color: #92400e; line-height: 1.6;
+  }
+  .grid-5x5-slider {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(130px, 1fr));
+    gap: 10px;
+    padding: 10px 4px;
+    overflow-y: auto;
+    max-height: 52vh;
+    justify-content: center;
+    align-content: start;
+    -webkit-overflow-scrolling: touch;
+  }
+  @media (max-width: 680px) {
+    .grid-5x5-slider { grid-template-columns: repeat(2, 1fr); max-height: 56vh; }
+  }
+  .media-card-item {
+    border: 1.5px solid var(--border); border-radius: 10px; background: #f8fafc;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 8px; cursor: pointer; transition: 0.15s; text-align: center;
+  }
+  .media-card-item:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
+  .media-card-item img { width: 100%; height: 75px; object-fit: cover; border-radius: 6px; }
+  .media-card-item .pdf-icon-box { width: 100%; height: 75px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #fee2e2; color: #b91c1c; font-size: 26px; border-radius: 6px; }
+  .media-card-title { margin-top: 6px; font-size: 12px; font-weight: 700; color: #1e293b; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  
   .vitality-toggle-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
   .vitality-details-box { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #bfdbfe; font-size: 12px; color: #334155; line-height: 1.6; }
   
@@ -139,7 +163,7 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge">v9.4.8</span>
+      <span class="v-badge">v9.4.9</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
@@ -542,12 +566,19 @@
     </div>
   </div>
 </div>
-<!-- 5x5 抽屜彈窗 -->
+<!-- 🌟 5x5 置中抽屜彈窗（含賠償條款與置中排列） 🌟 -->
 <div class="modal-overlay" id="mediaDrawerOverlay">
   <div class="modal-box">
     <button type="button" class="modal-close-btn" onclick="closeMediaDrawer()">×</button>
-    <h3 id="drawerCategoryTitle" style="margin:0 0 4px 0; color:var(--primary); font-size:17px;">保障資料一覽</h3>
-    <div style="font-size:12px; color:#64748b; margin-bottom:8px;">👈 支援左右滑動瀏覽，點擊可放大開啟：</div>
+    <h3 id="drawerCategoryTitle" style="margin:0 0 6px 0; color:var(--primary); font-size:17px;">保障資料一覽</h3>
+    
+    <!-- 📋 賠償與保障條款重點展示區 -->
+    <div class="terms-clause-box" id="drawerTermsBox">
+      <strong>📋 賠償與保障條款重點摘要：</strong><br>
+      <span id="drawerTermsText">• 嚴重危疾發放 100% 基本保額；早期及特定兒童疾病預支 20% 保額。<br>• 首 10 年享升級加贈保障；受保項目經合資格專科醫生確診後即可遞交索償申請。</span>
+    </div>
+    
+    <div style="font-size:12px; color:#64748b; margin-bottom:6px; text-align:center;">👈 5×5 網格呈現，支援上下滾動，點擊可放大開啟：</div>
     <div class="grid-5x5-slider" id="drawerMediaGrid"></div>
   </div>
 </div>
@@ -564,7 +595,7 @@
   <div class="admin-tab-bar">
     <button type="button" class="admin-tab-btn active" onclick="switchAdminTab('pages', this)">📄 頁面文案與按鈕</button>
     <button type="button" class="admin-tab-btn" onclick="switchAdminTab('config', this)">⚙️ 系統參數設定</button>
-    <button type="button" class="admin-tab-btn" onclick="switchAdminTab('firebase', this)">🔥 Firebase 案例/圖片管理</button>
+    <button type="button" class="admin-tab-btn" onclick="switchAdminTab('firebase', this)">🔥 Firebase 案例/圖片管理 (支援最多10張)</button>
   </div>
   <div class="admin-scroll-body">
     <!-- 分頁 1：頁面文案與按鈕 -->
@@ -582,10 +613,10 @@
     <div id="adminTabConfigSection" style="display:none;">
       <div class="admin-card-section" id="adminConfigContainer"></div>
     </div>
-    <!-- 分頁 3：Firebase 圖片/案例上傳 -->
+    <!-- 分頁 3：Firebase 圖片/案例上傳 (支援最多 10 張) -->
     <div id="adminTabFirebaseSection" style="display:none;">
       <div class="admin-card-section">
-        <h3 style="color:var(--primary); margin:0 0 10px 0; font-size:16px;">🔥 上傳保障文件／理賠案例到 Firebase</h3>
+        <h3 style="color:var(--primary); margin:0 0 10px 0; font-size:16px;">🔥 上傳保障文件／理賠案例到 Firebase (支援最多 10 個檔案)</h3>
         <div style="display:flex; flex-direction:column; gap:10px;">
           <div>
             <label class="admin-label">歸屬分類：</label>
@@ -597,13 +628,13 @@
           </div>
           <div>
             <label class="admin-label">案例／文件名稱：</label>
-            <input type="text" id="uploadFileTitle" placeholder="例如：肺癌第3期理賠個案">
+            <input type="text" id="uploadFileTitle" placeholder="例如：肺癌第3期理賠個案 / 保障條款">
           </div>
           <div>
-            <label class="admin-label">選擇圖片或 PDF 文件：</label>
-            <input type="file" id="uploadFileInput" accept="image/*,.pdf" style="border:none; padding:4px 0;">
+            <label class="admin-label">選擇圖片或 PDF 文件 (可多選，最多10個)：</label>
+            <input type="file" id="uploadFileInput" multiple accept="image/*,.pdf" style="border:none; padding:4px 0;">
           </div>
-          <button type="button" class="btn-primary" id="btnUploadToFirebase" style="background:#0284c7; margin-top:8px;" onclick="uploadFileToFirebase()">🚀 開始上傳並新增至中央庫</button>
+          <button type="button" class="btn-primary" id="btnUploadToFirebase" style="background:#0284c7; margin-top:8px;" onclick="uploadFileToFirebase()">🚀 開始上傳多檔並新增至中央庫</button>
         </div>
       </div>
       <div class="admin-card-section">
@@ -1123,7 +1154,7 @@
     finalPremEl.innerText = displayPrem;
     syncGoalDisplay();
 
-    // 🌟 動態更新跳往醫療 App 的按鈕 URL (精準攜帶兒童/成人模式參數)
+    // 動態更新跳往醫療 App 的按鈕 URL (精準攜帶兒童/成人模式參數)
     const medBtn = document.getElementById('f-med-app-btn');
     if (medBtn) {
       const isChild = ciState.isChildMode;
@@ -1169,14 +1200,25 @@
     document.getElementById('promoOys2NetY1').innerText = 'HK$ ' + oys2NetY1.toLocaleString();
     document.getElementById('promoOys2TotalSaved').innerText = 'HK$ ' + oys2TotalSaved.toLocaleString();
   }
+  
+  // 🌟 5x5 置中抽屜彈窗呈現 + 賠償條款切換 🌟
   function openMediaDrawer(categoryKey) {
     const overlay = document.getElementById('mediaDrawerOverlay');
     const titleEl = document.getElementById('drawerCategoryTitle');
     const gridEl = document.getElementById('drawerMediaGrid');
+    const termsTextEl = document.getElementById('drawerTermsText');
     overlay.style.display = 'flex';
-    if (categoryKey === '102') titleEl.innerText = '🧑 102 種嚴重／早期危疾保障一覽 (左右滑動)';
-    else if (categoryKey === 'child') titleEl.innerText = '👶 兒童及青少年專屬特定疾病保障 (左右滑動)';
-    else if (categoryKey === 'case') titleEl.innerText = '📑 真實危疾索償賠償案例庫 (左右滑動)';
+    
+    if (categoryKey === '102') {
+      titleEl.innerText = '🧑 102 種嚴重／早期危疾保障一覽';
+      termsTextEl.innerHTML = '• <strong>嚴重危疾賠償</strong>：發放 100% 基本保額，合約即行完結。<br>• <strong>早期疾病預支</strong>：預支 20% 基本保額，扣減後嚴重危疾保額為 80%。<br>• <strong>等候期條款</strong>：投保後設有 90 天等候期，意外導致之嚴重疾病除外。';
+    } else if (categoryKey === 'child') {
+      titleEl.innerText = '👶 兒童及青少年專屬特定疾病保障';
+      termsTextEl.innerHTML = '• <strong>兒童專屬預支</strong>：自閉症、ADHD、嚴重哮喘等預支 20% 保額。<br>• <strong>首10年升級加贈</strong>：享額外 +50% 專屬賠償保障，強化黃金成長治療期。<br>• <strong>家長豁免保費</strong>：若投保人不幸身故或完全永久殘廢，豁免受保孩子所有後續保費。';
+    } else if (categoryKey === 'case') {
+      titleEl.innerText = '📑 真實危疾索償賠償案例庫';
+      termsTextEl.innerHTML = '• <strong>多重理賠持續守護</strong>：首次重疾理賠後即豁免餘下保費，持續保障至 85 歲。<br>• <strong>癌症間隔期</strong>：兩次癌症索償之間隔期為 3 年（一筆過）或 1 年（每月津貼模式）。<br>• <strong>腦退化年金</strong>：確診後每年可獲發 6% 保額之長期照護年金。';
+    }
     
     const items = cloudAppDatabase[categoryKey] || [];
     let html = '';
@@ -1195,7 +1237,7 @@
           </div>`;
       }
     });
-    if (items.length === 0) html = '<div style="grid-column: span 5; text-align:center; padding:30px; color:#94a3b8;">暫無上載之文件</div>';
+    if (items.length === 0) html = '<div style="grid-column: 1 / -1; text-align:center; padding:30px; color:#94a3b8;">暫無上載之文件</div>';
     gridEl.innerHTML = html;
   }
   function closeMediaDrawer() {
@@ -1439,45 +1481,59 @@
     });
     container.innerHTML = html;
   }
+  
+  // 🌟 Firebase 上傳核心（支援最多 10 張檔案多選上傳） 🌟
   async function uploadFileToFirebase() {
     const fileInput = document.getElementById('uploadFileInput');
     const titleInput = document.getElementById('uploadFileTitle');
     const catSelect = document.getElementById('uploadCategorySelect');
-    const file = fileInput.files[0];
-    const title = titleInput.value.trim();
+    const files = Array.from(fileInput.files);
+    const baseTitle = titleInput.value.trim();
     const cat = catSelect.value;
-    if (!file) { alert('請先選擇要上傳的圖片或 PDF 檔案！'); return; }
-    if (!title) { alert('請輸入案例或文件標題！'); return; }
+    
+    if (!files || files.length === 0) { alert('請先選擇要上傳的圖片或 PDF 檔案！'); return; }
+    if (files.length > 10) { alert('⚠️ 單次最多只支援上傳 10 個檔案！已為你自動選取前 10 個。'); files.length = 10; }
+    if (!baseTitle) { alert('請輸入案例或文件標題！'); return; }
+    
     const btn = document.getElementById('btnUploadToFirebase');
-    btn.innerText = '⏳ 上傳至 Firebase 中...';
+    btn.innerText = `⏳ 正在上傳 ${files.length} 個檔案至 Firebase...`;
     btn.disabled = true;
+    
     try {
-      const isPdf = file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf';
-      const ext = file.name.split('.').pop();
-      const storageRef = storage.ref(`ci_uploads/${cat}_${Date.now()}.${ext}`);
-      const snapshot = await storageRef.put(file);
-      const downloadURL = await snapshot.ref.getDownloadURL();
-      const newItem = {
-        title: title,
-        type: isPdf ? 'pdf' : 'image',
-        url: downloadURL
-      };
       if (!cloudAppDatabase[cat]) cloudAppDatabase[cat] = [];
-      cloudAppDatabase[cat].push(newItem);
       if (!Array.isArray(dbData.cases)) dbData.cases = [];
-      dbData.cases.push({
-        category: cat,
-        diseaseName: title,
-        filesJson: JSON.stringify([newItem])
-      });
-      alert('✅ 檔案已成功上傳至 Firebase 並新增到清單！請點擊右上角「儲存同步至 Google Sheet」使改動永久生效。');
+      
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const isPdf = file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf';
+        const ext = file.name.split('.').pop();
+        const safeFileName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+        const storageRef = storage.ref(`ci_uploads/${cat}_${Date.now()}_${i}_${safeFileName}`);
+        const snapshot = await storageRef.put(file);
+        const downloadURL = await snapshot.ref.getDownloadURL();
+        
+        const itemTitle = files.length > 1 ? `${baseTitle} (頁/圖 ${i + 1})` : baseTitle;
+        const newItem = {
+          title: itemTitle,
+          type: isPdf ? 'pdf' : 'image',
+          url: downloadURL
+        };
+        cloudAppDatabase[cat].push(newItem);
+        dbData.cases.push({
+          category: cat,
+          diseaseName: itemTitle,
+          filesJson: JSON.stringify([newItem])
+        });
+      }
+      
+      alert(`✅ 成功上傳 ${files.length} 個檔案至 Firebase！請點擊右上角「💾 儲存同步至 Google Sheet」使改動永久生效。`);
       fileInput.value = '';
       titleInput.value = '';
       renderAdminFirebaseList();
     } catch(err) {
       alert('❌ 上傳失敗：' + err.message);
     } finally {
-      btn.innerText = '🚀 開始上傳並新增至中央庫';
+      btn.innerText = '🚀 開始上傳多檔並新增至中央庫';
       btn.disabled = false;
     }
   }
@@ -1559,7 +1615,6 @@
       document.getElementById('sync-status-badge').innerHTML = '✅ 中央庫已同步';
       document.getElementById('sync-status-badge').className = 'status-ok';
       
-      // 🌟 確保雲端載入完成後，依據 URL 參數保持模式
       const p = new URLSearchParams(window.location.search);
       if ((p.has('role') && p.get('role') === 'child') || (p.has('type') && p.get('type') === 'child')) {
         ciState.isChildMode = true;
