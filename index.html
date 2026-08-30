@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.4.9)</title>
+<title>確診危疾生活儲備規劃 (v9.5.0)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -163,7 +163,7 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge">v9.4.9</span>
+      <span class="v-badge">v9.5.0</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
@@ -566,22 +566,23 @@
     </div>
   </div>
 </div>
-<!-- 🌟 5x5 置中抽屜彈窗（含賠償條款與置中排列） 🌟 -->
+<!-- 🌟 5x5 置中抽屜彈窗 🌟 -->
 <div class="modal-overlay" id="mediaDrawerOverlay">
   <div class="modal-box">
     <button type="button" class="modal-close-btn" onclick="closeMediaDrawer()">×</button>
     <h3 id="drawerCategoryTitle" style="margin:0 0 6px 0; color:var(--primary); font-size:17px;">保障資料一覽</h3>
     
-    <!-- 📋 賠償與保障條款重點展示區 -->
+    <!-- 📋 賠償與保障條款重點展示區 (連動後台設定) -->
     <div class="terms-clause-box" id="drawerTermsBox">
       <strong>📋 賠償與保障條款重點摘要：</strong><br>
-      <span id="drawerTermsText">• 嚴重危疾發放 100% 基本保額；早期及特定兒童疾病預支 20% 保額。<br>• 首 10 年享升級加贈保障；受保項目經合資格專科醫生確診後即可遞交索償申請。</span>
+      <span id="drawerTermsText">載入條款中...</span>
     </div>
     
     <div style="font-size:12px; color:#64748b; margin-bottom:6px; text-align:center;">👈 5×5 網格呈現，支援上下滾動，點擊可放大開啟：</div>
     <div class="grid-5x5-slider" id="drawerMediaGrid"></div>
   </div>
 </div>
+
 <!-- ⚙️ 全螢幕所見即所得後台管理系統 -->
 <div id="adminFullScreenModal">
   <div class="admin-header-nav">
@@ -595,6 +596,7 @@
   <div class="admin-tab-bar">
     <button type="button" class="admin-tab-btn active" onclick="switchAdminTab('pages', this)">📄 頁面文案與按鈕</button>
     <button type="button" class="admin-tab-btn" onclick="switchAdminTab('config', this)">⚙️ 系統參數設定</button>
+    <button type="button" class="admin-tab-btn" onclick="switchAdminTab('terms', this)">📋 賠償條款設定</button>
     <button type="button" class="admin-tab-btn" onclick="switchAdminTab('firebase', this)">🔥 Firebase 案例/圖片管理 (支援最多10張)</button>
   </div>
   <div class="admin-scroll-body">
@@ -613,7 +615,25 @@
     <div id="adminTabConfigSection" style="display:none;">
       <div class="admin-card-section" id="adminConfigContainer"></div>
     </div>
-    <!-- 分頁 3：Firebase 圖片/案例上傳 (支援最多 10 張) -->
+    <!-- 分頁 3：賠償條款設定 -->
+    <div id="adminTabTermsSection" style="display:none;">
+      <div class="admin-card-section" id="adminTermsContainer">
+        <h3 style="color:var(--primary); margin:0 0 12px 0; font-size:16px;">📋 3 大抽屜之賠償條款重點文案設定</h3>
+        <div style="margin-bottom:12px;">
+          <label class="admin-label">🧑 102種疾病保障 條款文案：</label>
+          <textarea id="admTerm102" style="min-height:75px;"></textarea>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label class="admin-label">👶 兒童特定疾病保障 條款文案：</label>
+          <textarea id="admTermChild" style="min-height:75px;"></textarea>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label class="admin-label">📑 真實理賠案例庫 條款文案：</label>
+          <textarea id="admTermCase" style="min-height:75px;"></textarea>
+        </div>
+      </div>
+    </div>
+    <!-- 分頁 4：Firebase 圖片/案例上傳 -->
     <div id="adminTabFirebaseSection" style="display:none;">
       <div class="admin-card-section">
         <h3 style="color:var(--primary); margin:0 0 10px 0; font-size:16px;">🔥 上傳保障文件／理賠案例到 Firebase (支援最多 10 個檔案)</h3>
@@ -644,6 +664,7 @@
     </div>
   </div>
 </div>
+
 <script>
   const GAS_CENTRAL_URL = "https://script.google.com/macros/s/AKfycbxATo0XVkQszgYP-gF9LE1OvyNOo0jQTWd4HdNuOCDvJTcF46nz1v6QFRV-OyLHmKYszg/exec";
   const firebaseConfig = { storageBucket: "medical-and-ci.firebasestorage.app" };
@@ -651,6 +672,23 @@
   const storage = firebase.storage();
   
   const defaultDatabase = {
+    config: {
+      "成人_預設每月開支": "40000",
+      "成人_預設休養月數": "36",
+      "成人_預設現有危疾": "300000",
+      "成人_預設投保年齡": "20",
+      "成人_30歲以下加贈率": "0.50",
+      "成人_31歲以上加贈率": "0.35",
+      "兒童_預設每月開支": "30000",
+      "兒童_預設休養月數": "24",
+      "兒童_預設現有危疾": "0",
+      "兒童_預設投保年齡": "5",
+      "兒童_預設確診年齡": "10",
+      "兒童_首十年加贈率": "0.50",
+      "條款_102種疾病": "• 嚴重危疾賠償：發放 100% 基本保額，發放後合約即告完結。\n• 早期疾病預支：預支 20% 基本保額，扣減後嚴重危疾保額為 80%。\n• 等候期條款：投保後設有 90 天等候期，意外導致之嚴重疾病除外。",
+      "條款_兒童疾病": "• 兒童專屬預支：自閉症、ADHD、嚴重哮喘等預支 20% 保額。\n• 首10年升級加贈：享額外 +50% 專屬賠償保障，強化黃金成長治療期。\n• 家長豁免保費：若投保人不幸身故或完全永久殘廢，豁免受保孩子所有後續保費。",
+      "條款_案例庫": "• 多重理賠持續守護：首次重疾理賠後即豁免餘下保費，持續保障至 85 歲。\n• 癌症間隔期：兩次癌症索償之間隔期為 3 年（一筆過）或 1 年（每月津貼模式）。\n• 腦退化年金：確診後每年可獲發 6% 保額之長期照護年金。"
+    },
     pages: [
       { role: 'adult', stepOrder: 1, pageId: 'step_ci_1', tagName: '01｜生活儲備目標', title: '確診危疾生活儲備', subtitle: '在不影響家庭質素的前提下，量化停工期間所需的整體生活儲備：' },
       { role: 'child', stepOrder: 1, pageId: 'step_ci_1', tagName: '01｜父母照護基金', title: '兒童重大疾病照護儲備', subtitle: '為確保小朋友獲得黃金治療，並讓父母全心全職陪伴照護的生活資金：' },
@@ -687,7 +725,7 @@
       { claimKey: "dementia", name: "腦退化年金", emoji: "🧠", btnText: "🧠 腦退化 (+1年)", maxCount: 11, waitYears: 1, isMonthly: false, color: "#27ae60" }
     ]
   };
-  let dbData = { config: {}, pages: defaultDatabase.pages, options: defaultDatabase.options, rates: {}, cases: [], rules: defaultDatabase.rules };
+  let dbData = { config: { ...defaultDatabase.config }, pages: defaultDatabase.pages, options: defaultDatabase.options, rates: {}, cases: [], rules: defaultDatabase.rules };
   let cloudAppDatabase = { "102": [], "child": [], "case": [], rules: defaultDatabase.rules };
   const ciState = {
     isChildMode: false,
@@ -1154,7 +1192,6 @@
     finalPremEl.innerText = displayPrem;
     syncGoalDisplay();
 
-    // 動態更新跳往醫療 App 的按鈕 URL (精準攜帶兒童/成人模式參數)
     const medBtn = document.getElementById('f-med-app-btn');
     if (medBtn) {
       const isChild = ciState.isChildMode;
@@ -1201,7 +1238,7 @@
     document.getElementById('promoOys2TotalSaved').innerText = 'HK$ ' + oys2TotalSaved.toLocaleString();
   }
   
-  // 🌟 5x5 置中抽屜彈窗呈現 + 賠償條款切換 🌟
+  // 🌟 5x5 置中抽屜彈窗呈現 + 讀取賠償條款設定 🌟
   function openMediaDrawer(categoryKey) {
     const overlay = document.getElementById('mediaDrawerOverlay');
     const titleEl = document.getElementById('drawerCategoryTitle');
@@ -1209,15 +1246,16 @@
     const termsTextEl = document.getElementById('drawerTermsText');
     overlay.style.display = 'flex';
     
+    const cfg = { ...defaultDatabase.config, ...dbData.config };
     if (categoryKey === '102') {
       titleEl.innerText = '🧑 102 種嚴重／早期危疾保障一覽';
-      termsTextEl.innerHTML = '• <strong>嚴重危疾賠償</strong>：發放 100% 基本保額，合約即行完結。<br>• <strong>早期疾病預支</strong>：預支 20% 基本保額，扣減後嚴重危疾保額為 80%。<br>• <strong>等候期條款</strong>：投保後設有 90 天等候期，意外導致之嚴重疾病除外。';
+      termsTextEl.innerHTML = (cfg["條款_102種疾病"] || defaultDatabase.config["條款_102種疾病"]).replace(/\n/g, '<br>');
     } else if (categoryKey === 'child') {
       titleEl.innerText = '👶 兒童及青少年專屬特定疾病保障';
-      termsTextEl.innerHTML = '• <strong>兒童專屬預支</strong>：自閉症、ADHD、嚴重哮喘等預支 20% 保額。<br>• <strong>首10年升級加贈</strong>：享額外 +50% 專屬賠償保障，強化黃金成長治療期。<br>• <strong>家長豁免保費</strong>：若投保人不幸身故或完全永久殘廢，豁免受保孩子所有後續保費。';
+      termsTextEl.innerHTML = (cfg["條款_兒童疾病"] || defaultDatabase.config["條款_兒童疾病"]).replace(/\n/g, '<br>');
     } else if (categoryKey === 'case') {
       titleEl.innerText = '📑 真實危疾索償賠償案例庫';
-      termsTextEl.innerHTML = '• <strong>多重理賠持續守護</strong>：首次重疾理賠後即豁免餘下保費，持續保障至 85 歲。<br>• <strong>癌症間隔期</strong>：兩次癌症索償之間隔期為 3 年（一筆過）或 1 年（每月津貼模式）。<br>• <strong>腦退化年金</strong>：確診後每年可獲發 6% 保額之長期照護年金。';
+      termsTextEl.innerHTML = (cfg["條款_案例庫"] || defaultDatabase.config["條款_案例庫"]).replace(/\n/g, '<br>');
     }
     
     const items = cloudAppDatabase[categoryKey] || [];
@@ -1371,11 +1409,13 @@
     calculateCIPremium();
     runStage3Calculation();
   }
+  
   // ======================== 後台管理控制台邏輯 ========================
   function openAdminModal() {
     document.getElementById('adminFullScreenModal').style.display = 'flex';
     renderAdminVisualLayout();
     renderAdminConfigLayout();
+    renderAdminTermsLayout();
     renderAdminFirebaseList();
   }
   function closeAdminModal() {
@@ -1386,6 +1426,7 @@
     btn.classList.add('active');
     document.getElementById('adminTabPagesSection').style.display = (tabKey === 'pages') ? 'block' : 'none';
     document.getElementById('adminTabConfigSection').style.display = (tabKey === 'config') ? 'block' : 'none';
+    document.getElementById('adminTabTermsSection').style.display = (tabKey === 'terms') ? 'block' : 'none';
     document.getElementById('adminTabFirebaseSection').style.display = (tabKey === 'firebase') ? 'block' : 'none';
   }
   function renderAdminVisualLayout() {
@@ -1444,11 +1485,15 @@
     });
     container.innerHTML = html;
   }
+  
+  // 渲染系統參數（排除條款以分開管理）
   function renderAdminConfigLayout() {
     const container = document.getElementById('adminConfigContainer');
     if (!container) return;
-    let html = '<h3 style="color:var(--primary); margin:0 0 12px 0;">⚙️ 系統參數與贈送加贈比例</h3><div class="grid-2col">';
-    for (const [k, v] of Object.entries(dbData.config)) {
+    const cfg = { ...defaultDatabase.config, ...dbData.config };
+    let html = '<h3 style="color:var(--primary); margin:0 0 12px 0;">⚙️ 系統參數與加贈比例設定</h3><div class="grid-2col">';
+    for (const [k, v] of Object.entries(cfg)) {
+      if (k.startsWith("條款_")) continue;
       html += `
         <div>
           <label class="admin-label">${k}</label>
@@ -1458,6 +1503,18 @@
     html += '</div>';
     container.innerHTML = html;
   }
+  
+  // 渲染賠償條款分頁
+  function renderAdminTermsLayout() {
+    const cfg = { ...defaultDatabase.config, ...dbData.config };
+    const t102 = document.getElementById('admTerm102');
+    const tChild = document.getElementById('admTermChild');
+    const tCase = document.getElementById('admTermCase');
+    if (t102) t102.value = cfg["條款_102種疾病"] || defaultDatabase.config["條款_102種疾病"];
+    if (tChild) tChild.value = cfg["條款_兒童疾病"] || defaultDatabase.config["條款_兒童疾病"];
+    if (tCase) tCase.value = cfg["條款_案例庫"] || defaultDatabase.config["條款_案例庫"];
+  }
+
   function renderAdminFirebaseList() {
     const container = document.getElementById('adminUploadedItemsList');
     if (!container) return;
@@ -1482,7 +1539,6 @@
     container.innerHTML = html;
   }
   
-  // 🌟 Firebase 上傳核心（支援最多 10 張檔案多選上傳） 🌟
   async function uploadFileToFirebase() {
     const fileInput = document.getElementById('uploadFileInput');
     const titleInput = document.getElementById('uploadFileTitle');
@@ -1537,6 +1593,7 @@
       btn.disabled = false;
     }
   }
+  
   function deleteFirebaseItem(cat, idx) {
     if (!confirm('確定刪除此項目？')) return;
     const removed = cloudAppDatabase[cat].splice(idx, 1);
@@ -1546,6 +1603,7 @@
     }
     renderAdminFirebaseList();
   }
+  
   async function saveAllAdminData() {
     document.querySelectorAll('[data-adm-page-tag]').forEach(inp => {
       const idx = Number(inp.dataset.admPageTag);
@@ -1571,6 +1629,12 @@
       const key = inp.dataset.admConfigKey;
       dbData.config[key] = inp.value;
     });
+    
+    // 儲存賠償條款設定
+    if (document.getElementById('admTerm102')) dbData.config["條款_102種疾病"] = document.getElementById('admTerm102').value;
+    if (document.getElementById('admTermChild')) dbData.config["條款_兒童疾病"] = document.getElementById('admTermChild').value;
+    if (document.getElementById('admTermCase')) dbData.config["條款_案例庫"] = document.getElementById('admTermCase').value;
+    
     try {
       await fetch(GAS_CENTRAL_URL, {
         method: "POST",
@@ -1590,10 +1654,14 @@
       alert("⚠️ 同步失敗，請檢查網路。");
     }
   }
+  
   // ======================== 雲端同步與初始化 ========================
   window.onGASDataLoaded = function(json) {
     if (json && json.status === "success") {
       dbData = json;
+      if (!dbData.config || Object.keys(dbData.config).length === 0) {
+        dbData.config = { ...defaultDatabase.config };
+      }
       cloudAppDatabase["102"] = [];
       cloudAppDatabase["child"] = [];
       cloudAppDatabase["case"] = [];
