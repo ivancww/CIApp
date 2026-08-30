@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.4.7)</title>
+<title>確診危疾生活儲備規劃 (v9.4.8)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -139,13 +139,12 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge">v9.4.7</span>
+      <span class="v-badge">v9.4.8</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
     <div id="sync-status-badge">🔄 連接雲端中央庫...</div>
   </div>
-
   <!-- 第 1 步：01｜生活儲備目標 -->
   <div class="stage-card active" id="stage-ci-1">
     <span class="stage-tag" id="ui-tag-1">01｜生活儲備目標</span>
@@ -172,7 +171,6 @@
       <button type="button" class="btn-primary" data-nav="to-2">下一步：現有防線可以走幾遠 →</button>
     </div>
   </div>
-
   <!-- 第 2 步：02｜現有防線 -->
   <div class="stage-card" id="stage-ci-2">
     <span class="stage-tag" id="ui-tag-2">02｜現有防線</span>
@@ -194,7 +192,6 @@
       📊 資金承托分析：<br>
       目前危疾保障 (<span id="b-ci-text">$300K</span>) ÷ 每月生活需要 (<span id="b-exp-text">$40K</span>) ➔ 可維持約 <span id="b-months-support" style="text-decoration:underline; font-size:18px;">7.5</span> 個月。
     </div>
-
     <h4 style="margin: 18px 0 8px 0; color: #2c3e50; font-size: 14.5px;">❓ 生活現金流缺口，你會先動用邊筆資產去填補？(可多選並輸入金額)</h4>
     <div id="assets-list-container"></div>
     
@@ -213,13 +210,11 @@
         <strong style="color:var(--danger); font-size:18px;" id="b-asset-remain-gap">HK$ 640,000</strong>
       </div>
     </div>
-
     <div class="nav-btn-group">
       <button type="button" class="btn-secondary" data-nav="to-1">← 返回目標設定</button>
       <button type="button" class="btn-primary" data-nav="to-3">下一步：補充儲備缺口及守護資產 →</button>
     </div>
   </div>
-
   <!-- 第 3 步：03｜解決方案 -->
   <div class="stage-card" id="stage-ci-3">
     <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -328,7 +323,6 @@
       <button type="button" class="btn-primary" data-nav="to-4">下一步：多重賠償推演對比 →</button>
     </div>
   </div>
-
   <!-- 第 4 步：04｜多重賠償時間線推演 -->
   <div class="stage-card" id="stage-ci-4">
     <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -382,7 +376,6 @@
       <button type="button" class="btn-primary" data-nav="to-5">下一步：方案及保費精算 →</button>
     </div>
   </div>
-
   <!-- 第 5 步：05｜方案與保費 -->
   <div class="stage-card" id="stage-ci-5">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -393,7 +386,6 @@
       </div>
     </div>
     <h2 class="stage-title" id="ui-title-5" style="margin-bottom:15px;">選擇合適你的方案</h2>
-
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
       <div>
         <label style="font-size:12px; font-weight:bold;">受保人年齡</label>
@@ -407,7 +399,6 @@
         </select>
       </div>
     </div>
-
     <!-- 05 健康程式方塊 (<=17歲自動隱藏) -->
     <div id="vitality-wrap-box" style="margin:12px 0; font-size:13px; background:#eff6ff; padding:12px; border-radius:8px; border:1px solid #bfdbfe;">
       <div class="vitality-toggle-header" onclick="toggleVitalityDetails()">
@@ -426,7 +417,6 @@
         </div>
       </div>
     </div>
-
     <div class="grid-2col" style="margin-top:14px;">
       <div class="plan-card" id="card-ci-sce">
         <input type="checkbox" id="chk-plan-sce">
@@ -472,7 +462,6 @@
       <button type="button" class="btn-primary" data-nav="to-6">下一步：方案總結 →</button>
     </div>
   </div>
-
   <!-- 第 6 步：06｜方案總結 -->
   <div class="stage-card" id="stage-ci-6">
     <span class="stage-tag" id="ui-tag-6">06｜方案總結</span>
@@ -553,7 +542,6 @@
     </div>
   </div>
 </div>
-
 <!-- 5x5 抽屜彈窗 -->
 <div class="modal-overlay" id="mediaDrawerOverlay">
   <div class="modal-box">
@@ -563,8 +551,7 @@
     <div class="grid-5x5-slider" id="drawerMediaGrid"></div>
   </div>
 </div>
-
-<!-- ⚙️ 全螢幕所見即所得後台管理系統 (徹底解決手機端截斷問題) -->
+<!-- ⚙️ 全螢幕所見即所得後台管理系統 -->
 <div id="adminFullScreenModal">
   <div class="admin-header-nav">
     <span style="font-weight:800; font-size:15px;">⚙️ CIApp 雲端後台管理控制台</span>
@@ -579,7 +566,6 @@
     <button type="button" class="admin-tab-btn" onclick="switchAdminTab('config', this)">⚙️ 系統參數設定</button>
     <button type="button" class="admin-tab-btn" onclick="switchAdminTab('firebase', this)">🔥 Firebase 案例/圖片管理</button>
   </div>
-
   <div class="admin-scroll-body">
     <!-- 分頁 1：頁面文案與按鈕 -->
     <div id="adminTabPagesSection">
@@ -592,12 +578,10 @@
       </div>
       <div id="adminVisualContainer"></div>
     </div>
-
     <!-- 分頁 2：系統參數設定 -->
     <div id="adminTabConfigSection" style="display:none;">
       <div class="admin-card-section" id="adminConfigContainer"></div>
     </div>
-
     <!-- 分頁 3：Firebase 圖片/案例上傳 -->
     <div id="adminTabFirebaseSection" style="display:none;">
       <div class="admin-card-section">
@@ -629,7 +613,6 @@
     </div>
   </div>
 </div>
-
 <script>
   const GAS_CENTRAL_URL = "https://script.google.com/macros/s/AKfycbxATo0XVkQszgYP-gF9LE1OvyNOo0jQTWd4HdNuOCDvJTcF46nz1v6QFRV-OyLHmKYszg/exec";
   const firebaseConfig = { storageBucket: "medical-and-ci.firebasestorage.app" };
@@ -673,10 +656,8 @@
       { claimKey: "dementia", name: "腦退化年金", emoji: "🧠", btnText: "🧠 腦退化 (+1年)", maxCount: 11, waitYears: 1, isMonthly: false, color: "#27ae60" }
     ]
   };
-
   let dbData = { config: {}, pages: defaultDatabase.pages, options: defaultDatabase.options, rates: {}, cases: [], rules: defaultDatabase.rules };
   let cloudAppDatabase = { "102": [], "child": [], "case": [], rules: defaultDatabase.rules };
-
   const ciState = {
     isChildMode: false,
     monthlyExp: 40000,
@@ -700,14 +681,11 @@
     oys2PayPeriod: 18,
     annualPremMap: { sce: 1425, oys2: 19204 }
   };
-
   let hasUrlLosses = false;
-
   function parseNum(val) {
     if (typeof val === 'number') return val;
     return Number(String(val || '').replace(/[^0-9]/g, '')) || 0;
   }
-
   function goToCIStage(stageNum) {
     document.querySelectorAll('.stage-card').forEach(c => c.classList.remove('active'));
     const target = document.getElementById('stage-ci-' + stageNum);
@@ -721,42 +699,35 @@
     }
     if (String(stageNum) === '6') updateConfirmSummary();
   }
-
   function toggleRoleMode() {
     ciState.isChildMode = !ciState.isChildMode;
     applyRoleMode();
   }
-
   function applyRoleMode() {
     const btn = document.getElementById('btnRoleSwitch');
     const isChild = ciState.isChildMode;
     btn.innerText = isChild ? "👶 兒童模式" : "👨‍👩‍👧 成人模式";
     btn.style.background = isChild ? "#fef3c7" : "#e0e7ff";
     btn.style.color = isChild ? "#b45309" : "#3730a3";
-
     const defExp = isChild ? parseNum(dbData.config["兒童_預設每月開支"] || 30000) : parseNum(dbData.config["成人_預設每月開支"] || 40000);
     const defMonths = isChild ? parseNum(dbData.config["兒童_預設休養月數"] || 24) : parseNum(dbData.config["成人_預設休養月數"] || 36);
     const defExist = isChild ? parseNum(dbData.config["兒童_預設現有危疾"] || 0) : parseNum(dbData.config["成人_預設現有危疾"] || 300000);
     const defStart = isChild ? parseNum(dbData.config["兒童_預設投保年齡"] || 5) : parseNum(dbData.config["成人_預設投保年齡"] || 20);
     const defClaim = isChild ? parseNum(dbData.config["兒童_預設確診年齡"] || 10) : (defStart + 5);
-
     ciState.monthlyExp = defExp;
     ciState.months = defMonths;
     ciState.existingCI = defExist;
     ciState.simStartAge = defStart;
     ciState.simClaimAge = defClaim;
-
     document.getElementById('a-monthly-exp-input').value = defExp.toLocaleString();
     document.getElementById('a-months-input').value = defMonths;
     document.getElementById('b-ci-input').value = defExist.toLocaleString();
     document.getElementById('c-input-start-age').value = defStart;
     document.getElementById('c-input-claim-age').value = defClaim;
     document.getElementById('ci-calc-age').value = defStart;
-
     renderDynamicTextsAndOptions();
     recalculateAll();
   }
-
   function isGoalMatched(optTitle, optKey, lossesArray) {
     if (!lossesArray || lossesArray.length === 0) return false;
     for (let rawLoss of lossesArray) {
@@ -772,7 +743,6 @@
     }
     return false;
   }
-
   function renderDynamicTextsAndOptions() {
     const roleKey = ciState.isChildMode ? 'child' : 'adult';
     const pages = (dbData.pages && dbData.pages.length > 0) ? dbData.pages.filter(p => p.role === roleKey) : defaultDatabase.pages.filter(p => p.role === roleKey);
@@ -793,7 +763,6 @@
         }
       }
     });
-
     const goalsGrid = document.getElementById('goal-options-grid');
     if (goalsGrid) {
       const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
@@ -819,7 +788,6 @@
       });
       syncGoalDisplay();
     }
-
     const assetContainer = document.getElementById('assets-list-container');
     if (assetContainer) {
       const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
@@ -843,14 +811,12 @@
       bindAssetEvents();
     }
   }
-
   function bindAssetEvents() {
     const rows = document.querySelectorAll('.asset-input-row');
     rows.forEach(row => {
       const chk = row.querySelector('input[type="checkbox"]');
       const valInput = row.querySelector('.asset-input-val');
       const leftArea = row.querySelector('.asset-left-area');
-
       if (leftArea && chk && valInput) {
         leftArea.onclick = function(e) {
           if (e.target !== chk) {
@@ -864,7 +830,6 @@
           row.classList.toggle('selected', chk.checked);
           updateAllAssets();
         };
-
         chk.onclick = function(e) {
           e.stopPropagation();
           if (!this.checked) {
@@ -875,7 +840,6 @@
           row.classList.toggle('selected', this.checked);
           updateAllAssets();
         };
-
         valInput.oninput = function() {
           let num = parseNum(this.value);
           this.value = num.toLocaleString();
@@ -891,24 +855,20 @@
       }
     });
   }
-
   function onExpenseInputChanged(el) {
     ciState.monthlyExp = parseNum(el.value);
     el.value = ciState.monthlyExp.toLocaleString();
     recalculateAll();
   }
-
   function onMonthsInputChanged(el) {
     ciState.months = parseNum(el.value) || 36;
     recalculateAll();
   }
-
   function onExistingCIInputChanged(el) {
     ciState.existingCI = parseNum(el.value);
     el.value = ciState.existingCI.toLocaleString();
     recalculateAll();
   }
-
   function recalculateAll() {
     ciState.totalNeed = ciState.monthlyExp * ciState.months;
     ciState.netGap = Math.max(0, ciState.totalNeed - ciState.existingCI);
@@ -927,7 +887,6 @@
     document.getElementById('f-confirm-existing').innerText = 'HK$ ' + ciState.existingCI.toLocaleString();
     updateAllAssets();
   }
-
   function updateAllAssets() {
     let sum = 0;
     const rows = document.querySelectorAll('.asset-input-row');
@@ -940,7 +899,6 @@
         }
       }
     });
-
     ciState.totalChosenAssets = sum;
     const remainGap = Math.max(0, ciState.netGap - sum);
     
@@ -951,12 +909,10 @@
     if (formulaEl) {
       formulaEl.innerText = `(生活缺口 HK$ ${ciState.netGap.toLocaleString()} － 計劃動用資產 HK$ ${sum.toLocaleString()})`;
     }
-
     document.getElementById('c-summary-assets').innerText = 'HK$ ' + sum.toLocaleString();
     document.getElementById('c-summary-remain-gap').innerText = 'HK$ ' + remainGap.toLocaleString();
     runStage3Calculation();
   }
-
   function toggleClaimCheck(key) {
     const chk = document.getElementById(`chk-${key}`);
     if (chk) {
@@ -964,7 +920,6 @@
       runStage3Calculation();
     }
   }
-
   function runStage3Calculation() {
     const startAgeEl = document.getElementById('c-input-start-age');
     const claimAgeEl = document.getElementById('c-input-claim-age');
@@ -975,41 +930,33 @@
     const isChild = ciState.isChildMode;
     const sceSum = ciState.sceSum;
     const oys2Sum = ciState.oys2Sum;
-
     const rawRateUnder30 = dbData.config["成人_30歲以下加贈率"] || 0.50;
     const rawRateOver31 = dbData.config["成人_31歲以上加贈率"] || 0.35;
     const rawChildRate = dbData.config["兒童_首十年加贈率"] || 0.50;
-
     const rateUnder30 = typeof rawRateUnder30 === 'string' ? parseFloat(rawRateUnder30) : Number(rawRateUnder30);
     const rateOver31 = typeof rawRateOver31 === 'string' ? parseFloat(rawRateOver31) : Number(rawRateOver31);
     const childRate = typeof rawChildRate === 'string' ? parseFloat(rawChildRate) : Number(rawChildRate);
-
     const bonusRate = isChild ? childRate : ((ciState.simStartAge <= 30) ? rateUnder30 : rateOver31);
     
     const elapsed = ciState.simClaimAge - ciState.simStartAge;
     const isWithin10Years = (elapsed >= 0 && elapsed <= 10);
-
     const chkOys2First = document.getElementById('chk-oys2-first')?.checked || false;
     const chkOys2Early = document.getElementById('chk-oys2-early')?.checked || false;
     const chkOys2Child = isChild && (document.getElementById('chk-oys2-child')?.checked || false);
-
     document.getElementById('box-sce-first')?.classList.toggle('checked', chkOys2First);
     document.getElementById('box-sce-early')?.classList.toggle('checked', chkOys2Early);
     document.getElementById('c-sce-child-block')?.classList.toggle('checked', chkOys2Child);
     document.getElementById('box-oys2-first')?.classList.toggle('checked', chkOys2First);
     document.getElementById('box-oys2-early')?.classList.toggle('checked', chkOys2Early);
     document.getElementById('c-oys2-child-block')?.classList.toggle('checked', chkOys2Child);
-
     let sceFirstRemainPct = (chkOys2Early || chkOys2Child) ? 0.8 : 1.0;
     let sceFirstPayout = chkOys2First ? Math.round(sceSum * sceFirstRemainPct) : 0;
     let sceEarlyPayout = chkOys2Early ? Math.round(sceSum * 0.2) : 0;
     let sceChildPayout = chkOys2Child ? Math.round(sceSum * 0.2) : 0;
-
     document.getElementById('c-sce-first-pct-lbl').innerText = (sceFirstRemainPct === 0.8) ? '80% (已扣減早期預支)' : '100%';
     document.getElementById('c-sce-first-claim').innerText = 'HK$ ' + Math.round(sceSum * sceFirstRemainPct).toLocaleString();
     document.getElementById('c-sce-first-desc').innerText = (sceFirstRemainPct === 0.8) ? '• 已預支 20%，發放餘下 80% 保額賠償並完結' : '• 100% 基本保額賠償，發放後合約即時完結';
     document.getElementById('c-sce-early-claim').innerText = 'HK$ ' + Math.round(sceSum * 0.2).toLocaleString();
-
     let oys2FirstRemainPct = (chkOys2Early || chkOys2Child) ? 0.8 : 1.0;
     let oys2BonusVal = isWithin10Years ? Math.round(oys2Sum * bonusRate) : 0;
     let earlyActualBonusAmt = isWithin10Years ? Math.round(oys2Sum * 0.2 * bonusRate) : 0;
@@ -1017,7 +964,6 @@
     let oys2EarlyPayout = chkOys2Early ? Math.round((oys2Sum * 0.2) + earlyActualBonusAmt) : 0;
     let oys2ChildPayout = chkOys2Child ? Math.round((oys2Sum * 0.2) + earlyActualBonusAmt) : 0;
     let oys2FirstDisplay = Math.round((oys2Sum * oys2FirstRemainPct) + oys2BonusVal);
-
     document.getElementById('c-oys2-first-claim').innerText = 'HK$ ' + oys2FirstDisplay.toLocaleString();
     
     if (isWithin10Years) {
@@ -1033,7 +979,6 @@
       document.getElementById('c-oys2-early-claim').innerText = 'HK$ ' + Math.round(oys2Sum * 0.2).toLocaleString();
       document.getElementById('c-oys2-early-desc-line').innerText = '• 預支 20% 原有保額 (無首 10 年加贈)';
     }
-
     const sceChildBlock = document.getElementById('c-sce-child-block');
     const oys2ChildBlock = document.getElementById('c-oys2-child-block');
     if (isChild) {
@@ -1047,7 +992,6 @@
       sceChildBlock.style.display = 'none';
       oys2ChildBlock.style.display = 'none';
     }
-
     const totalSelectedPayout = sceFirstPayout + sceEarlyPayout + sceChildPayout + oys2FirstPayout + oys2EarlyPayout + oys2ChildPayout;
     const remainLifeGap = Math.max(0, ciState.netGap - totalSelectedPayout);
     
@@ -1059,7 +1003,6 @@
     }
     ciState.oys2MultiPaid = oys2FirstDisplay;
   }
-
   function getRateFromTable(product, age, gender, period) {
     if (product === 'sce') {
       const t = (gender === 'F') ? dbData.rates?.sce_f : dbData.rates?.sce_m;
@@ -1083,12 +1026,10 @@
     }
     return 0;
   }
-
   function calculateCIPremium() {
     const age = parseInt(document.getElementById('ci-calc-age').value, 10) || 20;
     const gender = document.getElementById('ci-calc-gender').value || 'M';
     const period = ciState.oys2PayPeriod;
-
     const vitalityWrap = document.getElementById('vitality-wrap-box');
     const vitalityChk = document.getElementById('ci-calc-vitality');
     if (age <= 17) {
@@ -1097,22 +1038,16 @@
     } else {
       if (vitalityWrap) vitalityWrap.style.display = 'block';
     }
-
     const isVitality = vitalityChk ? vitalityChk.checked : false;
-
     document.getElementById('plan-sum-sce-text').innerText = 'HK$ ' + ciState.sceSum.toLocaleString();
     document.getElementById('plan-sum-oys2-text').innerText = 'HK$ ' + ciState.oys2Sum.toLocaleString();
     document.getElementById('v-extra-oys2-amt').innerText = '+HK$ ' + Math.round(ciState.oys2Sum * 0.1).toLocaleString();
-
     const sceRate = getRateFromTable('sce', age, gender, period);
     let finalSceHkd = Math.round((ciState.sceSum / 7800) * sceRate);
     if (isVitality) finalSceHkd = Math.round(finalSceHkd * 0.9);
-
     const oys2Rate = getRateFromTable('oys2', age, gender, period);
     let finalOys2Hkd = Math.round((ciState.oys2Sum / 7800) * oys2Rate);
-
     ciState.annualPremMap = { sce: finalSceHkd, oys2: finalOys2Hkd };
-
     if (ciState.premiumMode === 'annual') {
       document.getElementById('prem-sce-display').innerText = 'HK$ ' + finalSceHkd.toLocaleString() + ' /年';
       document.getElementById('prem-oys2-display').innerText = 'HK$ ' + finalOys2Hkd.toLocaleString() + ' /年';
@@ -1122,12 +1057,10 @@
       document.getElementById('prem-sce-display').innerText = 'HK$ ' + sceM.toLocaleString() + ' /月';
       document.getElementById('prem-oys2-display').innerText = 'HK$ ' + oys2M.toLocaleString() + ' /月';
     }
-
     renderProjectionTable(age, gender, isVitality, period);
     updateConfirmSummary();
     calculateCIPromo();
   }
-
   function toggleVitalityDetails() {
     const box = document.getElementById('vitality-details-content');
     const arrow = document.getElementById('vitality-arrow-icon');
@@ -1139,21 +1072,18 @@
       arrow.innerText = '▲ 點擊收起說明';
     }
   }
-
   function renderProjectionTable(startAge, gender, isVitality, period) {
     const tbody = document.getElementById('projection-table-body');
     if (!tbody) return;
     let html = '';
     let totalScePaid = 0;
     let totalOys2Paid = 0;
-
     for (let age = startAge; age <= 80; age += 5) {
       let stepYears = 5;
       let sceRate = getRateFromTable('sce', age, gender, period);
       let sceAnnualAtAge = Math.round((ciState.sceSum / 7800) * sceRate);
       if (isVitality) sceAnnualAtAge = Math.round(sceAnnualAtAge * 0.9);
       totalScePaid += (sceAnnualAtAge * stepYears);
-
       let elapsed = age - startAge;
       let oys2AnnualAtAge = 0;
       if (elapsed < period) {
@@ -1162,7 +1092,6 @@
         let yearsInBlock = Math.min(stepYears, period - elapsed);
         totalOys2Paid += (oys2AnnualAtAge * yearsInBlock);
       }
-
       html += `
         <tr>
           <td style="text-align:left;"><strong>${age} 歲</strong></td>
@@ -1170,18 +1099,15 @@
           <td style="color:#27ae60;">${oys2AnnualAtAge > 0 ? 'HK$ ' + oys2AnnualAtAge.toLocaleString() : '<span style="color:#64748b;">$0 (已供滿)</span>'}</td>
         </tr>`;
     }
-
     tbody.innerHTML = html;
     document.getElementById('table-total-sce').innerText = 'HK$ ' + totalScePaid.toLocaleString();
     document.getElementById('table-total-oys2').innerText = 'HK$ ' + totalOys2Paid.toLocaleString();
   }
-
   function updateConfirmSummary() {
     const period = ciState.oys2PayPeriod;
     const planNameEl = document.getElementById('f-confirm-plan-name');
     const finalPremEl = document.getElementById('f-confirm-prem');
     document.getElementById('f-confirm-gap').innerText = 'HK$ ' + ciState.netGap.toLocaleString();
-
     let comboAnnual = 0;
     let comboTitles = [];
     if (ciState.chooseSce) {
@@ -1192,13 +1118,21 @@
       comboAnnual += ciState.annualPremMap.oys2;
       comboTitles.push(`愛伴航2 (OYS2 ${period}年供款) ｜ 保額：HK$ ${ciState.oys2Sum.toLocaleString()}`);
     }
-
     let displayPrem = ciState.premiumMode === 'annual' ? 'HK$ ' + comboAnnual.toLocaleString() + ' /年' : 'HK$ ' + Math.round((comboAnnual * 1.06) / 12).toLocaleString() + ' /月';
     planNameEl.innerText = comboTitles.length > 0 ? comboTitles.join(' ＋ ') : '未選擇任何方案';
     finalPremEl.innerText = displayPrem;
     syncGoalDisplay();
-  }
 
+    // 🌟 動態更新跳往醫療 App 的按鈕 URL (精準攜帶兒童/成人模式參數)
+    const medBtn = document.getElementById('f-med-app-btn');
+    if (medBtn) {
+      const isChild = ciState.isChildMode;
+      const roleVal = isChild ? 'child' : 'adult';
+      const lossesVal = ciState.goals.join(',');
+      const alertText = isChild ? '留意兒童私家住院及各項先進治療費用' : '';
+      medBtn.href = `https://ivancww.github.io/medicalclaims?role=${roleVal}&type=${roleVal}&cost=500000&losses=${encodeURIComponent(lossesVal)}&alertMsg=${encodeURIComponent(alertText)}`;
+    }
+  }
   function syncGoalDisplay() {
     ciState.goals = [];
     document.querySelectorAll('#goal-options-grid .grid-btn.selected').forEach(btn => {
@@ -1211,7 +1145,6 @@
     const fGoals = document.getElementById('f-confirm-goals');
     if (fGoals) fGoals.innerText = txt;
   }
-
   function calculateCIPromo() {
     const sce200 = Number(document.getElementById('promoSce200')?.value) || 0;
     const sce500 = Number(document.getElementById('promoSce500')?.value) || 0;
@@ -1224,7 +1157,6 @@
     const sceRebateY3Val = Math.round((sceAnn / 12) * sceY3Months);
     const sceTotalSaved = sceCouponSaved + sceRebateY2Val + sceRebateY3Val;
     document.getElementById('promoSceNetY1').innerText = 'HK$ ' + sceNetY1.toLocaleString();
-
     const oys2500 = Number(document.getElementById('promoOys2500')?.value) || 0;
     const oys2Y2Months = Number(document.getElementById('promoOys2Y2')?.value) || 0;
     const oys2Y3Months = Number(document.getElementById('promoOys2Y3')?.value) || 0;
@@ -1237,7 +1169,6 @@
     document.getElementById('promoOys2NetY1').innerText = 'HK$ ' + oys2NetY1.toLocaleString();
     document.getElementById('promoOys2TotalSaved').innerText = 'HK$ ' + oys2TotalSaved.toLocaleString();
   }
-
   function openMediaDrawer(categoryKey) {
     const overlay = document.getElementById('mediaDrawerOverlay');
     const titleEl = document.getElementById('drawerCategoryTitle');
@@ -1267,11 +1198,9 @@
     if (items.length === 0) html = '<div style="grid-column: span 5; text-align:center; padding:30px; color:#94a3b8;">暫無上載之文件</div>';
     gridEl.innerHTML = html;
   }
-
   function closeMediaDrawer() {
     document.getElementById('mediaDrawerOverlay').style.display = 'none';
   }
-
   function renderMultiButtonsFromRules() {
     const topContainer = document.getElementById('topMultiBtnContainer');
     const botContainer = document.getElementById('botEmojiBtnContainer');
@@ -1288,27 +1217,21 @@
       if (rule.claimKey === 'dementia' && ciState.countsMap['dementia'] >= 1) {
         bText = `🧠 腦退化年金 (每年6%)`;
       }
-
       const bColor = rule.color || '#d97706';
       const bEmoji = rule.emoji || '🛡️';
       const bName = rule.name || '理賠項目';
-
       const isDisabled = (rule.claimKey === 'cancer_a' && (ciState.countsMap['cancer_b'] || 0) > 0);
-
       topHtml += `<button type="button" class="btn-multi-action" id="top-btn-${rule.claimKey}" style="background:${bColor};" ${isDisabled ? 'disabled' : ''} onclick="executeDynamicClaim('${rule.claimKey}')">${bText}</button>`;
       botHtml += `<button type="button" class="btn-emoji-inline" id="bot-btn-${rule.claimKey}" style="background:${bColor};" ${isDisabled ? 'disabled' : ''} onclick="executeDynamicClaim('${rule.claimKey}')" title="${bName}">${bEmoji}</button>`;
     });
-
     botHtml += `<button type="button" class="btn-emoji-inline" style="background:#64748b;" onclick="undoLastMultiClaim()" title="撤銷上一筆">↩️</button>`;
     topContainer.innerHTML = topHtml;
     botContainer.innerHTML = botHtml;
   }
-
   function executeDynamicClaim(claimKey) {
     const rules = (cloudAppDatabase.rules && cloudAppDatabase.rules.length > 0) ? cloudAppDatabase.rules : defaultDatabase.rules;
     const rule = rules.find(r => r.claimKey === claimKey);
     if (!rule) return;
-
     const listOys2 = document.getElementById('d-timeline-oys2');
     const sum = ciState.oys2Sum;
     const currentCount = ciState.countsMap[claimKey] || 0;
@@ -1318,14 +1241,11 @@
       alert(`${rule.name || '此項目'} 已達最高理賠上限 (${maxCount} 次)！`);
       return;
     }
-
     ciState.countsMap[claimKey] = currentCount + 1;
     const waitYears = parseInt(rule.waitYears, 10) || 1;
     ciState.multiTimelineAge += waitYears;
-
     let amt = sum;
     let desc = '';
-
     if (claimKey === 'cancer_b') {
       amt = Math.round(sum * 0.05);
       desc = `發放每月 5% 津貼 ($${amt.toLocaleString()})`;
@@ -1341,9 +1261,7 @@
       amt = rule.isMonthly ? Math.round(sum * 0.05) : sum;
       desc = `發放 100% 賠償 ($${amt.toLocaleString()})`;
     }
-
     ciState.oys2MultiPaid += amt;
-
     const record = {
       claimKey: claimKey,
       amt: amt,
@@ -1358,14 +1276,12 @@
     document.getElementById('d-oys2-total-paid').innerText = 'HK$ ' + ciState.oys2MultiPaid.toLocaleString();
     renderMultiButtonsFromRules();
   }
-
   function undoLastMultiClaim() {
     if (ciState.claimHistory.length === 0) return;
     const last = ciState.claimHistory.pop();
     ciState.oys2MultiPaid -= last.amt;
     ciState.multiTimelineAge = last.ageBefore;
     ciState.countsMap[last.claimKey]--;
-
     const listOys2 = document.getElementById('d-timeline-oys2');
     const rawRateUnder30 = dbData.config["成人_30歲以下加贈率"] || 0.50;
     const rawRateOver31 = dbData.config["成人_31歲以上加贈率"] || 0.35;
@@ -1383,7 +1299,6 @@
     document.getElementById('d-oys2-total-paid').innerText = 'HK$ ' + ciState.oys2MultiPaid.toLocaleString();
     renderMultiButtonsFromRules();
   }
-
   function resetCompareMultiTimeline() {
     ciState.multiTimelineAge = ciState.simClaimAge;
     ciState.claimHistory = [];
@@ -1396,7 +1311,6 @@
     const bonusRate = ciState.isChildMode ? Number(rawChildRate) : ((ciState.simStartAge <= 30) ? Number(rawRateUnder30) : Number(rawRateOver31));
     const isWithin10 = (ciState.simClaimAge - ciState.simStartAge <= 10) && (ciState.simClaimAge >= ciState.simStartAge);
     const firstClaimVal = ciState.oys2Sum + (isWithin10 ? Math.round(ciState.oys2Sum * bonusRate) : 0);
-
     document.getElementById('d-timeline-sce').innerHTML = `
       <div class="timeline-mini-card" style="border-left:5px solid #34495e !important;">
         <div><strong>首次確診 (${ciState.simClaimAge}歲)</strong>：發放 $${ciState.sceSum.toLocaleString()}<br><span style="color:#e74c3c; font-weight:bold;">⚠️ 合約正式完結，無後續多重賠償</span></div>
@@ -1408,7 +1322,6 @@
     document.getElementById('d-oys2-total-paid').innerText = 'HK$ ' + firstClaimVal.toLocaleString();
     renderMultiButtonsFromRules();
   }
-
   function onStage5AgeChanged(input) {
     const val = parseInt(input.value, 10) || 20;
     ciState.simStartAge = val;
@@ -1416,19 +1329,16 @@
     calculateCIPremium();
     runStage3Calculation();
   }
-
-  // ======================== 🌟 全新全螢幕後台控制台邏輯 🌟 ========================
+  // ======================== 後台管理控制台邏輯 ========================
   function openAdminModal() {
     document.getElementById('adminFullScreenModal').style.display = 'flex';
     renderAdminVisualLayout();
     renderAdminConfigLayout();
     renderAdminFirebaseList();
   }
-
   function closeAdminModal() {
     document.getElementById('adminFullScreenModal').style.display = 'none';
   }
-
   function switchAdminTab(tabKey, btn) {
     document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
@@ -1436,8 +1346,6 @@
     document.getElementById('adminTabConfigSection').style.display = (tabKey === 'config') ? 'block' : 'none';
     document.getElementById('adminTabFirebaseSection').style.display = (tabKey === 'firebase') ? 'block' : 'none';
   }
-
-  // 分頁 1：渲染 01～06 頁面文案與按鈕
   function renderAdminVisualLayout() {
     const container = document.getElementById('adminVisualContainer');
     const selectedRole = document.getElementById('adminRoleSelect').value;
@@ -1460,8 +1368,6 @@
             <label class="admin-label">副標題說明：</label>
             <textarea data-adm-page-sub="${realPIdx}" style="min-height:50px;">${p.subtitle}</textarea>
           </div>`;
-
-      // 01 頁 4 大守護項目
       if (p.stepOrder === 1) {
         const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
         const opts = allOpts.filter(o => o.pageId === 'step_ci_1' && (o.role === selectedRole || o.role === 'common')).sort((a,b)=>a.order-b.order);
@@ -1478,8 +1384,6 @@
         });
         html += `</div>`;
       }
-
-      // 02 頁資產填補項目
       if (p.stepOrder === 2) {
         const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
         const aOpts = allOpts.filter(o => o.pageId === 'step_ci_2').sort((a,b)=>a.order-b.order);
@@ -1494,13 +1398,10 @@
         });
         html += `</div>`;
       }
-
       html += `</div>`;
     });
     container.innerHTML = html;
   }
-
-  // 分頁 2：渲染系統設定參數
   function renderAdminConfigLayout() {
     const container = document.getElementById('adminConfigContainer');
     if (!container) return;
@@ -1515,8 +1416,6 @@
     html += '</div>';
     container.innerHTML = html;
   }
-
-  // 分頁 3：Firebase 圖片/文件列表
   function renderAdminFirebaseList() {
     const container = document.getElementById('adminUploadedItemsList');
     if (!container) return;
@@ -1540,8 +1439,6 @@
     });
     container.innerHTML = html;
   }
-
-  // Firebase 上傳核心
   async function uploadFileToFirebase() {
     const fileInput = document.getElementById('uploadFileInput');
     const titleInput = document.getElementById('uploadFileTitle');
@@ -1549,38 +1446,30 @@
     const file = fileInput.files[0];
     const title = titleInput.value.trim();
     const cat = catSelect.value;
-
     if (!file) { alert('請先選擇要上傳的圖片或 PDF 檔案！'); return; }
     if (!title) { alert('請輸入案例或文件標題！'); return; }
-
     const btn = document.getElementById('btnUploadToFirebase');
     btn.innerText = '⏳ 上傳至 Firebase 中...';
     btn.disabled = true;
-
     try {
       const isPdf = file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf';
       const ext = file.name.split('.').pop();
       const storageRef = storage.ref(`ci_uploads/${cat}_${Date.now()}.${ext}`);
       const snapshot = await storageRef.put(file);
       const downloadURL = await snapshot.ref.getDownloadURL();
-
       const newItem = {
         title: title,
         type: isPdf ? 'pdf' : 'image',
         url: downloadURL
       };
-
       if (!cloudAppDatabase[cat]) cloudAppDatabase[cat] = [];
       cloudAppDatabase[cat].push(newItem);
-
-      // 新增至 cases 清單供同步至 Google Sheet
       if (!Array.isArray(dbData.cases)) dbData.cases = [];
       dbData.cases.push({
         category: cat,
         diseaseName: title,
         filesJson: JSON.stringify([newItem])
       });
-
       alert('✅ 檔案已成功上傳至 Firebase 並新增到清單！請點擊右上角「儲存同步至 Google Sheet」使改動永久生效。');
       fileInput.value = '';
       titleInput.value = '';
@@ -1592,7 +1481,6 @@
       btn.disabled = false;
     }
   }
-
   function deleteFirebaseItem(cat, idx) {
     if (!confirm('確定刪除此項目？')) return;
     const removed = cloudAppDatabase[cat].splice(idx, 1);
@@ -1602,8 +1490,6 @@
     }
     renderAdminFirebaseList();
   }
-
-  // 儲存全部後台設定
   async function saveAllAdminData() {
     document.querySelectorAll('[data-adm-page-tag]').forEach(inp => {
       const idx = Number(inp.dataset.admPageTag);
@@ -1629,7 +1515,6 @@
       const key = inp.dataset.admConfigKey;
       dbData.config[key] = inp.value;
     });
-
     try {
       await fetch(GAS_CENTRAL_URL, {
         method: "POST",
@@ -1649,7 +1534,6 @@
       alert("⚠️ 同步失敗，請檢查網路。");
     }
   }
-
   // ======================== 雲端同步與初始化 ========================
   window.onGASDataLoaded = function(json) {
     if (json && json.status === "success") {
@@ -1658,7 +1542,6 @@
       cloudAppDatabase["child"] = [];
       cloudAppDatabase["case"] = [];
       cloudAppDatabase.rules = (json.rules && json.rules.length > 0) ? json.rules : defaultDatabase.rules;
-
       if (Array.isArray(json.cases)) {
         json.cases.forEach(row => {
           const cat = String(row.category || '').trim();
@@ -1673,15 +1556,19 @@
           }
         });
       }
-
       document.getElementById('sync-status-badge').innerHTML = '✅ 中央庫已同步';
       document.getElementById('sync-status-badge').className = 'status-ok';
+      
+      // 🌟 確保雲端載入完成後，依據 URL 參數保持模式
+      const p = new URLSearchParams(window.location.search);
+      if ((p.has('role') && p.get('role') === 'child') || (p.has('type') && p.get('type') === 'child')) {
+        ciState.isChildMode = true;
+      }
       applyRoleMode();
       renderMultiButtonsFromRules();
       calculateCIPremium();
     }
   };
-
   function syncAllFromGASCentral() {
     const script = document.createElement('script');
     script.src = GAS_CENTRAL_URL + (GAS_CENTRAL_URL.includes('?') ? '&' : '?') + 'callback=onGASDataLoaded&t=' + Date.now();
@@ -1693,7 +1580,6 @@
     };
     document.body.appendChild(script);
   }
-
   document.addEventListener('DOMContentLoaded', function() {
     const p = new URLSearchParams(window.location.search);
     if ((p.has('role') && p.get('role') === 'child') || (p.has('type') && p.get('type') === 'child')) {
@@ -1714,35 +1600,28 @@
         noticeBox.innerHTML = `⚠️ <strong>規劃提醒：</strong>${p.get('alertMsg')}`;
       }
     }
-
     document.getElementById('a-monthly-exp-input').value = ciState.monthlyExp.toLocaleString();
     document.getElementById('a-months-input').value = ciState.months;
     document.getElementById('b-ci-input').value = ciState.existingCI.toLocaleString();
-
     renderDynamicTextsAndOptions();
     renderMultiButtonsFromRules();
-
     document.querySelectorAll('[data-nav]').forEach(btn => {
       btn.addEventListener('click', function() {
         goToCIStage(this.getAttribute('data-nav').replace('to-', ''));
       });
     });
-
     document.getElementById('c-sce-sum-input').addEventListener('input', function() {
       ciState.sceSum = parseNum(this.value);
       this.value = ciState.sceSum.toLocaleString();
       runStage3Calculation();
     });
-
     document.getElementById('c-oys2-sum-input').addEventListener('input', function() {
       ciState.oys2Sum = parseNum(this.value);
       this.value = ciState.oys2Sum.toLocaleString();
       runStage3Calculation();
     });
-
     document.getElementById('c-input-start-age').addEventListener('input', runStage3Calculation);
     document.getElementById('c-input-claim-age').addEventListener('input', runStage3Calculation);
-
     document.querySelectorAll('.prem-mode-btn').forEach(btn => {
       btn.addEventListener('click', function() {
         document.querySelectorAll('.prem-mode-btn').forEach(b => b.classList.remove('active'));
@@ -1751,12 +1630,10 @@
         calculateCIPremium();
       });
     });
-
     const cardSce = document.getElementById('card-ci-sce');
     const chkSce = document.getElementById('chk-plan-sce');
     const cardOys2 = document.getElementById('card-ci-oys2');
     const chkOys2 = document.getElementById('chk-plan-oys2');
-
     if (cardSce && chkSce) {
       cardSce.addEventListener('click', function(e) {
         if (e.target !== chkSce) chkSce.checked = !chkSce.checked;
@@ -1765,7 +1642,6 @@
         calculateCIPremium();
       });
     }
-
     if (cardOys2 && chkOys2) {
       cardOys2.addEventListener('click', function(e) {
         if (e.target !== chkOys2 && !e.target.classList.contains('pay-period-btn')) {
@@ -1776,7 +1652,6 @@
         calculateCIPremium();
       });
     }
-
     document.querySelectorAll('.pay-period-btn').forEach(btn => {
       btn.addEventListener('click', function(e) {
         e.stopPropagation();
@@ -1786,9 +1661,7 @@
         calculateCIPremium();
       });
     });
-
     document.getElementById('ci-calc-gender').addEventListener('change', calculateCIPremium);
-
     const btnPromo = document.getElementById('btnToggleCIPromo');
     if (btnPromo) {
       btnPromo.addEventListener('click', function() {
@@ -1797,16 +1670,12 @@
         calculateCIPromo();
       });
     }
-
     ['promoSce200', 'promoSce500', 'promoSceY2', 'promoSceY3', 'promoOys2500', 'promoOys2Y2', 'promoOys2Y3'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('input', calculateCIPromo);
     });
-
     syncAllFromGASCentral();
   });
 </script>
 </body>
 </html>
-
-
