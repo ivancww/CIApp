@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.5.1)</title>
+<title>確診危疾生活儲備規劃 (v9.5.0)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -76,7 +76,6 @@
   .claim-header-row { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
   
   .timeline-mini-card { display: flex; align-items: center; background: white; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; border: 1px solid #eee; font-size: 12.5px; line-height: 1.5; }
-  .card-color-cancer-a { border-left: 5px solid #d97706 !important; }
   .multi-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
   .btn-multi-action { padding: 10px 8px; font-size: 12.5px; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; color: #fff; text-align: center; transition: 0.15s; }
   .emoji-bar-inline { display: flex; gap: 6px; margin-top: 10px; overflow-x: auto; }
@@ -101,17 +100,12 @@
   .media-card-item img { width: 100%; height: 45px; object-fit: cover; border-radius: 4px; }
   .media-card-item .pdf-icon-box { width: 100%; height: 45px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #fee2e2; color: #b91c1c; font-size: 18px; border-radius: 4px; }
   .media-card-title { margin-top: 3px; font-size: 11px; font-weight: 700; color: #1e293b; text-align: center; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  
   /* 05 健康程式摺疊細則 */
   .vitality-toggle-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
   .vitality-details-box { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #bfdbfe; font-size: 12px; color: #334155; line-height: 1.6; }
-
-  /* 後台面板樣式 */
+  /* 後台面板 */
   .admin-modal-box { background: #eef2f5; border-radius: 16px; width: 95vw; max-width: 880px; max-height: 92vh; overflow-y: auto; padding: 20px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-  .admin-top-bar { display: flex; justify-content: space-between; align-items: center; background: #1e3a8a; color: #fff; padding: 12px 18px; border-radius: 12px; margin-bottom: 12px; font-weight: bold; font-size: 15px; }
-  .admin-tabs-nav { display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto; }
-  .adm-tab-btn { padding: 6px 12px; font-size: 12.5px; font-weight: 700; border-radius: 8px; border: none; background: #e2e8f0; color: #475569; cursor: pointer; white-space: nowrap; }
-  .adm-tab-btn.active { background: #1e3a8a; color: #fff; }
+  .admin-top-bar { display: flex; justify-content: space-between; align-items: center; background: #1e3a8a; color: #fff; padding: 12px 18px; border-radius: 12px; margin-bottom: 16px; font-weight: bold; font-size: 15px; }
   select, input[type="text"], input[type="number"], textarea { width: 100%; padding: 8px; font-size: 13.5px; border-radius: 8px; border: 2px dashed var(--pink-border); background: #fff; font-weight: 700; color: #333; outline: none; margin-top: 4px; box-sizing: border-box; }
 </style>
 </head>
@@ -126,7 +120,6 @@
     </div>
     <div id="sync-status-badge">🔄 連接雲端中央庫...</div>
   </div>
-
   <!-- 第 1 步：01｜生活儲備目標 -->
   <div class="stage-card active" id="stage-ci-1">
     <span class="stage-tag" id="ui-tag-1">01｜生活儲備目標</span>
@@ -153,7 +146,6 @@
       <button type="button" class="btn-primary" data-nav="to-2">下一步：現有防線可以走幾遠 →</button>
     </div>
   </div>
-
   <!-- 第 2 步：02｜現有防線 -->
   <div class="stage-card" id="stage-ci-2">
     <span class="stage-tag" id="ui-tag-2">02｜現有防線</span>
@@ -192,8 +184,7 @@
       <button type="button" class="btn-primary" data-nav="to-3">下一步：補充儲備缺口及守護資產 →</button>
     </div>
   </div>
-
-  <!-- 第 3 步：03｜解決方案 -->
+  <!-- 第 3 步：03｜解決方案 (只在 OYS2 放 Checkbox，同步連動 SCE) -->
   <div class="stage-card" id="stage-ci-3">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <span class="stage-tag" id="ui-tag-3" style="margin:0;">03｜解決方案</span>
@@ -225,7 +216,7 @@
       </div>
     </div>
     <div class="grid-2col">
-      <!-- 左邊：SCE -->
+      <!-- 左邊：SCE (無 Checkbox，同步跟隨 OYS2) -->
       <div class="compare-side-card sce">
         <div class="side-card-title" style="color:#34495e;">
           <span>方案 A ｜ 簡護危疾保 (SCE)</span>
@@ -235,23 +226,26 @@
           <label style="font-size:11.5px; font-weight:bold; color:#34495e;">SCE 擬投保額 (HK$)：</label>
           <input type="text" id="c-sce-sum-input" value="780,000">
         </div>
+        <!-- 首次重疾 -->
         <div class="claim-check-item checked" id="box-sce-first">
           <div style="font-size:12px; font-weight:bold; color:#c0392b;">🚨 首次嚴重危疾 (<span id="c-sce-first-pct-lbl">100%</span>)</div>
           <div style="font-size:18px; font-weight:900; color:#2c3e50; margin:3px 0;" id="c-sce-first-claim">HK$ 780,000</div>
           <div style="font-size:11px; color:#666;" id="c-sce-first-desc">• 基本保額賠償，發放後合約即時完結</div>
         </div>
+        <!-- 早期預支 -->
         <div class="claim-check-item" id="box-sce-early">
           <div style="font-size:12px; font-weight:bold; color:#d97706;">⚡ 早期疾病預支 (20%)</div>
           <div style="font-size:18px; font-weight:900; color:#2c3e50; margin:3px 0;" id="c-sce-early-claim">HK$ 156,000</div>
           <div style="font-size:11px; color:#666;">• 預支 20% 保額 (扣減後重疾餘額為 80%)</div>
         </div>
+        <!-- 兒童疾病預支 (只限兒童模式) -->
         <div class="claim-check-item" id="c-sce-child-block" style="display:none;">
           <div style="font-size:12px; font-weight:bold; color:#9333ea;">👶 兒童疾病預支 (20%)</div>
           <div style="font-size:18px; font-weight:900; color:#2c3e50; margin:3px 0;" id="c-sce-child-claim">HK$ 156,000</div>
           <div style="font-size:11px; color:#666;">• 預支 20% 保額 (特定兒童疾病)</div>
         </div>
       </div>
-      <!-- 右邊：OYS2 -->
+      <!-- 右邊：OYS2 (保留 Checkbox 並同步控制兩邊) -->
       <div class="compare-side-card oys2">
         <div class="side-card-title" style="color:#27ae60;">
           <span>方案 B ｜ 愛伴航2 (OYS2)</span>
@@ -261,6 +255,7 @@
           <label style="font-size:11.5px; font-weight:bold; color:#27ae60;">OYS2 擬投保額 (HK$)：</label>
           <input type="text" id="c-oys2-sum-input" value="780,000">
         </div>
+        <!-- 首次重疾 -->
         <div class="claim-check-item checked" id="box-oys2-first">
           <div class="claim-header-row" onclick="toggleClaimCheck('oys2-first')">
             <div style="font-size:12px; font-weight:bold; color:#c0392b;">🚨 首次嚴重危疾 (<span id="c-oys2-claim-title-pct">100% + 升級</span>)</div>
@@ -271,6 +266,7 @@
             • 保額 ＋ 🎁 首 10 年加贈 <strong id="c-oys2-bonus-rate">+35% ($273,000)</strong><br>• 豁免餘下保費，多重持續有效
           </div>
         </div>
+        <!-- 早期預支 -->
         <div class="claim-check-item" id="box-oys2-early">
           <div class="claim-header-row" onclick="toggleClaimCheck('oys2-early')">
             <div style="font-size:12px; font-weight:bold; color:#d97706;">⚡ 早期疾病預支 (20%<span id="c-oys2-early-bonus-tag"> + 升級</span>)</div>
@@ -279,6 +275,7 @@
           <div style="font-size:18px; font-weight:900; color:#27ae60; margin:3px 0;" id="c-oys2-early-claim">HK$ 210,600</div>
           <div style="font-size:11px; color:#166534;" id="c-oys2-early-desc-line">• 預支 20% 保額 ＋ 早期升級加贈</div>
         </div>
+        <!-- 兒童特定疾病預支* (只限兒童模式) -->
         <div class="claim-check-item" id="c-oys2-child-block" style="display:none;">
           <div class="claim-header-row" onclick="toggleClaimCheck('oys2-child')">
             <div style="font-size:12px; font-weight:bold; color:#9333ea;">👶 兒童特定疾病預支* (20%<span id="c-oys2-child-bonus-tag"> + 升級</span>)</div>
@@ -303,8 +300,7 @@
       <button type="button" class="btn-primary" data-nav="to-4">下一步：多重賠償推演對比 →</button>
     </div>
   </div>
-
-  <!-- 第 4 步：04｜多重賠償時間線推演 (已完整修復所有按鈕) -->
+  <!-- 第 4 步：04｜多重賠償時間線推演 -->
   <div class="stage-card" id="stage-ci-4">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <span class="stage-tag" id="ui-tag-4" style="margin:0;">04｜多重賠償時間線</span>
@@ -314,7 +310,6 @@
     </div>
     <h2 class="stage-title" id="ui-title-4" style="margin-top:8px;">癌症復發、持續、擴散？腦退化？心臟病／中風？</h2>
     <p class="stage-desc" id="ui-subtitle-4">對比單次保單完結後之風險注意，與 OYS2 延續至 85 歲之多重架構：</p>
-    
     <div style="background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:12px; margin-bottom:12px;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
         <span style="font-weight:bold; font-size:13px; color:var(--primary);">⏳ 點擊推進模擬多次理賠：</span>
@@ -323,10 +318,8 @@
           <button type="button" class="btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="resetCompareMultiTimeline()">🔄 重置時間線</button>
         </div>
       </div>
-      <!-- 04 頂部 4 大多重按鈕容器 -->
       <div class="multi-btn-grid" id="topMultiBtnContainer"></div>
     </div>
-    
     <div class="grid-2col">
       <div class="compare-side-card sce">
         <div class="side-card-title" style="color:#34495e;">
@@ -334,7 +327,7 @@
           <span style="font-size:11px; color:#e74c3c; font-weight:bold;">合約已完結</span>
         </div>
         <div id="d-timeline-sce" style="min-height:140px;"></div>
-        <div class="neutral-alert-box" style="margin-top:auto; font-size:12px; line-height:1.5; border-left:4px solid #f59e0b; background:#fffbeb; padding:10px; border-radius:8px;">
+        <div class="neutral-alert-box" style="margin-top:auto; font-size:12px; line-height:1.5; border-left-color:#f59e0b; background:#fffbeb; padding:10px; border-radius:8px;">
           ⚠️ <strong>風險注意：</strong>首次賠償後合約即告完結。因已留有健康紀錄，市場上一般無法再投保新危疾計劃。
         </div>
       </div>
@@ -345,7 +338,6 @@
         </div>
         <div id="d-timeline-oys2" style="min-height:140px;"></div>
         <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; margin-top:8px;">
-          <!-- 04 底部 Emoji 快速按鈕容器 -->
           <div class="emoji-bar-inline" id="botEmojiBtnContainer"></div>
         </div>
         <div class="stat-grid-box" style="margin-top:8px; margin-bottom:0; background:#f0fdf4; border-color:#bbf7d0; padding:10px;">
@@ -361,8 +353,7 @@
       <button type="button" class="btn-primary" data-nav="to-5">下一步：方案及保費精算 →</button>
     </div>
   </div>
-
-  <!-- 第 5 步：05｜方案與保費 -->
+  <!-- 第 5 步：05｜方案與保費 (健康程式*摺疊說明) -->
   <div class="stage-card" id="stage-ci-5">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
       <span class="stage-tag" id="ui-tag-5" style="margin:0;">05｜方案與保費</span>
@@ -386,6 +377,7 @@
         </select>
       </div>
     </div>
+    <!-- 健康程式* 摺疊方塊 -->
     <div style="margin:12px 0; font-size:13px; background:#eff6ff; padding:12px; border-radius:8px; border:1px solid #bfdbfe;">
       <div class="vitality-toggle-header" onclick="toggleVitalityDetails()">
         <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:bold; color:#1e40af;" onclick="event.stopPropagation();">
@@ -425,6 +417,7 @@
         <div style="font-size:18px; font-weight:900; color:#27ae60; margin-top:8px;" id="prem-oys2-display">HK$ 35,100 /年</div>
       </div>
     </div>
+    <!-- 每年保費投影表 -->
     <div class="stat-grid-box" style="margin-top:16px;">
       <h4 style="margin:0 0 8px 0; font-size:14px; color:var(--primary);">📊 每年保費</h4>
       <table class="projection-table">
@@ -450,7 +443,6 @@
       <button type="button" class="btn-primary" data-nav="to-6">下一步：方案總結 →</button>
     </div>
   </div>
-
   <!-- 第 6 步：06｜方案總結 -->
   <div class="stage-card" id="stage-ci-6">
     <span class="stage-tag" id="ui-tag-6">06｜方案總結</span>
@@ -467,11 +459,12 @@
       </div>
       <div>💵 <strong>預算投入：</strong> <strong style="color:var(--danger); font-size:18px;" id="f-confirm-prem">HK$ 35,100 /年</strong></div>
     </div>
+    <!-- 06 紅底紅字規劃提醒 -->
     <div class="red-alert-notice-card" id="f-soft-notice-box">
       ⚠️ <strong>規劃提醒：</strong>一場嚴重疾病往往引發兩條戰線。危疾賠償主要用於承托停工休養期間的生活開支與照護基金；而前線龐大的私家住院與手術費用，仍需具備實報實銷的醫療保險作全面覆蓋。
     </div>
     <!-- 醫療分析 App 卡片連結 -->
-    <a href="#" target="_blank" class="med-app-jump-btn" id="f-med-app-btn">
+    <a href="https://ivancww.github.io/medicalclaims" target="_blank" class="med-app-jump-btn" id="f-med-app-btn">
       <img src="https://ivancww.github.io/medicalclaims/icon-192.png" alt="Medical App Logo" onerror="this.src='https://via.placeholder.com/42?text=Med';">
       <div style="display:flex; flex-direction:column; gap:2px;">
         <span style="font-size:15px; font-weight:800;">醫療分析 App</span>
@@ -532,7 +525,6 @@
     </div>
   </div>
 </div>
-
 <!-- 5x5 抽屜彈窗 -->
 <div class="modal-overlay" id="mediaDrawerOverlay">
   <div class="modal-box">
@@ -542,95 +534,30 @@
     <div class="grid-5x5-slider" id="drawerMediaGrid"></div>
   </div>
 </div>
-
-<!-- ⚙️ 完整後台管理面板 (包含 4 大分頁) -->
+<!-- ⚙️ 所見即所得 (WYSIWYG) 前台同款後台管理面板 -->
 <div class="modal-overlay" id="adminModalOverlay">
   <div class="admin-modal-box">
     <button type="button" class="modal-close-btn" onclick="closeAdminModal()">×</button>
     <div class="admin-top-bar">
-      <span>⚙️ CIApp 視覺化雲端後台管理系統</span>
+      <span>⚙️ CIApp 所見即所得雲端後台</span>
       <button type="button" class="btn-primary" style="padding:6px 14px; font-size:12px; background:#10b981;" onclick="saveAllAdminData()">💾 儲存並同步至 Google Sheet</button>
     </div>
     
-    <div class="admin-tabs-nav">
-      <button type="button" class="adm-tab-btn active" id="admTabBtn-1" onclick="switchAdminTab('visual')">01～06 題目與選項</button>
-      <button type="button" class="adm-tab-btn" id="admTabBtn-2" onclick="switchAdminTab('rules')">賠償條款 (多重規則)</button>
-      <button type="button" class="adm-tab-btn" id="admTabBtn-3" onclick="switchAdminTab('cases')">賠償案例庫 & 上載</button>
-      <button type="button" class="adm-tab-btn" id="admTabBtn-4" onclick="switchAdminTab('config')">系統設定</button>
+    <div style="display:flex; gap:8px; margin-bottom:12px;">
+      <select id="adminRoleSelect" style="font-weight:bold;" onchange="renderAdminVisualLayout()">
+        <option value="adult" selected>👨‍👩‍👧 編輯：成人模式 (01～06)</option>
+        <option value="child">👶 編輯：兒童模式 (01～06)</option>
+      </select>
     </div>
-
-    <!-- 分頁 1：01~06 頁面與選項 -->
-    <div id="admSection-visual">
-      <div style="display:flex; gap:8px; margin-bottom:12px;">
-        <select id="adminRoleSelect" style="font-weight:bold;" onchange="renderAdminVisualLayout()">
-          <option value="adult" selected>👨‍👩‍👧 編輯：成人模式 (01～06)</option>
-          <option value="child">👶 編輯：兒童模式 (01～06)</option>
-        </select>
-      </div>
-      <div id="adminVisualContainer"></div>
-    </div>
-
-    <!-- 分頁 2：賠償條款 (多重規則設定) -->
-    <div id="admSection-rules" style="display:none;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <strong style="color:var(--primary); font-size:14px;">📜 04 多重理賠條款與規則管理</strong>
-        <button type="button" class="btn-primary" style="padding:4px 10px; font-size:12px;" onclick="addAdminRule()">+ 新增規則</button>
-      </div>
-      <div id="adminRulesContainer"></div>
-    </div>
-
-    <!-- 分頁 3：賠償案例與 Firebase 上載 -->
-    <div id="admSection-cases" style="display:none;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <strong style="color:var(--primary); font-size:14px;">📑 案例庫管理 (支援 Firebase Storage 直線上載)</strong>
-        <select id="admCaseCatFilter" style="width:160px; margin-top:0;" onchange="renderAdminCasesLayout()">
-          <option value="102">🧑 102種疾病</option>
-          <option value="child">👶 兒童特定疾病</option>
-          <option value="case" selected>📑 真實理賠案例</option>
-        </select>
-      </div>
-      <div id="adminCasesContainer"></div>
-    </div>
-
-    <!-- 分頁 4：系統設定 -->
-    <div id="admSection-config" style="display:none;">
-      <div style="font-weight:bold; color:var(--primary); margin-bottom:10px; font-size:14px;">⚙️ 系統參數、預設金額與 App 網址設定</div>
-      <div id="adminConfigContainer" class="stat-grid-box" style="margin-top:0; background:#fff;"></div>
-    </div>
+    <div id="adminVisualContainer"></div>
   </div>
 </div>
-
 <script>
   const GAS_CENTRAL_URL = "https://script.google.com/macros/s/AKfycbxATo0XVkQszgYP-gF9LE1OvyNOo0jQTWd4HdNuOCDvJTcF46nz1v6QFRV-OyLHmKYszg/exec";
-  const firebaseConfig = { 
-    apiKey: "AIzaSyDBA5Iitb8X0qmbVfjVdYWw-M2D_9ZhFIg",
-    authDomain: "medical-and-ci.firebaseapp.com",
-    projectId: "medical-and-ci",
-    storageBucket: "medical-and-ci.firebasestorage.app",
-    messagingSenderId: "857984223277",
-    appId: "1:857984223277:web:bd64aa72fc7e374c3450a4"
-  };
+  const firebaseConfig = { storageBucket: "medical-and-ci.firebasestorage.app" };
   if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
   const storage = firebase.storage();
-
   const defaultDatabase = {
-    config: {
-      "成人_預設每月開支": 40000,
-      "成人_預設休養月數": 36,
-      "成人_預設現有危疾": 300000,
-      "成人_預設投保年齡": 40,
-      "成人_預設確診年齡": 45,
-      "成人_30歲以下加贈率": 0.50,
-      "成人_31歲以上加贈率": 0.35,
-      "兒童_預設每月開支": 30000,
-      "兒童_預設休養月數": 24,
-      "兒童_預設現有危疾": 0,
-      "兒童_預設投保年齡": 5,
-      "兒童_預設確診年齡": 10,
-      "兒童_首十年加贈率": 0.50,
-      "醫療App網址": "https://ivancww.github.io/medicalclaims",
-      "資料版本": "9.5.0"
-    },
     pages: [
       { role: 'adult', stepOrder: 1, pageId: 'step_ci_1', tagName: '01｜生活儲備目標', title: '確診危疾生活儲備', subtitle: '在不影響家庭質素的前提下，量化停工期間所需的整體生活儲備：' },
       { role: 'child', stepOrder: 1, pageId: 'step_ci_1', tagName: '01｜父母照護基金', title: '兒童重大疾病照護儲備', subtitle: '為確保小朋友獲得黃金治療，並讓父母全心全職陪伴照護的生活資金：' },
@@ -665,13 +592,10 @@
       { claimKey: "cancer_b", name: "癌症選項B (每月津貼)", emoji: "💊", btnText: "💊 癌症選項B (5%/月)", maxCount: 100, waitYears: 1, isMonthly: true, color: "#0284c7" },
       { claimKey: "heart", name: "心臟病/中風", emoji: "❤️", btnText: "❤️ 心臟/中風 (+1年)", maxCount: 3, waitYears: 1, isMonthly: false, color: "#8e44ad" },
       { claimKey: "dementia", name: "腦退化年金", emoji: "🧠", btnText: "🧠 腦退化年金 (+1年)", maxCount: 1, waitYears: 1, isMonthly: false, color: "#27ae60" }
-    ],
-    cases: []
+    ]
   };
-
-  let dbData = { config: defaultDatabase.config, pages: defaultDatabase.pages, options: defaultDatabase.options, rates: {}, cases: [], rules: defaultDatabase.rules };
+  let dbData = { config: {}, pages: defaultDatabase.pages, options: defaultDatabase.options, rates: {}, cases: [], rules: defaultDatabase.rules };
   let cloudAppDatabase = { "102": [], "child": [], "case": [], rules: defaultDatabase.rules };
-
   const ciState = {
     isChildMode: false,
     monthlyExp: 40000,
@@ -695,14 +619,11 @@
     oys2PayPeriod: 18,
     annualPremMap: { sce: 3994, oys2: 35100 }
   };
-
   const assetKeys = ['savings', 'invest', 'edu', 'retire', 'prop'];
-
   function parseNum(val) {
     if (typeof val === 'number') return val;
-    return Number(String(val || '').replace(/[^0-9.]/g, '')) || 0;
+    return Number(String(val || '').replace(/[^0-9]/g, '')) || 0;
   }
-
   function goToCIStage(stageNum) {
     document.querySelectorAll('.stage-card').forEach(c => c.classList.remove('active'));
     const target = document.getElementById('stage-ci-' + stageNum);
@@ -716,43 +637,35 @@
     }
     if (String(stageNum) === '6') updateConfirmSummary();
   }
-
   function toggleRoleMode() {
     ciState.isChildMode = !ciState.isChildMode;
     applyRoleMode();
   }
-
   function applyRoleMode() {
     const btn = document.getElementById('btnRoleSwitch');
     const isChild = ciState.isChildMode;
     btn.innerText = isChild ? "👶 兒童模式" : "👨‍👩‍👧 成人模式";
     btn.style.background = isChild ? "#fef3c7" : "#e0e7ff";
     btn.style.color = isChild ? "#b45309" : "#3730a3";
-
     const defExp = isChild ? parseNum(dbData.config["兒童_預設每月開支"] || 30000) : parseNum(dbData.config["成人_預設每月開支"] || 40000);
     const defMonths = isChild ? parseNum(dbData.config["兒童_預設休養月數"] || 24) : parseNum(dbData.config["成人_預設休養月數"] || 36);
     const defExist = isChild ? parseNum(dbData.config["兒童_預設現有危疾"] || 0) : parseNum(dbData.config["成人_預設現有危疾"] || 300000);
     const defStart = isChild ? parseNum(dbData.config["兒童_預設投保年齡"] || 5) : parseNum(dbData.config["成人_預設投保年齡"] || 40);
     const defClaim = isChild ? parseNum(dbData.config["兒童_預設確診年齡"] || 10) : parseNum(dbData.config["成人_預設確診年齡"] || 45);
-
     ciState.monthlyExp = defExp;
     ciState.months = defMonths;
     ciState.existingCI = defExist;
     ciState.simStartAge = defStart;
     ciState.simClaimAge = defClaim;
-
     document.getElementById('a-monthly-exp-input').value = defExp.toLocaleString();
     document.getElementById('a-months-input').value = defMonths;
     document.getElementById('b-ci-input').value = defExist.toLocaleString();
     document.getElementById('c-input-start-age').value = defStart;
     document.getElementById('c-input-claim-age').value = defClaim;
     document.getElementById('ci-calc-age').value = defStart;
-
     renderDynamicTextsAndOptions();
     recalculateAll();
-    renderMultiButtonsFromRules();
   }
-
   function renderDynamicTextsAndOptions() {
     const roleKey = ciState.isChildMode ? 'child' : 'adult';
     const pages = (dbData.pages && dbData.pages.length > 0) ? dbData.pages.filter(p => p.role === roleKey) : defaultDatabase.pages.filter(p => p.role === roleKey);
@@ -765,7 +678,6 @@
       if (title) title.innerText = p.title;
       if (sub) sub.innerText = p.subtitle;
     });
-
     const goalsGrid = document.getElementById('goal-options-grid');
     if (goalsGrid) {
       const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
@@ -783,7 +695,6 @@
         });
       });
     }
-
     const assetContainer = document.getElementById('assets-list-container');
     if (assetContainer) {
       const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
@@ -804,7 +715,6 @@
       bindAssetEvents();
     }
   }
-
   function bindAssetEvents() {
     assetKeys.forEach(k => {
       const leftArea = document.querySelector(`.asset-left-area[data-asset="${k}"]`);
@@ -831,24 +741,20 @@
       }
     });
   }
-
   function onExpenseInputChanged(el) {
     ciState.monthlyExp = parseNum(el.value);
     el.value = ciState.monthlyExp.toLocaleString();
     recalculateAll();
   }
-
   function onMonthsInputChanged(el) {
     ciState.months = parseNum(el.value) || 36;
     recalculateAll();
   }
-
   function onExistingCIInputChanged(el) {
     ciState.existingCI = parseNum(el.value);
     el.value = ciState.existingCI.toLocaleString();
     recalculateAll();
   }
-
   function recalculateAll() {
     ciState.totalNeed = ciState.monthlyExp * ciState.months;
     ciState.netGap = Math.max(0, ciState.totalNeed - ciState.existingCI);
@@ -866,7 +772,6 @@
     document.getElementById('f-confirm-existing').innerText = 'HK$ ' + ciState.existingCI.toLocaleString();
     updateAllAssets();
   }
-
   function updateAllAssets() {
     let sum = 0;
     assetKeys.forEach(k => {
@@ -887,7 +792,6 @@
     document.getElementById('c-summary-remain-gap').innerText = 'HK$ ' + remainGap.toLocaleString();
     runStage3Calculation();
   }
-
   function toggleClaimCheck(key) {
     const chk = document.getElementById(`chk-${key}`);
     if (chk) {
@@ -895,7 +799,7 @@
       runStage3Calculation();
     }
   }
-
+  // 03 核心精算：OYS2 Checkbox 同步控制 SCE，並寫明 +50% 實際金額
   function runStage3Calculation() {
     const startAgeEl = document.getElementById('c-input-start-age');
     const claimAgeEl = document.getElementById('c-input-claim-age');
@@ -906,25 +810,25 @@
     const isChild = ciState.isChildMode;
     const sceSum = ciState.sceSum;
     const oys2Sum = ciState.oys2Sum;
-
+    // 1. 自動年齡加贈比例判定
     const rateUnder30 = parseNum(dbData.config["成人_30歲以下加贈率"] || 0.50);
     const rateOver31 = parseNum(dbData.config["成人_31歲以上加贈率"] || 0.35);
     const childRate = parseNum(dbData.config["兒童_首十年加贈率"] || 0.50);
     const bonusRate = isChild ? childRate : ((ciState.simStartAge <= 30) ? rateUnder30 : rateOver31);
     const elapsed = ciState.simClaimAge - ciState.simStartAge;
     const isWithin10Years = (elapsed <= 10) && (elapsed >= 0);
-
+    // 2. 取得 OYS2 勾選狀態 (同步連動兩邊)
     const chkOys2First = document.getElementById('chk-oys2-first')?.checked || false;
     const chkOys2Early = document.getElementById('chk-oys2-early')?.checked || false;
     const chkOys2Child = isChild && (document.getElementById('chk-oys2-child')?.checked || false);
-
+    // 雙邊視覺同步樣式
     document.getElementById('box-sce-first')?.classList.toggle('checked', chkOys2First);
     document.getElementById('box-sce-early')?.classList.toggle('checked', chkOys2Early);
     document.getElementById('c-sce-child-block')?.classList.toggle('checked', chkOys2Child);
     document.getElementById('box-oys2-first')?.classList.toggle('checked', chkOys2First);
     document.getElementById('box-oys2-early')?.classList.toggle('checked', chkOys2Early);
     document.getElementById('c-oys2-child-block')?.classList.toggle('checked', chkOys2Child);
-
+    // 3. SCE 計算 (先早期/兒童預支，後續重疾自動扣除對應 20%)
     let sceFirstRemainPct = (chkOys2Early || chkOys2Child) ? 0.8 : 1.0;
     let sceFirstPayout = chkOys2First ? Math.round(sceSum * sceFirstRemainPct) : 0;
     let sceEarlyPayout = chkOys2Early ? Math.round(sceSum * 0.2) : 0;
@@ -933,7 +837,7 @@
     document.getElementById('c-sce-first-claim').innerText = 'HK$ ' + Math.round(sceSum * sceFirstRemainPct).toLocaleString();
     document.getElementById('c-sce-first-desc').innerText = (sceFirstRemainPct === 0.8) ? '• 已預支 20%，發放餘下 80% 保額賠償並完結' : '• 100% 基本保額賠償，發放後合約即時完結';
     document.getElementById('c-sce-early-claim').innerText = 'HK$ ' + Math.round(sceSum * 0.2).toLocaleString();
-
+    // 4. OYS2 計算 (寫明實際加贈金額)
     let oys2FirstRemainPct = (chkOys2Early || chkOys2Child) ? 0.8 : 1.0;
     let oys2BonusVal = isWithin10Years ? Math.round(oys2Sum * bonusRate) : 0;
     let earlyActualBonusAmt = isWithin10Years ? Math.round(oys2Sum * 0.2 * bonusRate) : 0;
@@ -956,7 +860,7 @@
       document.getElementById('c-oys2-early-claim').innerText = 'HK$ ' + Math.round(oys2Sum * 0.2).toLocaleString();
       document.getElementById('c-oys2-early-desc-line').innerText = '• 預支 20% 原有保額';
     }
-
+    // 5. 兒童特定疾病預支* (寫明實際加贈金額，只限兒童模式)
     const sceChildBlock = document.getElementById('c-sce-child-block');
     const oys2ChildBlock = document.getElementById('c-oys2-child-block');
     if (isChild) {
@@ -970,7 +874,7 @@
       sceChildBlock.style.display = 'none';
       oys2ChildBlock.style.display = 'none';
     }
-
+    // 6. 計算當前勾選組合之理賠總額
     const totalSelectedPayout = sceFirstPayout + sceEarlyPayout + sceChildPayout + oys2FirstPayout + oys2EarlyPayout + oys2ChildPayout;
     const remainLifeGap = Math.max(0, ciState.netGap - totalSelectedPayout);
     
@@ -982,7 +886,7 @@
     }
     ciState.oys2MultiPaid = oys2FirstDisplay;
   }
-
+  // 05 費率查表 (支援所有歲數精確對應)
   function getRateFromTable(product, age, gender, period) {
     if (product === 'sce') {
       const t = (gender === 'F') ? dbData.rates?.sce_f : dbData.rates?.sce_m;
@@ -996,6 +900,7 @@
         if (period === 25) return t[age].pay25_non;
         return t[age].pay18_non;
       }
+      // 兒童預設 5 歲保費率備用
       if (age <= 18) {
         if (period === 10) return 27.52;
         if (period === 25) return 13.19;
@@ -1005,26 +910,20 @@
     }
     return 0;
   }
-
   function calculateCIPremium() {
     const age = parseInt(document.getElementById('ci-calc-age').value, 10) || 40;
     const gender = document.getElementById('ci-calc-gender').value || 'M';
     const isVitality = document.getElementById('ci-calc-vitality').checked;
     const period = ciState.oys2PayPeriod;
-
     document.getElementById('plan-sum-sce-text').innerText = 'HK$ ' + ciState.sceSum.toLocaleString();
     document.getElementById('plan-sum-oys2-text').innerText = 'HK$ ' + ciState.oys2Sum.toLocaleString();
     document.getElementById('v-extra-oys2-amt').innerText = '+HK$ ' + Math.round(ciState.oys2Sum * 0.1).toLocaleString();
-
     const sceRate = getRateFromTable('sce', age, gender, period);
     let finalSceHkd = Math.round((ciState.sceSum / 7800) * sceRate);
     if (isVitality) finalSceHkd = Math.round(finalSceHkd * 0.9);
-
     const oys2Rate = getRateFromTable('oys2', age, gender, period);
     let finalOys2Hkd = Math.round((ciState.oys2Sum / 7800) * oys2Rate);
-
     ciState.annualPremMap = { sce: finalSceHkd, oys2: finalOys2Hkd };
-
     if (ciState.premiumMode === 'annual') {
       document.getElementById('prem-sce-display').innerText = 'HK$ ' + finalSceHkd.toLocaleString() + ' /年';
       document.getElementById('prem-oys2-display').innerText = 'HK$ ' + finalOys2Hkd.toLocaleString() + ' /年';
@@ -1034,12 +933,10 @@
       document.getElementById('prem-sce-display').innerText = 'HK$ ' + sceM.toLocaleString() + ' /月';
       document.getElementById('prem-oys2-display').innerText = 'HK$ ' + oys2M.toLocaleString() + ' /月';
     }
-
     renderProjectionTable(age, gender, isVitality, period);
     updateConfirmSummary();
     calculateCIPromo();
   }
-
   function toggleVitalityDetails() {
     const box = document.getElementById('vitality-details-content');
     const arrow = document.getElementById('vitality-arrow-icon');
@@ -1051,21 +948,18 @@
       arrow.innerText = '▲ 點擊收起說明';
     }
   }
-
   function renderProjectionTable(startAge, gender, isVitality, period) {
     const tbody = document.getElementById('projection-table-body');
     if (!tbody) return;
     let html = '';
     let totalScePaid = 0;
     let totalOys2Paid = 0;
-
     for (let age = startAge; age <= 80; age += 5) {
       let stepYears = 5;
       let sceRate = getRateFromTable('sce', age, gender, period);
       let sceAnnualAtAge = Math.round((ciState.sceSum / 7800) * sceRate);
       if (isVitality) sceAnnualAtAge = Math.round(sceAnnualAtAge * 0.9);
       totalScePaid += (sceAnnualAtAge * stepYears);
-
       let elapsed = age - startAge;
       let oys2AnnualAtAge = 0;
       if (elapsed < period) {
@@ -1074,7 +968,6 @@
         let yearsInBlock = Math.min(stepYears, period - elapsed);
         totalOys2Paid += (oys2AnnualAtAge * yearsInBlock);
       }
-
       html += `
         <tr>
           <td style="text-align:left;"><strong>${age} 歲</strong></td>
@@ -1086,13 +979,11 @@
     document.getElementById('table-total-sce').innerText = 'HK$ ' + totalScePaid.toLocaleString();
     document.getElementById('table-total-oys2').innerText = 'HK$ ' + totalOys2Paid.toLocaleString();
   }
-
   function updateConfirmSummary() {
     const period = ciState.oys2PayPeriod;
     const planNameEl = document.getElementById('f-confirm-plan-name');
     const finalPremEl = document.getElementById('f-confirm-prem');
     document.getElementById('f-confirm-gap').innerText = 'HK$ ' + ciState.netGap.toLocaleString();
-    
     let comboAnnual = 0;
     let comboTitles = [];
     if (ciState.chooseSce) {
@@ -1110,12 +1001,10 @@
 
     const medBtn = document.getElementById('f-med-app-btn');
     if (medBtn) {
-      const curRole = ciState.isChildMode ? 'child' : 'adult';
-      const medBase = (dbData.config && dbData.config["醫療App網址"]) || "https://ivancww.github.io/medicalclaims";
-      medBtn.href = medBase.trim().replace(/\/+$/, '') + `?role=${curRole}&cost=500000`;
+      const currentRole = ciState.isChildMode ? 'child' : 'adult';
+      medBtn.href = `https://ivancww.github.io/medicalclaims?role=${currentRole}&cost=200000`;
     }
   }
-
   function syncGoalDisplay() {
     ciState.goals = [];
     document.querySelectorAll('#goal-options-grid .grid-btn.selected').forEach(btn => {
@@ -1126,7 +1015,6 @@
     const fGoals = document.getElementById('f-confirm-goals');
     if (fGoals) fGoals.innerText = txt;
   }
-
   function calculateCIPromo() {
     const sce200 = Number(document.getElementById('promoSce200')?.value) || 0;
     const sce500 = Number(document.getElementById('promoSce500')?.value) || 0;
@@ -1139,7 +1027,6 @@
     const sceRebateY3Val = Math.round((sceAnn / 12) * sceY3Months);
     const sceTotalSaved = sceCouponSaved + sceRebateY2Val + sceRebateY3Val;
     document.getElementById('promoSceNetY1').innerText = 'HK$ ' + sceNetY1.toLocaleString();
-
     const oys2500 = Number(document.getElementById('promoOys2500')?.value) || 0;
     const oys2Y2Months = Number(document.getElementById('promoOys2Y2')?.value) || 0;
     const oys2Y3Months = Number(document.getElementById('promoOys2Y3')?.value) || 0;
@@ -1152,17 +1039,14 @@
     document.getElementById('promoOys2NetY1').innerText = 'HK$ ' + oys2NetY1.toLocaleString();
     document.getElementById('promoOys2TotalSaved').innerText = 'HK$ ' + oys2TotalSaved.toLocaleString();
   }
-
   function openMediaDrawer(categoryKey) {
     const overlay = document.getElementById('mediaDrawerOverlay');
     const titleEl = document.getElementById('drawerCategoryTitle');
     const gridEl = document.getElementById('drawerMediaGrid');
     overlay.style.display = 'flex';
-
     if (categoryKey === '102') titleEl.innerText = '🧑 102 種嚴重／早期危疾保障一覽 (左右滑動)';
     else if (categoryKey === 'child') titleEl.innerText = '👶 兒童及青少年專屬特定疾病保障 (左右滑動)';
     else if (categoryKey === 'case') titleEl.innerText = '📑 真實危疾索償賠償案例庫 (左右滑動)';
-
     const items = cloudAppDatabase[categoryKey] || [];
     let html = '';
     items.forEach(item => {
@@ -1183,60 +1067,48 @@
     if (items.length === 0) html = '<div style="grid-column: span 5; text-align:center; padding:30px; color:#94a3b8;">暫無上載之文件</div>';
     gridEl.innerHTML = html;
   }
-
   function closeMediaDrawer() {
     document.getElementById('mediaDrawerOverlay').style.display = 'none';
   }
-
-  // 04 多重時間線推演按鈕核心渲染 (還原全部按鈕)
+  // 04 多重時間線推演按鈕修復
   function renderMultiButtonsFromRules() {
     const topContainer = document.getElementById('topMultiBtnContainer');
     const botContainer = document.getElementById('botEmojiBtnContainer');
     if (!topContainer || !botContainer) return;
-    
     let topHtml = '';
     let botHtml = '';
     const rules = (cloudAppDatabase.rules && cloudAppDatabase.rules.length > 0) ? cloudAppDatabase.rules : defaultDatabase.rules;
-    
     rules.forEach(rule => {
       ciState.countsMap[rule.claimKey] = 0;
       const bText = rule.btnText || `${rule.emoji || '🛡️'} ${rule.name || '理賠項目'} (+${rule.waitYears || 1}年)`;
       const bColor = rule.color || '#d97706';
       const bEmoji = rule.emoji || '🛡️';
       const bName = rule.name || '理賠項目';
-
       topHtml += `<button type="button" class="btn-multi-action" id="top-btn-${rule.claimKey}" style="background:${bColor};" onclick="executeDynamicClaim('${rule.claimKey}')">${bText}</button>`;
       botHtml += `<button type="button" class="btn-emoji-inline" id="bot-btn-${rule.claimKey}" style="background:${bColor};" onclick="executeDynamicClaim('${rule.claimKey}')" title="${bName}">${bEmoji}</button>`;
     });
     botHtml += `<button type="button" class="btn-emoji-inline" style="background:#64748b;" onclick="undoLastMultiClaim()" title="撤銷上一筆">↩️</button>`;
-
     topContainer.innerHTML = topHtml;
     botContainer.innerHTML = botHtml;
   }
-
   function executeDynamicClaim(claimKey) {
     const rules = (cloudAppDatabase.rules && cloudAppDatabase.rules.length > 0) ? cloudAppDatabase.rules : defaultDatabase.rules;
     const rule = rules.find(r => r.claimKey === claimKey);
     if (!rule) return;
-
     const listOys2 = document.getElementById('d-timeline-oys2');
     const sum = ciState.oys2Sum;
     const currentCount = ciState.countsMap[claimKey] || 0;
     const maxCount = parseInt(rule.maxCount, 10) || 6;
-
     if (currentCount >= maxCount) {
       alert(`${rule.name || '此項目'} 已達最高理賠上限 (${maxCount} 次)！`);
       return;
     }
-
     ciState.countsMap[claimKey] = currentCount + 1;
     const waitYears = parseInt(rule.waitYears, 10) || 1;
     ciState.multiTimelineAge += waitYears;
-
     let amt = rule.isMonthly ? Math.round(sum * 0.05) : sum;
     let desc = rule.isMonthly ? `發放每月 5% 津貼 ($${amt.toLocaleString()})` : `發放 100% 賠償 ($${amt.toLocaleString()})`;
     ciState.oys2MultiPaid += amt;
-
     const record = {
       claimKey: claimKey,
       amt: amt,
@@ -1246,86 +1118,58 @@
           <div><strong>${rule.name || '理賠項目'} (${ciState.multiTimelineAge}歲)</strong>：${desc}<br><span style="color:${rule.color || '#d97706'}; font-weight:bold;">✅ 多重現金流到位</span></div>
         </div>`
     };
-
     ciState.claimHistory.push(record);
     listOys2.insertAdjacentHTML('beforeend', record.html);
     document.getElementById('d-oys2-total-paid').innerText = 'HK$ ' + ciState.oys2MultiPaid.toLocaleString();
   }
-
   function undoLastMultiClaim() {
     if (ciState.claimHistory.length === 0) return;
     const last = ciState.claimHistory.pop();
     ciState.oys2MultiPaid -= last.amt;
     ciState.multiTimelineAge = last.ageBefore;
     ciState.countsMap[last.claimKey]--;
-
     const listOys2 = document.getElementById('d-timeline-oys2');
     const bonusRate = ciState.isChildMode ? 0.50 : ((ciState.simStartAge <= 30) ? 0.50 : 0.35);
     const firstClaimVal = ciState.oys2Sum + (ciState.simClaimAge - ciState.simStartAge <= 10 ? Math.round(ciState.oys2Sum * bonusRate) : 0);
-
     let baseHtml = `
       <div class="timeline-mini-card card-color-cancer-a">
         <div><strong>首次確診 (${ciState.simClaimAge}歲)</strong>：發放 $${firstClaimVal.toLocaleString()} (含升級)<br><span style="color:#27ae60; font-weight:bold;">✅ 豁免保費，多重持續生效至85歲</span></div>
       </div>`;
-
     ciState.claimHistory.forEach(r => { baseHtml += r.html; });
     listOys2.innerHTML = baseHtml;
     document.getElementById('d-oys2-total-paid').innerText = 'HK$ ' + ciState.oys2MultiPaid.toLocaleString();
   }
-
   function resetCompareMultiTimeline() {
     ciState.multiTimelineAge = ciState.simClaimAge;
     ciState.claimHistory = [];
     Object.keys(ciState.countsMap).forEach(k => { ciState.countsMap[k] = 0; });
     runStage3Calculation();
-
     const bonusRate = ciState.isChildMode ? 0.50 : ((ciState.simStartAge <= 30) ? 0.50 : 0.35);
     const firstClaimVal = ciState.oys2Sum + (ciState.simClaimAge - ciState.simStartAge <= 10 ? Math.round(ciState.oys2Sum * bonusRate) : 0);
-
     document.getElementById('d-timeline-sce').innerHTML = `
       <div class="timeline-mini-card" style="border-left:5px solid #34495e !important;">
         <div><strong>首次確診 (${ciState.simClaimAge}歲)</strong>：發放 $${ciState.sceSum.toLocaleString()}<br><span style="color:#e74c3c; font-weight:bold;">⚠️ 合約正式完結，無後續多重賠償</span></div>
       </div>`;
-
     document.getElementById('d-timeline-oys2').innerHTML = `
       <div class="timeline-mini-card card-color-cancer-a">
         <div><strong>首次確診 (${ciState.simClaimAge}歲)</strong>：發放 $${firstClaimVal.toLocaleString()} (含升級)<br><span style="color:#27ae60; font-weight:bold;">✅ 豁免保費，多重持續生效至85歲</span></div>
       </div>`;
-
     document.getElementById('d-oys2-total-paid').innerText = 'HK$ ' + firstClaimVal.toLocaleString();
   }
-
   function onStage5AgeChanged(input) {
     const val = parseInt(input.value, 10) || 40;
     ciState.simStartAge = val;
     document.getElementById('c-input-start-age').value = val;
     calculateCIPremium();
   }
-
-  // ======================== 後台管理面板 (還原 4 大分頁功能) ========================
+  // 所見即所得 (WYSIWYG) 前台同款後台管理
   function openAdminModal() {
     document.getElementById('adminModalOverlay').style.display = 'flex';
-    switchAdminTab('visual');
+    renderAdminVisualLayout();
   }
-
   function closeAdminModal() {
     document.getElementById('adminModalOverlay').style.display = 'none';
   }
-
-  function switchAdminTab(tabKey) {
-    const tabs = ['visual', 'rules', 'cases', 'config'];
-    tabs.forEach((t, idx) => {
-      document.getElementById('admTabBtn-' + (idx + 1)).classList.toggle('active', t === tabKey);
-      document.getElementById('admSection-' + t).style.display = (t === tabKey) ? 'block' : 'none';
-    });
-
-    if (tabKey === 'visual') renderAdminVisualLayout();
-    if (tabKey === 'rules') renderAdminRulesLayout();
-    if (tabKey === 'cases') renderAdminCasesLayout();
-    if (tabKey === 'config') renderAdminConfigLayout();
-  }
-
-  // 1. 01~06 題目鏡像
   function renderAdminVisualLayout() {
     const container = document.getElementById('adminVisualContainer');
     const selectedRole = document.getElementById('adminRoleSelect').value;
@@ -1344,7 +1188,7 @@
           <input type="text" data-adm-page-title="${realPIdx}" value="${p.title}" style="font-size:16px; font-weight:800; color:var(--primary);">
           <label style="font-size:11.5px; font-weight:bold; margin-top:6px; display:block;">副標題說明：</label>
           <textarea data-adm-page-sub="${realPIdx}" style="min-height:50px;">${p.subtitle}</textarea>`;
-      
+      // 若為 01 頁面，顯示按鈕設定
       if (p.stepOrder === 1) {
         const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
         const opts = allOpts.filter(o => o.pageId === 'step_ci_1' && (o.role === selectedRole || o.role === 'common')).sort((a,b)=>a.order-b.order);
@@ -1365,134 +1209,7 @@
     });
     container.innerHTML = html;
   }
-
-  // 2. 賠償條款管理
-  function renderAdminRulesLayout() {
-    const box = document.getElementById('adminRulesContainer');
-    const rules = dbData.rules || defaultDatabase.rules;
-    let html = '';
-    rules.forEach((r, idx) => {
-      html += `
-        <div class="stage-card" style="display:block; margin-bottom:12px; padding:14px; border:1px solid #cbd5e1;">
-          <div style="display:flex; gap:8px; align-items:center;">
-            <input type="text" data-adm-rule-emoji="${idx}" value="${r.emoji || '🛡️'}" style="width:45px; text-align:center;">
-            <input type="text" data-adm-rule-name="${idx}" value="${r.name}" placeholder="條款名稱" style="flex:1;">
-            <input type="color" data-adm-rule-color="${idx}" value="${r.color || '#d97706'}" style="width:50px; height:36px; padding:0; border:none; cursor:pointer;">
-            <button type="button" onclick="deleteAdminRule(${idx})" style="background:#fee2e2; color:#dc2626; border:1px solid #ef4444; border-radius:6px; padding:6px 10px; cursor:pointer;">刪除</button>
-          </div>
-          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-top:8px;">
-            <div><label style="font-size:11px; font-weight:bold;">等候期 (年)：</label><input type="number" data-adm-rule-wait="${idx}" value="${r.waitYears || 1}"></div>
-            <div><label style="font-size:11px; font-weight:bold;">最高賠償次數：</label><input type="number" data-adm-rule-max="${idx}" value="${r.maxCount || 6}"></div>
-            <div><label style="font-size:11px; font-weight:bold;">賠償類型：</label>
-              <select data-adm-rule-type="${idx}">
-                <option value="lump" ${!r.isMonthly ? 'selected' : ''}>一筆過 (100%)</option>
-                <option value="monthly" ${r.isMonthly ? 'selected' : ''}>每月津貼 (5%/月)</option>
-              </select>
-            </div>
-          </div>
-        </div>`;
-    });
-    box.innerHTML = html;
-  }
-
-  function addAdminRule() {
-    if (!dbData.rules) dbData.rules = [];
-    dbData.rules.push({ claimKey: "custom_" + Date.now(), name: "新賠償條款", emoji: "🛡️", btnText: "🛡️ 新賠償項目 (+1年)", maxCount: 3, waitYears: 1, isMonthly: false, color: "#d97706" });
-    renderAdminRulesLayout();
-  }
-
-  function deleteAdminRule(idx) {
-    dbData.rules.splice(idx, 1);
-    renderAdminRulesLayout();
-  }
-
-  // 3. 賠償案例與 Firebase 直線上載
-  function renderAdminCasesLayout() {
-    const box = document.getElementById('adminCasesContainer');
-    const cat = document.getElementById('admCaseCatFilter').value;
-    const cases = (dbData.cases || []).filter(c => String(c.category || '').trim() === cat);
-    
-    let html = `
-      <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
-        <button type="button" class="btn-primary" style="padding:4px 10px; font-size:12px;" onclick="addAdminCaseItem('${cat}')">+ 新增此類別項目</button>
-      </div>`;
-
-    cases.forEach((c) => {
-      const realIdx = dbData.cases.indexOf(c);
-      let parsedFiles = [];
-      try { parsedFiles = JSON.parse(c.filesJson); } catch(e) {}
-      const fileUrl = (parsedFiles.length > 0 && parsedFiles[0].url) ? parsedFiles[0].url : '';
-
-      html += `
-        <div class="stage-card" style="display:block; margin-bottom:12px; padding:14px; border:1px solid #cbd5e1;">
-          <div style="display:flex; gap:8px; align-items:center;">
-            <input type="text" data-adm-case-name="${realIdx}" value="${c.diseaseName || ''}" placeholder="項目/疾病/案例名稱" style="flex:1;">
-            <button type="button" onclick="deleteAdminCaseItem(${realIdx})" style="background:#fee2e2; color:#dc2626; border:1px solid #ef4444; border-radius:6px; padding:6px 10px; cursor:pointer;">刪除</button>
-          </div>
-          <div style="display:flex; gap:8px; align-items:center; margin-top:8px;">
-            <input type="text" id="admCaseUrl_${realIdx}" data-adm-case-url="${realIdx}" value="${fileUrl}" placeholder="Firebase 文件/圖片網址" style="flex:1;">
-            <label id="uploadLabel_${realIdx}" style="background:#1e3a8a; color:#fff; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; white-space:nowrap;">
-              📤 上載文件
-              <input type="file" accept="image/*,.pdf" style="display:none;" onchange="uploadCaseFileToFirebase(this, ${realIdx})">
-            </label>
-          </div>
-        </div>`;
-    });
-    if (cases.length === 0) html += '<div style="text-align:center; padding:20px; color:#64748b;">暫無此類別項目</div>';
-    box.innerHTML = html;
-  }
-
-  function addAdminCaseItem(cat) {
-    if (!dbData.cases) dbData.cases = [];
-    dbData.cases.push({ category: cat, diseaseName: "新保障項目", filesJson: JSON.stringify([{ title: "新項目", type: "image", url: "" }]) });
-    renderAdminCasesLayout();
-  }
-
-  function deleteAdminCaseItem(idx) {
-    dbData.cases.splice(idx, 1);
-    renderAdminCasesLayout();
-  }
-
-  function uploadCaseFileToFirebase(input, idx) {
-    const file = input.files[0];
-    if (!file) return;
-    const uploadBtn = document.getElementById(`uploadLabel_${idx}`);
-    uploadBtn.innerText = "⏳ 上載中...";
-    try {
-      const storageRef = firebase.storage().ref();
-      const cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
-      const fileRef = storageRef.child(`ci_cases/${Date.now()}_${cleanName}`);
-      
-      fileRef.put(file).then(snapshot => snapshot.ref.getDownloadURL()).then(url => {
-        document.getElementById(`admCaseUrl_${idx}`).value = url;
-        uploadBtn.innerText = "📤 上載文件";
-        alert("✅ 檔案成功上載至 Firebase Storage！");
-      }).catch(err => {
-        uploadBtn.innerText = "📤 上載文件";
-        alert("❌ 上載失敗：" + err.message);
-      });
-    } catch(e) {
-      uploadBtn.innerText = "📤 上載文件";
-      alert("Firebase 異常：" + e.message);
-    }
-  }
-
-  // 4. 系統設定
-  function renderAdminConfigLayout() {
-    const box = document.getElementById('adminConfigContainer');
-    let html = '';
-    for (const [k, v] of Object.entries(dbData.config || {})) {
-      html += `
-        <div style="margin-bottom:8px;">
-          <label style="font-size:12px; font-weight:bold;">${k}：</label>
-          <input type="text" data-adm-config-key="${k}" value="${v}">
-        </div>`;
-    }
-    box.innerHTML = html;
-  }
-
   async function saveAllAdminData() {
-    // 儲存頁面與選項
     document.querySelectorAll('[data-adm-page-tag]').forEach(inp => {
       const idx = Number(inp.dataset.admPageTag);
       if (dbData.pages[idx]) dbData.pages[idx].tagName = inp.value;
@@ -1513,63 +1230,27 @@
       const idx = Number(inp.dataset.admOptIcon);
       if (dbData.options[idx]) dbData.options[idx].icon = inp.value;
     });
-
-    // 儲存規則
-    document.querySelectorAll('[data-adm-rule-name]').forEach((inp, idx) => {
-      if (dbData.rules[idx]) {
-        dbData.rules[idx].name = inp.value;
-        dbData.rules[idx].emoji = document.querySelector(`[data-adm-rule-emoji="${idx}"]`).value;
-        dbData.rules[idx].color = document.querySelector(`[data-adm-rule-color="${idx}"]`).value;
-        dbData.rules[idx].waitYears = Number(document.querySelector(`[data-adm-rule-wait="${idx}"]`).value) || 1;
-        dbData.rules[idx].maxCount = Number(document.querySelector(`[data-adm-rule-max="${idx}"]`).value) || 6;
-        dbData.rules[idx].isMonthly = document.querySelector(`[data-adm-rule-type="${idx}"]`).value === 'monthly';
-        dbData.rules[idx].btnText = `${dbData.rules[idx].emoji} ${dbData.rules[idx].name} (+${dbData.rules[idx].waitYears}年)`;
-      }
-    });
-
-    // 儲存案例庫
-    document.querySelectorAll('[data-adm-case-name]').forEach((inp, idx) => {
-      if (dbData.cases[idx]) {
-        dbData.cases[idx].diseaseName = inp.value;
-        const url = document.querySelector(`[data-adm-case-url="${idx}"]`).value;
-        const isPdf = url.toLowerCase().includes('.pdf');
-        dbData.cases[idx].filesJson = JSON.stringify([{ title: inp.value, type: isPdf ? 'pdf' : 'image', url: url }]);
-      }
-    });
-
-    // 儲存系統設定
-    document.querySelectorAll('[data-adm-config-key]').forEach(inp => {
-      dbData.config[inp.dataset.admConfigKey] = inp.value;
-    });
-
     try {
       await fetch(GAS_CENTRAL_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ action: "saveAllAdmin", pages: dbData.pages, options: dbData.options, config: dbData.config, rules: dbData.rules, cases: dbData.cases })
+        body: JSON.stringify({ action: "saveAllAdmin", pages: dbData.pages, options: dbData.options, config: dbData.config })
       });
-      alert("✅ 後台設定已成功同步至 Google Sheet！");
-      cloudAppDatabase.rules = dbData.rules;
+      alert("✅ 所見即所得後台設定已成功同步至 Google Sheet！");
       renderDynamicTextsAndOptions();
-      renderMultiButtonsFromRules();
       closeAdminModal();
     } catch(e) {
       alert("⚠️ 同步失敗，請檢查網路。");
     }
   }
-
-  // JSONP 回呼函式：解決跨域問題並 100% 同步 Google Sheet
+  // JSONP 回呼函式：解決手機端跨域問題，100% 同步 Google Sheet
   window.onGASDataLoaded = function(json) {
     if (json && json.status === "success") {
       dbData = json;
-      if (!dbData.config) dbData.config = defaultDatabase.config;
-      if (!dbData.rules || dbData.rules.length === 0) dbData.rules = defaultDatabase.rules;
-      
       cloudAppDatabase["102"] = [];
       cloudAppDatabase["child"] = [];
       cloudAppDatabase["case"] = [];
-      cloudAppDatabase.rules = dbData.rules;
-
+      cloudAppDatabase.rules = (json.rules && json.rules.length > 0) ? json.rules : defaultDatabase.rules;
       if (Array.isArray(json.cases)) {
         json.cases.forEach(row => {
           const cat = String(row.category || '').trim();
@@ -1582,7 +1263,6 @@
           }
         });
       }
-
       document.getElementById('sync-status-badge').innerHTML = '✅ 中央庫已同步';
       document.getElementById('sync-status-badge').className = 'status-ok';
       applyRoleMode();
@@ -1590,7 +1270,7 @@
       calculateCIPremium();
     }
   };
-
+  // 雲端連線同步 (JSONP 注入)
   function syncAllFromGASCentral() {
     const script = document.createElement('script');
     script.src = GAS_CENTRAL_URL + (GAS_CENTRAL_URL.includes('?') ? '&' : '?') + 'callback=onGASDataLoaded&t=' + Date.now();
@@ -1602,14 +1282,12 @@
     };
     document.body.appendChild(script);
   }
-
   document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('[data-nav]').forEach(btn => {
       btn.addEventListener('click', function() {
         goToCIStage(this.getAttribute('data-nav').replace('to-', ''));
       });
     });
-
     document.getElementById('c-sce-sum-input').addEventListener('input', function() {
       ciState.sceSum = parseNum(this.value);
       this.value = ciState.sceSum.toLocaleString();
@@ -1620,10 +1298,8 @@
       this.value = ciState.oys2Sum.toLocaleString();
       runStage3Calculation();
     });
-
     document.getElementById('c-input-start-age').addEventListener('input', runStage3Calculation);
     document.getElementById('c-input-claim-age').addEventListener('input', runStage3Calculation);
-
     document.querySelectorAll('.prem-mode-btn').forEach(btn => {
       btn.addEventListener('click', function() {
         document.querySelectorAll('.prem-mode-btn').forEach(b => b.classList.remove('active'));
@@ -1632,12 +1308,10 @@
         calculateCIPremium();
       });
     });
-
     const cardSce = document.getElementById('card-ci-sce');
     const chkSce = document.getElementById('chk-plan-sce');
     const cardOys2 = document.getElementById('card-ci-oys2');
     const chkOys2 = document.getElementById('chk-plan-oys2');
-
     if (cardSce && chkSce) {
       cardSce.addEventListener('click', function(e) {
         if (e.target !== chkSce) chkSce.checked = !chkSce.checked;
@@ -1646,7 +1320,6 @@
         calculateCIPremium();
       });
     }
-
     if (cardOys2 && chkOys2) {
       cardOys2.addEventListener('click', function(e) {
         if (e.target !== chkOys2 && !e.target.classList.contains('pay-period-btn')) {
@@ -1657,7 +1330,6 @@
         calculateCIPremium();
       });
     }
-
     document.querySelectorAll('.pay-period-btn').forEach(btn => {
       btn.addEventListener('click', function(e) {
         e.stopPropagation();
@@ -1667,9 +1339,7 @@
         calculateCIPremium();
       });
     });
-
     document.getElementById('ci-calc-gender').addEventListener('change', calculateCIPremium);
-
     const btnPromo = document.getElementById('btnToggleCIPromo');
     if (btnPromo) {
       btnPromo.addEventListener('click', function() {
@@ -1678,12 +1348,11 @@
         calculateCIPromo();
       });
     }
-
     ['promoSce200', 'promoSce500', 'promoSceY2', 'promoSceY3', 'promoOys2500', 'promoOys2Y2', 'promoOys2Y3'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('input', calculateCIPromo);
     });
-
+    // 接收 New Health 動態 URL 參數
     const p = new URLSearchParams(window.location.search);
     if ((p.has('role') && p.get('role') === 'child') || (p.has('type') && p.get('type') === 'child')) {
       ciState.isChildMode = true;
@@ -1698,11 +1367,9 @@
         noticeBox.innerHTML = `⚠️ <strong>規劃提醒：</strong>${p.get('alertMsg')}`;
       }
     }
-
     document.getElementById('a-monthly-exp-input').value = ciState.monthlyExp.toLocaleString();
     document.getElementById('a-months-input').value = ciState.months;
     document.getElementById('b-ci-input').value = ciState.existingCI.toLocaleString();
-
     syncAllFromGASCentral();
   });
 </script>
