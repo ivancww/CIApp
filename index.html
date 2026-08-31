@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.6.4)</title>
+<title>確診危疾生活儲備規劃 (v9.6.5)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -60,7 +60,7 @@
     margin: 0 4px;
   }
 
-  /* 04 頁資料文字展示框 (Data Text Cards) */
+  /* 04 頁藍底藍字資料展示框 (Data Text Badge) */
   .rules-info-display-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -71,17 +71,18 @@
     .rules-info-display-grid { grid-template-columns: 1fr; }
   }
   .rule-text-badge {
-    background: #ffffff;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 12.5px;
-    font-weight: 700;
-    color: #334155;
+    background: #eff6ff !important;
+    border: 1.5px solid #bfdbfe !important;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #1e40af !important;
     line-height: 1.5;
     display: flex;
     align-items: center;
     gap: 6px;
+    box-shadow: 0 2px 6px rgba(30, 58, 138, 0.04);
   }
   
   .warm-tip-card {
@@ -249,7 +250,7 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge" id="appVersion">v9.6.4</span>
+      <span class="v-badge" id="appVersion">v9.6.5</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
@@ -365,16 +366,12 @@
   
   const defaultDatabase = {
     config: {
-      "資料版本": "9.6.4",
+      "資料版本": "9.6.5",
       "醫療App網址": "https://ivancww.github.io/medicalclaims",
       "醫療App參數": "role={role}&cost={medCost}&hasCompany={hasCompany}&companyLimit={companyLimit}&companyRate={companyRate}&hasPersonal={hasPersonal}&personalLimit={personalLimit}&personalRate={personalRate}&losses={losses}&focus={focus}",
       "溫馨提示醫療標題": "🏥 溫馨提示：醫療選擇防線",
       "溫馨提示醫療說明": "先了解你現有醫療保障，確認私家高額住院與手術費用可支持到幾多。",
       "溫馨提示醫療按鈕": "了解醫療方案 (前線醫療實報實銷) →",
-      "04多重條款_癌症A": "🎗️ 癌症選項A：合共 6 次（每 3 年）",
-      "04多重條款_癌症B": "💊 癌症選項B：每月賠償 5%（1 年後，最多 100 個月）",
-      "04多重條款_心臟中風": "❤️ 心臟病 / 中風：合共 3 次（1 年後）",
-      "04多重條款_腦退化": "🧠 腦退化 / 柏金遜：合共 1 次（1 年後），其後年金形式（每年 6%）",
       "成人_預設每月開支": "40000",
       "成人_預設休養月數": "36",
       "成人_預設現有危疾": "300000",
@@ -409,10 +406,10 @@
       { pageId: 'step_ci_2', role: 'common', optionKey: 'retire', icon: '🌅', title: '退休金', isDefaultSelected: 'FALSE', order: 4 }
     ],
     rules: [
-      { claimKey: "cancer_a", name: "🎗️ 癌症 (最多6次)", emoji: "🎗️", btnText: "🎗️ 癌症 (+3年)", maxCount: 6, waitYears: 3, isMonthly: false, color: "#d97706" },
-      { claimKey: "cancer_b", name: "💊 癌症選項B (每月5%)", emoji: "💊", btnText: "💊 癌症選項B (5%/月)", maxCount: 100, waitYears: 1, isMonthly: true, color: "#0284c7" },
-      { claimKey: "heart", name: "❤️ 心臟病 / 中風 (最多3次)", emoji: "❤️", btnText: "❤️ 心臟/中風 (+1年)", maxCount: 3, waitYears: 1, isMonthly: false, color: "#8e44ad" },
-      { claimKey: "dementia", name: "🧠 腦退化/柏金遜 (1次+每年6%年金)", emoji: "🧠", btnText: "🧠 腦退化 (+1年)", maxCount: 11, waitYears: 1, isMonthly: false, color: "#27ae60" }
+      { claimKey: "cancer_a", name: "🎗️ 癌症 (最多6次)", emoji: "🎗️", btnText: "🎗️ 癌症 (+3年)", maxCount: 6, waitYears: 3, isMonthly: false, color: "#d97706", displayNote: "🎗️ 癌症選項A - 合共6次（每3年）" },
+      { claimKey: "cancer_b", name: "💊 癌症選項B (每月5%)", emoji: "💊", btnText: "💊 癌症選項B (5%/月)", maxCount: 100, waitYears: 1, isMonthly: true, color: "#0284c7", displayNote: "💊 癌症選項B - 每月賠償5%（1年後）" },
+      { claimKey: "heart", name: "❤️ 心臟病 / 中風 (最多3次)", emoji: "❤️", btnText: "❤️ 心臟/中風 (+1年)", maxCount: 3, waitYears: 1, isMonthly: false, color: "#8e44ad", displayNote: "❤️ 心臟病 / 中風 - 合共3次（1年後）" },
+      { claimKey: "dementia", name: "🧠 腦退化/柏金遜 (1次+年金)", emoji: "🧠", btnText: "🧠 腦退化 (+1年)", maxCount: 11, waitYears: 1, isMonthly: false, color: "#27ae60", displayNote: "🧠 腦退化 - 合共1次（1年後），其後年金形式（6%）" }
     ]
   };
 
@@ -477,12 +474,6 @@
     const warmTipTitle = cfg["溫馨提示醫療標題"] || "🏥 溫馨提示：醫療選擇防線";
     const warmTipDesc = cfg["溫馨提示醫療說明"] || "先了解你現有醫療保障，確認私家高額住院與手術費用可支持到幾多。";
     const warmTipBtn = cfg["溫馨提示醫療按鈕"] || "了解醫療方案 (前線醫療實報實銷) →";
-    
-    // 04 頁純文字展示條款
-    const ruleTplCancerA = cfg["04多重條款_癌症A"] || "🎗️ 癌症選項A：合共 6 次（每 3 年）";
-    const ruleTplCancerB = cfg["04多重條款_癌症B"] || "💊 癌症選項B：每月賠償 5%（1 年後，最多 100 個月）";
-    const ruleTplHeart = cfg["04多重條款_心臟中風"] || "❤️ 心臟病 / 中風：合共 3 次（1 年後）";
-    const ruleTplDementia = cfg["04多重條款_腦退化"] || "🧠 腦退化 / 柏金遜：合共 1 次（1 年後），其後年金形式（每年 6%）";
 
     pages.forEach((p, idx) => {
       const isFirst = (idx === 0);
@@ -494,7 +485,6 @@
       let topBarExtras = '';
 
       if (p.stepOrder === 1) {
-        // 01 頁：合併開支與現有防線
         const supportMonths = ciState.monthlyExp > 0 ? (ciState.existingCI / ciState.monthlyExp).toFixed(1) : 0;
         bodyHtml = `
           <div class="stat-grid-box">
@@ -526,7 +516,6 @@
           </div>
         `;
       } else if (p.stepOrder === 2) {
-        // 02 頁：資產填補表 (接收 losses)
         const remainGap = Math.max(0, ciState.netGap - ciState.totalChosenAssets);
         bodyHtml = `
           <h4 style="margin: 4px 0 10px 0; color: #2c3e50; font-size: 14.5px;">❓ 生活現金流缺口，你會先動用邊筆資產去填補？(可多選並輸入金額)</h4>
@@ -650,12 +639,20 @@
           </div>
         `;
       } else if (p.stepOrder === 4) {
-        // 🌟 04 頁：紅圈改用純文字資料展示框 (Data Text Display) 🌟
+        // 🌟 04 頁：純文字資料展示框 (徹底實現藍底深藍字，動態讀取 Google Sheet 條款 F 欄) 🌟
         topBarExtras = `
           <div class="capsule-btn-bar" style="margin:0;">
             <button type="button" class="btn-capsule" onclick="openMediaDrawer('case')">📑 真實理賠案例庫</button>
           </div>
         `;
+        
+        const rulesList = (cloudAppDatabase.rules && cloudAppDatabase.rules.length > 0) ? cloudAppDatabase.rules : defaultDatabase.rules;
+        let rulesDisplayBadges = '';
+        rulesList.forEach(r => {
+          const badgeText = r.displayNote || `${r.emoji || '🛡️'} ${r.name}`;
+          rulesDisplayBadges += `<div class="rule-text-badge">${badgeText}</div>`;
+        });
+
         bodyHtml = `
           <div style="background:#f8fafc; border:1.5px solid var(--border); border-radius:12px; padding:14px; margin-bottom:14px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -666,12 +663,9 @@
               </div>
             </div>
             
-            <!-- 純文字資料展示框 (由 Google Sheet 系統設定驅動) -->
+            <!-- 藍底深藍字展示框 -->
             <div class="rules-info-display-grid">
-              <div class="rule-text-badge" id="ui-rule-cancer-a">${ruleTplCancerA}</div>
-              <div class="rule-text-badge" id="ui-rule-cancer-b">${ruleTplCancerB}</div>
-              <div class="rule-text-badge" id="ui-rule-heart">${ruleTplHeart}</div>
-              <div class="rule-text-badge" id="ui-rule-dementia">${ruleTplDementia}</div>
+              ${rulesDisplayBadges}
             </div>
           </div>
 
@@ -1903,6 +1897,10 @@
               <label class="admin-label">按鈕文字：</label>
               <input type="text" data-adm-rule-btn="${idx}" value="${rule.btnText}">
             </div>
+            <div style="grid-column: 1 / -1;">
+              <label class="admin-label">04 頁條款展示文案 (displayNote)：</label>
+              <input type="text" data-adm-rule-note="${idx}" value="${rule.displayNote || ''}" placeholder="例如：🎗️ 癌症選項A - 合共6次（每3年）">
+            </div>
             <div>
               <label class="admin-label">最高理賠次數上限：</label>
               <input type="number" data-adm-rule-max="${idx}" value="${rule.maxCount}">
@@ -2047,6 +2045,7 @@
       if (rulesToSave[idx]) {
         rulesToSave[idx].name = inp.value;
         rulesToSave[idx].btnText = document.querySelector(`[data-adm-rule-btn="${idx}"]`).value;
+        rulesToSave[idx].displayNote = document.querySelector(`[data-adm-rule-note="${idx}"]`).value;
         rulesToSave[idx].maxCount = Number(document.querySelector(`[data-adm-rule-max="${idx}"]`).value) || 1;
         rulesToSave[idx].waitYears = Number(document.querySelector(`[data-adm-rule-wait="${idx}"]`).value) || 1;
         rulesToSave[idx].color = document.querySelector(`[data-adm-rule-color="${idx}"]`).value;
