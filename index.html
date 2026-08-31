@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.6.1)</title>
+<title>確診危疾生活儲備規劃 (v9.6.2)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -38,9 +38,28 @@
   .stat-grid-box { background: #f8fafc; border: 1.5px solid var(--border); border-radius: 10px; padding: 16px; margin: 15px 0; }
   .stat-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; }
   .stat-row.total { border-top: 1.5px dashed var(--border); padding-top: 10px; margin-top: 10px; font-weight: 900; font-size: 16px; }
-  .yellow-red-alert-box { background: #fef3c7; border: 1.5px solid #fde68a; border-left: 5px solid #dc2626; border-radius: 8px; padding: 14px; margin-top: 14px; font-size: 14px; line-height: 1.6; color: #dc2626; font-weight: 700; }
   
-  /* 溫馨提示卡片與 App 導流按鈕 */
+  /* 01 頁藍色資金承托分析框 */
+  .blue-support-box {
+    background: #f0f7ff;
+    border: 1.5px solid #bfdbfe;
+    border-left: 5px solid var(--primary);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin: 14px 0;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #1e3a8a;
+    font-weight: 700;
+  }
+  .blue-support-months {
+    font-size: 26px;
+    font-weight: 900;
+    color: #1d4ed8;
+    text-decoration: underline;
+    margin: 0 4px;
+  }
+  
   .warm-tip-card {
     background: #f0f7ff;
     border: 1.5px solid #bfdbfe;
@@ -209,7 +228,7 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge" id="appVersion">v9.6.1</span>
+      <span class="v-badge" id="appVersion">v9.6.2</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
@@ -325,7 +344,7 @@
   
   const defaultDatabase = {
     config: {
-      "資料版本": "9.6.1",
+      "資料版本": "9.6.2",
       "醫療App網址": "https://ivancww.github.io/medicalclaims",
       "醫療App參數": "role={role}&cost={medCost}&hasCompany={hasCompany}&companyLimit={companyLimit}&companyRate={companyRate}&hasPersonal={hasPersonal}&personalLimit={personalLimit}&personalRate={personalRate}&losses={losses}&focus={focus}",
       "溫馨提示醫療標題": "🏥 溫馨提示：醫療選擇防線",
@@ -345,10 +364,10 @@
       "兒童_首十年加贈率": "0.50"
     },
     pages: [
-      { role: 'adult', stepOrder: 1, pageId: 'step_ci_1', pageType: '生活目標', tagName: '01｜生活儲備目標', title: '確診危疾生活儲備', subtitle: '在不影響家庭質素的前提下，量化停工期間所需的整體生活儲備：' },
-      { role: 'child', stepOrder: 1, pageId: 'step_ci_1', pageType: '生活目標', tagName: '01｜父母照護基金', title: '兒童重大疾病照護儲備', subtitle: '為確保小朋友獲得黃金治療，並讓父母全心全職陪伴照護的生活資金：' },
-      { role: 'adult', stepOrder: 2, pageId: 'step_ci_2', pageType: '現有防線', tagName: '02｜現有防線', title: '現有防線可以走幾遠？', subtitle: '對比現有危疾保障與生活資金需求的差距：' },
-      { role: 'child', stepOrder: 2, pageId: 'step_ci_2', pageType: '現有防線', tagName: '02｜家庭防線', title: '父母儲備可以支撐幾耐？', subtitle: '對比現有照護資金與小朋友康復期生活支出的差距：' },
+      { role: 'adult', stepOrder: 1, pageId: 'step_ci_1', pageType: '生活目標', tagName: '01｜生活防線現狀', title: '確診危疾生活儲備與缺口', subtitle: '量化停工休養期間的整體生活儲備，對比現有防線可支撐的時間：' },
+      { role: 'child', stepOrder: 1, pageId: 'step_ci_1', pageType: '生活目標', tagName: '01｜照護防線現狀', title: '兒童重大疾病照護儲備與缺口', subtitle: '量化父母專職停工陪伴照護基金，對比現有資金可支撐的時間：' },
+      { role: 'adult', stepOrder: 2, pageId: 'step_ci_2', pageType: '現有防線', tagName: '02｜填補資產與代價', title: '生活現金流缺口，動用邊筆資產填補？', subtitle: '面對已確認的缺口，你會先動用邊筆資產？確認辛苦累積的積蓄代價：' },
+      { role: 'child', stepOrder: 2, pageId: 'step_ci_2', pageType: '現有防線', tagName: '02｜填補資產與代價', title: '兒童照護缺口，動用邊筆資產填補？', subtitle: '面對照護資金缺口，確認動用家庭積蓄或教育金的代價：' },
       { role: 'adult', stepOrder: 3, pageId: 'step_ci_3', pageType: '解決方案', tagName: '03｜解決方案', title: '補充儲備缺口及守護資產', subtitle: '承接上頁缺口與資產數據，輸入獨立保額檢視兩款方案之賠償與財富守護效果：' },
       { role: 'child', stepOrder: 3, pageId: 'step_ci_3', pageType: '解決方案', tagName: '03｜全面守護', title: '打造專屬兒童健康防護盾', subtitle: '包含兒童特定疾病預支與加贈升級，全面守護孩子黃金成長期：' },
       { role: 'adult', stepOrder: 4, pageId: 'step_ci_4', pageType: '多重時間線', tagName: '04｜多重賠償時間線', title: '癌症復發、持續、擴散？腦退化？心臟病／中風？', subtitle: '對比單次保單完結後之風險注意，與 OYS2 延續至 85 歲之多重架構：' },
@@ -370,8 +389,7 @@
       { pageId: 'step_ci_2', role: 'common', optionKey: 'savings', icon: '💰', title: '銀行積蓄存款', isDefaultSelected: 'TRUE', order: 1 },
       { pageId: 'step_ci_2', role: 'common', optionKey: 'invest', icon: '📈', title: '股票／基金投資', isDefaultSelected: 'FALSE', order: 2 },
       { pageId: 'step_ci_2', role: 'common', optionKey: 'edu', icon: '🎓', title: '子女教育金', isDefaultSelected: 'FALSE', order: 3 },
-      { pageId: 'step_ci_2', role: 'common', optionKey: 'retire', icon: '🌅', title: '退休金', isDefaultSelected: 'FALSE', order: 4 },
-      { pageId: 'step_ci_2', role: 'common', optionKey: 'prop', icon: '🏠', title: '房產套現', isDefaultSelected: 'FALSE', order: 5 }
+      { pageId: 'step_ci_2', role: 'common', optionKey: 'retire', icon: '🌅', title: '退休金', isDefaultSelected: 'FALSE', order: 4 }
     ],
     rules: [
       { claimKey: "cancer_a", name: "癌症選項A (一筆過)", emoji: "🎗️", btnText: "🎗️ 癌症選項A (+3年)", maxCount: 6, waitYears: 3, isMonthly: false, color: "#d97706" },
@@ -384,7 +402,6 @@
   let dbData = { config: { ...defaultDatabase.config }, pages: defaultDatabase.pages, options: defaultDatabase.options, rates: {}, cases: [], rules: defaultDatabase.rules };
   let cloudAppDatabase = { "102": [], "child": [], "case": [], rules: defaultDatabase.rules };
   
-  // 承接來自 Health Protection 的完整上下文狀態
   const ciState = {
     isChildMode: false,
     monthlyExp: 40000,
@@ -408,7 +425,7 @@
     oys2PayPeriod: 18,
     annualPremMap: { sce: 1425, oys2: 19204 },
     
-    // 外部帶入的醫療相關參數 (Health Protection Context)
+    // 承接 Health Protection 帶過來的醫療參數
     medCost: 500000,
     hasCompanyMed: 'no',
     companyLimit: 100000,
@@ -455,6 +472,8 @@
       let topBarExtras = '';
 
       if (p.stepOrder === 1) {
+        // 🌟 新版 01 頁：合併生活儲備 + 現有防線 + 放大藍色支援月份 🌟
+        const supportMonths = ciState.monthlyExp > 0 ? (ciState.existingCI / ciState.monthlyExp).toFixed(1) : 0;
         bodyHtml = `
           <div class="stat-grid-box">
             <div class="stat-row">
@@ -465,36 +484,37 @@
               <span id="ui-lbl-months">黃金休養及康復期 (月數)：</span>
               <input type="number" id="a-months-input" class="asset-input-val" value="${ciState.months}" min="6" max="120" style="font-weight:900;" oninput="onMonthsInputChanged(this)">
             </div>
-            <div class="stat-row total" style="color:var(--danger); font-size:18px;">
+            <div class="stat-row total" style="color:var(--primary); font-size:16px;">
               <span id="ui-lbl-total-need">所需總生活儲備：</span>
-              <strong id="a-total-need" style="color:var(--danger);">HK$ ${ciState.totalNeed.toLocaleString()}</strong>
+              <strong id="a-total-need" style="color:var(--primary);">HK$ ${ciState.totalNeed.toLocaleString()}</strong>
+            </div>
+            <div class="stat-row" style="margin-top:10px; border-top:1px dashed var(--border); padding-top:10px;">
+              <span>現有危疾保障保額：</span>
+              <input type="text" id="b-ci-input" class="asset-input-val" value="${ciState.existingCI.toLocaleString()}" style="color:var(--primary); font-weight:bold;" oninput="onExistingCIInputChanged(this)">
+            </div>
+            <div class="stat-row total" style="color:var(--danger); font-size:18px;">
+              <span>生活現金流缺口：</span>
+              <strong style="color:var(--danger); font-size:22px;" id="b-gap-val">HK$ ${ciState.netGap.toLocaleString()}</strong>
             </div>
           </div>
+
+          <!-- 藍色資金承托分析框 (月份放大至 26px) -->
+          <div class="blue-support-box" id="b-duration-box">
+            📊 <strong>資金承托分析：</strong><br>
+            目前危疾保障 (<span id="b-ci-text">$${Math.round(ciState.existingCI/1000)}K</span>) ÷ 每月生活需要 (<span id="b-exp-text">$${Math.round(ciState.monthlyExp/1000)}K</span>) ➔ 可維持約 <span id="b-months-support" class="blue-support-months">${supportMonths}</span> 個月。
+          </div>
+
           <h4 id="ui-goals-prompt" style="margin: 16px 0 8px 0; color: #2c3e50; font-size: 14px;">🎯 如果真的發生，邊樣係你最不想失去／中斷？(可多選確認)</h4>
           <div class="grid-2x2" id="goal-options-grid"></div>
         `;
       } else if (p.stepOrder === 2) {
-        const supportMonths = ciState.monthlyExp > 0 ? (ciState.existingCI / ciState.monthlyExp).toFixed(1) : 0;
+        // 🌟 新版 02 頁：純資產填補表格 (移走房產套現，自動接收 Health Protection losses) 🌟
         const remainGap = Math.max(0, ciState.netGap - ciState.totalChosenAssets);
         bodyHtml = `
-          <div class="stat-grid-box">
-            <div class="stat-row"><span>所需總生活儲備：</span><strong id="b-target-defense">HK$ ${ciState.totalNeed.toLocaleString()}</strong></div>
-            <div class="stat-row">
-              <span>現有危疾保障保額：</span>
-              <input type="text" id="b-ci-input" class="asset-input-val" value="${ciState.existingCI.toLocaleString()}" style="color:var(--primary); font-weight:bold;" oninput="onExistingCIInputChanged(this)">
-            </div>
-            <div class="stat-row total">
-              <span style="color:var(--danger);">生活現金流缺口：</span>
-              <strong style="color:var(--danger); font-size:20px;" id="b-gap-val">HK$ ${ciState.netGap.toLocaleString()}</strong>
-            </div>
-          </div>
-          <div class="yellow-red-alert-box" id="b-duration-box">
-            📊 資金承托分析：<br>
-            目前危疾保障 (<span id="b-ci-text">$${Math.round(ciState.existingCI/1000)}K</span>) ÷ 每月生活需要 (<span id="b-exp-text">$${Math.round(ciState.monthlyExp/1000)}K</span>) ➔ 可維持約 <span id="b-months-support" style="text-decoration:underline; font-size:18px;">${supportMonths}</span> 個月。
-          </div>
-          <h4 style="margin: 18px 0 8px 0; color: #2c3e50; font-size: 14.5px;">❓ 生活現金流缺口，你會先動用邊筆資產去填補？(可多選並輸入金額)</h4>
+          <h4 style="margin: 4px 0 10px 0; color: #2c3e50; font-size: 14.5px;">❓ 生活現金流缺口，你會先動用邊筆資產去填補？(可多選並輸入金額)</h4>
           <div id="assets-list-container"></div>
-          <div class="stat-grid-box" style="margin-top:10px; background:#fff; border:2px solid var(--primary);">
+          
+          <div class="stat-grid-box" style="margin-top:14px; background:#fff; border:2px solid var(--primary);">
             <div class="stat-row">
               <span>計劃動用資產總額：</span>
               <strong style="color:var(--primary); font-size:17px;" id="b-asset-total-display">HK$ ${ciState.totalChosenAssets.toLocaleString()}</strong>
@@ -503,10 +523,10 @@
               <div>
                 <span>扣除資產後剩餘生活缺口：</span>
                 <div style="font-size:11.5px; color:#64748b; font-weight:normal;" id="b-asset-formula-text">
-                  (缺口 HK$ ${ciState.netGap.toLocaleString()} － 資產 HK$ ${ciState.totalChosenAssets.toLocaleString()})
+                  (生活缺口 HK$ ${ciState.netGap.toLocaleString()} － 計劃動用資產 HK$ ${ciState.totalChosenAssets.toLocaleString()})
                 </div>
               </div>
-              <strong style="color:var(--danger); font-size:18px;" id="b-asset-remain-gap">HK$ ${remainGap.toLocaleString()}</strong>
+              <strong style="color:var(--danger); font-size:20px;" id="b-asset-remain-gap">HK$ ${remainGap.toLocaleString()}</strong>
             </div>
           </div>
         `;
@@ -737,7 +757,6 @@
           </div>
         `;
       } else if (p.stepOrder === 6) {
-        // 第 6 步：方案總結 (溫馨提示雙戰線導流卡片)
         bodyHtml = `
           <div style="background:#fff; border:2px solid var(--primary); border-radius:12px; padding:18px; line-height:1.8; font-size:14px; margin: 15px 0;">
             <div>🎯 <strong>你想守住的範疇：</strong> <span id="f-confirm-goals">家庭生活質素、積蓄與資產</span></div>
@@ -750,7 +769,6 @@
             <div>💵 <strong>預算投入：</strong> <strong style="color:var(--danger); font-size:18px;" id="f-confirm-prem">HK$ 19,204 /年</strong></div>
           </div>
           
-          <!-- 🌟 溫馨提示雙戰線醫療導流卡片 (承接 Health Protection 參數) 🌟 -->
           <a href="https://ivancww.github.io/medicalclaims" target="_blank" rel="noopener noreferrer" class="warm-tip-card" id="f-med-app-btn">
             <img src="https://ivancww.github.io/medicalclaims/icon-192.png" alt="Medical App Logo" class="warm-tip-logo" onerror="this.src='https://via.placeholder.com/48?text=Med';">
             <div class="warm-tip-content">
@@ -980,6 +998,8 @@
 
   function renderDynamicTextsAndOptions() {
     const roleKey = ciState.isChildMode ? 'child' : 'adult';
+    
+    // 01 頁目標選擇按鈕
     const goalsGrid = document.getElementById('goal-options-grid');
     if (goalsGrid) {
       const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
@@ -1006,15 +1026,20 @@
       syncGoalDisplay();
     }
 
+    // 02 頁純資產填補列表 (移走房產套現，自動匹配 Health Protection 帶入之 losses)
     const assetContainer = document.getElementById('assets-list-container');
     if (assetContainer) {
       const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
-      const aOpts = allOpts.filter(o => o.pageId === 'step_ci_2').sort((a,b)=>a.order-b.order);
-      const listToRender = aOpts.length > 0 ? aOpts : defaultDatabase.options.filter(o => o.pageId === 'step_ci_2');
+      const aOpts = allOpts.filter(o => o.pageId === 'step_ci_2' && o.optionKey !== 'prop').sort((a,b)=>a.order-b.order);
       
       let aHtml = '';
-      listToRender.forEach(o => {
-        const isSel = String(o.isDefaultSelected).toUpperCase() === 'TRUE';
+      aOpts.forEach(o => {
+        let isSel = false;
+        if (hasUrlLosses && ciState.goals.length > 0) {
+          isSel = isGoalMatched(o.title, o.optionKey, ciState.goals);
+        } else {
+          isSel = String(o.isDefaultSelected).toUpperCase() === 'TRUE';
+        }
         const initVal = isSel ? '500,000' : '0';
         aHtml += `
           <div class="asset-input-row ${isSel ? 'selected' : ''}" id="row-asset-${o.optionKey}">
@@ -2143,7 +2168,7 @@
     if (p.has('months')) ciState.months = Number(p.get('months')) || (ciState.isChildMode ? 24 : 36);
     if (p.has('existing')) ciState.existingCI = Number(p.get('existing')) || 0;
     
-    // 承接 Health Protection 帶入的醫療相關參數
+    // 承接 Health Protection 帶過來的醫療相關參數
     if (p.has('cost')) ciState.medCost = Number(p.get('cost')) || 500000;
     if (p.has('hasCompany')) ciState.hasCompanyMed = p.get('hasCompany');
     if (p.has('companyLimit')) ciState.companyLimit = Number(p.get('companyLimit')) || 0;
