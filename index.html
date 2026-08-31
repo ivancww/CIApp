@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.6.2)</title>
+<title>確診危疾生活儲備規劃 (v9.6.3)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -39,7 +39,7 @@
   .stat-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; }
   .stat-row.total { border-top: 1.5px dashed var(--border); padding-top: 10px; margin-top: 10px; font-weight: 900; font-size: 16px; }
   
-  /* 01 頁藍色資金承托分析框 */
+  /* 01 頁藍色資金承托分析框 (月份加粗放大至 26px) */
   .blue-support-box {
     background: #f0f7ff;
     border: 1.5px solid #bfdbfe;
@@ -115,12 +115,8 @@
   .capsule-btn-bar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
   .btn-capsule { padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; border: 1.5px solid #cbd5e1; background: #fff; color: #334155; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; }
   .btn-capsule:hover { background: #f1f5f9; border-color: var(--primary); color: var(--primary); }
-  .grid-2x2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-  .grid-btn { padding: 14px 10px; text-align: center; border-radius: 10px; border: 2px dashed var(--pink-border); background: #fff; font-weight: 700; font-size: 13.5px; cursor: pointer; line-height: 1.4; transition: 0.2s; user-select: none; }
-  .grid-btn * { pointer-events: none; }
-  .grid-btn.selected { background: var(--primary-light); border-color: var(--primary); border-style: solid; color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
   
-  .asset-input-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; border: 2px dashed var(--pink-border); border-radius: 10px; margin-bottom: 8px; background: #fff; transition: 0.2s; }
+  .asset-input-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; border: 2px dashed var(--pink-border); border-radius: 10px; margin-bottom: 8px; background: #fff; transition: 0.2s; }
   .asset-input-row.selected { background: var(--primary-light); border-color: var(--primary); border-style: solid; box-shadow: 0 0 0 1px var(--primary); }
   .asset-left-area { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; color: #2c3e50; cursor: pointer; flex: 1; user-select: none; }
   .asset-left-area input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
@@ -130,7 +126,7 @@
   .btn-primary { background: var(--primary); color: #fff; border: none; padding: 14px 20px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; flex: 1; text-align: center; }
   .btn-secondary { background: #f1f5f9; border: 1px solid var(--border); color: #333; padding: 14px 20px; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; }
   .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  @media (max-width: 600px) { .grid-2col, .grid-2x2 { grid-template-columns: 1fr; } }
+  @media (max-width: 600px) { .grid-2col { grid-template-columns: 1fr; } }
   
   .compare-side-card { border-radius: 12px; padding: 16px; border: 1.5px solid var(--border); background: #fff; display: flex; flex-direction: column; }
   .compare-side-card.sce { border-top: 5px solid #34495e; background: #fafafa; }
@@ -146,11 +142,15 @@
   .claim-header-row { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
   
   .timeline-mini-card { display: flex; align-items: center; background: white; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; border: 1px solid #eee; font-size: 12.5px; line-height: 1.5; }
-  .multi-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
-  .btn-multi-action { padding: 10px 8px; font-size: 12.5px; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; color: #fff; text-align: center; transition: 0.15s; }
+  
+  /* 04 頁多重賠償規則按鈕樣式 */
+  .multi-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+  @media (max-width: 600px) { .multi-btn-grid { grid-template-columns: 1fr; } }
+  .btn-multi-action { padding: 12px 10px; font-size: 13px; font-weight: 800; border-radius: 10px; border: none; cursor: pointer; color: #fff; text-align: center; transition: 0.15s; line-height: 1.4; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
   .btn-multi-action:disabled, .btn-emoji-inline:disabled { opacity: 0.35; cursor: not-allowed; filter: grayscale(1); }
   .emoji-bar-inline { display: flex; gap: 6px; margin-top: 10px; overflow-x: auto; }
   .btn-emoji-inline { flex: 1; padding: 8px 0; font-size: 16px; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; color: #fff; text-align: center; }
+  
   .prem-mode-btn { padding: 3px 10px; border-radius: 15px; font-size: 12px; font-weight: 700; cursor: pointer; border: 1px solid var(--border); background: #fff; color: #475569; }
   .prem-mode-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
   .pay-period-btn { padding: 4px 8px; font-size: 11px; font-weight: 700; border-radius: 6px; border: 1px solid var(--border); background: #fff; cursor: pointer; }
@@ -228,7 +228,7 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge" id="appVersion">v9.6.2</span>
+      <span class="v-badge" id="appVersion">v9.6.3</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
@@ -344,7 +344,7 @@
   
   const defaultDatabase = {
     config: {
-      "資料版本": "9.6.2",
+      "資料版本": "9.6.3",
       "醫療App網址": "https://ivancww.github.io/medicalclaims",
       "醫療App參數": "role={role}&cost={medCost}&hasCompany={hasCompany}&companyLimit={companyLimit}&companyRate={companyRate}&hasPersonal={hasPersonal}&personalLimit={personalLimit}&personalRate={personalRate}&losses={losses}&focus={focus}",
       "溫馨提示醫療標題": "🏥 溫馨提示：醫療選擇防線",
@@ -378,24 +378,16 @@
       { role: 'child', stepOrder: 6, pageId: 'step_ci_6', pageType: '方案總結', tagName: '06｜守護清單', title: '兒童專屬健康防禦總結', subtitle: '以下為小朋友量身定制的全面照護與醫療守護摘要：' }
     ],
     options: [
-      { pageId: 'step_ci_1', role: 'adult', optionKey: 'living', icon: '🏠', title: '家庭生活質素', isDefaultSelected: 'TRUE', order: 1 },
-      { pageId: 'step_ci_1', role: 'adult', optionKey: 'assets', icon: '💰', title: '積蓄與資產', isDefaultSelected: 'TRUE', order: 2 },
-      { pageId: 'step_ci_1', role: 'adult', optionKey: 'edu', icon: '🎓', title: '子女教育規劃', isDefaultSelected: 'FALSE', order: 3 },
-      { pageId: 'step_ci_1', role: 'adult', optionKey: 'retire', icon: '🌅', title: '退休儲備進度', isDefaultSelected: 'FALSE', order: 4 },
-      { pageId: 'step_ci_1', role: 'child', optionKey: 'care', icon: '🧸', title: '全天候全職陪伴', isDefaultSelected: 'TRUE', order: 1 },
-      { pageId: 'step_ci_1', role: 'child', optionKey: 'med_choice', icon: '🏥', title: '頂級私家醫療選擇', isDefaultSelected: 'TRUE', order: 2 },
-      { pageId: 'step_ci_1', role: 'child', optionKey: 'edu_fund', icon: '🎓', title: '未來留學教育儲備', isDefaultSelected: 'FALSE', order: 3 },
-      { pageId: 'step_ci_1', role: 'child', optionKey: 'future_asset', icon: '💰', title: '孩子成年健康資產', isDefaultSelected: 'FALSE', order: 4 },
       { pageId: 'step_ci_2', role: 'common', optionKey: 'savings', icon: '💰', title: '銀行積蓄存款', isDefaultSelected: 'TRUE', order: 1 },
       { pageId: 'step_ci_2', role: 'common', optionKey: 'invest', icon: '📈', title: '股票／基金投資', isDefaultSelected: 'FALSE', order: 2 },
       { pageId: 'step_ci_2', role: 'common', optionKey: 'edu', icon: '🎓', title: '子女教育金', isDefaultSelected: 'FALSE', order: 3 },
       { pageId: 'step_ci_2', role: 'common', optionKey: 'retire', icon: '🌅', title: '退休金', isDefaultSelected: 'FALSE', order: 4 }
     ],
     rules: [
-      { claimKey: "cancer_a", name: "癌症選項A (一筆過)", emoji: "🎗️", btnText: "🎗️ 癌症選項A (+3年)", maxCount: 6, waitYears: 3, isMonthly: false, color: "#d97706" },
-      { claimKey: "cancer_b", name: "癌症選項B (每月津貼)", emoji: "💊", btnText: "💊 癌症選項B (5%/月)", maxCount: 100, waitYears: 1, isMonthly: true, color: "#0284c7" },
-      { claimKey: "heart", name: "心臟病/中風", emoji: "❤️", btnText: "❤️ 心臟/中風 (+1年)", maxCount: 3, waitYears: 1, isMonthly: false, color: "#8e44ad" },
-      { claimKey: "dementia", name: "腦退化症與年金", emoji: "🧠", btnText: "🧠 腦退化 (+1年)", maxCount: 11, waitYears: 1, isMonthly: false, color: "#27ae60" }
+      { claimKey: "cancer_a", name: "🎗️ 癌症 (最多6次)", emoji: "🎗️", btnText: "🎗️ 癌症 (+3年，最多6次)", maxCount: 6, waitYears: 3, isMonthly: false, color: "#d97706" },
+      { claimKey: "cancer_b", name: "💊 癌症選項B (每月5%)", emoji: "💊", btnText: "💊 癌症選項B (5%/月，最多100個月)", maxCount: 100, waitYears: 1, isMonthly: true, color: "#0284c7" },
+      { claimKey: "heart", name: "❤️ 心臟病 / 中風 (最多3次)", emoji: "❤️", btnText: "❤️ 心臟/中風 (+1年，最多3次)", maxCount: 3, waitYears: 1, isMonthly: false, color: "#8e44ad" },
+      { claimKey: "dementia", name: "🧠 腦退化/柏金遜 (1次+每年6%年金)", emoji: "🧠", btnText: "🧠 腦退化/柏金遜 (1次+每年6%年金)", maxCount: 11, waitYears: 1, isMonthly: false, color: "#27ae60" }
     ]
   };
 
@@ -425,7 +417,6 @@
     oys2PayPeriod: 18,
     annualPremMap: { sce: 1425, oys2: 19204 },
     
-    // 承接 Health Protection 帶過來的醫療參數
     medCost: 500000,
     hasCompanyMed: 'no',
     companyLimit: 100000,
@@ -472,7 +463,7 @@
       let topBarExtras = '';
 
       if (p.stepOrder === 1) {
-        // 🌟 新版 01 頁：合併生活儲備 + 現有防線 + 放大藍色支援月份 🌟
+        // 🌟 圖 1 (01 頁)：已移走下方按鈕，僅保留開支與藍色承托分析 🌟
         const supportMonths = ciState.monthlyExp > 0 ? (ciState.existingCI / ciState.monthlyExp).toFixed(1) : 0;
         bodyHtml = `
           <div class="stat-grid-box">
@@ -498,17 +489,14 @@
             </div>
           </div>
 
-          <!-- 藍色資金承托分析框 (月份放大至 26px) -->
+          <!-- 藍色資金承托分析框 (月份數字加粗放大至 26px) -->
           <div class="blue-support-box" id="b-duration-box">
             📊 <strong>資金承托分析：</strong><br>
             目前危疾保障 (<span id="b-ci-text">$${Math.round(ciState.existingCI/1000)}K</span>) ÷ 每月生活需要 (<span id="b-exp-text">$${Math.round(ciState.monthlyExp/1000)}K</span>) ➔ 可維持約 <span id="b-months-support" class="blue-support-months">${supportMonths}</span> 個月。
           </div>
-
-          <h4 id="ui-goals-prompt" style="margin: 16px 0 8px 0; color: #2c3e50; font-size: 14px;">🎯 如果真的發生，邊樣係你最不想失去／中斷？(可多選確認)</h4>
-          <div class="grid-2x2" id="goal-options-grid"></div>
         `;
       } else if (p.stepOrder === 2) {
-        // 🌟 新版 02 頁：純資產填補表格 (移走房產套現，自動接收 Health Protection losses) 🌟
+        // 🌟 圖 2 (02 頁)：資產填補表，自動接收並勾選 Health Protection 的 losses 🌟
         const remainGap = Math.max(0, ciState.netGap - ciState.totalChosenAssets);
         bodyHtml = `
           <h4 style="margin: 4px 0 10px 0; color: #2c3e50; font-size: 14.5px;">❓ 生活現金流缺口，你會先動用邊筆資產去填補？(可多選並輸入金額)</h4>
@@ -632,15 +620,16 @@
           </div>
         `;
       } else if (p.stepOrder === 4) {
+        // 🌟 圖 3/4：多重時間線按鈕已套用紅圈條款與專屬 Emoji 🌟
         topBarExtras = `
           <div class="capsule-btn-bar" style="margin:0;">
             <button type="button" class="btn-capsule" onclick="openMediaDrawer('case')">📑 真實理賠案例庫</button>
           </div>
         `;
         bodyHtml = `
-          <div style="background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:12px; margin-bottom:12px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-              <span style="font-weight:bold; font-size:13px; color:var(--primary);">⏳ 點擊推進模擬多次理賠：</span>
+          <div style="background:#f8fafc; border:1.5px solid var(--border); border-radius:12px; padding:14px; margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-weight:bold; font-size:13.5px; color:var(--primary);">⏳ 點擊推進模擬多次理賠 (多重賠償及年金上限)：</span>
               <div style="display:flex; gap:6px;">
                 <button type="button" class="btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="undoLastMultiClaim()">↩️ 撤銷上一筆</button>
                 <button type="button" class="btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="resetCompareMultiTimeline()">🔄 重置時間線</button>
@@ -827,17 +816,6 @@
             </div>
           </div>
         `;
-      } else {
-        const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
-        const opts = allOpts.filter(o => o.pageId === p.pageId).sort((a,b)=>a.order-b.order);
-        let optButtons = '';
-        opts.forEach(o => {
-          optButtons += `
-            <button type="button" class="grid-btn" style="text-align:left;" onclick="this.classList.toggle('selected')">
-              ${o.icon ? o.icon + ' ' : ''}<strong>${o.title}</strong>
-            </button>`;
-        });
-        bodyHtml = `<div class="choice-list" style="margin-top:14px;">${optButtons}</div>`;
       }
 
       const navButtons = `
@@ -997,35 +975,6 @@
   }
 
   function renderDynamicTextsAndOptions() {
-    const roleKey = ciState.isChildMode ? 'child' : 'adult';
-    
-    // 01 頁目標選擇按鈕
-    const goalsGrid = document.getElementById('goal-options-grid');
-    if (goalsGrid) {
-      const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
-      const opts = allOpts.filter(o => o.pageId === 'step_ci_1' && (o.role === roleKey || o.role === 'common')).sort((a,b)=>a.order-b.order);
-      let gHtml = '';
-      
-      opts.forEach(o => {
-        let isSel = false;
-        if (hasUrlLosses && ciState.goals.length > 0) {
-          isSel = isGoalMatched(o.title, o.optionKey, ciState.goals);
-        } else {
-          isSel = String(o.isDefaultSelected).toUpperCase() === 'TRUE';
-        }
-        gHtml += `<button type="button" class="grid-btn ${isSel ? 'selected' : ''}" data-goal-key="${o.optionKey}" data-goal="${o.title}">${o.icon || '🎯'}<br>${o.title}</button>`;
-      });
-      goalsGrid.innerHTML = gHtml;
-      
-      goalsGrid.querySelectorAll('.grid-btn').forEach(b => {
-        b.onclick = function() {
-          this.classList.toggle('selected');
-          syncGoalDisplay();
-        };
-      });
-      syncGoalDisplay();
-    }
-
     // 02 頁純資產填補列表 (移走房產套現，自動匹配 Health Protection 帶入之 losses)
     const assetContainer = document.getElementById('assets-list-container');
     if (assetContainer) {
@@ -1421,7 +1370,7 @@
     
     syncGoalDisplay();
     
-    // 🌟 動態編譯跳轉醫療 App URL (完整帶入 Health Protection 參數) 🌟
+    // 動態編譯跳轉醫療 App URL
     function compileUrl(baseUrl, paramTemplate, valMap) {
       var cleanBase = (baseUrl || '').trim().replace(/\/+$/, '');
       var queryString = paramTemplate || '';
@@ -1462,8 +1411,9 @@
 
   function syncGoalDisplay() {
     ciState.goals = [];
-    document.querySelectorAll('#goal-options-grid .grid-btn.selected').forEach(btn => {
-      ciState.goals.push(btn.getAttribute('data-goal'));
+    document.querySelectorAll('#assets-list-container .asset-input-row.selected').forEach(row => {
+      const titleSpan = row.querySelector('.asset-left-area span');
+      if (titleSpan) ciState.goals.push(titleSpan.innerText.trim());
     });
     if (ciState.goals.length === 0) {
       ciState.goals = [ciState.isChildMode ? '全天候全職陪伴' : '家庭生活質素'];
@@ -1612,7 +1562,7 @@
     }, false);
   }
 
-  // ======================== 04 頁多重賠償推進邏輯 ========================
+  // ======================== 04 頁多重賠償推進 (紅圈條款加強版) ========================
   function renderMultiButtonsFromRules() {
     const topContainer = document.getElementById('topMultiBtnContainer');
     const botContainer = document.getElementById('botEmojiBtnContainer');
@@ -1624,7 +1574,7 @@
     
     rules.forEach(rule => {
       if (ciState.countsMap[rule.claimKey] === undefined) ciState.countsMap[rule.claimKey] = 0;
-      let bText = rule.btnText || `${rule.emoji || '🛡️'} ${rule.name || '理賠項目'} (+${rule.waitYears || 1}年)`;
+      let bText = rule.btnText || `${rule.emoji || '🛡️'} ${rule.name || '理賠項目'}`;
       
       if (rule.claimKey === 'dementia' && ciState.countsMap['dementia'] >= 1) {
         bText = `🧠 腦退化年金 (每年6%)`;
@@ -1757,7 +1707,7 @@
     runStage3Calculation();
   }
 
-  // ======================== 後台管理控制台邏輯 ========================
+  // ======================== 後台管理控制台 ========================
   function openAdminModal() {
     document.getElementById('adminFullScreenModal').style.display = 'flex';
     renderAdminVisualLayout();
@@ -2168,7 +2118,6 @@
     if (p.has('months')) ciState.months = Number(p.get('months')) || (ciState.isChildMode ? 24 : 36);
     if (p.has('existing')) ciState.existingCI = Number(p.get('existing')) || 0;
     
-    // 承接 Health Protection 帶過來的醫療相關參數
     if (p.has('cost')) ciState.medCost = Number(p.get('cost')) || 500000;
     if (p.has('hasCompany')) ciState.hasCompanyMed = p.get('hasCompany');
     if (p.has('companyLimit')) ciState.companyLimit = Number(p.get('companyLimit')) || 0;
