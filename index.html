@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.6.3)</title>
+<title>確診危疾生活儲備規劃 (v9.6.4)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -39,7 +39,7 @@
   .stat-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; }
   .stat-row.total { border-top: 1.5px dashed var(--border); padding-top: 10px; margin-top: 10px; font-weight: 900; font-size: 16px; }
   
-  /* 01 頁藍色資金承托分析框 (月份加粗放大至 26px) */
+  /* 01 頁藍色資金承托分析框 */
   .blue-support-box {
     background: #f0f7ff;
     border: 1.5px solid #bfdbfe;
@@ -58,6 +58,30 @@
     color: #1d4ed8;
     text-decoration: underline;
     margin: 0 4px;
+  }
+
+  /* 04 頁資料文字展示框 (Data Text Cards) */
+  .rules-info-display-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  @media (max-width: 600px) {
+    .rules-info-display-grid { grid-template-columns: 1fr; }
+  }
+  .rule-text-badge {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #334155;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
   
   .warm-tip-card {
@@ -143,13 +167,10 @@
   
   .timeline-mini-card { display: flex; align-items: center; background: white; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; border: 1px solid #eee; font-size: 12.5px; line-height: 1.5; }
   
-  /* 04 頁多重賠償規則按鈕樣式 */
-  .multi-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
-  @media (max-width: 600px) { .multi-btn-grid { grid-template-columns: 1fr; } }
-  .btn-multi-action { padding: 12px 10px; font-size: 13px; font-weight: 800; border-radius: 10px; border: none; cursor: pointer; color: #fff; text-align: center; transition: 0.15s; line-height: 1.4; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-  .btn-multi-action:disabled, .btn-emoji-inline:disabled { opacity: 0.35; cursor: not-allowed; filter: grayscale(1); }
-  .emoji-bar-inline { display: flex; gap: 6px; margin-top: 10px; overflow-x: auto; }
-  .btn-emoji-inline { flex: 1; padding: 8px 0; font-size: 16px; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; color: #fff; text-align: center; }
+  /* 04 頁下方多重推進按鈕 */
+  .emoji-bar-inline { display: flex; gap: 8px; margin-top: 10px; overflow-x: auto; }
+  .btn-emoji-inline { flex: 1; padding: 10px 0; font-size: 18px; font-weight: 700; border-radius: 10px; border: none; cursor: pointer; color: #fff; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+  .btn-emoji-inline:disabled { opacity: 0.35; cursor: not-allowed; filter: grayscale(1); }
   
   .prem-mode-btn { padding: 3px 10px; border-radius: 15px; font-size: 12px; font-weight: 700; cursor: pointer; border: 1px solid var(--border); background: #fff; color: #475569; }
   .prem-mode-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
@@ -228,7 +249,7 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge" id="appVersion">v9.6.3</span>
+      <span class="v-badge" id="appVersion">v9.6.4</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
@@ -344,12 +365,16 @@
   
   const defaultDatabase = {
     config: {
-      "資料版本": "9.6.3",
+      "資料版本": "9.6.4",
       "醫療App網址": "https://ivancww.github.io/medicalclaims",
       "醫療App參數": "role={role}&cost={medCost}&hasCompany={hasCompany}&companyLimit={companyLimit}&companyRate={companyRate}&hasPersonal={hasPersonal}&personalLimit={personalLimit}&personalRate={personalRate}&losses={losses}&focus={focus}",
       "溫馨提示醫療標題": "🏥 溫馨提示：醫療選擇防線",
       "溫馨提示醫療說明": "先了解你現有醫療保障，確認私家高額住院與手術費用可支持到幾多。",
       "溫馨提示醫療按鈕": "了解醫療方案 (前線醫療實報實銷) →",
+      "04多重條款_癌症A": "🎗️ 癌症選項A：合共 6 次（每 3 年）",
+      "04多重條款_癌症B": "💊 癌症選項B：每月賠償 5%（1 年後，最多 100 個月）",
+      "04多重條款_心臟中風": "❤️ 心臟病 / 中風：合共 3 次（1 年後）",
+      "04多重條款_腦退化": "🧠 腦退化 / 柏金遜：合共 1 次（1 年後），其後年金形式（每年 6%）",
       "成人_預設每月開支": "40000",
       "成人_預設休養月數": "36",
       "成人_預設現有危疾": "300000",
@@ -384,10 +409,10 @@
       { pageId: 'step_ci_2', role: 'common', optionKey: 'retire', icon: '🌅', title: '退休金', isDefaultSelected: 'FALSE', order: 4 }
     ],
     rules: [
-      { claimKey: "cancer_a", name: "🎗️ 癌症 (最多6次)", emoji: "🎗️", btnText: "🎗️ 癌症 (+3年，最多6次)", maxCount: 6, waitYears: 3, isMonthly: false, color: "#d97706" },
-      { claimKey: "cancer_b", name: "💊 癌症選項B (每月5%)", emoji: "💊", btnText: "💊 癌症選項B (5%/月，最多100個月)", maxCount: 100, waitYears: 1, isMonthly: true, color: "#0284c7" },
-      { claimKey: "heart", name: "❤️ 心臟病 / 中風 (最多3次)", emoji: "❤️", btnText: "❤️ 心臟/中風 (+1年，最多3次)", maxCount: 3, waitYears: 1, isMonthly: false, color: "#8e44ad" },
-      { claimKey: "dementia", name: "🧠 腦退化/柏金遜 (1次+每年6%年金)", emoji: "🧠", btnText: "🧠 腦退化/柏金遜 (1次+每年6%年金)", maxCount: 11, waitYears: 1, isMonthly: false, color: "#27ae60" }
+      { claimKey: "cancer_a", name: "🎗️ 癌症 (最多6次)", emoji: "🎗️", btnText: "🎗️ 癌症 (+3年)", maxCount: 6, waitYears: 3, isMonthly: false, color: "#d97706" },
+      { claimKey: "cancer_b", name: "💊 癌症選項B (每月5%)", emoji: "💊", btnText: "💊 癌症選項B (5%/月)", maxCount: 100, waitYears: 1, isMonthly: true, color: "#0284c7" },
+      { claimKey: "heart", name: "❤️ 心臟病 / 中風 (最多3次)", emoji: "❤️", btnText: "❤️ 心臟/中風 (+1年)", maxCount: 3, waitYears: 1, isMonthly: false, color: "#8e44ad" },
+      { claimKey: "dementia", name: "🧠 腦退化/柏金遜 (1次+每年6%年金)", emoji: "🧠", btnText: "🧠 腦退化 (+1年)", maxCount: 11, waitYears: 1, isMonthly: false, color: "#27ae60" }
     ]
   };
 
@@ -453,6 +478,12 @@
     const warmTipDesc = cfg["溫馨提示醫療說明"] || "先了解你現有醫療保障，確認私家高額住院與手術費用可支持到幾多。";
     const warmTipBtn = cfg["溫馨提示醫療按鈕"] || "了解醫療方案 (前線醫療實報實銷) →";
     
+    // 04 頁純文字展示條款
+    const ruleTplCancerA = cfg["04多重條款_癌症A"] || "🎗️ 癌症選項A：合共 6 次（每 3 年）";
+    const ruleTplCancerB = cfg["04多重條款_癌症B"] || "💊 癌症選項B：每月賠償 5%（1 年後，最多 100 個月）";
+    const ruleTplHeart = cfg["04多重條款_心臟中風"] || "❤️ 心臟病 / 中風：合共 3 次（1 年後）";
+    const ruleTplDementia = cfg["04多重條款_腦退化"] || "🧠 腦退化 / 柏金遜：合共 1 次（1 年後），其後年金形式（每年 6%）";
+
     pages.forEach((p, idx) => {
       const isFirst = (idx === 0);
       const isLast = (idx === pages.length - 1);
@@ -463,7 +494,7 @@
       let topBarExtras = '';
 
       if (p.stepOrder === 1) {
-        // 🌟 圖 1 (01 頁)：已移走下方按鈕，僅保留開支與藍色承托分析 🌟
+        // 01 頁：合併開支與現有防線
         const supportMonths = ciState.monthlyExp > 0 ? (ciState.existingCI / ciState.monthlyExp).toFixed(1) : 0;
         bodyHtml = `
           <div class="stat-grid-box">
@@ -489,14 +520,13 @@
             </div>
           </div>
 
-          <!-- 藍色資金承托分析框 (月份數字加粗放大至 26px) -->
           <div class="blue-support-box" id="b-duration-box">
             📊 <strong>資金承托分析：</strong><br>
             目前危疾保障 (<span id="b-ci-text">$${Math.round(ciState.existingCI/1000)}K</span>) ÷ 每月生活需要 (<span id="b-exp-text">$${Math.round(ciState.monthlyExp/1000)}K</span>) ➔ 可維持約 <span id="b-months-support" class="blue-support-months">${supportMonths}</span> 個月。
           </div>
         `;
       } else if (p.stepOrder === 2) {
-        // 🌟 圖 2 (02 頁)：資產填補表，自動接收並勾選 Health Protection 的 losses 🌟
+        // 02 頁：資產填補表 (接收 losses)
         const remainGap = Math.max(0, ciState.netGap - ciState.totalChosenAssets);
         bodyHtml = `
           <h4 style="margin: 4px 0 10px 0; color: #2c3e50; font-size: 14.5px;">❓ 生活現金流缺口，你會先動用邊筆資產去填補？(可多選並輸入金額)</h4>
@@ -620,7 +650,7 @@
           </div>
         `;
       } else if (p.stepOrder === 4) {
-        // 🌟 圖 3/4：多重時間線按鈕已套用紅圈條款與專屬 Emoji 🌟
+        // 🌟 04 頁：紅圈改用純文字資料展示框 (Data Text Display) 🌟
         topBarExtras = `
           <div class="capsule-btn-bar" style="margin:0;">
             <button type="button" class="btn-capsule" onclick="openMediaDrawer('case')">📑 真實理賠案例庫</button>
@@ -628,15 +658,23 @@
         `;
         bodyHtml = `
           <div style="background:#f8fafc; border:1.5px solid var(--border); border-radius:12px; padding:14px; margin-bottom:14px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-              <span style="font-weight:bold; font-size:13.5px; color:var(--primary);">⏳ 點擊推進模擬多次理賠 (多重賠償及年金上限)：</span>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-weight:bold; font-size:13.5px; color:var(--primary);">📋 多重賠償及年金上限（條款細則）：</span>
               <div style="display:flex; gap:6px;">
                 <button type="button" class="btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="undoLastMultiClaim()">↩️ 撤銷上一筆</button>
                 <button type="button" class="btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="resetCompareMultiTimeline()">🔄 重置時間線</button>
               </div>
             </div>
-            <div class="multi-btn-grid" id="topMultiBtnContainer"></div>
+            
+            <!-- 純文字資料展示框 (由 Google Sheet 系統設定驅動) -->
+            <div class="rules-info-display-grid">
+              <div class="rule-text-badge" id="ui-rule-cancer-a">${ruleTplCancerA}</div>
+              <div class="rule-text-badge" id="ui-rule-cancer-b">${ruleTplCancerB}</div>
+              <div class="rule-text-badge" id="ui-rule-heart">${ruleTplHeart}</div>
+              <div class="rule-text-badge" id="ui-rule-dementia">${ruleTplDementia}</div>
+            </div>
           </div>
+
           <div class="grid-2col">
             <div class="compare-side-card sce">
               <div class="side-card-title" style="color:#34495e;">
@@ -654,9 +692,13 @@
                 <span style="font-size:11px; color:#27ae60; font-weight:bold;">持續守護至 85 歲</span>
               </div>
               <div id="d-timeline-oys2" style="min-height:140px;"></div>
+              
+              <!-- 點擊推進時間線 Emoji 按鈕 -->
               <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; margin-top:8px;">
+                <div style="font-size:11px; font-weight:bold; color:#64748b; margin-bottom:4px; text-align:center;">👇 點擊下方 Emoji 推進模擬多次理賠：</div>
                 <div class="emoji-bar-inline" id="botEmojiBtnContainer"></div>
               </div>
+
               <div class="stat-grid-box" style="margin-top:8px; margin-bottom:0; background:#f0fdf4; border-color:#bbf7d0; padding:10px;">
                 <div class="stat-row" style="margin-bottom:0; font-size:13px;">
                   <span>OYS2 累計多重理賠總額：</span>
@@ -1370,7 +1412,6 @@
     
     syncGoalDisplay();
     
-    // 動態編譯跳轉醫療 App URL
     function compileUrl(baseUrl, paramTemplate, valMap) {
       var cleanBase = (baseUrl || '').trim().replace(/\/+$/, '');
       var queryString = paramTemplate || '';
@@ -1562,32 +1603,23 @@
     }, false);
   }
 
-  // ======================== 04 頁多重賠償推進 (紅圈條款加強版) ========================
+  // ======================== 04 頁多重賠償推進 (底排 Emoji 按鈕) ========================
   function renderMultiButtonsFromRules() {
-    const topContainer = document.getElementById('topMultiBtnContainer');
     const botContainer = document.getElementById('botEmojiBtnContainer');
-    if (!topContainer || !botContainer) return;
+    if (!botContainer) return;
     
-    let topHtml = '';
     let botHtml = '';
     const rules = (cloudAppDatabase.rules && cloudAppDatabase.rules.length > 0) ? cloudAppDatabase.rules : defaultDatabase.rules;
     
     rules.forEach(rule => {
       if (ciState.countsMap[rule.claimKey] === undefined) ciState.countsMap[rule.claimKey] = 0;
-      let bText = rule.btnText || `${rule.emoji || '🛡️'} ${rule.name || '理賠項目'}`;
-      
-      if (rule.claimKey === 'dementia' && ciState.countsMap['dementia'] >= 1) {
-        bText = `🧠 腦退化年金 (每年6%)`;
-      }
       const bColor = rule.color || '#d97706';
       const bEmoji = rule.emoji || '🛡️';
       const bName = rule.name || '理賠項目';
       const isDisabled = (rule.claimKey === 'cancer_a' && (ciState.countsMap['cancer_b'] || 0) > 0);
-      topHtml += `<button type="button" class="btn-multi-action" id="top-btn-${rule.claimKey}" style="background:${bColor};" ${isDisabled ? 'disabled' : ''} onclick="executeDynamicClaim('${rule.claimKey}')">${bText}</button>`;
       botHtml += `<button type="button" class="btn-emoji-inline" id="bot-btn-${rule.claimKey}" style="background:${bColor};" ${isDisabled ? 'disabled' : ''} onclick="executeDynamicClaim('${rule.claimKey}')" title="${bName}">${bEmoji}</button>`;
     });
     botHtml += `<button type="button" class="btn-emoji-inline" style="background:#64748b;" onclick="undoLastMultiClaim()" title="撤銷上一筆">↩️</button>`;
-    topContainer.innerHTML = topHtml;
     botContainer.innerHTML = botHtml;
   }
 
@@ -2118,6 +2150,7 @@
     if (p.has('months')) ciState.months = Number(p.get('months')) || (ciState.isChildMode ? 24 : 36);
     if (p.has('existing')) ciState.existingCI = Number(p.get('existing')) || 0;
     
+    // 承接 Health Protection 帶入的醫療相關參數
     if (p.has('cost')) ciState.medCost = Number(p.get('cost')) || 500000;
     if (p.has('hasCompany')) ciState.hasCompanyMed = p.get('hasCompany');
     if (p.has('companyLimit')) ciState.companyLimit = Number(p.get('companyLimit')) || 0;
