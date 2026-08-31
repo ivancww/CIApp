@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.6.7)</title>
+<title>確診危疾生活儲備規劃 (v9.6.8)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -27,6 +27,7 @@
   .role-toggle-btn { font-size: 11.5px; font-weight: 800; padding: 4px 10px; border-radius: 12px; background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; cursor: pointer; transition: 0.2s; }
   #sync-status-badge { font-size: 11px; font-weight: bold; padding: 2px 8px; border-radius: 10px; background: #fee2e2; color: #b91c1c; }
   .status-ok { background: #d4edda !important; color: #155724 !important; }
+  .status-cache { background: #e0e7ff !important; color: #3730a3 !important; }
   
   .stage-card { background: #fff; border-radius: var(--radius); padding: 24px 20px; box-shadow: 0 6px 25px rgba(0,0,0,0.06); display: none; margin-bottom: 20px; }
   .stage-card.active { display: block; animation: fadeIn 0.25s ease-out; }
@@ -69,7 +70,7 @@
     margin-top: 14px;
     color: #b45309;
   }
-  /* 04 頁藍底藍字資料展示框 (Data Text Badge) */
+  /* 04 頁藍底藍字資料展示框 */
   .rules-info-display-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -259,11 +260,11 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge" id="appVersion">v9.6.7</span>
+      <span class="v-badge" id="appVersion">v9.6.8</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
-    <div id="sync-status-badge">🔄 連接雲端中央庫...</div>
+    <div id="sync-status-badge">🔄 載入中...</div>
   </div>
   <!-- 前台動態題目卡片掛載容器 -->
   <div id="dynamic-ci-container"></div>
@@ -370,7 +371,7 @@
   
   const defaultDatabase = {
     config: {
-      "資料版本": "9.6.7",
+      "資料版本": "9.6.8",
       "醫療App網址": "https://ivancww.github.io/medicalclaims",
       "醫療App參數": "role={role}&cost={medCost}&hasCompany={hasCompany}&companyLimit={companyLimit}&companyRate={companyRate}&hasPersonal={hasPersonal}&personalLimit={personalLimit}&personalRate={personalRate}&losses={losses}&focus={focus}",
       "溫馨提示醫療標題": "🏥 溫馨提示：醫療選擇防線",
@@ -394,9 +395,9 @@
       "兒童_首十年加贈率": "0.50"
     },
     pages: [
-      { role: 'adult', stepOrder: 1, pageId: 'step_ci_1', pageType: '生活目標', tagName: '01｜生活防線現狀', title: '確診危疾生活儲備與缺口', subtitle: '量化停工休養期間的整體生活儲備，對比現有防線可支撐的時間：' },
-      { role: 'child', stepOrder: 1, pageId: 'step_ci_1', pageType: '生活目標', tagName: '01｜照護防線現狀', title: '兒童重大疾病照護儲備與缺口', subtitle: '量化父母專職停工陪伴照護基金，對比現有資金可支撐的時間：' },
-      { role: 'adult', stepOrder: 2, pageId: 'step_ci_2', pageType: '現有防線', tagName: '02｜填補資產與代價', title: '生活現金流缺口，動用邊筆資產填補？', subtitle: '面對已確認的缺口，你會先動用邊筆資產？確認辛苦累積的積蓄代價：' },
+      { role: 'adult', stepOrder: 1, pageId: 'step_ci_1', pageType: '生活目標', tagName: '01｜生活防線現狀', title: '萬一需要停工休養，現有資金可守住家庭幾多個月？', subtitle: '危疾賠償是「生活替代收入」。確認專心康復期間，維持家庭現有生活質素所需的時間底氣：' },
+      { role: 'child', stepOrder: 1, pageId: 'step_ci_1', pageType: '生活目標', tagName: '01｜照護防線現狀', title: '若孩子需要專職陪伴照護，家庭儲備能支撐多久？', subtitle: '量化父母專職停工陪伴照護基金，對比現有資金可支撐的時間：' },
+      { role: 'adult', stepOrder: 2, pageId: 'step_ci_2', pageType: '現有防線', tagName: '02｜填補資產與代價', title: '面對生活防線缺口，你願意動用哪一筆辛苦累積的資產？', subtitle: '若沒有額外專屬防線，以下哪項人生目標的資金需要被迫暫停或墊支？' },
       { role: 'child', stepOrder: 2, pageId: 'step_ci_2', pageType: '現有防線', tagName: '02｜填補資產與代價', title: '兒童照護缺口，動用邊筆資產填補？', subtitle: '面對照護資金缺口，確認動用家庭積蓄或教育金的代價：' },
       { role: 'adult', stepOrder: 3, pageId: 'step_ci_3', pageType: '解決方案', tagName: '03｜解決方案', title: '補充儲備缺口及守護資產', subtitle: '承接上頁缺口與資產數據，輸入獨立保額檢視兩款方案之賠償與財富守護效果：' },
       { role: 'child', stepOrder: 3, pageId: 'step_ci_3', pageType: '全面守護', tagName: '03｜全面守護', title: '打造專屬兒童健康防護盾', subtitle: '包含兒童特定疾病預支與加贈升級，全面守護孩子黃金成長期：' },
@@ -420,6 +421,8 @@
       { claimKey: "dementia", name: "🧠 腦退化/柏金遜 (1次+年金)", emoji: "🧠", btnText: "🧠 腦退化 (+1年)", maxCount: 11, waitYears: 1, isMonthly: false, color: "#27ae60", displayNote: "🧠 腦退化 - 合共1次（1年後），其後年金形式（6%）" }
     ]
   };
+
+  const STORAGE_KEY_DB = "CI_APP_DB_CACHE_V9";
   let dbData = { config: { ...defaultDatabase.config }, pages: defaultDatabase.pages, options: defaultDatabase.options, rates: {}, cases: [], rules: defaultDatabase.rules };
   let cloudAppDatabase = { "102": [], "child": [], "case": [], rules: defaultDatabase.rules };
   
@@ -465,6 +468,66 @@
     if (typeof val === 'number') return val;
     return Number(String(val || '').replace(/[^0-9]/g, '')) || 0;
   }
+
+  // ======================== LocalStorage 快取加載與解析 ========================
+  function applyDatabaseToMemory(jsonData) {
+    dbData = jsonData;
+    if (!dbData.config || Object.keys(dbData.config).length === 0) {
+      dbData.config = { ...defaultDatabase.config };
+    }
+    cloudAppDatabase["102"] = [];
+    cloudAppDatabase["child"] = [];
+    cloudAppDatabase["case"] = [];
+    cloudAppDatabase.rules = (jsonData.rules && jsonData.rules.length > 0) ? jsonData.rules : defaultDatabase.rules;
+    
+    if (Array.isArray(jsonData.cases)) {
+      jsonData.cases.forEach(row => {
+        const cat = String(row.category || '').trim();
+        let parsedFiles = null;
+        try { parsedFiles = JSON.parse(row.filesJson); } catch(e) {}
+        
+        let filesList = [];
+        if (Array.isArray(parsedFiles) && parsedFiles.length > 0) {
+          filesList = parsedFiles;
+        } else if (row.diseaseName) {
+          filesList = [{ title: row.diseaseName, type: "image", url: "https://via.placeholder.com/150x80" }];
+        }
+        
+        if (!cloudAppDatabase[cat]) cloudAppDatabase[cat] = [];
+        cloudAppDatabase[cat].push({
+          caseName: row.diseaseName || '未命名案例',
+          category: cat,
+          files: filesList,
+          filesJson: row.filesJson || '[]'
+        });
+      });
+    }
+  }
+
+  function loadFromLocalCache() {
+    try {
+      const cached = localStorage.getItem(STORAGE_KEY_DB);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && parsed.status === "success") {
+          applyDatabaseToMemory(parsed);
+          return true;
+        }
+      }
+    } catch(e) {
+      console.warn("讀取快取失敗:", e);
+    }
+    return false;
+  }
+
+  function saveToLocalCache(dataObj) {
+    try {
+      localStorage.setItem(STORAGE_KEY_DB, JSON.stringify(dataObj));
+    } catch(e) {
+      console.warn("寫入快取失敗:", e);
+    }
+  }
+
   // ======================== 全動態卡片渲染引擎 ========================
   function renderAllDynamicCards() {
     const container = document.getElementById('dynamic-ci-container');
@@ -492,11 +555,11 @@
         bodyHtml = `
           <div class="stat-grid-box">
             <div class="stat-row">
-              <span id="ui-lbl-exp">每月家庭必要開支 (維持現狀)：</span>
+              <span id="ui-lbl-exp">每月維持家庭必要開支 (維持現狀)：</span>
               <input type="text" id="a-monthly-exp-input" class="asset-input-val" value="${ciState.monthlyExp.toLocaleString()}" style="font-weight:900; color:var(--primary);" oninput="onExpenseInputChanged(this)">
             </div>
             <div class="stat-row">
-              <span id="ui-lbl-months">黃金休養及康復期 (月數)：</span>
+              <span id="ui-lbl-months">安心休養及康復期 (月數)：</span>
               <input type="number" id="a-months-input" class="asset-input-val" value="${ciState.months}" min="6" max="120" style="font-weight:900;" oninput="onMonthsInputChanged(this)">
             </div>
             <div class="stat-row total" style="color:var(--primary); font-size:16px;">
@@ -508,7 +571,7 @@
               <input type="text" id="b-ci-input" class="asset-input-val" value="${ciState.existingCI.toLocaleString()}" style="color:var(--primary); font-weight:bold;" oninput="onExistingCIInputChanged(this)">
             </div>
             <div class="stat-row total" style="color:var(--danger); font-size:18px;">
-              <span>生活現金流缺口：</span>
+              <span>生活防線缺口：</span>
               <strong style="color:var(--danger); font-size:22px;" id="b-gap-val">HK$ ${ciState.netGap.toLocaleString()}</strong>
             </div>
           </div>
@@ -520,7 +583,7 @@
       } else if (p.stepOrder === 2) {
         const remainGap = Math.max(0, ciState.netGap - ciState.totalChosenAssets);
         bodyHtml = `
-          <h4 style="margin: 4px 0 10px 0; color: #2c3e50; font-size: 14.5px;">❓ 生活現金流缺口，你會先動用邊筆資產去填補？(可多選並輸入金額)</h4>
+          <h4 style="margin: 4px 0 10px 0; color: #2c3e50; font-size: 14.5px;">❓ 面對生活防線缺口，你願意動用哪一筆辛苦累積的資產？(可多選並輸入金額)</h4>
           <div id="assets-list-container"></div>
           
           <div class="stat-grid-box" style="margin-top:14px; background:#fff; border:2px solid var(--primary);">
@@ -546,7 +609,6 @@
             <button type="button" class="btn-capsule" onclick="openMediaDrawer('child')">👶 兒童特定疾病保障</button>
           </div>
         `;
-        // 03 頁：黃底紅邊警示方塊
         bodyHtml = `
           <div class="stat-grid-box" style="margin-top:0; background:#f0f7ff; border-color:#bfdbfe;">
             <div class="stat-row">
@@ -632,7 +694,6 @@
             </div>
           </div>
           
-          <!-- 黃底紅字警示方塊 (理賠總額以紅色呈現) -->
           <div class="yellow-red-alert-box">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
               <span style="font-size:15px; font-weight:900; color:#78350f;">所選項目合計理賠總額 (填補生活缺口)：</span>
@@ -991,7 +1052,6 @@
     return false;
   }
   function renderDynamicTextsAndOptions() {
-    // 02 頁純資產填補列表
     const assetContainer = document.getElementById('assets-list-container');
     if (assetContainer) {
       const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
@@ -1989,19 +2049,21 @@
     dbData.rules = rulesToSave;
     cloudAppDatabase.rules = rulesToSave;
     try {
+      const payload = {
+        action: "saveAllAdmin",
+        pages: dbData.pages,
+        options: dbData.options,
+        config: dbData.config,
+        rules: dbData.rules,
+        cases: dbData.cases
+      };
       await fetch(GAS_CENTRAL_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({
-          action: "saveAllAdmin",
-          pages: dbData.pages,
-          options: dbData.options,
-          config: dbData.config,
-          rules: dbData.rules,
-          cases: dbData.cases
-        })
+        body: JSON.stringify(payload)
       });
-      alert("✅ 所見即所得後台設定已成功同步至 Google Sheet！");
+      saveToLocalCache({ status: "success", ...payload });
+      alert("✅ 所見即所得後台設定已成功同步至 Google Sheet 及本地快取！");
       renderAllDynamicCards();
       renderMultiButtonsFromRules();
       closeAdminModal();
@@ -2009,40 +2071,12 @@
       alert("⚠️ 同步失敗，請檢查網路。");
     }
   }
-  // ======================== 雲端同步與初始化 ========================
+
+  // ======================== 雲端同步與版本檢查 ========================
   window.onGASDataLoaded = function(json) {
     if (json && json.status === "success") {
-      dbData = json;
-      if (!dbData.config || Object.keys(dbData.config).length === 0) {
-        dbData.config = { ...defaultDatabase.config };
-      }
-      cloudAppDatabase["102"] = [];
-      cloudAppDatabase["child"] = [];
-      cloudAppDatabase["case"] = [];
-      cloudAppDatabase.rules = (json.rules && json.rules.length > 0) ? json.rules : defaultDatabase.rules;
-      
-      if (Array.isArray(json.cases)) {
-        json.cases.forEach(row => {
-          const cat = String(row.category || '').trim();
-          let parsedFiles = null;
-          try { parsedFiles = JSON.parse(row.filesJson); } catch(e) {}
-          
-          let filesList = [];
-          if (Array.isArray(parsedFiles) && parsedFiles.length > 0) {
-            filesList = parsedFiles;
-          } else if (row.diseaseName) {
-            filesList = [{ title: row.diseaseName, type: "image", url: "https://via.placeholder.com/150x80" }];
-          }
-          
-          if (!cloudAppDatabase[cat]) cloudAppDatabase[cat] = [];
-          cloudAppDatabase[cat].push({
-            caseName: row.diseaseName || '未命名案例',
-            category: cat,
-            files: filesList,
-            filesJson: row.filesJson || '[]'
-          });
-        });
-      }
+      saveToLocalCache(json);
+      applyDatabaseToMemory(json);
       
       const badge = document.getElementById('sync-status-badge');
       if (badge) {
@@ -2050,27 +2084,67 @@
         badge.className = 'status-ok';
       }
       
-      const p = new URLSearchParams(window.location.search);
-      if ((p.has('role') && p.get('role') === 'child') || (p.has('type') && p.get('type') === 'child')) {
-        ciState.isChildMode = true;
-      }
       applyRoleMode();
       renderMultiButtonsFromRules();
       calculateCIPremium();
     }
   };
-  function syncAllFromGASCentral() {
-    const script = document.createElement('script');
-    script.src = GAS_CENTRAL_URL + (GAS_CENTRAL_URL.includes('?') ? '&' : '?') + 'callback=onGASDataLoaded&t=' + Date.now();
-    script.onerror = function() {
+
+  window.onGASVersionChecked = function(res) {
+    const currentCachedVer = dbData.config ? dbData.config["資料版本"] : null;
+    const remoteVer = res && res.version ? res.version : (res && res.config ? res.config["資料版本"] : null);
+    
+    // 如果雲端有新版本，則下載完整中央資料庫
+    if (remoteVer && remoteVer !== currentCachedVer) {
+      const s = document.createElement('script');
+      s.src = GAS_CENTRAL_URL + (GAS_CENTRAL_URL.includes('?') ? '&' : '?') + 'callback=onGASDataLoaded&t=' + Date.now();
+      document.body.appendChild(s);
+    } else {
       const badge = document.getElementById('sync-status-badge');
-      if (badge) badge.innerHTML = '⚠️ 本地模式';
+      if (badge) {
+        badge.innerHTML = '⚡ 已使用本機秒開 (v' + (currentCachedVer || '9.6.8') + ')';
+        badge.className = 'status-ok';
+      }
+    }
+  };
+
+  function syncAllFromGASCentral() {
+    const hasCache = loadFromLocalCache();
+    if (hasCache) {
+      const badge = document.getElementById('sync-status-badge');
+      if (badge) {
+        badge.innerHTML = '⚡ 本地極速載入中...';
+        badge.className = 'status-cache';
+      }
       applyRoleMode();
       renderMultiButtonsFromRules();
       calculateCIPremium();
-    };
-    document.body.appendChild(script);
+      
+      // 背景僅檢查版本號
+      const sVer = document.createElement('script');
+      sVer.src = GAS_CENTRAL_URL + (GAS_CENTRAL_URL.includes('?') ? '&' : '?') + 'action=checkVersion&callback=onGASVersionChecked&t=' + Date.now();
+      sVer.onerror = function() {
+        if (badge) {
+          badge.innerHTML = '⚡ 離線/快取模式 (v' + (dbData.config["資料版本"] || '9.6.8') + ')';
+          badge.className = 'status-ok';
+        }
+      };
+      document.body.appendChild(sVer);
+    } else {
+      // 首次無快取，載入全部資料
+      const script = document.createElement('script');
+      script.src = GAS_CENTRAL_URL + (GAS_CENTRAL_URL.includes('?') ? '&' : '?') + 'callback=onGASDataLoaded&t=' + Date.now();
+      script.onerror = function() {
+        const badge = document.getElementById('sync-status-badge');
+        if (badge) badge.innerHTML = '⚠️ 本地模式';
+        applyRoleMode();
+        renderMultiButtonsFromRules();
+        calculateCIPremium();
+      };
+      document.body.appendChild(script);
+    }
   }
+
   document.addEventListener('DOMContentLoaded', function() {
     const p = new URLSearchParams(window.location.search);
     if ((p.has('role') && p.get('role') === 'child') || (p.has('type') && p.get('type') === 'child')) {
@@ -2080,7 +2154,7 @@
     if (p.has('months')) ciState.months = Number(p.get('months')) || (ciState.isChildMode ? 24 : 36);
     if (p.has('existing')) ciState.existingCI = Number(p.get('existing')) || 0;
     
-    // 承接 Health Protection 帶入的醫療相關參數
+    // 承接 Health Protection 帶入之參數
     if (p.has('cost')) ciState.medCost = Number(p.get('cost')) || 500000;
     if (p.has('hasCompany')) ciState.hasCompanyMed = p.get('hasCompany');
     if (p.has('companyLimit')) ciState.companyLimit = Number(p.get('companyLimit')) || 0;
@@ -2094,8 +2168,6 @@
       ciState.goals = p.get('losses').split(',').map(s => s.trim());
     }
     
-    renderAllDynamicCards();
-    renderMultiButtonsFromRules();
     syncAllFromGASCentral();
   });
 </script>
