@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.6.5)</title>
+<title>確診危疾生活儲備規劃 (v9.6.6)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -58,6 +58,17 @@
     color: #1d4ed8;
     text-decoration: underline;
     margin: 0 4px;
+  }
+
+  /* 03 頁經典黃底紅字警示方塊 */
+  .yellow-red-alert-box {
+    background: #fffbeb !important;
+    border: 1.5px solid #fde68a !important;
+    border-left: 5px solid #dc2626 !important;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 14px;
+    color: #b45309;
   }
 
   /* 04 頁藍底藍字資料展示框 (Data Text Badge) */
@@ -250,18 +261,18 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge" id="appVersion">v9.6.5</span>
+      <span class="v-badge" id="appVersion">v9.6.6</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
     <div id="sync-status-badge">🔄 連接雲端中央庫...</div>
   </div>
 
-  <!-- ==================== 前台動態題目卡片掛載容器 ==================== -->
+  <!-- 前台動態題目卡片掛載容器 -->
   <div id="dynamic-ci-container"></div>
 </div>
 
-<!-- ==================== 5x5 置中抽屜彈窗 ==================== -->
+<!-- 5x5 置中抽屜彈窗 -->
 <div class="modal-overlay" id="mediaDrawerOverlay">
   <div class="modal-box">
     <button type="button" class="modal-close-btn" onclick="closeMediaDrawer()">×</button>
@@ -275,7 +286,7 @@
   </div>
 </div>
 
-<!-- ==================== 免下載直接置中大圖預覽器 ==================== -->
+<!-- 免下載直接置中大圖預覽器 -->
 <div id="viewerModalOverlay">
   <div class="viewer-header-bar">
     <span id="viewerTitle" style="font-weight:bold; font-size:14px;">預覽文件</span>
@@ -288,7 +299,7 @@
   </div>
 </div>
 
-<!-- ==================== 全螢幕所見即所得後台管理系統 ==================== -->
+<!-- 全螢幕所見即所得後台管理系統 -->
 <div id="adminFullScreenModal">
   <div class="admin-header-nav">
     <span style="font-weight:800; font-size:15px;">⚙️ CIApp 雲端後台管理控制台</span>
@@ -366,12 +377,16 @@
   
   const defaultDatabase = {
     config: {
-      "資料版本": "9.6.5",
+      "資料版本": "9.6.6",
       "醫療App網址": "https://ivancww.github.io/medicalclaims",
       "醫療App參數": "role={role}&cost={medCost}&hasCompany={hasCompany}&companyLimit={companyLimit}&companyRate={companyRate}&hasPersonal={hasPersonal}&personalLimit={personalLimit}&personalRate={personalRate}&losses={losses}&focus={focus}",
       "溫馨提示醫療標題": "🏥 溫馨提示：醫療選擇防線",
       "溫馨提示醫療說明": "先了解你現有醫療保障，確認私家高額住院與手術費用可支持到幾多。",
       "溫馨提示醫療按鈕": "了解醫療方案 (前線醫療實報實銷) →",
+      "04多重條款_癌症A": "🎗️ 癌症選項A：合共 6 次（每 3 年）",
+      "04多重條款_癌症B": "💊 癌症選項B：每月賠償 5%（1 年後，最多 100 個月）",
+      "04多重條款_心臟中風": "❤️ 心臟病 / 中風：合共 3 次（1 年後）",
+      "04多重條款_腦退化": "🧠 腦退化 / 柏金遜：合共 1 次（1 年後），其後年金形式（每年 6%）",
       "成人_預設每月開支": "40000",
       "成人_預設休養月數": "36",
       "成人_預設現有危疾": "300000",
@@ -544,6 +559,7 @@
             <button type="button" class="btn-capsule" onclick="openMediaDrawer('child')">👶 兒童特定疾病保障</button>
           </div>
         `;
+        // 🌟 03 頁：還原黃色底色 ＋ 左側紅色粗邊框 ＋ 紅色重點文字 🌟
         bodyHtml = `
           <div class="stat-grid-box" style="margin-top:0; background:#f0f7ff; border-color:#bfdbfe;">
             <div class="stat-row">
@@ -628,18 +644,19 @@
               </div>
             </div>
           </div>
-          <div class="yellow-red-alert-box" style="margin-top:14px;">
+          
+          <!-- 黃底紅字警示方塊 -->
+          <div class="yellow-red-alert-box">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
-              <span style="font-size:15px; font-weight:900;">所選項目合計理賠總額 (填補生活缺口)：</span>
-              <span style="font-size:19px; font-weight:900;" id="c-link-remain-gap">HK$ 0</span>
+              <span style="font-size:15px; font-weight:900; color:#78350f;">所選項目合計理賠總額 (填補生活缺口)：</span>
+              <span style="font-size:20px; font-weight:900; color:#1e293b;" id="c-link-remain-gap">HK$ 0</span>
             </div>
-            <div style="font-size:12px; font-weight:normal; margin-top:4px; color:#991b1b;" id="c-link-status-note">
-              （總理賠已全額覆蓋生活缺口 ✅）
+            <div style="font-size:13px; font-weight:700; margin-top:5px; color:#dc2626;" id="c-link-status-note">
+              （所選理賠 HK$ 0，尚欠生活資金 HK$ 1,140,000）
             </div>
           </div>
         `;
       } else if (p.stepOrder === 4) {
-        // 🌟 04 頁：純文字資料展示框 (徹底實現藍底深藍字，動態讀取 Google Sheet 條款 F 欄) 🌟
         topBarExtras = `
           <div class="capsule-btn-bar" style="margin:0;">
             <button type="button" class="btn-capsule" onclick="openMediaDrawer('case')">📑 真實理賠案例庫</button>
@@ -663,7 +680,6 @@
               </div>
             </div>
             
-            <!-- 藍底深藍字展示框 -->
             <div class="rules-info-display-grid">
               ${rulesDisplayBadges}
             </div>
@@ -687,7 +703,6 @@
               </div>
               <div id="d-timeline-oys2" style="min-height:140px;"></div>
               
-              <!-- 點擊推進時間線 Emoji 按鈕 -->
               <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; margin-top:8px;">
                 <div style="font-size:11px; font-weight:bold; color:#64748b; margin-bottom:4px; text-align:center;">👇 點擊下方 Emoji 推進模擬多次理賠：</div>
                 <div class="emoji-bar-inline" id="botEmojiBtnContainer"></div>
@@ -1256,8 +1271,10 @@
     if (linkStatusNote) {
       if (remainLifeGap === 0 && totalSelectedPayout > 0) {
         linkStatusNote.innerText = `（所選理賠 HK$ ${totalSelectedPayout.toLocaleString()} 已全額覆蓋 HK$ ${ciState.netGap.toLocaleString()} 生活缺口 ✅）`;
+        linkStatusNote.style.color = '#059669';
       } else {
         linkStatusNote.innerText = `（所選理賠 HK$ ${totalSelectedPayout.toLocaleString()}，尚欠生活資金 HK$ ${remainLifeGap.toLocaleString()}）`;
+        linkStatusNote.style.color = '#dc2626';
       }
     }
     ciState.oys2MultiPaid = oys2FirstDisplay;
