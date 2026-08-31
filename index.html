@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.6.0)</title>
+<title>確診危疾生活儲備規劃 (v9.6.1)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -40,10 +40,58 @@
   .stat-row.total { border-top: 1.5px dashed var(--border); padding-top: 10px; margin-top: 10px; font-weight: 900; font-size: 16px; }
   .yellow-red-alert-box { background: #fef3c7; border: 1.5px solid #fde68a; border-left: 5px solid #dc2626; border-radius: 8px; padding: 14px; margin-top: 14px; font-size: 14px; line-height: 1.6; color: #dc2626; font-weight: 700; }
   
-  .red-alert-notice-card { background: #fee2e2; border: 1.5px solid #fca5a5; border-left: 5px solid #dc2626; padding: 12px 14px; border-radius: 8px; margin: 14px 0; font-size: 13.5px; color: #991b1b; line-height: 1.6; font-weight: 700; }
-  .med-app-jump-btn { padding: 14px 16px; border-radius: 14px; border: 1.5px solid #bfdbfe; background: #eff6ff; color: #1e40af; font-size: 14.5px; font-weight: 800; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: transform 0.1s ease; margin-top: 12px; }
-  .med-app-jump-btn:active { transform: scale(0.98); }
-  .med-app-jump-btn img { width: 42px; height: 42px; border-radius: 10px; object-fit: cover; }
+  /* 溫馨提示卡片與 App 導流按鈕 */
+  .warm-tip-card {
+    background: #f0f7ff;
+    border: 1.5px solid #bfdbfe;
+    border-radius: 14px;
+    padding: 16px;
+    margin: 14px 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    transition: 0.2s ease;
+    box-shadow: 0 2px 8px rgba(30, 58, 138, 0.04);
+  }
+  .warm-tip-card:hover {
+    border-color: var(--primary);
+    background: #e0f2fe;
+    transform: translateY(-1px);
+  }
+  .warm-tip-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    object-fit: cover;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  .warm-tip-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .warm-tip-title {
+    font-size: 15.5px;
+    font-weight: 800;
+    color: var(--primary);
+  }
+  .warm-tip-desc {
+    font-size: 12.5px;
+    color: #475569;
+    line-height: 1.5;
+  }
+  .warm-tip-action {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+  }
   
   .capsule-btn-bar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
   .btn-capsule { padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; border: 1.5px solid #cbd5e1; background: #fff; color: #334155; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; }
@@ -161,7 +209,7 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge" id="appVersion">v9.6.0</span>
+      <span class="v-badge" id="appVersion">v9.6.1</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
@@ -172,7 +220,7 @@
   <div id="dynamic-ci-container"></div>
 </div>
 
-<!-- ==================== 5x5 置中抽屜彈窗（支援二級案例切換） ==================== -->
+<!-- ==================== 5x5 置中抽屜彈窗 ==================== -->
 <div class="modal-overlay" id="mediaDrawerOverlay">
   <div class="modal-box">
     <button type="button" class="modal-close-btn" onclick="closeMediaDrawer()">×</button>
@@ -186,7 +234,7 @@
   </div>
 </div>
 
-<!-- ==================== 免下載直接置中大圖/檔案左右滑動預覽器 ==================== -->
+<!-- ==================== 免下載直接置中大圖預覽器 ==================== -->
 <div id="viewerModalOverlay">
   <div class="viewer-header-bar">
     <span id="viewerTitle" style="font-weight:bold; font-size:14px;">預覽文件</span>
@@ -216,7 +264,6 @@
     <button type="button" class="admin-tab-btn" onclick="switchAdminTab('firebase', this)">🔥 Firebase 案例/圖片管理</button>
   </div>
   <div class="admin-scroll-body">
-    <!-- 分頁 1：頁面流程與題目管理 -->
     <div id="adminTabPagesSection">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
         <div style="display:flex; align-items:center; gap:8px;">
@@ -230,18 +277,15 @@
       </div>
       <div id="adminVisualContainer"></div>
     </div>
-    <!-- 分頁 2：系統參數設定 -->
     <div id="adminTabConfigSection" style="display:none;">
       <div class="admin-card-section" id="adminConfigContainer"></div>
     </div>
-    <!-- 分頁 3：04頁多重賠償規則設定 -->
     <div id="adminTabRulesSection" style="display:none;">
       <div class="admin-card-section">
         <h3 style="color:var(--primary); margin:0 0 12px 0; font-size:16px;">⚖️ 04 頁多重賠償計算規則 (連動 Google Sheet 賠償條款)</h3>
         <div id="adminRulesContainer" style="display:flex; flex-direction:column; gap:12px;"></div>
       </div>
     </div>
-    <!-- 分頁 4：Firebase 圖片/案例上傳 -->
     <div id="adminTabFirebaseSection" style="display:none;">
       <div class="admin-card-section">
         <h3 style="color:var(--primary); margin:0 0 10px 0; font-size:16px;">🔥 上傳保障文件／理賠案例到 Firebase (支援最多 10 個檔案)</h3>
@@ -281,7 +325,12 @@
   
   const defaultDatabase = {
     config: {
-      "資料版本": "9.6.0",
+      "資料版本": "9.6.1",
+      "醫療App網址": "https://ivancww.github.io/medicalclaims",
+      "醫療App參數": "role={role}&cost={medCost}&hasCompany={hasCompany}&companyLimit={companyLimit}&companyRate={companyRate}&hasPersonal={hasPersonal}&personalLimit={personalLimit}&personalRate={personalRate}&losses={losses}&focus={focus}",
+      "溫馨提示醫療標題": "🏥 溫馨提示：醫療選擇防線",
+      "溫馨提示醫療說明": "先了解你現有醫療保障，確認私家高額住院與手術費用可支持到幾多。",
+      "溫馨提示醫療按鈕": "了解醫療方案 (前線醫療實報實銷) →",
       "成人_預設每月開支": "40000",
       "成人_預設休養月數": "36",
       "成人_預設現有危疾": "300000",
@@ -335,6 +384,7 @@
   let dbData = { config: { ...defaultDatabase.config }, pages: defaultDatabase.pages, options: defaultDatabase.options, rates: {}, cases: [], rules: defaultDatabase.rules };
   let cloudAppDatabase = { "102": [], "child": [], "case": [], rules: defaultDatabase.rules };
   
+  // 承接來自 Health Protection 的完整上下文狀態
   const ciState = {
     isChildMode: false,
     monthlyExp: 40000,
@@ -356,7 +406,17 @@
     chooseOys2: true,
     premiumMode: 'annual',
     oys2PayPeriod: 18,
-    annualPremMap: { sce: 1425, oys2: 19204 }
+    annualPremMap: { sce: 1425, oys2: 19204 },
+    
+    // 外部帶入的醫療相關參數 (Health Protection Context)
+    medCost: 500000,
+    hasCompanyMed: 'no',
+    companyLimit: 100000,
+    companyRate: 80,
+    hasPersonalMed: 'no',
+    personalLimit: 100000,
+    personalRate: 80,
+    focus: ''
   };
   let hasUrlLosses = false;
   
@@ -380,6 +440,11 @@
     let pages = (dbData.pages && dbData.pages.length > 0) ? dbData.pages.filter(p => p.role === roleKey) : defaultDatabase.pages.filter(p => p.role === roleKey);
     pages.sort((a,b) => Number(a.stepOrder) - Number(b.stepOrder));
     
+    const cfg = dbData.config || defaultDatabase.config;
+    const warmTipTitle = cfg["溫馨提示醫療標題"] || "🏥 溫馨提示：醫療選擇防線";
+    const warmTipDesc = cfg["溫馨提示醫療說明"] || "先了解你現有醫療保障，確認私家高額住院與手術費用可支持到幾多。";
+    const warmTipBtn = cfg["溫馨提示醫療按鈕"] || "了解醫療方案 (前線醫療實報實銷) →";
+    
     pages.forEach((p, idx) => {
       const isFirst = (idx === 0);
       const isLast = (idx === pages.length - 1);
@@ -390,7 +455,6 @@
       let topBarExtras = '';
 
       if (p.stepOrder === 1) {
-        // 第 1 步：生活儲備目標
         bodyHtml = `
           <div class="stat-grid-box">
             <div class="stat-row">
@@ -410,7 +474,6 @@
           <div class="grid-2x2" id="goal-options-grid"></div>
         `;
       } else if (p.stepOrder === 2) {
-        // 第 2 步：現有防線
         const supportMonths = ciState.monthlyExp > 0 ? (ciState.existingCI / ciState.monthlyExp).toFixed(1) : 0;
         const remainGap = Math.max(0, ciState.netGap - ciState.totalChosenAssets);
         bodyHtml = `
@@ -448,7 +511,6 @@
           </div>
         `;
       } else if (p.stepOrder === 3) {
-        // 第 3 步：解決方案
         topBarExtras = `
           <div class="capsule-btn-bar" style="margin:0;">
             <button type="button" class="btn-capsule" onclick="openMediaDrawer('102')">🧑 102種疾病保障</button>
@@ -550,7 +612,6 @@
           </div>
         `;
       } else if (p.stepOrder === 4) {
-        // 第 4 步：多重時間線
         topBarExtras = `
           <div class="capsule-btn-bar" style="margin:0;">
             <button type="button" class="btn-capsule" onclick="openMediaDrawer('case')">📑 真實理賠案例庫</button>
@@ -597,7 +658,6 @@
           </div>
         `;
       } else if (p.stepOrder === 5) {
-        // 第 5 步：保費精算
         topBarExtras = `
           <div style="display:flex; gap:4px;">
             <button type="button" class="prem-mode-btn active" id="btn-ci-annual" data-mode="annual">年繳</button>
@@ -677,7 +737,7 @@
           </div>
         `;
       } else if (p.stepOrder === 6) {
-        // 第 6 步：方案總結
+        // 第 6 步：方案總結 (溫馨提示雙戰線導流卡片)
         bodyHtml = `
           <div style="background:#fff; border:2px solid var(--primary); border-radius:12px; padding:18px; line-height:1.8; font-size:14px; margin: 15px 0;">
             <div>🎯 <strong>你想守住的範疇：</strong> <span id="f-confirm-goals">家庭生活質素、積蓄與資產</span></div>
@@ -689,16 +749,17 @@
             </div>
             <div>💵 <strong>預算投入：</strong> <strong style="color:var(--danger); font-size:18px;" id="f-confirm-prem">HK$ 19,204 /年</strong></div>
           </div>
-          <div class="red-alert-notice-card" id="f-soft-notice-box">
-            ⚠️ <strong>規劃提醒：</strong>一場嚴重疾病往往引發兩條戰線。危疾賠償主要用於承托停工休養期間的生活開支與照護基金；而前線龐大的私家住院與手術費用，仍需具備實報實銷的醫療保險作全面覆蓋。
-          </div>
-          <a href="https://ivancww.github.io/medicalclaims" target="_blank" class="med-app-jump-btn" id="f-med-app-btn">
-            <img src="https://ivancww.github.io/medicalclaims/icon-192.png" alt="Medical App Logo" onerror="this.src='https://via.placeholder.com/42?text=Med';">
-            <div style="display:flex; flex-direction:column; gap:2px;">
-              <span style="font-size:15px; font-weight:800;">醫療分析 App</span>
-              <span style="font-size:12px; font-weight:600; opacity:0.85;">前線私家醫療費用自付缺口試算 →</span>
+          
+          <!-- 🌟 溫馨提示雙戰線醫療導流卡片 (承接 Health Protection 參數) 🌟 -->
+          <a href="https://ivancww.github.io/medicalclaims" target="_blank" rel="noopener noreferrer" class="warm-tip-card" id="f-med-app-btn">
+            <img src="https://ivancww.github.io/medicalclaims/icon-192.png" alt="Medical App Logo" class="warm-tip-logo" onerror="this.src='https://via.placeholder.com/48?text=Med';">
+            <div class="warm-tip-content">
+              <div class="warm-tip-title" id="ui-warm-tip-title">${warmTipTitle}</div>
+              <div class="warm-tip-desc" id="ui-warm-tip-desc">${warmTipDesc}</div>
+              <div class="warm-tip-action" id="ui-warm-tip-btn">${warmTipBtn}</div>
             </div>
           </a>
+
           <div style="margin-top:14px;">
             <button type="button" class="btn-secondary" style="width:100%; font-size:13.5px; font-weight:bold; background:#fffdf5; border-color:#fde68a; color:#b45309;" id="btnToggleCIPromo">
               🎁 點擊展開：專屬保費優惠與回贈試算 (左右獨立) ▼
@@ -749,7 +810,6 @@
           </div>
         `;
       } else {
-        // 自訂動態問卷或資訊頁面
         const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
         const opts = allOpts.filter(o => o.pageId === p.pageId).sort((a,b)=>a.order-b.order);
         let optButtons = '';
@@ -789,7 +849,6 @@
   }
 
   function bindCardSpecificEvents() {
-    // 綁定保額即時輸入
     const sceSumInp = document.getElementById('c-sce-sum-input');
     const oys2SumInp = document.getElementById('c-oys2-sum-input');
     if (sceSumInp) sceSumInp.oninput = function() { ciState.sceSum = parseNum(this.value); this.value = ciState.sceSum.toLocaleString(); runStage3Calculation(); };
@@ -800,7 +859,6 @@
     if (startAgeEl) startAgeEl.oninput = runStage3Calculation;
     if (claimAgeEl) claimAgeEl.oninput = runStage3Calculation;
 
-    // 方案選擇卡片點擊
     const cardSce = document.getElementById('card-ci-sce');
     const chkSce = document.getElementById('chk-plan-sce');
     const cardOys2 = document.getElementById('card-ci-oys2');
@@ -822,7 +880,6 @@
       };
     }
 
-    // 供款年期按鈕
     document.querySelectorAll('.pay-period-btn').forEach(btn => {
       btn.onclick = function(e) {
         e.stopPropagation();
@@ -833,7 +890,6 @@
       };
     });
 
-    // 年繳/月繳切換
     document.querySelectorAll('.prem-mode-btn').forEach(btn => {
       btn.onclick = function() {
         document.querySelectorAll('.prem-mode-btn').forEach(b => b.classList.remove('active'));
@@ -1340,13 +1396,42 @@
     
     syncGoalDisplay();
     
+    // 🌟 動態編譯跳轉醫療 App URL (完整帶入 Health Protection 參數) 🌟
+    function compileUrl(baseUrl, paramTemplate, valMap) {
+      var cleanBase = (baseUrl || '').trim().replace(/\/+$/, '');
+      var queryString = paramTemplate || '';
+      for (var k in valMap) {
+        var val = valMap[k];
+        queryString = queryString.replace(new RegExp('\\{' + k + '\\}', 'g'), encodeURIComponent(val !== undefined && val !== null ? val : ''));
+      }
+      return cleanBase + (queryString ? '?' + queryString : '');
+    }
+
     const medBtn = document.getElementById('f-med-app-btn');
     if (medBtn) {
       const isChild = ciState.isChildMode;
       const roleVal = isChild ? 'child' : 'adult';
       const lossesVal = ciState.goals.join(',');
-      const alertText = isChild ? '留意兒童私家住院及各項先進治療費用' : '';
-      medBtn.href = `https://ivancww.github.io/medicalclaims?role=${roleVal}&type=${roleVal}&cost=500000&losses=${encodeURIComponent(lossesVal)}&alertMsg=${encodeURIComponent(alertText)}`;
+      
+      const valDict = {
+        role: roleVal,
+        type: roleVal,
+        cost: ciState.medCost || (isChild ? 200000 : 500000),
+        medCost: ciState.medCost || (isChild ? 200000 : 500000),
+        hasCompany: ciState.hasCompanyMed || 'no',
+        companyLimit: ciState.companyLimit || 0,
+        companyRate: ciState.companyRate || 80,
+        hasPersonal: ciState.hasPersonalMed || 'no',
+        personalLimit: ciState.personalLimit || 0,
+        personalRate: ciState.personalRate || 80,
+        losses: lossesVal,
+        focus: ciState.focus || ''
+      };
+
+      const medBase = (dbData.config && dbData.config["醫療App網址"]) || "https://ivancww.github.io/medicalclaims";
+      const medTpl = (dbData.config && dbData.config["醫療App參數"]) || "role={role}&cost={medCost}&hasCompany={hasCompany}&companyLimit={companyLimit}&companyRate={companyRate}&hasPersonal={hasPersonal}&personalLimit={personalLimit}&personalRate={personalRate}&losses={losses}&focus={focus}";
+      
+      medBtn.href = compileUrl(medBase, medTpl, valDict);
     }
   }
 
@@ -2058,6 +2143,16 @@
     if (p.has('months')) ciState.months = Number(p.get('months')) || (ciState.isChildMode ? 24 : 36);
     if (p.has('existing')) ciState.existingCI = Number(p.get('existing')) || 0;
     
+    // 承接 Health Protection 帶入的醫療相關參數
+    if (p.has('cost')) ciState.medCost = Number(p.get('cost')) || 500000;
+    if (p.has('hasCompany')) ciState.hasCompanyMed = p.get('hasCompany');
+    if (p.has('companyLimit')) ciState.companyLimit = Number(p.get('companyLimit')) || 0;
+    if (p.has('companyRate')) ciState.companyRate = Number(p.get('companyRate')) || 80;
+    if (p.has('hasPersonal')) ciState.hasPersonalMed = p.get('hasPersonal');
+    if (p.has('personalLimit')) ciState.personalLimit = Number(p.get('personalLimit')) || 0;
+    if (p.has('personalRate')) ciState.personalRate = Number(p.get('personalRate')) || 80;
+    if (p.has('focus')) ciState.focus = p.get('focus');
+
     if (p.has('losses') && p.get('losses').trim()) {
       hasUrlLosses = true;
       ciState.goals = p.get('losses').split(',').map(s => s.trim());
