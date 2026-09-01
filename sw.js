@@ -1,5 +1,5 @@
 // Service Worker for Insurance PWA v9.7.1
-const CACHE_VERSION = 'insurance-pwa-cache-v9.8.1';
+const CACHE_VERSION = 'insurance-pwa-cache-v9.9.0';
 const FILES_TO_CACHE = [
   './',
   './index.html',
