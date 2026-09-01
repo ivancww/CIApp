@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.7.3)</title>
+<title>確診危疾生活儲備規劃 (v9.7.4)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -127,7 +127,7 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge" id="appVersion">v9.7.3</span>
+      <span class="v-badge" id="appVersion">v9.7.4</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
@@ -192,7 +192,7 @@
 
   const defaultDatabase = {
     config: {
-      "資料版本": "9.7.3",
+      "資料版本": "9.7.4",
       "醫療App網址": "https://ivancww.github.io/medicalclaims",
       "醫療App參數": "role={role}&cost={medCost}&hasCompany={hasCompany}&companyLimit={companyLimit}&companyRate={companyRate}&hasPersonal={hasPersonal}&personalLimit={personalLimit}&personalRate={personalRate}&losses={losses}&focus={focus}",
       "溫馨提示醫療標題": "🏥 溫馨提示：醫療選擇防線",
@@ -284,6 +284,11 @@
   };
   let hasUrlLosses = false;
 
+  let currentViewerList = [];
+  let currentViewerIndex = 0;
+  let touchStartX = 0;
+  let touchEndX = 0;
+
   function parseNum(val) {
     if (typeof val === 'number') return val;
     return Number(String(val || '').replace(/[^0-9]/g, '')) || 0;
@@ -294,6 +299,19 @@
     if (!dbData.config || Object.keys(dbData.config).length === 0) dbData.config = { ...defaultDatabase.config };
     if (!dbData.rates || Object.keys(dbData.rates).length === 0) dbData.rates = fallbackRates;
     cloudAppDatabase.rules = (jsonData.rules && jsonData.rules.length > 0) ? jsonData.rules : defaultDatabase.rules;
+    if (Array.isArray(jsonData.cases)) {
+      cloudAppDatabase["102"] = [];
+      cloudAppDatabase["child"] = [];
+      cloudAppDatabase["case"] = [];
+      jsonData.cases.forEach(row => {
+        const cat = String(row.category || '').trim();
+        let parsedFiles = null;
+        try { parsedFiles = JSON.parse(row.filesJson); } catch(e) {}
+        let filesList = Array.isArray(parsedFiles) && parsedFiles.length > 0 ? parsedFiles : [{ title: row.diseaseName || '案例', type: "image", url: "https://via.placeholder.com/150x80" }];
+        if (!cloudAppDatabase[cat]) cloudAppDatabase[cat] = [];
+        cloudAppDatabase[cat].push({ caseName: row.diseaseName || '未命名案例', category: cat, files: filesList, filesJson: row.filesJson || '[]' });
+      });
+    }
   }
 
   function loadFromLocalCache() {
@@ -330,11 +348,18 @@
     let pages = (dbData.pages && dbData.pages.length > 0) ? dbData.pages.filter(p => p.role === roleKey) : defaultDatabase.pages.filter(p => p.role === roleKey);
     pages.sort((a,b) => Number(a.stepOrder) - Number(b.stepOrder));
     
+    const cfg = dbData.config || defaultDatabase.config;
+    const warmTipTitle = cfg["溫馨提示醫療標題"] || "🏥 溫馨提示：醫療選擇防線";
+    const warmTipDesc = cfg["溫馨提示醫療說明"] || "先了解你現有醫療保障，確認私家高額住院與手術費用可支持到幾多。";
+    const warmTipBtn = cfg["溫馨提示醫療按鈕"] || "了解醫療方案 (前線醫療實報實銷) →";
+    
     pages.forEach((p, idx) => {
       const isFirst = (idx === 0);
       const isLast = (idx === pages.length - 1);
-      const prevOrder = isFirst ? null : pages[idx - 1].stepOrder;
-      const nextOrder = isLast ? null : pages[idx + 1].stepOrder;
+      
+      // 改進：直接按當前排序數組的上下頁尋找目標 stepOrder，解決點擊下一步卡住的問題
+      const nextOrder = !isLast ? pages[idx + 1].stepOrder : null;
+      const prevOrder = !isFirst ? pages[idx - 1].stepOrder : null;
       
       let bodyHtml = '';
       let topBarExtras = '';
@@ -404,6 +429,12 @@
           </div>
         `;
       } else if (p.pageId === 'step_ci_3' || p.pageType === '解決方案' || p.pageType === '全面守護') {
+        topBarExtras = `
+          <div class="capsule-btn-bar" style="margin:0;">
+            <button type="button" class="btn-capsule" onclick="openMediaDrawer('102')">🧑 102種疾病保障</button>
+            <button type="button" class="btn-capsule" onclick="openMediaDrawer('child')">👶 兒童特定疾病保障</button>
+          </div>
+        `;
         bodyHtml = `
           <div class="stat-grid-box" style="margin-top:0; background:#f0f7ff; border-color:#bfdbfe;">
             <div class="stat-row">
@@ -418,11 +449,11 @@
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
             <div>
               <label style="font-size:12px; font-weight:bold; color:var(--primary);">受保人投保年齡：</label>
-              <input type="number" id="c-input-start-age" value="${ciState.simStartAge}" min="0" max="80" oninput="runStage3Calculation()">
+              <input type="number" id="c-input-start-age" value="${ciState.simStartAge}" min="0" max="80">
             </div>
             <div>
               <label style="font-size:12px; font-weight:bold;">假設確診歲數：</label>
-              <input type="number" id="c-input-claim-age" value="${ciState.simClaimAge}" min="0" max="100" oninput="runStage3Calculation()">
+              <input type="number" id="c-input-claim-age" value="${ciState.simClaimAge}" min="0" max="100">
             </div>
           </div>
           <div class="grid-2col">
@@ -433,12 +464,12 @@
               </div>
               <div style="margin-bottom:8px;">
                 <label style="font-size:11.5px; font-weight:bold; color:#34495e;">SCE 擬投保額 (HK$)：</label>
-                <input type="text" id="c-sce-sum-input" value="${ciState.sceSum.toLocaleString()}" oninput="ciState.sceSum=parseNum(this.value); this.value=ciState.sceSum.toLocaleString(); runStage3Calculation();">
+                <input type="text" id="c-sce-sum-input" value="${ciState.sceSum.toLocaleString()}">
               </div>
               <div class="claim-check-item checked" id="box-sce-first">
-                <div style="font-size:12px; font-weight:bold; color:#c0392b;">🚨 首次嚴重危疾 (100%)</div>
-                <div style="font-size:18px; font-weight:900; color:#2c3e50; margin:3px 0;" id="c-sce-first-claim">HK$ ${ciState.sceSum.toLocaleString()}</div>
-                <div style="font-size:11px; color:#666;">• 100% 基本保額賠償，發放後合約即時完結</div>
+                <div style="font-size:12px; font-weight:bold; color:#c0392b;">🚨 首次嚴重危疾 (<span id="c-sce-first-pct-lbl">100%</span>)</div>
+                <div style="font-size:18px; font-weight:900; color:#2c3e50; margin:3px 0;" id="c-sce-first-claim">HK$ 780,000</div>
+                <div style="font-size:11px; color:#666;" id="c-sce-first-desc">• 100% 基本保額賠償，發放後合約即時完結</div>
               </div>
             </div>
             <div class="compare-side-card oys2">
@@ -448,7 +479,7 @@
               </div>
               <div style="margin-bottom:8px;">
                 <label style="font-size:11.5px; font-weight:bold; color:#27ae60;">OYS2 擬投保額 (HK$)：</label>
-                <input type="text" id="c-oys2-sum-input" value="${ciState.oys2Sum.toLocaleString()}" oninput="ciState.oys2Sum=parseNum(this.value); this.value=ciState.oys2Sum.toLocaleString(); runStage3Calculation();">
+                <input type="text" id="c-oys2-sum-input" value="${ciState.oys2Sum.toLocaleString()}">
               </div>
               <div class="claim-check-item checked" id="box-oys2-first">
                 <div class="claim-header-row" onclick="toggleClaimCheck('oys2-first')">
@@ -457,7 +488,7 @@
                 </div>
                 <div style="font-size:18px; font-weight:900; color:#27ae60; margin:3px 0;" id="c-oys2-first-claim">HK$ 1,170,000</div>
                 <div style="font-size:11px; color:#166534;" id="c-oys2-bonus-desc-line">
-                  • 保額 ＋ 🎁 首 10 年加贈 <strong id="c-oys2-bonus-rate">+50%</strong><br>• 豁免餘下保費，多重持續有效
+                  • 保額 ＋ 🎁 首 10 年加贈 <strong id="c-oys2-bonus-rate">+50% ($390,000)</strong><br>• 豁免餘下保費，多重持續有效
                 </div>
               </div>
             </div>
@@ -474,6 +505,11 @@
           </div>
         `;
       } else if (p.pageId === 'step_ci_4' || p.pageType === '多重時間線') {
+        topBarExtras = `
+          <div class="capsule-btn-bar" style="margin:0;">
+            <button type="button" class="btn-capsule" onclick="openMediaDrawer('case')">📑 真實理賠案例庫</button>
+          </div>
+        `;
         const rulesList = (cloudAppDatabase.rules && cloudAppDatabase.rules.length > 0) ? cloudAppDatabase.rules : defaultDatabase.rules;
         let rulesDisplayBadges = '';
         rulesList.forEach(r => {
@@ -574,8 +610,8 @@
       
       const navButtons = `
         <div class="nav-btn-group">
-          ${!isFirst ? `<button type="button" class="btn-secondary" onclick="goToCIStage(${prevOrder})">← 上一步</button>` : ''}
-          ${!isLast ? `<button type="button" class="btn-primary" onclick="goToCIStage(${nextOrder})">下一步 →</button>` : `<button type="button" class="btn-primary" style="background:#059669;" onclick="alert('已為你生成專屬申請備案！')">🚀 確認並開始辦理</button>`}
+          ${prevOrder !== null ? `<button type="button" class="btn-secondary" onclick="goToCIStage(${prevOrder})">← 上一步</button>` : ''}
+          ${nextOrder !== null ? `<button type="button" class="btn-primary" onclick="goToCIStage(${nextOrder})">下一步 →</button>` : `<button type="button" class="btn-primary" style="background:#059669;" onclick="alert('已為你生成專屬申請備案！')">🚀 確認並開始辦理</button>`}
         </div>
       `;
       
@@ -600,6 +636,16 @@
   }
 
   function bindCardSpecificEvents() {
+    const sceSumInp = document.getElementById('c-sce-sum-input');
+    const oys2SumInp = document.getElementById('c-oys2-sum-input');
+    if (sceSumInp) sceSumInp.oninput = function() { ciState.sceSum = parseNum(this.value); this.value = ciState.sceSum.toLocaleString(); runStage3Calculation(); };
+    if (oys2SumInp) oys2SumInp.oninput = function() { ciState.oys2Sum = parseNum(this.value); this.value = ciState.oys2Sum.toLocaleString(); runStage3Calculation(); };
+    
+    const startAgeEl = document.getElementById('c-input-start-age');
+    const claimAgeEl = document.getElementById('c-input-claim-age');
+    if (startAgeEl) startAgeEl.oninput = runStage3Calculation;
+    if (claimAgeEl) claimAgeEl.oninput = runStage3Calculation;
+    
     const cardSce = document.getElementById('card-ci-sce');
     const chkSce = document.getElementById('chk-plan-sce');
     const cardOys2 = document.getElementById('card-ci-oys2');
@@ -639,25 +685,21 @@
     });
   }
 
-  // 安全跳頁函式（徹底解決下一步卡住問題）
+  // 通用安全跳頁函式
   function goToCIStage(targetStepOrder) {
-    if (!targetStepOrder) return;
+    if (targetStepOrder === undefined || targetStepOrder === null) return;
     document.querySelectorAll('.stage-card').forEach(c => c.classList.remove('active'));
     const target = document.getElementById('stage-ci-' + targetStepOrder);
     if (target) {
       target.classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    
-    // 安全執行各模組校準
     try {
       if (document.getElementById('c-input-start-age')) runStage3Calculation();
       if (document.getElementById('d-timeline-sce')) resetCompareMultiTimeline();
       if (document.getElementById('ci-calc-age')) calculateCIPremium();
       if (document.getElementById('f-confirm-plan-name')) updateConfirmSummary();
-    } catch(e) {
-      console.warn("模組連動檢查:", e);
-    }
+    } catch(e) { console.warn("跳頁校準:", e); }
   }
 
   function toggleRoleMode() {
@@ -677,12 +719,11 @@
     const defMonths = isChild ? parseNum(dbData.config["兒童_預設休養月數"] || 24) : parseNum(dbData.config["成人_預設休養月數"] || 36);
     const defExist = isChild ? parseNum(dbData.config["兒童_預設現有危疾"] || 0) : parseNum(dbData.config["成人_預設現有危疾"] || 300000);
     const defStart = isChild ? parseNum(dbData.config["兒童_預設投保年齡"] || 5) : parseNum(dbData.config["成人_預設投保年齡"] || 20);
-    const defClaim = isChild ? parseNum(dbData.config["兒童_預設確診年齡"] || 10) : (defStart + 5);
     ciState.monthlyExp = defExp;
     ciState.months = defMonths;
     ciState.existingCI = defExist;
     ciState.simStartAge = defStart;
-    ciState.simClaimAge = defClaim;
+    ciState.simClaimAge = defStart + 5;
     renderAllDynamicCards();
     recalculateAll();
   }
@@ -912,82 +953,6 @@
     if (fGoals) fGoals.innerText = ciState.goals.join('、');
   }
 
-  // ======================== 04 頁多重賠償時間線 ========================
-  function renderMultiButtonsFromRules() {
-    const botContainer = document.getElementById('botEmojiBtnContainer');
-    if (!botContainer) return;
-    let botHtml = '';
-    const rules = (cloudAppDatabase.rules && cloudAppDatabase.rules.length > 0) ? cloudAppDatabase.rules : defaultDatabase.rules;
-    rules.forEach(rule => {
-      if (ciState.countsMap[rule.claimKey] === undefined) ciState.countsMap[rule.claimKey] = 0;
-      const bColor = rule.color || '#d97706';
-      const bEmoji = rule.emoji || '🛡️';
-      const bName = rule.name || '理賠項目';
-      botHtml += `<button type="button" class="btn-emoji-inline" style="background:${bColor};" onclick="executeDynamicClaim('${rule.claimKey}')" title="${bName}">${bEmoji}</button>`;
-    });
-    botHtml += `<button type="button" class="btn-emoji-inline" style="background:#64748b;" onclick="undoLastMultiClaim()" title="撤銷上一筆">↩️</button>`;
-    botContainer.innerHTML = botHtml;
-  }
-
-  function executeDynamicClaim(claimKey) {
-    const rules = (cloudAppDatabase.rules && cloudAppDatabase.rules.length > 0) ? cloudAppDatabase.rules : defaultDatabase.rules;
-    const rule = rules.find(r => r.claimKey === claimKey);
-    if (!rule) return;
-    const listOys2 = document.getElementById('d-timeline-oys2');
-    const sum = ciState.oys2Sum;
-    const currentCount = ciState.countsMap[claimKey] || 0;
-    const maxCount = parseInt(rule.maxCount, 10) || 6;
-    if (currentCount >= maxCount) { alert(`${rule.name || '此項目'} 已達最高理賠上限 (${maxCount} 次)！`); return; }
-    ciState.countsMap[claimKey] = currentCount + 1;
-    const waitYears = parseInt(rule.waitYears, 10) || 1;
-    ciState.multiTimelineAge += waitYears;
-    let amt = (claimKey === 'cancer_b') ? Math.round(sum * 0.05) : sum;
-    let desc = (claimKey === 'cancer_b') ? `發放每月 5% 津貼 ($${amt.toLocaleString()})` : `發放 100% 賠償 ($${amt.toLocaleString()})`;
-    ciState.oys2MultiPaid += amt;
-    const record = {
-      claimKey: claimKey, amt: amt, ageBefore: ciState.multiTimelineAge - waitYears,
-      html: `<div class="timeline-mini-card" style="border-left:5px solid ${rule.color || '#d97706'} !important;"><div><strong>${rule.name || '理賠項目'} (${ciState.multiTimelineAge}歲)</strong>：${desc}<br><span style="color:${rule.color || '#d97706'}; font-weight:bold;">✅ 多重現金流到位</span></div></div>`
-    };
-    ciState.claimHistory.push(record);
-    if (listOys2) listOys2.insertAdjacentHTML('beforeend', record.html);
-    const oys2TotPaid = document.getElementById('d-oys2-total-paid');
-    if (oys2TotPaid) oys2TotPaid.innerText = 'HK$ ' + ciState.oys2MultiPaid.toLocaleString();
-  }
-
-  function undoLastMultiClaim() {
-    if (ciState.claimHistory.length === 0) return;
-    const last = ciState.claimHistory.pop();
-    ciState.oys2MultiPaid -= last.amt;
-    ciState.multiTimelineAge = last.ageBefore;
-    ciState.countsMap[last.claimKey]--;
-    const listOys2 = document.getElementById('d-timeline-oys2');
-    const isWithin10 = (ciState.simClaimAge - ciState.simStartAge <= 10);
-    const bonusRate = ciState.isChildMode ? 0.5 : ((ciState.simStartAge <= 30) ? 0.5 : 0.35);
-    const firstClaimVal = ciState.oys2Sum + (isWithin10 ? Math.round(ciState.oys2Sum * bonusRate) : 0);
-    let baseHtml = `<div class="timeline-mini-card" style="border-left:5px solid #27ae60 !important;"><div><strong>首次確診 (${ciState.simClaimAge}歲)</strong>：發放 $${firstClaimVal.toLocaleString()} (含升級)<br><span style="color:#27ae60; font-weight:bold;">✅ 豁免保費，多重持續生效至85歲</span></div></div>`;
-    ciState.claimHistory.forEach(r => { baseHtml += r.html; });
-    if (listOys2) listOys2.innerHTML = baseHtml;
-    const oys2TotPaid = document.getElementById('d-oys2-total-paid');
-    if (oys2TotPaid) oys2TotPaid.innerText = 'HK$ ' + ciState.oys2MultiPaid.toLocaleString();
-  }
-
-  function resetCompareMultiTimeline() {
-    ciState.multiTimelineAge = ciState.simClaimAge;
-    ciState.claimHistory = [];
-    Object.keys(ciState.countsMap).forEach(k => { ciState.countsMap[k] = 0; });
-    runStage3Calculation();
-    const isWithin10 = (ciState.simClaimAge - ciState.simStartAge <= 10);
-    const bonusRate = ciState.isChildMode ? 0.5 : ((ciState.simStartAge <= 30) ? 0.5 : 0.35);
-    const firstClaimVal = ciState.oys2Sum + (isWithin10 ? Math.round(ciState.oys2Sum * bonusRate) : 0);
-    const tlSce = document.getElementById('d-timeline-sce');
-    const tlOys2 = document.getElementById('d-timeline-oys2');
-    if (tlSce) tlSce.innerHTML = `<div class="timeline-mini-card" style="border-left:5px solid #34495e !important;"><div><strong>首次確診 (${ciState.simClaimAge}歲)</strong>：發放 $${ciState.sceSum.toLocaleString()}<br><span style="color:#e74c3c; font-weight:bold;">⚠️ 合約正式完結，無後續多重賠償</span></div></div>`;
-    if (tlOys2) tlOys2.innerHTML = `<div class="timeline-mini-card" style="border-left:5px solid #27ae60 !important;"><div><strong>首次確診 (${ciState.simClaimAge}歲)</strong>：發放 $${firstClaimVal.toLocaleString()} (含升級)<br><span style="color:#27ae60; font-weight:bold;">✅ 豁免保費，多重持續生效至85歲</span></div></div>`;
-    const oys2TotPaid = document.getElementById('d-oys2-total-paid');
-    if (oys2TotPaid) oys2TotPaid.innerText = 'HK$ ' + firstClaimVal.toLocaleString();
-    renderMultiButtonsFromRules();
-  }
-
   // ======================== 後台管理 ========================
   function openAdminModal() { document.getElementById('adminFullScreenModal').style.display = 'flex'; renderAdminVisualLayout(); renderAdminConfigLayout(); renderAdminRulesLayout(); }
   function closeAdminModal() { document.getElementById('adminFullScreenModal').style.display = 'none'; }
@@ -1151,7 +1116,7 @@
     const hasCache = loadFromLocalCache();
     if (hasCache) {
       const badge = document.getElementById('sync-status-badge');
-      if (badge) { badge.innerHTML = '⚡ 已使用本機秒開 (v' + (dbData.config["資料版本"] || '9.7.3') + ')'; badge.className = 'status-ok'; }
+      if (badge) { badge.innerHTML = '⚡ 已使用本機秒開 (v' + (dbData.config["資料版本"] || '9.7.4') + ')'; badge.className = 'status-ok'; }
       applyRoleMode();
       calculateCIPremium();
     }
