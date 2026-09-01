@@ -2,8 +2,8 @@
 <html lang="zh-HK">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.6.9)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+<title>確診危疾生活儲備規劃 (v9.7.0)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -36,150 +36,29 @@
   .stage-title { font-size: 22px; font-weight: 800; color: var(--primary); line-height: 1.4; margin: 0 0 10px 0; }
   .stage-desc { font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 18px; }
   
-  /* 核心價值尊嚴大標題與置中圖片框 */
-  .dignity-headline-box {
-    font-size: 17px;
-    font-weight: 800;
-    color: #334155;
-    line-height: 1.6;
-    margin-bottom: 16px;
-  }
-  .dignity-highlight-text {
-    display: block;
-    font-size: 22px;
-    font-weight: 900;
-    color: #1d4ed8;
-    line-height: 1.4;
-    margin-top: 6px;
-    letter-spacing: 0.3px;
-  }
-  .dignity-image-wrap {
-    width: 100%;
-    border-radius: 12px;
-    overflow: hidden;
-    margin: 16px 0;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    background: #f1f5f9;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid var(--border);
-  }
-  .dignity-image-wrap img {
-    width: 100%;
-    height: auto;
-    max-height: 360px;
-    object-fit: cover;
-    display: block;
-  }
+  .dignity-headline-box { font-size: 17px; font-weight: 800; color: #334155; line-height: 1.6; margin-bottom: 16px; }
+  .dignity-highlight-text { display: block; font-size: 22px; font-weight: 900; color: #1d4ed8; line-height: 1.4; margin-top: 6px; letter-spacing: 0.3px; }
+  .dignity-image-wrap { width: 100%; border-radius: 12px; overflow: hidden; margin: 16px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.08); background: #f1f5f9; display: flex; justify-content: center; align-items: center; border: 1px solid var(--border); }
+  .dignity-image-wrap img { width: 100%; height: auto; max-height: 360px; object-fit: cover; display: block; }
 
   .stat-grid-box { background: #f8fafc; border: 1.5px solid var(--border); border-radius: 10px; padding: 16px; margin: 15px 0; }
   .stat-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; }
   .stat-row.total { border-top: 1.5px dashed var(--border); padding-top: 10px; margin-top: 10px; font-weight: 900; font-size: 16px; }
   
-  .blue-support-box {
-    background: #f0f7ff;
-    border: 1.5px solid #bfdbfe;
-    border-left: 5px solid var(--primary);
-    border-radius: 10px;
-    padding: 14px 16px;
-    margin: 14px 0;
-    font-size: 14px;
-    line-height: 1.7;
-    color: #1e3a8a;
-    font-weight: 700;
-  }
-  .blue-support-months {
-    font-size: 26px;
-    font-weight: 900;
-    color: #1d4ed8;
-    text-decoration: underline;
-    margin: 0 4px;
-  }
-  .yellow-red-alert-box {
-    background: #fffbeb !important;
-    border: 1.5px solid #fde68a !important;
-    border-left: 5px solid #dc2626 !important;
-    border-radius: 10px;
-    padding: 14px 16px;
-    margin-top: 14px;
-    color: #b45309;
-  }
-  .rules-info-display-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 8px;
-  }
-  @media (max-width: 600px) {
-    .rules-info-display-grid { grid-template-columns: 1fr; }
-  }
-  .rule-text-badge {
-    background: #eff6ff !important;
-    border: 1.5px solid #bfdbfe !important;
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-size: 13px;
-    font-weight: 800;
-    color: #1e40af !important;
-    line-height: 1.5;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    box-shadow: 0 2px 6px rgba(30, 58, 138, 0.04);
-  }
+  .blue-support-box { background: #f0f7ff; border: 1.5px solid #bfdbfe; border-left: 5px solid var(--primary); border-radius: 10px; padding: 14px 16px; margin: 14px 0; font-size: 14px; line-height: 1.7; color: #1e3a8a; font-weight: 700; }
+  .blue-support-months { font-size: 26px; font-weight: 900; color: #1d4ed8; text-decoration: underline; margin: 0 4px; }
+  .yellow-red-alert-box { background: #fffbeb !important; border: 1.5px solid #fde68a !important; border-left: 5px solid #dc2626 !important; border-radius: 10px; padding: 14px 16px; margin-top: 14px; color: #b45309; }
+  .rules-info-display-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  @media (max-width: 600px) { .rules-info-display-grid { grid-template-columns: 1fr; } }
+  .rule-text-badge { background: #eff6ff !important; border: 1.5px solid #bfdbfe !important; border-radius: 10px; padding: 10px 14px; font-size: 13px; font-weight: 800; color: #1e40af !important; line-height: 1.5; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(30, 58, 138, 0.04); }
   
-  .warm-tip-card {
-    background: #f0f7ff;
-    border: 1.5px solid #bfdbfe;
-    border-radius: 14px;
-    padding: 16px;
-    margin: 14px 0;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    text-decoration: none;
-    transition: 0.2s ease;
-    box-shadow: 0 2px 8px rgba(30, 58, 138, 0.04);
-  }
-  .warm-tip-card:hover {
-    border-color: var(--primary);
-    background: #e0f2fe;
-    transform: translateY(-1px);
-  }
-  .warm-tip-logo {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    object-fit: cover;
-    flex-shrink: 0;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  }
-  .warm-tip-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .warm-tip-title {
-    font-size: 15.5px;
-    font-weight: 800;
-    color: var(--primary);
-  }
-  .warm-tip-desc {
-    font-size: 12.5px;
-    color: #475569;
-    line-height: 1.5;
-  }
-  .warm-tip-action {
-    font-size: 13.5px;
-    font-weight: 800;
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-top: 2px;
-  }
+  .warm-tip-card { background: #f0f7ff; border: 1.5px solid #bfdbfe; border-radius: 14px; padding: 16px; margin: 14px 0; display: flex; align-items: center; gap: 14px; text-decoration: none; transition: 0.2s ease; box-shadow: 0 2px 8px rgba(30, 58, 138, 0.04); }
+  .warm-tip-card:hover { border-color: var(--primary); background: #e0f2fe; transform: translateY(-1px); }
+  .warm-tip-logo { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+  .warm-tip-content { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+  .warm-tip-title { font-size: 15.5px; font-weight: 800; color: var(--primary); }
+  .warm-tip-desc { font-size: 12.5px; color: #475569; line-height: 1.5; }
+  .warm-tip-action { font-size: 13.5px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 4px; margin-top: 2px; }
   
   .capsule-btn-bar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
   .btn-capsule { padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; border: 1.5px solid #cbd5e1; background: #fff; color: #334155; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; }
@@ -211,7 +90,6 @@
   .claim-header-row { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
   
   .timeline-mini-card { display: flex; align-items: center; background: white; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; border: 1px solid #eee; font-size: 12.5px; line-height: 1.5; }
-  
   .emoji-bar-inline { display: flex; gap: 8px; margin-top: 10px; overflow-x: auto; }
   .btn-emoji-inline { flex: 1; padding: 10px 0; font-size: 18px; font-weight: 700; border-radius: 10px; border: none; cursor: pointer; color: #fff; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
   .btn-emoji-inline:disabled { opacity: 0.35; cursor: not-allowed; filter: grayscale(1); }
@@ -230,39 +108,20 @@
   .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 999999; justify-content: center; align-items: center; padding: 12px; }
   .modal-box { background: #fff; border-radius: 16px; width: 95vw; max-width: 900px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; position: relative; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
   .modal-close-btn { position: absolute; top: 12px; right: 14px; background: #f1f5f9; border: none; font-size: 20px; font-weight: bold; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; }
-  
-  .case-selector-bar {
-    background: #f0f7ff; border: 1px solid #cce5ff; border-radius: 10px; padding: 8px 12px; margin-bottom: 10px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .grid-5x5-slider {
-    display: grid; grid-template-columns: repeat(5, minmax(130px, 1fr)); gap: 10px;
-    padding: 10px 4px; overflow-y: auto; max-height: 60vh; justify-content: center; align-content: start; -webkit-overflow-scrolling: touch;
-  }
+  .case-selector-bar { background: #f0f7ff; border: 1px solid #cce5ff; border-radius: 10px; padding: 8px 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .grid-5x5-slider { display: grid; grid-template-columns: repeat(5, minmax(130px, 1fr)); gap: 10px; padding: 10px 4px; overflow-y: auto; max-height: 60vh; justify-content: center; align-content: start; -webkit-overflow-scrolling: touch; }
   @media (max-width: 680px) { .grid-5x5-slider { grid-template-columns: repeat(2, 1fr); max-height: 65vh; } }
-  .media-card-item {
-    border: 1.5px solid var(--border); border-radius: 10px; background: #f8fafc;
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    padding: 8px; cursor: pointer; transition: 0.15s; text-align: center;
-  }
+  .media-card-item { border: 1.5px solid var(--border); border-radius: 10px; background: #f8fafc; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 8px; cursor: pointer; transition: 0.15s; text-align: center; }
   .media-card-item:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
   .media-card-item img { width: 100%; height: 75px; object-fit: cover; border-radius: 6px; }
   .media-card-item .pdf-icon-box { width: 100%; height: 75px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #fee2e2; color: #b91c1c; font-size: 26px; border-radius: 6px; }
   .media-card-title { margin-top: 6px; font-size: 12px; font-weight: 700; color: #1e293b; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   
-  #viewerModalOverlay {
-    display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(0,0,0,0.92); z-index: 10000000; justify-content: center; align-items: center; flex-direction: column;
-  }
+  #viewerModalOverlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.92); z-index: 10000000; justify-content: center; align-items: center; flex-direction: column; }
   .viewer-content-wrap { position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-  .viewer-img { max-width: 92vw; max-height: 85vh; object-fit: contain; border-radius: 8px; transition: transform 0.2s ease; }
+  .viewer-img { max-width: 92vw; max-height: 85vh; object-fit: contain; border-radius: 8px; }
   .viewer-iframe { width: 92vw; height: 85vh; border: none; background: #fff; border-radius: 8px; }
-  .viewer-nav-btn {
-    position: absolute; top: 50%; transform: translateY(-50%);
-    background: rgba(255,255,255,0.25); color: #fff; border: none; font-size: 28px; width: 48px; height: 48px;
-    border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; user-select: none;
-  }
-  .viewer-nav-btn:hover { background: rgba(255,255,255,0.45); }
+  .viewer-nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.25); color: #fff; border: none; font-size: 28px; width: 48px; height: 48px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   .viewer-nav-left { left: 16px; }
   .viewer-nav-right { right: 16px; }
   .viewer-header-bar { position: absolute; top: 0; left: 0; width: 100%; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; z-index: 10; }
@@ -271,19 +130,13 @@
   .vitality-toggle-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
   .vitality-details-box { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #bfdbfe; font-size: 12px; color: #334155; line-height: 1.6; }
   
-  #adminFullScreenModal {
-    display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: #f1f5f9; z-index: 9999999; flex-direction: column; overflow: hidden;
-  }
-  .admin-header-nav {
-    background: #1e3a8a; color: #fff; padding: 12px 16px; display: flex;
-    justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.15); flex-shrink: 0;
-  }
+  #adminFullScreenModal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #f1f5f9; z-index: 9999999; flex-direction: column; overflow: hidden; }
+  .admin-header-nav { background: #1e3a8a; color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.15); flex-shrink: 0; }
   .admin-tab-bar { display: flex; gap: 8px; background: #e2e8f0; padding: 8px 16px; border-bottom: 1px solid #cbd5e1; flex-shrink: 0; overflow-x: auto; }
   .admin-tab-btn { padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 800; border: none; background: #fff; color: #475569; cursor: pointer; white-space: nowrap; }
   .admin-tab-btn.active { background: #1e3a8a; color: #fff; }
   .admin-scroll-body { flex: 1; overflow-y: auto; padding: 16px; max-width: 900px; width: 100%; margin: 0 auto; -webkit-overflow-scrolling: touch; }
-  .admin-card-section { background: #fff; border-radius: 12px; border: 1.5px solid #cbd5e1; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+  .admin-card-section { background: #fff; border-radius: 12px; border: 1.5px solid #cbd5e1; padding: 16px; margin-bottom: 16px; }
   .admin-label { font-size: 12px; font-weight: 800; color: #475569; margin-top: 8px; display: block; }
   select, input[type="text"], input[type="number"], textarea { width: 100%; padding: 8px; font-size: 13.5px; border-radius: 8px; border: 2px dashed var(--pink-border); background: #fff; font-weight: 700; color: #333; outline: none; margin-top: 4px; box-sizing: border-box; }
 </style>
@@ -293,13 +146,12 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge" id="appVersion">v9.6.9</span>
+      <span class="v-badge" id="appVersion">v9.7.0</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
     <div id="sync-status-badge">🔄 載入中...</div>
   </div>
-  <!-- 前台動態題目卡片掛載容器 -->
   <div id="dynamic-ci-container"></div>
 </div>
 
@@ -408,7 +260,7 @@
   
   const defaultDatabase = {
     config: {
-      "資料版本": "9.6.9",
+      "資料版本": "9.7.0",
       "醫療App網址": "https://ivancww.github.io/medicalclaims",
       "醫療App參數": "role={role}&cost={medCost}&hasCompany={hasCompany}&companyLimit={companyLimit}&companyRate={companyRate}&hasPersonal={hasPersonal}&personalLimit={personalLimit}&personalRate={personalRate}&losses={losses}&focus={focus}",
       "溫馨提示醫療標題": "🏥 溫馨提示：醫療選擇防線",
@@ -600,7 +452,6 @@
     }
   }
 
-  // ======================== 全動態卡片渲染引擎 ========================
   function renderAllDynamicCards() {
     const container = document.getElementById('dynamic-ci-container');
     if (!container) return;
@@ -1095,7 +946,6 @@
     if (target) target.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     
-    // 定位對應步驟功能
     if (document.getElementById('c-input-start-age')) runStage3Calculation();
     if (document.getElementById('d-timeline-sce')) resetCompareMultiTimeline();
     if (document.getElementById('ci-calc-age')) {
@@ -1624,8 +1474,6 @@
     if (pOys2Saved) pOys2Saved.innerText = 'HK$ ' + oys2TotalSaved.toLocaleString();
   }
 
-  // ======================== 抽屜與左右滑動預覽器 ========================
-  let currentDrawerCategory = 'case';
   function openMediaDrawer(categoryKey) {
     currentDrawerCategory = categoryKey;
     const overlay = document.getElementById('mediaDrawerOverlay');
@@ -1732,7 +1580,6 @@
     }, false);
   }
 
-  // ======================== 04 頁多重賠償推進 ========================
   function renderMultiButtonsFromRules() {
     const botContainer = document.getElementById('botEmojiBtnContainer');
     if (!botContainer) return;
@@ -1868,7 +1715,7 @@
     runStage3Calculation();
   }
 
-  // ======================== 後台管理控制台 ========================
+  // ======================== 後台管理控制台 (支援頁面直接上載圖片) ========================
   function openAdminModal() {
     document.getElementById('adminFullScreenModal').style.display = 'flex';
     renderAdminVisualLayout();
@@ -1926,8 +1773,14 @@
             <textarea data-adm-page-sub="${realPIdx}" style="min-height:50px;">${p.subtitle || ''}</textarea>
           </div>
           <div style="margin-top:8px;">
-            <label class="admin-label">圖片網址 (imageUrl)：</label>
-            <input type="text" data-adm-page-img="${realPIdx}" value="${p.imageUrl || ''}" placeholder="https://firebasestorage...">
+            <label class="admin-label">圖片網址 (imageUrl) / 支援直接上載：</label>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <input type="text" id="admPageImg_${realPIdx}" data-adm-page-img="${realPIdx}" value="${p.imageUrl || ''}" placeholder="https://firebasestorage..." style="flex:1; margin-top:0;">
+              <label id="uploadPageLabel_${realPIdx}" style="background:#1e3a8a; color:#fff; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; white-space:nowrap;">
+                📤 上載圖片
+                <input type="file" accept="image/*" style="display:none;" onchange="uploadSingleImageToFirebase(this, ${realPIdx})">
+              </label>
+            </div>
           </div>`;
       
       const allOpts = (dbData.options && dbData.options.length > 0) ? dbData.options : defaultDatabase.options;
@@ -1956,6 +1809,30 @@
       html += `</div>`;
     });
     container.innerHTML = html;
+  }
+
+  // 獨立單張頁面圖片上傳處理函數
+  async function uploadSingleImageToFirebase(input, pageIdx) {
+    const file = input.files[0];
+    if (!file) return;
+    const uploadLabel = document.getElementById(`uploadPageLabel_${pageIdx}`);
+    const textInput = document.getElementById(`admPageImg_${pageIdx}`);
+    
+    uploadLabel.innerText = "⏳ 上載中...";
+    try {
+      const safeFileName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+      const storageRef = storage.ref(`ci_pages/${Date.now()}_${safeFileName}`);
+      const snapshot = await storageRef.put(file);
+      const downloadURL = await snapshot.ref.getDownloadURL();
+      
+      textInput.value = downloadURL;
+      if (dbData.pages[pageIdx]) dbData.pages[pageIdx].imageUrl = downloadURL;
+      uploadLabel.innerText = "📤 上載圖片";
+      alert("✅ 圖片上傳至 Firebase 成功！請點擊右上角「💾 儲存同步至 Google Sheet」保存。");
+    } catch(err) {
+      uploadLabel.innerText = "📤 上載圖片";
+      alert("❌ 圖片上傳失敗：" + err.message);
+    }
   }
 
   function addAdminNewCIPage() {
@@ -2184,13 +2061,13 @@
       if (dbData.pages[idx]) dbData.pages[idx].imageUrl = inp.value;
     });
     
-    document.querySelectorAll('[data-adm-opt-title]').forEach(inp => {
-      const idx = Number(inp.dataset.admOptTitle);
-      if (dbData.options[idx]) dbData.options[idx].title = inp.value;
+    document.querySelectorAll('[data-adm-opt-title]').forEach(el => {
+      const idx = Number(el.dataset.admOptTitle);
+      if (dbData.options[idx]) dbData.options[idx].title = el.value;
     });
-    document.querySelectorAll('[data-adm-opt-icon]').forEach(inp => {
-      const idx = Number(inp.dataset.admOptIcon);
-      if (dbData.options[idx]) dbData.options[idx].icon = inp.value;
+    document.querySelectorAll('[data-adm-opt-icon]').forEach(el => {
+      const idx = Number(el.dataset.admOptIcon);
+      if (dbData.options[idx]) dbData.options[idx].icon = el.value;
     });
     document.querySelectorAll('[data-adm-config-key]').forEach(inp => {
       const key = inp.dataset.admConfigKey;
@@ -2235,7 +2112,6 @@
     }
   }
 
-  // ======================== 雲端同步與版本檢查 ========================
   window.onGASDataLoaded = function(json) {
     if (json && json.status === "success") {
       saveToLocalCache(json);
@@ -2264,7 +2140,7 @@
     } else {
       const badge = document.getElementById('sync-status-badge');
       if (badge) {
-        badge.innerHTML = '⚡ 已使用本機秒開 (v' + (currentCachedVer || '9.6.9') + ')';
+        badge.innerHTML = '⚡ 已使用本機秒開 (v' + (currentCachedVer || '9.7.0') + ')';
         badge.className = 'status-ok';
       }
     }
@@ -2286,7 +2162,7 @@
       sVer.src = GAS_CENTRAL_URL + (GAS_CENTRAL_URL.includes('?') ? '&' : '?') + 'action=checkVersion&callback=onGASVersionChecked&t=' + Date.now();
       sVer.onerror = function() {
         if (badge) {
-          badge.innerHTML = '⚡ 離線/快取模式 (v' + (dbData.config["資料版本"] || '9.6.9') + ')';
+          badge.innerHTML = '⚡ 離線/快取模式 (v' + (dbData.config["資料版本"] || '9.7.0') + ')';
           badge.className = 'status-ok';
         }
       };
