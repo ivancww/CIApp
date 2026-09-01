@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.7.6)</title>
+<title>確診危疾生活儲備規劃 (v9.7.7)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -108,25 +108,6 @@
   .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 999999; justify-content: center; align-items: center; padding: 12px; }
   .modal-box { background: #fff; border-radius: 16px; width: 95vw; max-width: 900px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; position: relative; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
   .modal-close-btn { position: absolute; top: 12px; right: 14px; background: #f1f5f9; border: none; font-size: 20px; font-weight: bold; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; }
-  .case-selector-bar { background: #f0f7ff; border: 1px solid #cce5ff; border-radius: 10px; padding: 8px 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-  .grid-5x5-slider { display: grid; grid-template-columns: repeat(5, minmax(130px, 1fr)); gap: 10px; padding: 10px 4px; overflow-y: auto; max-height: 60vh; justify-content: center; align-content: start; -webkit-overflow-scrolling: touch; }
-  @media (max-width: 680px) { .grid-5x5-slider { grid-template-columns: repeat(2, 1fr); max-height: 65vh; } }
-  .media-card-item { border: 1.5px solid var(--border); border-radius: 10px; background: #f8fafc; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 8px; cursor: pointer; transition: 0.15s; text-align: center; }
-  .media-card-item:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
-  .media-card-item img { width: 100%; height: 75px; object-fit: cover; border-radius: 6px; }
-  .media-card-title { margin-top: 6px; font-size: 12px; font-weight: 700; color: #1e293b; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  
-  #viewerModalOverlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.92); z-index: 10000000; justify-content: center; align-items: center; flex-direction: column; }
-  .viewer-content-wrap { position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-  .viewer-img { max-width: 92vw; max-height: 85vh; object-fit: contain; border-radius: 8px; }
-  .viewer-nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.25); color: #fff; border: none; font-size: 28px; width: 48px; height: 48px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-  .viewer-nav-left { left: 16px; }
-  .viewer-nav-right { right: 16px; }
-  .viewer-header-bar { position: absolute; top: 0; left: 0; width: 100%; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; color: #fff; z-index: 10; }
-  .viewer-close-btn { background: rgba(255,255,255,0.2); border: none; color: #fff; font-size: 20px; font-weight: bold; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; }
-  
-  .vitality-toggle-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-  .vitality-details-box { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #bfdbfe; font-size: 12px; color: #334155; line-height: 1.6; }
   
   #adminFullScreenModal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #f1f5f9; z-index: 9999999; flex-direction: column; overflow: hidden; }
   .admin-header-nav { background: #1e3a8a; color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.15); flex-shrink: 0; }
@@ -146,7 +127,7 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge" id="appVersion">v9.7.6</span>
+      <span class="v-badge" id="appVersion">v9.7.7</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
@@ -155,6 +136,7 @@
   <div id="dynamic-ci-container"></div>
 </div>
 
+<!-- 5x5 置中抽屜彈窗 -->
 <div class="modal-overlay" id="mediaDrawerOverlay">
   <div class="modal-box">
     <button type="button" class="modal-close-btn" onclick="closeMediaDrawer()">×</button>
@@ -163,10 +145,12 @@
       <span style="font-size:12.5px; font-weight:bold; color:var(--primary); white-space:nowrap;">📍 選擇查看案例：</span>
       <select id="caseDropdownSelect" onchange="renderCaseGallery(this.value)" style="flex:1; margin-top:0; font-size:13px;"></select>
     </div>
+    <div style="font-size:12px; color:#64748b; margin-bottom:6px; text-align:center;">👈 點擊圖片直接全螢幕置中開啟（支援左右滑動預覽）：</div>
     <div class="grid-5x5-slider" id="drawerMediaGrid"></div>
   </div>
 </div>
 
+<!-- 免下載直接置中大圖預覽器 -->
 <div id="viewerModalOverlay">
   <div class="viewer-header-bar">
     <span id="viewerTitle" style="font-weight:bold; font-size:14px;">預覽文件</span>
@@ -179,6 +163,7 @@
   </div>
 </div>
 
+<!-- 全螢幕所見即所得後台管理系統 -->
 <div id="adminFullScreenModal">
   <div class="admin-header-nav">
     <span style="font-weight:800; font-size:15px;">⚙️ CIApp 雲端後台管理控制台</span>
@@ -234,7 +219,7 @@
 
   const defaultDatabase = {
     config: {
-      "資料版本": "9.7.6",
+      "資料版本": "9.7.7",
       "醫療App網址": "https://ivancww.github.io/medicalclaims",
       "醫療App參數": "role={role}&cost={medCost}&hasCompany={hasCompany}&companyLimit={companyLimit}&companyRate={companyRate}&hasPersonal={hasPersonal}&personalLimit={personalLimit}&personalRate={personalRate}&losses={losses}&focus={focus}",
       "溫馨提示醫療標題": "🏥 溫馨提示：醫療選擇防線",
@@ -339,6 +324,19 @@
     if (!dbData.config || Object.keys(dbData.config).length === 0) dbData.config = { ...defaultDatabase.config };
     if (!dbData.rates || Object.keys(dbData.rates).length === 0) dbData.rates = fallbackRates;
     cloudAppDatabase.rules = (jsonData.rules && jsonData.rules.length > 0) ? jsonData.rules : defaultDatabase.rules;
+    if (Array.isArray(jsonData.cases)) {
+      cloudAppDatabase["102"] = [];
+      cloudAppDatabase["child"] = [];
+      cloudAppDatabase["case"] = [];
+      jsonData.cases.forEach(row => {
+        const cat = String(row.category || '').trim();
+        let parsedFiles = null;
+        try { parsedFiles = JSON.parse(row.filesJson); } catch(e) {}
+        let filesList = Array.isArray(parsedFiles) && parsedFiles.length > 0 ? parsedFiles : [{ title: row.diseaseName || '案例', type: "image", url: "https://via.placeholder.com/150x80" }];
+        if (!cloudAppDatabase[cat]) cloudAppDatabase[cat] = [];
+        cloudAppDatabase[cat].push({ caseName: row.diseaseName || '未命名案例', category: cat, files: filesList, filesJson: row.filesJson || '[]' });
+      });
+    }
   }
 
   function loadFromLocalCache() {
@@ -570,10 +568,6 @@
           <div style="background:#f8fafc; border:1.5px solid var(--border); border-radius:12px; padding:14px; margin-bottom:14px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <span style="font-weight:bold; font-size:13.5px; color:var(--primary);">📋 多重賠償及年金上限（條款細則）：</span>
-              <div style="display:flex; gap:6px;">
-                <button type="button" class="btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="undoLastMultiClaim()">↩️ 撤銷上一筆</button>
-                <button type="button" class="btn-secondary" style="padding:3px 8px; font-size:11px;" onclick="resetCompareMultiTimeline()">🔄 重置時間線</button>
-              </div>
             </div>
             <div class="rules-info-display-grid">${rulesDisplayBadges}</div>
           </div>
@@ -591,7 +585,10 @@
             <div class="compare-side-card oys2">
               <div class="side-card-title" style="color:#27ae60;">
                 <span>方案 B ｜ OYS2 愛伴航2</span>
-                <span style="font-size:11px; color:#27ae60; font-weight:bold;">持續守護至 85 歲</span>
+                <div style="display:flex; gap:4px;">
+                  <button type="button" class="btn-secondary" style="padding:2px 6px; font-size:11px;" onclick="undoLastMultiClaim()">↩️ 撤銷</button>
+                  <button type="button" class="btn-secondary" style="padding:2px 6px; font-size:11px;" onclick="resetCompareMultiTimeline()">🔄 重置</button>
+                </div>
               </div>
               <div id="d-timeline-oys2" style="min-height:140px;"></div>
               <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; margin-top:8px;">
@@ -866,7 +863,7 @@
     ciState.months = defMonths;
     ciState.existingCI = defExist;
     ciState.simStartAge = defStart;
-    ciState.simClaimAge = defClaim;
+    ciState.simClaimAge = defStart + 5;
     renderAllDynamicCards();
     recalculateAll();
   }
@@ -878,7 +875,12 @@
       const aOpts = allOpts.filter(o => o.pageId === 'step_ci_2').sort((a,b)=>a.order-b.order);
       let aHtml = '';
       aOpts.forEach(o => {
-        const isSel = String(o.isDefaultSelected).toUpperCase() === 'TRUE';
+        let isSel = false;
+        if (hasUrlLosses && ciState.goals.length > 0) {
+          isSel = isGoalMatched(o.title, o.optionKey, ciState.goals);
+        } else {
+          isSel = String(o.isDefaultSelected).toUpperCase() === 'TRUE';
+        }
         const initVal = isSel ? '500,000' : '0';
         aHtml += `
           <div class="asset-input-row ${isSel ? 'selected' : ''}" id="row-asset-${o.optionKey}">
@@ -892,6 +894,22 @@
       assetContainer.innerHTML = aHtml;
       bindAssetEvents();
     }
+  }
+
+  function isGoalMatched(optTitle, optKey, lossesArray) {
+    if (!lossesArray || lossesArray.length === 0) return false;
+    for (let rawLoss of lossesArray) {
+      let loss = String(rawLoss).trim();
+      if (!loss) continue;
+      if (optTitle === loss || optKey === loss) return true;
+      if (loss.includes('陪伴') && optTitle.includes('陪伴')) return true;
+      if ((loss.includes('醫療') || loss.includes('治療')) && (optTitle.includes('醫療') || optTitle.includes('治療'))) return true;
+      if (loss.includes('教育') && optTitle.includes('教育')) return true;
+      if ((loss.includes('資產') || loss.includes('積蓄')) && (optTitle.includes('資產') || optTitle.includes('積蓄'))) return true;
+      if (loss.includes('生活') && optTitle.includes('生活')) return true;
+      if (loss.includes('退休') && optTitle.includes('退休')) return true;
+    }
+    return false;
   }
 
   function bindAssetEvents() {
@@ -1131,7 +1149,6 @@
     
     renderProjectionTable(age, gender, isVitality, period);
     updateConfirmSummary();
-    calculateCIPromo();
   }
 
   function toggleVitalityDetails() {
@@ -1271,88 +1288,7 @@
     if (pOys2Saved) pOys2Saved.innerText = 'HK$ ' + oys2TotalSaved.toLocaleString();
   }
 
-  // ======================== 05 頁多重賠償推進 (包含自動熄燈與復原) ========================
-  function renderMultiButtonsFromRules() {
-    const botContainer = document.getElementById('botEmojiBtnContainer');
-    if (!botContainer) return;
-    let botHtml = '';
-    const rules = (cloudAppDatabase.rules && cloudAppDatabase.rules.length > 0) ? cloudAppDatabase.rules : defaultDatabase.rules;
-    
-    rules.forEach(rule => {
-      if (ciState.countsMap[rule.claimKey] === undefined) ciState.countsMap[rule.claimKey] = 0;
-      const bColor = rule.color || '#d97706';
-      const bEmoji = rule.emoji || '🛡️';
-      const bName = rule.name || '理賠項目';
-      // 癌症B選中後，癌症A自動熄燈停用
-      const isDisabled = (rule.claimKey === 'cancer_a' && (ciState.countsMap['cancer_b'] || 0) > 0);
-      botHtml += `<button type="button" class="btn-emoji-inline" id="bot-btn-${rule.claimKey}" style="background:${bColor};" ${isDisabled ? 'disabled' : ''} onclick="executeDynamicClaim('${rule.claimKey}')" title="${bName}">${bEmoji}</button>`;
-    });
-    botHtml += `<button type="button" class="btn-emoji-inline" style="background:#64748b;" onclick="undoLastMultiClaim()" title="撤銷上一筆">↩️</button>`;
-    botContainer.innerHTML = botHtml;
-  }
-
-  function executeDynamicClaim(claimKey) {
-    const rules = (cloudAppDatabase.rules && cloudAppDatabase.rules.length > 0) ? cloudAppDatabase.rules : defaultDatabase.rules;
-    const rule = rules.find(r => r.claimKey === claimKey);
-    if (!rule) return;
-    const listOys2 = document.getElementById('d-timeline-oys2');
-    const sum = ciState.oys2Sum;
-    const currentCount = ciState.countsMap[claimKey] || 0;
-    const maxCount = parseInt(rule.maxCount, 10) || 6;
-    if (currentCount >= maxCount) { alert(`${rule.name || '此項目'} 已達最高理賠上限 (${maxCount} 次)！`); return; }
-    ciState.countsMap[claimKey] = currentCount + 1;
-    const waitYears = parseInt(rule.waitYears, 10) || 1;
-    ciState.multiTimelineAge += waitYears;
-    let amt = (claimKey === 'cancer_b') ? Math.round(sum * 0.05) : sum;
-    let desc = (claimKey === 'cancer_b') ? `發放每月 5% 津貼 ($${amt.toLocaleString()})` : `發放 100% 賠償 ($${amt.toLocaleString()})`;
-    ciState.oys2MultiPaid += amt;
-    const record = {
-      claimKey: claimKey, amt: amt, ageBefore: ciState.multiTimelineAge - waitYears,
-      html: `<div class="timeline-mini-card" style="border-left:5px solid ${rule.color || '#d97706'} !important;"><div><strong>${rule.name || '理賠項目'} (${ciState.multiTimelineAge}歲)</strong>：${desc}<br><span style="color:${rule.color || '#d97706'}; font-weight:bold;">✅ 多重現金流到位</span></div></div>`
-    };
-    ciState.claimHistory.push(record);
-    if (listOys2) listOys2.insertAdjacentHTML('beforeend', record.html);
-    const oys2TotPaid = document.getElementById('d-oys2-total-paid');
-    if (oys2TotPaid) oys2TotPaid.innerText = 'HK$ ' + ciState.oys2MultiPaid.toLocaleString();
-    renderMultiButtonsFromRules();
-  }
-
-  function undoLastMultiClaim() {
-    if (ciState.claimHistory.length === 0) return;
-    const last = ciState.claimHistory.pop();
-    ciState.oys2MultiPaid -= last.amt;
-    ciState.multiTimelineAge = last.ageBefore;
-    ciState.countsMap[last.claimKey]--;
-    const listOys2 = document.getElementById('d-timeline-oys2');
-    const isWithin10 = (ciState.simClaimAge - ciState.simStartAge <= 10);
-    const bonusRate = ciState.isChildMode ? 0.5 : ((ciState.simStartAge <= 30) ? 0.5 : 0.35);
-    const firstClaimVal = ciState.oys2Sum + (isWithin10 ? Math.round(ciState.oys2Sum * bonusRate) : 0);
-    let baseHtml = `<div class="timeline-mini-card" style="border-left:5px solid #27ae60 !important;"><div><strong>首次確診 (${ciState.simClaimAge}歲)</strong>：發放 $${firstClaimVal.toLocaleString()} (含升級)<br><span style="color:#27ae60; font-weight:bold;">✅ 豁免保費，多重持續生效至85歲</span></div></div>`;
-    ciState.claimHistory.forEach(r => { baseHtml += r.html; });
-    if (listOys2) listOys2.innerHTML = baseHtml;
-    const oys2TotPaid = document.getElementById('d-oys2-total-paid');
-    if (oys2TotPaid) oys2TotPaid.innerText = 'HK$ ' + ciState.oys2MultiPaid.toLocaleString();
-    renderMultiButtonsFromRules();
-  }
-
-  function resetCompareMultiTimeline() {
-    ciState.multiTimelineAge = ciState.simClaimAge;
-    ciState.claimHistory = [];
-    Object.keys(ciState.countsMap).forEach(k => { ciState.countsMap[k] = 0; });
-    runStage3Calculation();
-    const isWithin10 = (ciState.simClaimAge - ciState.simStartAge <= 10);
-    const bonusRate = ciState.isChildMode ? 0.5 : ((ciState.simStartAge <= 30) ? 0.5 : 0.35);
-    const firstClaimVal = ciState.oys2Sum + (isWithin10 ? Math.round(ciState.oys2Sum * bonusRate) : 0);
-    const tlSce = document.getElementById('d-timeline-sce');
-    const tlOys2 = document.getElementById('d-timeline-oys2');
-    if (tlSce) tlSce.innerHTML = `<div class="timeline-mini-card" style="border-left:5px solid #34495e !important;"><div><strong>首次確診 (${ciState.simClaimAge}歲)</strong>：發放 $${ciState.sceSum.toLocaleString()}<br><span style="color:#e74c3c; font-weight:bold;">⚠️ 合約正式完結，無後續多重賠償</span></div></div>`;
-    if (tlOys2) tlOys2.innerHTML = `<div class="timeline-mini-card" style="border-left:5px solid #27ae60 !important;"><div><strong>首次確診 (${ciState.simClaimAge}歲)</strong>：發放 $${firstClaimVal.toLocaleString()} (含升級)<br><span style="color:#27ae60; font-weight:bold;">✅ 豁免保費，多重持續生效至85歲</span></div></div>`;
-    const oys2TotPaid = document.getElementById('d-oys2-total-paid');
-    if (oys2TotPaid) oys2TotPaid.innerText = 'HK$ ' + firstClaimVal.toLocaleString();
-    renderMultiButtonsFromRules();
-  }
-
-  // ======================== 後台管理 (完整支援選項增刪、排序與圖片上傳) ========================
+  // ======================== 後台管理 (完整支援選項與圖片編輯) ========================
   function openAdminModal() { document.getElementById('adminFullScreenModal').style.display = 'flex'; renderAdminVisualLayout(); renderAdminConfigLayout(); renderAdminRulesLayout(); }
   function closeAdminModal() { document.getElementById('adminFullScreenModal').style.display = 'none'; }
   function switchAdminTab(tabKey, btn) {
@@ -1396,7 +1332,6 @@
     const selectedRole = document.getElementById('adminRoleSelect').value;
     const rolePages = dbData.pages.filter(p => p.role === selectedRole);
     rolePages.sort((a,b) => Number(a.stepOrder) - Number(b.stepOrder));
-    
     let html = '';
     rolePages.forEach((p, rIdx) => {
       const realIdx = dbData.pages.indexOf(p);
@@ -1492,7 +1427,7 @@
       textInput.value = downloadURL;
       if (dbData.pages[pageIdx]) dbData.pages[pageIdx].imageUrl = downloadURL;
       uploadLabel.innerText = "📤 上載圖片";
-      alert("✅ 圖片上傳成功！");
+      alert("✅ 圖片上傳成功！請點擊右上角「💾 儲存同步至 Google Sheet」保存。");
     } catch(err) {
       uploadLabel.innerText = "📤 上載圖片";
       alert("❌ 上傳失敗：" + err.message);
@@ -1562,7 +1497,7 @@
     const hasCache = loadFromLocalCache();
     if (hasCache) {
       const badge = document.getElementById('sync-status-badge');
-      if (badge) { badge.innerHTML = '⚡ 已使用本機秒開 (v' + (dbData.config["資料版本"] || '9.7.6') + ')'; badge.className = 'status-ok'; }
+      if (badge) { badge.innerHTML = '⚡ 已使用本機秒開 (v' + (dbData.config["資料版本"] || '9.7.7') + ')'; badge.className = 'status-ok'; }
       applyRoleMode();
       calculateCIPremium();
     }
