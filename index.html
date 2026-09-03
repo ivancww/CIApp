@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.9.0)</title>
+<title>確診危疾生活儲備規劃 (v9.9.1)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -25,7 +25,7 @@
   .header-version-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 13px; font-weight: 700; color: #64748b; }
   .v-badge { font-size: 11px; background: #e2e8f0; color: #334155; padding: 2px 8px; border-radius: 10px; }
   .role-toggle-btn { font-size: 11.5px; font-weight: 800; padding: 4px 10px; border-radius: 12px; background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; cursor: pointer; transition: 0.2s; }
-  #sync-status-badge { font-size: 11px; font-weight: bold; padding: 2px 8px; border-radius: 10px; background: #fee2e2; color: #b91c1c; }
+  #sync-status-badge { font-size: 11px; font-weight: bold; padding: 2px 8px; border-radius: 10px; background: #fee2e2; color: #b9770c; }
   .status-ok { background: #d4edda !important; color: #155724 !important; }
   .status-cache { background: #e0e7ff !important; color: #3730a3 !important; }
   
@@ -105,7 +105,6 @@
   .promo-box { background: #fffcf5; border: 1.5px solid #fde68a; border-radius: 10px; padding: 16px; margin-top: 14px; }
   .promo-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
   
-  /* 彈窗與預覽器 CSS */
   .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 999999; justify-content: center; align-items: center; padding: 12px; }
   .modal-box { background: #fff; border-radius: 16px; width: 95vw; max-width: 900px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; position: relative; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
   .modal-close-btn { position: absolute; top: 12px; right: 14px; background: #f1f5f9; border: none; font-size: 20px; font-weight: bold; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; }
@@ -147,7 +146,7 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge" id="appVersion">v9.9.0</span>
+      <span class="v-badge" id="appVersion">v9.9.1</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
@@ -155,6 +154,7 @@
   </div>
   <div id="dynamic-ci-container"></div>
 </div>
+
 <!-- 5x5 置中抽屜彈窗 -->
 <div class="modal-overlay" id="mediaDrawerOverlay">
   <div class="modal-box">
@@ -167,6 +167,7 @@
     <div class="grid-5x5-slider" id="drawerMediaGrid"></div>
   </div>
 </div>
+
 <!-- 免下載直接置中大圖預覽器 -->
 <div id="viewerModalOverlay">
   <div class="viewer-header-bar">
@@ -179,6 +180,7 @@
     <button type="button" class="viewer-nav-btn viewer-nav-right" onclick="navigateViewer(1)">❯</button>
   </div>
 </div>
+
 <!-- 全螢幕所見即所得後台管理系統 -->
 <div id="adminFullScreenModal">
   <div class="admin-header-nav">
@@ -248,6 +250,7 @@
     </div>
   </div>
 </div>
+
 <script>
   const GAS_CENTRAL_URL = "https://script.google.com/macros/s/AKfycbxATo0XVkQszgYP-gF9LE1OvyNOo0jQTWd4HdNuOCDvJTcF46nz1v6QFRV-OyLHmKYszg/exec";
   const firebaseConfig = { storageBucket: "medical-and-ci.firebasestorage.app" };
@@ -262,7 +265,7 @@
   };
   const defaultDatabase = {
     config: {
-      "資料版本": "9.9.0",
+      "資料版本": "9.9.1",
       "醫療App網址": "https://ivancww.github.io/medicalclaims",
       "醫療App參數": "role={role}&cost={medCost}&hasCompany={hasCompany}&companyLimit={companyLimit}&companyRate={companyRate}&hasPersonal={hasPersonal}&personalLimit={personalLimit}&personalRate={personalRate}&losses={losses}&focus={focus}",
       "溫馨提示醫療標題": "🏥 溫馨提示：醫療選擇防線",
@@ -353,7 +356,6 @@
     personalRate: 80,
     focus: ''
   };
-  let hasUrlLosses = false;
   let currentViewerList = [];
   let currentViewerIndex = 0;
   function parseNum(val) {
@@ -395,7 +397,7 @@
   function saveToLocalCache(dataObj) {
     try { localStorage.setItem(STORAGE_KEY_DB, JSON.stringify(dataObj)); } catch(e) {}
   }
-  // ======================== 全動態卡片渲染引擎 ========================
+
   function renderAllDynamicCards() {
     const container = document.getElementById('dynamic-ci-container');
     if (!container) return;
@@ -409,7 +411,7 @@
     const warmTipTitle = cfg["溫馨提示醫療標題"] || "🏥 溫馨提示：醫療選擇防線";
     const warmTipDesc = cfg["溫馨提示醫療說明"] || "先了解你現有醫療保障，確認私家高額住院與手術費用可支持到幾多。";
     const warmTipBtn = cfg["溫馨提示醫療按鈕"] || "了解醫療方案 (前線醫療實報實銷) →";
-    // 1. 條款純文字展示排版 (點擊 ! 展開)
+
     const textRulesContent = `
       <div style="font-size:12px; line-height:1.7; color:#334155;">
         • <strong>癌症選項A</strong> - 賠償100%（3年） / <strong>癌症選項B</strong> - 每月賠償5%（1年）- <em>合共600%</em><br>
@@ -490,7 +492,6 @@
           </div>
         `;
       } else if (p.pageId === 'step_ci_3' || p.pageType === '解決方案' || p.pageType === '全面守護' || p.tagName.includes('解決方案') || p.tagName.includes('替代方案') || p.tagName.includes('全面守護')) {
-        // 03 / 04 頁 (支援兒童模式專屬賠償展示)
         const isChildModeActive = ciState.isChildMode;
         const childSceEarlyHtml = isChildModeActive ? `
           <div class="claim-check-item" id="box-sce-child">
@@ -606,7 +607,6 @@
           </div>
         `;
       } else if (p.pageId === 'step_ci_4' || p.pageType === '多重時間線' || p.tagName.includes('多重')) {
-        // 05 頁
         topBarExtras = `
           <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
             <div style="display:flex; gap:4px;">
@@ -637,14 +637,12 @@
                 <span style="font-size:11px; color:#27ae60; font-weight:bold;">持續守護至 85 歲</span>
               </div>
               
-              <!-- 1. 純文字資料展示 (點擊 ℹ️ 展開/收起) -->
               <div id="inlineMultiRulesBox" style="display:none; background:#f8fafc; border:1.5px solid #bfdbfe; border-radius:8px; padding:10px; margin-bottom:10px;">
                 <strong style="color:var(--primary); font-size:12px; display:block; margin-bottom:4px;">📋 多重賠償及年金上限（條款細則）：</strong>
                 ${textRulesContent}
               </div>
               <div id="d-timeline-oys2" style="min-height:140px;"></div>
               
-              <!-- 2. 底部推進按鈕容器 -->
               <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:6px; margin-top:8px;">
                 <div style="font-size:11px; font-weight:bold; color:#64748b; margin-bottom:4px; text-align:center;">👇 點擊下方 Emoji 推進模擬多次理賠：</div>
                 <div class="emoji-bar-inline" id="botEmojiBtnContainer"></div>
@@ -660,7 +658,6 @@
           </div>
         `;
       } else if (p.pageId === 'step_ci_5' || p.pageType === '保費精算' || p.tagName.includes('保費')) {
-        // 06 頁
         topBarExtras = `
           <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
             <div style="display:flex; gap:4px;">
@@ -801,10 +798,10 @@
                 </div>
                 <div class="stat-grid-box" style="margin:8px 0 0 0; background:#f8fafc; padding:10px; font-size:12.5px;">
                   <div class="stat-row"><span>首年實繳保費：</span><strong id="promoOys2NetY1">HK$ 18,704</strong></div>
-                  <div class="stat-row" id="row-oys2-y2-rebate"><span>第 2 年回贈金額：</span><strong style="color:#059669;" id="promoOys2RebateY2">HK$ 3,200</strong></div>
+                  <div class="stat-row" id="row-oys2-y2-rebate" style="display:none;"><span>第 2 年回贈金額：</span><strong style="color:#059669;" id="promoOys2RebateY2">HK$ 0</strong></div>
                   <div class="stat-row" id="row-oys2-y3-rebate" style="display:none;"><span>第 3 年回贈金額：</span><strong style="color:#059669;" id="promoOys2RebateY3">HK$ 0</strong></div>
                   <div class="stat-row total" style="color:#b45309; margin-top:6px; padding-top:6px;">
-                    <span>總共累計節省：</span><strong style="color:#dc2626;" id="promoOys2TotalSaved">HK$ 3,700</strong>
+                    <span>總共累計節省：</span><strong style="color:#dc2626;" id="promoOys2TotalSaved">HK$ 0</strong>
                   </div>
                 </div>
               </div>
@@ -840,30 +837,30 @@
     bindCardSpecificEvents();
     applyPlanVisibilities();
   }
-  // 05 頁文字條款展開／收起
+
   function toggleMultiRulesInline() {
     const box = document.getElementById('inlineMultiRulesBox');
     if (!box) return;
     box.style.display = (box.style.display === 'none' || !box.style.display) ? 'block' : 'none';
   }
-  // 3. 方案 A / 方案 B 同步獨立顯示與隱藏 (跨 04, 05, 06 頁動態同步)
+
   function togglePlanVis(type) {
     ciState.planVis[type] = !ciState.planVis[type];
     applyPlanVisibilities();
   }
+
   function applyPlanVisibilities() {
     ['sce', 'oys2'].forEach(type => {
       const isShown = ciState.planVis[type];
       document.querySelectorAll(`.plan-col-${type}`).forEach(el => {
         el.style.display = isShown ? '' : 'none';
       });
-      // 同步所有切換按鈕的外觀狀態
       document.querySelectorAll(`[id^="vis-btn-${type}"]`).forEach(btn => {
         btn.classList.toggle('off', !isShown);
       });
     });
   }
-  // 06 頁供款期切換
+
   function changeOys2Period(period, event) {
     if (event) event.stopPropagation();
     ciState.oys2PayPeriod = Number(period);
@@ -872,12 +869,14 @@
     });
     calculateCIPremium();
   }
+
   function toggleCIPromoBox() {
     const box = document.getElementById('ciPromoBox');
     if (!box) return;
     box.style.display = (box.style.display === 'none' || !box.style.display) ? 'block' : 'none';
     calculateCIPromo();
   }
+
   function bindCardSpecificEvents() {
     const cardSce = document.getElementById('card-ci-sce');
     const chkSce = document.getElementById('chk-plan-sce');
@@ -908,6 +907,7 @@
       };
     });
   }
+
   function goToCIStage(targetStepOrder) {
     if (targetStepOrder === undefined || targetStepOrder === null) return;
     document.querySelectorAll('.stage-card').forEach(c => c.classList.remove('active'));
@@ -924,10 +924,12 @@
       applyPlanVisibilities();
     } catch(e) { console.warn(e); }
   }
+
   function toggleRoleMode() {
     ciState.isChildMode = !ciState.isChildMode;
     applyRoleMode();
   }
+
   function applyRoleMode() {
     const btn = document.getElementById('btnRoleSwitch');
     const isChild = ciState.isChildMode;
@@ -948,6 +950,7 @@
     renderAllDynamicCards();
     recalculateAll();
   }
+
   function renderDynamicTextsAndOptions() {
     const assetContainer = document.getElementById('assets-list-container');
     if (assetContainer) {
@@ -970,6 +973,7 @@
       bindAssetEvents();
     }
   }
+
   function bindAssetEvents() {
     const rows = document.querySelectorAll('.asset-input-row');
     rows.forEach(row => {
@@ -994,9 +998,11 @@
       }
     });
   }
+
   function onExpenseInputChanged(el) { ciState.monthlyExp = parseNum(el.value); el.value = ciState.monthlyExp.toLocaleString(); recalculateAll(); }
   function onMonthsInputChanged(el) { ciState.months = parseNum(el.value) || 36; recalculateAll(); }
   function onExistingCIInputChanged(el) { ciState.existingCI = parseNum(el.value); el.value = ciState.existingCI.toLocaleString(); recalculateAll(); }
+  
   function recalculateAll() {
     ciState.totalNeed = ciState.monthlyExp * ciState.months;
     ciState.netGap = Math.max(0, ciState.totalNeed - ciState.existingCI);
@@ -1014,6 +1020,7 @@
     if (bExpTxt) bExpTxt.innerText = '$' + Math.round(ciState.monthlyExp/1000) + 'K';
     updateAllAssets();
   }
+
   function updateAllAssets() {
     let sumVal = 0;
     const rows = document.querySelectorAll('.asset-input-row');
@@ -1037,6 +1044,7 @@
     if (cAssets) cAssets.innerText = 'HK$ ' + sumVal.toLocaleString();
     if (cRemain) cRemain.innerText = 'HK$ ' + remainGap.toLocaleString();
   }
+
   function toggleClaimCheck(key) {
     const chk = document.getElementById(`chk-${key}`);
     if (chk) {
@@ -1044,6 +1052,7 @@
       runStage3Calculation();
     }
   }
+
   function runStage3Calculation() {
     const startAgeEl = document.getElementById('c-input-start-age');
     const claimAgeEl = document.getElementById('c-input-claim-age');
@@ -1136,6 +1145,7 @@
     ciState.oys2MultiPaid = oys2FirstDisplay;
     calculateCIPremium();
   }
+
   function getRateFromTable(product, age, gender, period) {
     const r = dbData.rates || fallbackRates;
     if (product === 'sce') {
@@ -1154,7 +1164,7 @@
     }
     return 0;
   }
-  // 4. 06 頁精算保費與豁免後續保費動態聯動
+
   function calculateCIPremium() {
     const ageEl = document.getElementById('ci-calc-age');
     const genderEl = document.getElementById('ci-calc-gender');
@@ -1190,6 +1200,7 @@
     renderProjectionTable(age, gender, isVitality, period);
     updateConfirmSummary();
   }
+
   function toggleVitalityDetails() {
     const box = document.getElementById('vitality-details-content');
     const arrow = document.getElementById('vitality-arrow-icon');
@@ -1197,7 +1208,7 @@
     box.style.display = (box.style.display === 'block') ? 'none' : 'block';
     if (arrow) arrow.innerText = (box.style.display === 'block') ? '▲ 點擊收起說明' : '▼ 點擊展開說明';
   }
-  // 4. 06 頁保費推演表 (展示後續保費免交效果)
+
   function renderProjectionTable(startAge, gender, isVitality, period) {
     const tbody = document.getElementById('projection-table-body');
     if (!tbody) return;
@@ -1209,7 +1220,6 @@
     for (let age = startAge; age <= 80; age += 5) {
       let stepYears = 5;
       
-      // SCE 消費型計算
       let sceRate = getRateFromTable('sce', age, gender, period);
       let sceAnnualAtAge = Math.round((ciState.sceSum / 7800) * sceRate);
       if (isVitality) sceAnnualAtAge = Math.round(sceAnnualAtAge * 0.9);
@@ -1221,7 +1231,6 @@
         totalScePaid += (sceAnnualAtAge * stepYears);
       }
       
-      // OYS2 儲蓄型計算 (含豁免判定)
       let elapsed = age - startAge;
       let oys2AnnualAtAge = 0;
       let oys2Display = '';
@@ -1251,12 +1260,14 @@
     if (tabTotSce) tabTotSce.innerText = 'HK$ ' + totalScePaid.toLocaleString();
     if (tabTotOys2) tabTotOys2.innerText = 'HK$ ' + totalOys2Paid.toLocaleString();
   }
+
   function onStage5AgeChanged(input) {
     const val = parseInt(input.value, 10) || 20;
     ciState.simStartAge = val;
     calculateCIPremium();
     runStage3Calculation();
   }
+
   function updateConfirmSummary() {
     const period = ciState.oys2PayPeriod;
     const planNameEl = document.getElementById('f-confirm-plan-name');
@@ -1292,6 +1303,7 @@
       medBtn.href = `${medBase.trim().replace(/\/+$/, '')}?role=${roleVal}&cost=${ciState.medCost || 500000}&hasCompany=${ciState.hasCompanyMed || 'no'}`;
     }
   }
+
   function syncGoalDisplay() {
     ciState.goals = [];
     document.querySelectorAll('#assets-list-container .asset-input-row.selected').forEach(row => {
@@ -1302,6 +1314,8 @@
     const fGoals = document.getElementById('f-confirm-goals');
     if (fGoals) fGoals.innerText = ciState.goals.join('、');
   }
+
+  // 核心修復：精確計算並即時切換獨立顯示第 2 年、第 3 年回贈行
   function calculateCIPromo() {
     const sce200 = Number(document.getElementById('promoSce200')?.value) || 0;
     const sce500 = Number(document.getElementById('promoSce500')?.value) || 0;
@@ -1317,10 +1331,15 @@
     const pSceNet = document.getElementById('promoSceNetY1');
     const pSceY2 = document.getElementById('promoSceRebateY2');
     const pSceY3 = document.getElementById('promoSceRebateY3');
+    const rowSceY2 = document.getElementById('row-sce-y2-rebate');
+    const rowSceY3 = document.getElementById('row-sce-y3-rebate');
     const pSceSaved = document.getElementById('promoSceTotalSaved');
+
     if (pSceNet) pSceNet.innerText = 'HK$ ' + sceNetY1.toLocaleString();
     if (pSceY2) pSceY2.innerText = 'HK$ ' + sceRebateY2Val.toLocaleString();
     if (pSceY3) pSceY3.innerText = 'HK$ ' + sceRebateY3Val.toLocaleString();
+    if (rowSceY2) rowSceY2.style.display = sceY2Months > 0 ? 'flex' : 'none';
+    if (rowSceY3) rowSceY3.style.display = sceY3Months > 0 ? 'flex' : 'none';
     if (pSceSaved) pSceSaved.innerText = 'HK$ ' + sceTotalSaved.toLocaleString();
     
     const oys2500 = Number(document.getElementById('promoOys2500')?.value) || 0;
@@ -1336,13 +1355,18 @@
     const pOys2Net = document.getElementById('promoOys2NetY1');
     const pOys2Y2 = document.getElementById('promoOys2RebateY2');
     const pOys2Y3 = document.getElementById('promoOys2RebateY3');
+    const rowOys2Y2 = document.getElementById('row-oys2-y2-rebate');
+    const rowOys2Y3 = document.getElementById('row-oys2-y3-rebate');
     const pOys2Saved = document.getElementById('promoOys2TotalSaved');
+
     if (pOys2Net) pOys2Net.innerText = 'HK$ ' + oys2NetY1.toLocaleString();
     if (pOys2Y2) pOys2Y2.innerText = 'HK$ ' + oys2RebateY2Val.toLocaleString();
     if (pOys2Y3) pOys2Y3.innerText = 'HK$ ' + oys2RebateY3Val.toLocaleString();
+    if (rowOys2Y2) rowOys2Y2.style.display = oys2Y2Months > 0 ? 'flex' : 'none';
+    if (rowOys2Y3) rowOys2Y3.style.display = oys2Y3Months > 0 ? 'flex' : 'none';
     if (pOys2Saved) pOys2Saved.innerText = 'HK$ ' + oys2TotalSaved.toLocaleString();
   }
-  // ======================== 2. 05 頁多重推進按鈕還原 ========================
+
   function renderMultiButtonsFromRules() {
     const botContainer = document.getElementById('botEmojiBtnContainer');
     if (!botContainer) return;
@@ -1354,13 +1378,13 @@
       const bColor = rule.color || '#d97706';
       const bEmoji = rule.emoji || '🛡️';
       const bName = rule.diseaseName || rule.name || '理賠項目';
-      // 癌症B選中後，癌症A自動熄燈停用
       const isDisabled = (rule.claimKey === 'cancer_a' && (ciState.countsMap['cancer_b'] || 0) > 0);
       botHtml += `<button type="button" class="btn-emoji-inline" id="bot-btn-${rule.claimKey}" style="background:${bColor};" ${isDisabled ? 'disabled' : ''} onclick="executeDynamicClaim('${rule.claimKey}')" title="${bName}">${bEmoji}</button>`;
     });
     botHtml += `<button type="button" class="btn-emoji-inline" style="background:#64748b;" onclick="undoLastMultiClaim()" title="撤銷上一筆">↩️</button>`;
     botContainer.innerHTML = botHtml;
   }
+
   function executeDynamicClaim(claimKey) {
     const rules = (cloudAppDatabase.rules && cloudAppDatabase.rules.length > 0) ? cloudAppDatabase.rules : defaultDatabase.rules;
     const rule = rules.find(r => r.claimKey === claimKey);
@@ -1400,6 +1424,7 @@
     if (oys2TotPaid) oys2TotPaid.innerText = 'HK$ ' + ciState.oys2MultiPaid.toLocaleString();
     renderMultiButtonsFromRules();
   }
+
   function undoLastMultiClaim() {
     if (ciState.claimHistory.length === 0) return;
     const last = ciState.claimHistory.pop();
@@ -1417,6 +1442,7 @@
     if (oys2TotPaid) oys2TotPaid.innerText = 'HK$ ' + ciState.oys2MultiPaid.toLocaleString();
     renderMultiButtonsFromRules();
   }
+
   function resetCompareMultiTimeline() {
     ciState.multiTimelineAge = ciState.simClaimAge;
     ciState.claimHistory = [];
@@ -1433,7 +1459,7 @@
     if (oys2TotPaid) oys2TotPaid.innerText = 'HK$ ' + firstClaimVal.toLocaleString();
     renderMultiButtonsFromRules();
   }
-  // ======================== 5. 案例庫彈窗修復 ========================
+
   let currentDrawerCategory = 'case';
   function openMediaDrawer(categoryKey) {
     currentDrawerCategory = categoryKey;
@@ -1464,6 +1490,7 @@
       renderCaseGallery(0);
     }
   }
+
   function renderCaseGallery(caseIndex) {
     const gridEl = document.getElementById('drawerMediaGrid');
     let caseList = cloudAppDatabase[currentDrawerCategory] || [];
@@ -1483,6 +1510,7 @@
     });
     gridEl.innerHTML = html;
   }
+
   function closeMediaDrawer() { document.getElementById('mediaDrawerOverlay').style.display = 'none'; }
   function openDocViewer(index) { currentViewerList = currentViewerList || []; currentViewerIndex = index; document.getElementById('viewerModalOverlay').style.display = 'flex'; renderViewerItem(); }
   function closeDocViewer() { document.getElementById('viewerModalOverlay').style.display = 'none'; }
@@ -1497,7 +1525,7 @@
     document.getElementById('viewerTitle').innerText = `${item.title} (${currentViewerIndex + 1} / ${currentViewerList.length})`;
     document.getElementById('viewerBody').innerHTML = `<img src="${item.url}" class="viewer-img" alt="${item.title}">`;
   }
-  // ======================== 後台管理 ========================
+
   function openAdminModal() { 
     document.getElementById('adminFullScreenModal').style.display = 'flex'; 
     renderAdminVisualLayout(); 
@@ -1518,6 +1546,7 @@
     if (tabKey === 'rules') renderAdminRulesLayout();
     if (tabKey === 'firebase') renderAdminFirebaseList();
   }
+
   function movePageOrder(role, currentIndex, direction) {
     saveCurrentAdminInputs();
     const rolePages = dbData.pages.filter(p => p.role === role).sort((a,b) => a.stepOrder - b.stepOrder);
@@ -1528,6 +1557,7 @@
     rolePages[targetIndex].stepOrder = tempOrder;
     renderAdminVisualLayout();
   }
+
   function saveCurrentAdminInputs() {
     document.querySelectorAll('[data-adm-page-idx]').forEach(card => {
       const idx = Number(card.dataset.admPageIdx);
@@ -1541,6 +1571,7 @@
       }
     });
   }
+
   function renderAdminVisualLayout() {
     const container = document.getElementById('adminVisualContainer');
     const selectedRole = document.getElementById('adminRoleSelect').value;
@@ -1604,25 +1635,22 @@
     });
     container.innerHTML = html;
   }
+
   function addAdminCIOption(pageId, role) {
     if (!dbData.options) dbData.options = [];
     const count = dbData.options.filter(o => o.pageId === pageId).length + 1;
     dbData.options.push({
-      pageId: pageId,
-      role: role,
-      optionKey: "opt_" + count + "_" + Date.now().toString().slice(-3),
-      icon: "📌",
-      title: "新選項標題",
-      desc: "",
-      isDefaultSelected: "FALSE",
-      order: count
+      pageId: pageId, role: role, optionKey: "opt_" + count + "_" + Date.now().toString().slice(-3),
+      icon: "📌", title: "新選項標題", desc: "", isDefaultSelected: "FALSE", order: count
     });
     renderAdminVisualLayout();
   }
+
   function deleteAdminCIOption(idx) {
     dbData.options.splice(idx, 1);
     renderAdminVisualLayout();
   }
+
   async function uploadSingleImageToFirebase(input, pageIdx) {
     const file = input.files[0];
     if (!file) return;
@@ -1643,6 +1671,7 @@
       alert("❌ 上傳失敗：" + err.message);
     }
   }
+
   function renderAdminFirebaseList() {
     const container = document.getElementById('adminUploadedItemsList');
     if (!container) return;
@@ -1666,6 +1695,7 @@
     });
     container.innerHTML = html;
   }
+
   async function uploadFileToFirebase() {
     const fileInput = document.getElementById('uploadFileInput');
     const titleInput = document.getElementById('uploadFileTitle');
@@ -1699,25 +1729,12 @@
         });
       }
       
-      const newCase = {
-        category: cat,
-        caseName: baseTitle,
-        files: uploadedFiles,
-        filesJson: JSON.stringify(uploadedFiles)
-      };
-      
+      const newCase = { category: cat, caseName: baseTitle, files: uploadedFiles, filesJson: JSON.stringify(uploadedFiles) };
       if (!cloudAppDatabase[cat]) cloudAppDatabase[cat] = [];
       cloudAppDatabase[cat].push(newCase);
       
       if (!Array.isArray(dbData.cases)) dbData.cases = [];
-      dbData.cases.push({
-        category: cat,
-        diseaseName: baseTitle,
-        claimCount: "最新上載",
-        amount: "100%",
-        date: new Date().toLocaleDateString('zh-HK'),
-        filesJson: JSON.stringify(uploadedFiles)
-      });
+      dbData.cases.push({ category: cat, diseaseName: baseTitle, claimCount: "最新上載", amount: "100%", date: new Date().toLocaleDateString('zh-HK'), filesJson: JSON.stringify(uploadedFiles) });
       
       alert(`✅ 成功建立案例【${baseTitle}】並上傳至 Firebase！請點擊右上角「💾 儲存同步至 Google Sheet」保存。`);
       fileInput.value = '';
@@ -1730,6 +1747,7 @@
       btn.disabled = false;
     }
   }
+
   function deleteAdminCaseItem(cat, idx) {
     if (!confirm('確定刪除此案例及包含的所有檔案？')) return;
     const removed = cloudAppDatabase[cat].splice(idx, 1);
@@ -1739,6 +1757,7 @@
     }
     renderAdminFirebaseList();
   }
+
   function addAdminNewCIPage() {
     saveCurrentAdminInputs();
     const selectedRole = document.getElementById('adminRoleSelect').value;
@@ -1746,9 +1765,11 @@
     dbData.pages.push({ role: selectedRole, stepOrder: count, pageId: "step_ci_" + Date.now().toString().slice(-4), pageType: "文案", tagName: `0${count}｜自訂步驟`, title: "請在此輸入標題", subtitle: "", imageUrl: "", highlightText: "" });
     renderAdminVisualLayout();
   }
+
   function deleteAdminCIPage(idx) {
     if (confirm("確定刪除此頁面？")) { dbData.pages.splice(idx, 1); renderAdminVisualLayout(); }
   }
+
   function renderAdminConfigLayout() {
     const container = document.getElementById('adminConfigContainer');
     if (!container) return;
@@ -1758,6 +1779,7 @@
     html += '</div>';
     container.innerHTML = html;
   }
+
   function renderAdminRulesLayout() {
     const container = document.getElementById('adminRulesContainer');
     if (!container) return;
@@ -1775,55 +1797,23 @@
             <span style="font-size:11px; background:#e2e8f0; padding:2px 6px; border-radius:4px;">鍵值: ${rule.claimKey}</span>
           </div>
           <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
-            <div>
-              <label class="admin-label">diseaseName (疾病名稱)：</label>
-              <input type="text" data-adm-rule-dname="${idx}" value="${dName}" style="margin-top:2px;">
-            </div>
-            <div>
-              <label class="admin-label">claimCount (次數上限)：</label>
-              <input type="text" data-adm-rule-count="${idx}" value="${cCount}" style="margin-top:2px;">
-            </div>
-            <div>
-              <label class="admin-label">amount (賠償比率)：</label>
-              <input type="text" data-adm-rule-amt="${idx}" value="${amt}" style="margin-top:2px;">
-            </div>
+            <div><label class="admin-label">diseaseName：</label><input type="text" data-adm-rule-dname="${idx}" value="${dName}"></div>
+            <div><label class="admin-label">claimCount：</label><input type="text" data-adm-rule-count="${idx}" value="${cCount}"></div>
+            <div><label class="admin-label">amount：</label><input type="text" data-adm-rule-amt="${idx}" value="${amt}"></div>
           </div>
-          <div style="margin-top:6px;">
-            <label class="admin-label">displayNote (顯示備註)：</label>
-            <input type="text" data-adm-rule-note="${idx}" value="${dNote}" style="margin-top:2px;">
-          </div>
-        </div>
-      `;
+          <div style="margin-top:6px;"><label class="admin-label">displayNote：</label><input type="text" data-adm-rule-note="${idx}" value="${dNote}"></div>
+        </div>`;
     });
     container.innerHTML = html;
   }
+
   async function saveAllAdminData() {
     saveCurrentAdminInputs();
     document.querySelectorAll('[data-adm-config-key]').forEach(inp => { dbData.config[inp.dataset.admConfigKey] = inp.value; });
-    document.querySelectorAll('[data-adm-rule-note]').forEach(inp => {
-      const idx = Number(inp.dataset.admRuleNote);
-      if (dbData.rules && dbData.rules[idx]) {
-        dbData.rules[idx].displayNote = inp.value;
-      }
-    });
-    document.querySelectorAll('[data-adm-rule-dname]').forEach(inp => {
-      const idx = Number(inp.dataset.admRuleDname);
-      if (dbData.rules && dbData.rules[idx]) {
-        dbData.rules[idx].diseaseName = inp.value;
-      }
-    });
-    document.querySelectorAll('[data-adm-rule-count]').forEach(inp => {
-      const idx = Number(inp.dataset.admRuleCount);
-      if (dbData.rules && dbData.rules[idx]) {
-        dbData.rules[idx].claimCount = inp.value;
-      }
-    });
-    document.querySelectorAll('[data-adm-rule-amt]').forEach(inp => {
-      const idx = Number(inp.dataset.admRuleAmt);
-      if (dbData.rules && dbData.rules[idx]) {
-        dbData.rules[idx].amount = inp.value;
-      }
-    });
+    document.querySelectorAll('[data-adm-rule-note]').forEach(inp => { const idx = Number(inp.dataset.admRuleNote); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].displayNote = inp.value; });
+    document.querySelectorAll('[data-adm-rule-dname]').forEach(inp => { const idx = Number(inp.dataset.admRuleDname); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].diseaseName = inp.value; });
+    document.querySelectorAll('[data-adm-rule-count]').forEach(inp => { const idx = Number(inp.dataset.admRuleCount); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].claimCount = inp.value; });
+    document.querySelectorAll('[data-adm-rule-amt]').forEach(inp => { const idx = Number(inp.dataset.admRuleAmt); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].amount = inp.value; });
     try {
       const payload = { action: "saveAllAdmin", pages: dbData.pages, options: dbData.options, config: dbData.config, rules: dbData.rules, cases: dbData.cases };
       await fetch(GAS_CENTRAL_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
@@ -1835,6 +1825,7 @@
       alert("⚠️ 同步失敗，請檢查網路。");
     }
   }
+
   window.onGASDataLoaded = function(json) {
     if (json && json.status === "success") {
       saveToLocalCache(json);
@@ -1845,11 +1836,12 @@
       calculateCIPremium();
     }
   };
+
   function syncAllFromGASCentral() {
     const hasCache = loadFromLocalCache();
     if (hasCache) {
       const badge = document.getElementById('sync-status-badge');
-      if (badge) { badge.innerHTML = '⚡ 已使用本機秒開 (v' + (dbData.config["資料版本"] || '9.9.0') + ')'; badge.className = 'status-ok'; }
+      if (badge) { badge.innerHTML = '⚡ 已使用本機秒開 (v' + (dbData.config["資料版本"] || '9.9.1') + ')'; badge.className = 'status-ok'; }
       applyRoleMode();
       calculateCIPremium();
     }
@@ -1857,6 +1849,7 @@
     script.src = GAS_CENTRAL_URL + (GAS_CENTRAL_URL.includes('?') ? '&' : '?') + 'callback=onGASDataLoaded&t=' + Date.now();
     document.body.appendChild(script);
   }
+
   document.addEventListener('DOMContentLoaded', function() {
     const p = new URLSearchParams(window.location.search);
     if (p.get('role') === 'child') ciState.isChildMode = true;
