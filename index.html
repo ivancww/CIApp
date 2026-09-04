@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.9.2)</title>
+<title>確診危疾生活儲備規劃 (v9.9.4)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -154,7 +154,7 @@
   <div class="header-version-bar">
     <div style="display:flex; align-items:center; gap:6px;">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge" id="appVersion">v9.9.2</span>
+      <span class="v-badge" id="appVersion">v9.9.4</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
@@ -194,7 +194,8 @@
   <div class="admin-header-nav">
     <span style="font-weight:800; font-size:15px;" id="adminHeaderTitle">⚙️ CIApp 後台管理控制台</span>
     <div style="display:flex; gap:6px; align-items:center;">
-      <button type="button" class="btn-primary" style="padding:6px 10px; font-size:11.5px; background:#0284c7;" onclick="exportAgentPreset()">📤 匯出設定</button>
+      <button type="button" id="btnAdminUnlock" class="btn-primary" style="padding:6px 10px; font-size:11.5px; background:#d97706;" onclick="promptAdminLogin()">🔑 管理員登入</button>
+      <button type="button" class="btn-primary" style="padding:6px 10px; font-size:11.5px; background:#0284c7;" onclick="exportAgentPreset()">📤 匯出</button>
       <label style="background:#475569; color:#fff; padding:6px 10px; border-radius:6px; font-size:11.5px; font-weight:bold; cursor:pointer; white-space:nowrap;">
         📥 匯入
         <input type="file" accept=".json" style="display:none;" onchange="importAgentPreset(this)">
@@ -206,10 +207,10 @@
   
   <div class="admin-tab-bar" id="adminTabBar">
     <button type="button" class="admin-tab-btn active" onclick="switchAdminTab('pages', this)">📄 頁面流程與題目管理</button>
-    <button type="button" class="admin-tab-btn" onclick="switchAdminTab('plans', this)">📋 方案與特點管理 (A/B/C/D)</button>
-    <button type="button" class="admin-tab-btn admin-only-tab" onclick="switchAdminTab('config', this)">🔒 系統參數 (中央)</button>
-    <button type="button" class="admin-tab-btn admin-only-tab" onclick="switchAdminTab('rules', this)">🔒 賠償條款 (中央)</button>
-    <button type="button" class="admin-tab-btn admin-only-tab" onclick="switchAdminTab('firebase', this)">🔒 Firebase 圖片庫 (中央)</button>
+    <button type="button" class="admin-tab-btn" onclick="switchAdminTab('plans', this)">📋 方案管理 (A/B/C/D)</button>
+    <button type="button" class="admin-tab-btn" onclick="switchAdminTab('config', this)">⚙️ 系統參數設定</button>
+    <button type="button" class="admin-tab-btn" onclick="switchAdminTab('rules', this)">📑 賠償條款設定</button>
+    <button type="button" class="admin-tab-btn" onclick="switchAdminTab('firebase', this)">🔥 Firebase 案例/圖片管理</button>
   </div>
   <div class="admin-scroll-body">
     <div id="adminTabPagesSection">
@@ -286,9 +287,8 @@
   if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
   const storage = firebase.storage();
   
-  // 判斷是否為隊長管理員
   const urlParams = new URLSearchParams(window.location.search);
-  const isAdminMaster = (urlParams.get('admin') === '888');
+  let isAdminMaster = (urlParams.get('admin') === '8888' || urlParams.get('admin') === '888');
 
   const fallbackRates = {
     oys2_m: { 0:{pay10_non:31.2,pay18_non:19.4,pay25_non:15.1}, 5:{pay10_non:34.5,pay18_non:21.3,pay25_non:16.8}, 20:{pay10_non:39.8,pay18_non:24.62,pay25_non:19.3}, 25:{pay10_non:44.2,pay18_non:27.5,pay25_non:21.6}, 30:{pay10_non:49.8,pay18_non:31.2,pay25_non:24.8}, 35:{pay10_non:56.8,pay18_non:36.1,pay25_non:28.9}, 40:{pay10_non:65.9,pay18_non:42.5,pay25_non:34.2}, 43:{pay10_non:72.5,pay18_non:47.2,pay25_non:38.1} },
@@ -299,7 +299,8 @@
   
   const defaultDatabase = {
     config: {
-      "資料版本": "9.9.2",
+      "資料版本": "9.9.4",
+      "管理員密碼": "8888",
       "醫療App網址": "https://ivancww.github.io/medicalclaims",
       "溫馨提示醫療標題": "🏥 溫馨提示：醫療選擇防線",
       "溫馨提示醫療說明": "先了解你現有醫療保障，確認私家高額住院與手術費用可支持到幾多。",
@@ -342,8 +343,8 @@
       { pageId: 'step_ci_2', role: 'common', optionKey: 'family_life', icon: '🏠', title: '家庭生活', isDefaultSelected: 'FALSE', order: 5 }
     ],
     rules: [
-      { claimKey: "cancer_a", diseaseName: "🎗️ 癌症 (最多6次)", name: "🎗️ 癌症選項A (最多6次)", emoji: "🎗️", btnText: "🎗️ 癌症 (+3年)", claimCount: "上限:6次", amount: "100%", maxCount: 6, waitYears: 3, isMonthly: false, color: "#d97706", displayNote: "🎗️ 癌症選項A" },
-      { claimKey: "cancer_b", diseaseName: "💊 癌症選項B (每月5%)", name: "💊 癌症選項B (每月5%)", emoji: "💊", btnText: "💊 癌症選項B (5%/月)", claimCount: "上限:100個月", amount: "5%", maxCount: 100, waitYears: 1, isMonthly: true, color: "#0284c7", displayNote: "💊 癌症選項B" },
+      { claimKey: "cancer_a", diseaseName: "🎗️ 癌症 (最多6次)", name: "🎗️ 癌症選項A (最多6次)", emoji: "🎗️", btnText: "🎗️ 癌症 (+3年)", claimCount: "上限:6次", amount: "100%", maxCount: 6, waitYears: 3, isMonthly: false, color: "#d97706", displayNote: "🎗️ 癌症選項A (每3年100%)" },
+      { claimKey: "cancer_b", diseaseName: "💊 癌症選項B (每月5%)", name: "💊 癌症選項B (每月5%)", emoji: "💊", btnText: "💊 癌症選項B (5%/月)", claimCount: "上限:100個月", amount: "5%", maxCount: 100, waitYears: 1, isMonthly: true, color: "#0284c7", displayNote: "💊 癌症選項B (每月5%連續發放)" },
       { claimKey: "heart", diseaseName: "❤️ 心臟病 / 中風 (最多3次)", name: "❤️ 心臟病 / 中風 (最多3次)", emoji: "❤️", btnText: "❤️ 心臟/中風 (+1年)", claimCount: "上限:3次", amount: "100%", maxCount: 3, waitYears: 1, isMonthly: false, color: "#8e44ad", displayNote: "❤️ 心臟病 / 中風" },
       { claimKey: "dementia", diseaseName: "🧠 腦退化/柏金遜 (1次+年金)", name: "🧠 腦退化/柏金遜 (1次+年金)", emoji: "🧠", btnText: "🧠 腦退化 (+1年)", claimCount: "上限:1次+年金", amount: "100%+6%", maxCount: 11, waitYears: 1, isMonthly: false, color: "#27ae60", displayNote: "🧠 腦退化" }
     ],
@@ -368,6 +369,7 @@
     hasClaimedFirst: false,
     planSums: { sce: 780000, oys2: 780000 },
     multiTimelineAge: 25,
+    cancerBMonthCounter: 0,
     oys2MultiPaid: 1170000,
     claimHistory: [],
     countsMap: {},
@@ -385,18 +387,48 @@
     return Number(String(val || '').replace(/[^0-9]/g, '')) || 0;
   }
 
-  // 雙軌資料混合引擎 (Hybrid Merge)
+  // 密碼解鎖管理員權限
+  function promptAdminLogin() {
+    const correctPwd = (dbData.config && dbData.config["管理員密碼"]) || "8888";
+    const inputPwd = prompt("🔑 請輸入隊長管理員密碼：");
+    if (inputPwd === correctPwd) {
+      isAdminMaster = true;
+      updateAdminUIState();
+      alert("✅ 管理員驗證成功！已解鎖 Google Sheet 雙向同步權限。");
+    } else if (inputPwd !== null) {
+      alert("❌ 密碼錯誤，維持個人本機自訂模式。");
+    }
+  }
+
+  function updateAdminUIState() {
+    const titleEl = document.getElementById('adminHeaderTitle');
+    const saveBtn = document.getElementById('btnAdminSaveSync');
+    const unlockBtn = document.getElementById('btnAdminUnlock');
+    if (!titleEl || !saveBtn) return;
+    
+    if (isAdminMaster) {
+      titleEl.innerText = "⚙️ CIApp【隊長管理員】中央控制台";
+      saveBtn.innerText = "💾 儲存同步至 Google Sheet";
+      saveBtn.style.background = "#10b981";
+      if (unlockBtn) unlockBtn.style.display = "none";
+    } else {
+      titleEl.innerText = "⚙️ CIApp【個人自訂】控制台 (存入本機)";
+      saveBtn.innerText = "💾 保存至本機";
+      saveBtn.style.background = "#0284c7";
+      if (unlockBtn) unlockBtn.style.display = "inline-block";
+    }
+  }
+
   function applyHybridDatabaseMerge(remoteJson) {
     const localCached = loadFromLocalCacheRaw();
     const isTailorMade = localCached && localCached.isCustomized;
     
-    // 🔒 1. 強制跟中央 (系統設定、賠償條款、費率表、Firebase案例)
     dbData.config = (remoteJson && remoteJson.config) ? remoteJson.config : defaultDatabase.config;
-    dbData.rules = (remoteJson && remoteJson.rules) ? remoteJson.rules : defaultDatabase.rules;
+    dbData.rules = (remoteJson && remoteJson.rules && remoteJson.rules.length > 0) ? remoteJson.rules : defaultDatabase.rules;
     dbData.rates = (remoteJson && remoteJson.rates) ? remoteJson.rates : fallbackRates;
     cloudAppDatabase.rules = dbData.rules;
 
-    if (remoteJson && Array.isArray(remoteJson.cases)) {
+    if (remoteJson && Array.isArray(remoteJson.cases) && remoteJson.cases.length > 0) {
       cloudAppDatabase["102"] = [];
       cloudAppDatabase["child"] = [];
       cloudAppDatabase["case"] = [];
@@ -410,7 +442,6 @@
       });
     }
 
-    // 🎨 2. 隊員 Tailor-made 優先 (頁面題目、問題順序、自訂方案)
     if (isTailorMade && !isAdminMaster) {
       dbData.pages = localCached.pages || defaultDatabase.pages;
       dbData.options = localCached.options || defaultDatabase.options;
@@ -421,7 +452,6 @@
       dbData.plans = (remoteJson && remoteJson.plans) ? remoteJson.plans : defaultDatabase.plans;
     }
 
-    // 初始化方案可見度與保額
     dbData.plans.forEach(p => {
       if (ciState.planVis[p.planKey] === undefined) ciState.planVis[p.planKey] = true;
       if (ciState.planSums[p.planKey] === undefined) ciState.planSums[p.planKey] = 780000;
@@ -456,7 +486,7 @@
 
     const textRulesContent = `
       <div style="font-size:12px; line-height:1.7; color:#334155;">
-        • <strong>癌症選項A</strong> - 賠償100%（3年） / <strong>癌症選項B</strong> - 每月賠償5%（1年）- <em>合共600%</em><br>
+        • <strong>癌症選項A</strong> - 賠償100%（3年） / <strong>癌症選項B</strong> - 每月賠償5%（1年後連續發放）- <em>合共600%</em><br>
         • <strong>心臟病 / 中風</strong> - 賠償100%（1年）- <em>合共3次</em><br>
         • <strong>腦退化</strong> - 賠償100%（1年）- <em>1次100%後，每年6%年金</em>
       </div>
@@ -472,7 +502,6 @@
       let topBarExtras = '';
       const hasImage = p.imageUrl && p.imageUrl.trim() !== '';
       
-      // 動態生成方案膠囊列
       let planCapsulesHtml = '<div style="display:flex; gap:4px; align-items:center; flex-wrap:wrap;">';
       (dbData.plans || defaultDatabase.plans).forEach(plan => {
         const isVis = ciState.planVis[plan.planKey] !== false;
@@ -805,7 +834,7 @@
                 </div>
                 <div class="stat-grid-box" style="margin:8px 0 0 0; background:#f8fafc; padding:10px; font-size:12.5px;">
                   <div class="stat-row"><span>首年實繳保費：</span><strong id="promoOys2NetY1">HK$ 18,704</strong></div>
-                  <div class="stat-row" id="row-oys2-y2-rebate"><span id="lbl-promo-y2-oys2">第 2 年回贈金額：</span><strong style="color:#059669;" id="promoOys2RebateY2">HK$ 3,200</strong></div>
+                  <div class="stat-row" id="row-oys2-y2-rebate"><span>第 2 年回贈金額：</span><strong style="color:#059669;" id="promoOys2RebateY2">HK$ 3,200</strong></div>
                   <div class="stat-row" id="row-oys2-y3-rebate" style="display:none;"><span>第 3 年回贈金額：</span><strong style="color:#059669;" id="promoOys2RebateY3">HK$ 0</strong></div>
                   <div class="stat-row total" style="color:#b45309; margin-top:6px; padding-top:6px;">
                     <span>總共累計節省：</span><strong style="color:#dc2626;" id="promoOys2TotalSaved">HK$ 3,700</strong>
@@ -887,7 +916,7 @@
 
     const docs = (plan && plan.docs) ? plan.docs : [];
     if (docs.length === 0) {
-      gridEl.innerHTML = '<div style="grid-column: 1 / -1; text-align:center; padding:35px; color:#94a3b8;">暫無專屬條款上載 (可於後台「方案與特點管理」上傳)</div>';
+      gridEl.innerHTML = '<div style="grid-column: 1 / -1; text-align:center; padding:35px; color:#94a3b8;">暫無專屬條款上載 (可於後台「方案管理」上傳)</div>';
       return;
     }
     currentViewerList = docs;
@@ -1371,16 +1400,27 @@
     const currentCount = ciState.countsMap[claimKey] || 0;
     const maxCount = parseInt(rule.maxCount, 10) || 6;
     if (currentCount >= maxCount) { alert(`${rule.diseaseName || rule.name || '此項目'} 已達最高理賠上限 (${maxCount} 次)！`); return; }
-    ciState.countsMap[claimKey] = currentCount + 1;
-    const waitYears = parseInt(rule.waitYears, 10) || 1;
-    ciState.multiTimelineAge += waitYears;
     
+    ciState.countsMap[claimKey] = currentCount + 1;
+    let waitYears = parseInt(rule.waitYears, 10) || 1;
+    let ageAdded = 0;
     let amt = sum;
     let desc = `發放 100% 賠償 ($${amt.toLocaleString()})`;
+
     if (claimKey === 'cancer_b') {
       amt = Math.round(sum * 0.05);
-      desc = `發放每月 5% 津貼 ($${amt.toLocaleString()})`;
+      ciState.cancerBMonthCounter++;
+      if (ciState.cancerBMonthCounter === 1) {
+        ageAdded = 1;
+        ciState.multiTimelineAge += 1;
+      } else if (ciState.cancerBMonthCounter % 12 === 1) {
+        ageAdded = 1;
+        ciState.multiTimelineAge += 1;
+      }
+      desc = `發放第 ${ciState.cancerBMonthCounter} 個月 5% 現金流 ($${amt.toLocaleString()})`;
     } else if (claimKey === 'dementia') {
+      ageAdded = waitYears;
+      ciState.multiTimelineAge += waitYears;
       if (currentCount === 0) {
         amt = sum;
         desc = `首次確診賠償 100% ($${amt.toLocaleString()})`;
@@ -1388,11 +1428,14 @@
         amt = Math.round(sum * 0.06);
         desc = `第 ${currentCount} 年領取 6% 年金 ($${amt.toLocaleString()})`;
       }
+    } else {
+      ageAdded = waitYears;
+      ciState.multiTimelineAge += waitYears;
     }
     
     ciState.oys2MultiPaid += amt;
     const record = {
-      claimKey: claimKey, amt: amt, ageBefore: ciState.multiTimelineAge - waitYears,
+      claimKey: claimKey, amt: amt, ageAdded: ageAdded,
       html: `<div class="timeline-mini-card" style="border-left:5px solid ${rule.color || '#d97706'} !important;"><div><strong>${rule.diseaseName || rule.name || '理賠項目'} (${ciState.multiTimelineAge}歲)</strong>：${desc}<br><span style="color:${rule.color || '#d97706'}; font-weight:bold;">✅ 多重現金流到位</span></div></div>`
     };
     ciState.claimHistory.push(record);
@@ -1406,8 +1449,10 @@
     if (ciState.claimHistory.length === 0) return;
     const last = ciState.claimHistory.pop();
     ciState.oys2MultiPaid -= last.amt;
-    ciState.multiTimelineAge = last.ageBefore;
+    ciState.multiTimelineAge -= last.ageAdded;
     ciState.countsMap[last.claimKey]--;
+    if (last.claimKey === 'cancer_b') ciState.cancerBMonthCounter--;
+    
     const listOys2 = document.getElementById('d-timeline-oys2');
     const isWithin10 = (ciState.simClaimAge - ciState.simStartAge <= 10);
     const bonusRate = ciState.isChildMode ? 0.5 : ((ciState.simStartAge <= 30) ? 0.5 : 0.35);
@@ -1423,6 +1468,7 @@
 
   function resetCompareMultiTimeline() {
     ciState.multiTimelineAge = ciState.simClaimAge;
+    ciState.cancerBMonthCounter = 0;
     ciState.claimHistory = [];
     Object.keys(ciState.countsMap).forEach(k => { ciState.countsMap[k] = 0; });
     runStage3Calculation();
@@ -1509,29 +1555,13 @@
   // ======================== 後台管理與權限隔離 ========================
   function openAdminModal() { 
     document.getElementById('adminFullScreenModal').style.display = 'flex'; 
-    const titleEl = document.getElementById('adminHeaderTitle');
-    const saveBtn = document.getElementById('btnAdminSaveSync');
-    
-    // 權限區分：只有管理員能看見並儲存中央數據
-    if (isAdminMaster) {
-      titleEl.innerText = "⚙️ CIApp【隊長管理員】中央控制台";
-      saveBtn.innerText = "💾 儲存同步至 Google Sheet";
-      saveBtn.style.background = "#10b981";
-      document.querySelectorAll('.admin-only-tab').forEach(el => el.style.display = '');
-    } else {
-      titleEl.innerText = "⚙️ CIApp【個人自訂】控制台 (存入本機)";
-      saveBtn.innerText = "💾 保存至本機";
-      saveBtn.style.background = "#0284c7";
-      document.querySelectorAll('.admin-only-tab').forEach(el => el.style.display = 'none');
-    }
+    updateAdminUIState();
     
     renderAdminVisualLayout(); 
     renderAdminPlansLayout();
-    if (isAdminMaster) {
-      renderAdminConfigLayout(); 
-      renderAdminRulesLayout(); 
-      renderAdminFirebaseList();
-    }
+    renderAdminConfigLayout(); 
+    renderAdminRulesLayout(); 
+    renderAdminFirebaseList();
   }
 
   function closeAdminModal() { document.getElementById('adminFullScreenModal').style.display = 'none'; }
@@ -1547,9 +1577,9 @@
     
     if (tabKey === 'pages') renderAdminVisualLayout();
     if (tabKey === 'plans') renderAdminPlansLayout();
-    if (tabKey === 'config' && isAdminMaster) renderAdminConfigLayout();
-    if (tabKey === 'rules' && isAdminMaster) renderAdminRulesLayout();
-    if (tabKey === 'firebase' && isAdminMaster) renderAdminFirebaseList();
+    if (tabKey === 'config') renderAdminConfigLayout();
+    if (tabKey === 'rules') renderAdminRulesLayout();
+    if (tabKey === 'firebase') renderAdminFirebaseList();
   }
 
   function movePageOrder(role, currentIndex, direction) {
@@ -1641,7 +1671,6 @@
     container.innerHTML = html;
   }
 
-  // 渲染動態方案管理介面
   function renderAdminPlansLayout() {
     const container = document.getElementById('adminPlansContainer');
     if (!container) return;
@@ -1829,8 +1858,11 @@
   function renderAdminConfigLayout() {
     const container = document.getElementById('adminConfigContainer');
     if (!container) return;
-    const cfg = dbData.config || defaultDatabase.config;
-    let html = '<h3 style="color:var(--primary); margin:0 0 12px 0;">⚙️ 系統參數設定 (中央控制)</h3><div class="grid-2col">';
+    if (!dbData.config) dbData.config = { ...defaultDatabase.config };
+    if (!dbData.config["管理員密碼"]) dbData.config["管理員密碼"] = "8888";
+    
+    const cfg = dbData.config;
+    let html = '<h3 style="color:var(--primary); margin:0 0 12px 0;">⚙️ 系統參數設定</h3><div class="grid-2col">';
     for (const [k, v] of Object.entries(cfg)) html += `<div><label class="admin-label">${k}</label><input type="text" data-adm-config-key="${k}" value="${v}"></div>`;
     html += '</div>';
     container.innerHTML = html;
@@ -1846,16 +1878,18 @@
       const cCount = rule.claimCount || '';
       const amt = rule.amount || '';
       const dNote = rule.displayNote || '';
+      const waitY = rule.waitYears !== undefined ? rule.waitYears : 1;
       html += `
         <div style="background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
             <strong style="color:var(--primary); font-size:14px;">${dName}</strong>
             <span style="font-size:11px; background:#e2e8f0; padding:2px 6px; border-radius:4px;">鍵值: ${rule.claimKey}</span>
           </div>
-          <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
+          <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:8px;">
             <div><label class="admin-label">diseaseName：</label><input type="text" data-adm-rule-dname="${idx}" value="${dName}"></div>
             <div><label class="admin-label">claimCount：</label><input type="text" data-adm-rule-count="${idx}" value="${cCount}"></div>
             <div><label class="admin-label">amount：</label><input type="text" data-adm-rule-amt="${idx}" value="${amt}"></div>
+            <div><label class="admin-label">waitYears (年數)：</label><input type="number" data-adm-rule-waity="${idx}" value="${waitY}"></div>
           </div>
           <div style="margin-top:6px;"><label class="admin-label">displayNote：</label><input type="text" data-adm-rule-note="${idx}" value="${dNote}"></div>
         </div>`;
@@ -1863,18 +1897,17 @@
     container.innerHTML = html;
   }
 
-  // 儲存邏輯分流：隊長寫入中央，隊員寫入本機
   async function saveAllAdminData() {
     saveCurrentAdminInputs();
     
-    if (isAdminMaster) {
-      // 只有管理員才讀取並更新中央系統參數與條款
-      document.querySelectorAll('[data-adm-config-key]').forEach(inp => { dbData.config[inp.dataset.admConfigKey] = inp.value; });
-      document.querySelectorAll('[data-adm-rule-note]').forEach(inp => { const idx = Number(inp.dataset.admRuleNote); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].displayNote = inp.value; });
-      document.querySelectorAll('[data-adm-rule-dname]').forEach(inp => { const idx = Number(inp.dataset.admRuleDname); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].diseaseName = inp.value; });
-      document.querySelectorAll('[data-adm-rule-count]').forEach(inp => { const idx = Number(inp.dataset.admRuleCount); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].claimCount = inp.value; });
-      document.querySelectorAll('[data-adm-rule-amt]').forEach(inp => { const idx = Number(inp.dataset.admRuleAmt); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].amount = inp.value; });
+    document.querySelectorAll('[data-adm-config-key]').forEach(inp => { dbData.config[inp.dataset.admConfigKey] = inp.value; });
+    document.querySelectorAll('[data-adm-rule-note]').forEach(inp => { const idx = Number(inp.dataset.admRuleNote); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].displayNote = inp.value; });
+    document.querySelectorAll('[data-adm-rule-dname]').forEach(inp => { const idx = Number(inp.dataset.admRuleDname); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].diseaseName = inp.value; });
+    document.querySelectorAll('[data-adm-rule-count]').forEach(inp => { const idx = Number(inp.dataset.admRuleCount); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].claimCount = inp.value; });
+    document.querySelectorAll('[data-adm-rule-amt]').forEach(inp => { const idx = Number(inp.dataset.admRuleAmt); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].amount = inp.value; });
+    document.querySelectorAll('[data-adm-rule-waity]').forEach(inp => { const idx = Number(inp.dataset.admRuleWaity); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].waitYears = Number(inp.value)||1; });
 
+    if (isAdminMaster) {
       const saveBtn = document.getElementById('btnAdminSaveSync');
       const originalText = saveBtn.innerText;
       saveBtn.innerText = "⏳ 正在同步至 Google Sheet...";
@@ -1900,7 +1933,6 @@
         saveBtn.disabled = false;
       }
     } else {
-      // 同事模式：只儲存至手機 LocalStorage
       saveToLocalCache({
         status: "success",
         isCustomized: true,
@@ -1915,7 +1947,6 @@
     closeAdminModal();
   }
 
-  // Preset 匯出與匯入
   function exportAgentPreset() {
     saveCurrentAdminInputs();
     const presetName = prompt("請輸入此設定檔名稱（例如：Ivan極簡版）：") || "MyPreset";
@@ -1983,7 +2014,7 @@
       applyHybridDatabaseMerge(localCached);
       const badge = document.getElementById('sync-status-badge');
       if (badge) { 
-        badge.innerHTML = '⚡ 本機秒開 (v' + (dbData.config["資料版本"] || '9.9.2') + ')'; 
+        badge.innerHTML = '⚡ 本機秒開 (v' + (dbData.config["資料版本"] || '9.9.4') + ')'; 
         badge.className = 'status-cache'; 
       }
       applyRoleMode();
