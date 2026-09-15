@@ -1,0 +1,24 @@
+name: Codex Auto Merge
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    if: >
+      github.event.pull_request.base.ref == 'main' &&
+      github.event.pull_request.draft == false &&
+      contains(github.event.pull_request.labels.*.name, 'codex')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Enable auto merge for Codex PR
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
