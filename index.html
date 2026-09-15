@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.10.0)</title>
+<title>確診危疾生活儲備規劃 (v9.11.0)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -169,23 +169,36 @@
   .admin-action.primary { background: var(--brand-primary); color: #fff; border-color: var(--brand-primary); }
   .admin-only { display: none; }
 
-  /* 5pay responsive typography scale: shared hierarchy across client and admin UI. */
+  /* 5pay workspace and component scale: one fluid design system across phone, foldable and iPad. */
   :root {
-    --type-display: clamp(1.5rem, 1.18rem + 1vw, 1.875rem);
-    --type-title: clamp(1.25rem, 1.05rem + .65vw, 1.5rem);
-    --type-subtitle: clamp(1.0625rem, .96rem + .35vw, 1.1875rem);
-    --type-body: clamp(.9375rem, .89rem + .16vw, 1rem);
-    --type-option: clamp(.875rem, .83rem + .16vw, .9375rem);
-    --type-button: clamp(.875rem, .83rem + .16vw, .9375rem);
-    --type-input: clamp(1rem, .95rem + .16vw, 1.0625rem);
-    --type-caption: clamp(.75rem, .71rem + .16vw, .8125rem);
-    --type-admin: clamp(.8125rem, .76rem + .18vw, .875rem);
+    --workspace-gutter: clamp(14px, 3vw, 40px);
+    --card-padding: clamp(20px, 3.25vw, 44px);
+    --section-gap: clamp(18px, 2.4vw, 30px);
+    --control-height: clamp(48px, 5.4vw, 56px);
+    --radius-card: clamp(18px, 2.2vw, 24px);
+    --radius-control: 12px;
+    --type-display: clamp(1.625rem, 1.23rem + 1.25vw, 2.125rem);
+    --type-title: clamp(1.3125rem, 1.08rem + .75vw, 1.625rem);
+    --type-subtitle: clamp(1.0625rem, .92rem + .48vw, 1.25rem);
+    --type-body: clamp(1rem, .91rem + .3vw, 1.125rem);
+    --type-option: clamp(.9375rem, .86rem + .25vw, 1.0625rem);
+    --type-button: clamp(1rem, .94rem + .2vw, 1.0625rem);
+    --type-input: clamp(1rem, .91rem + .3vw, 1.125rem);
+    --type-caption: clamp(.8125rem, .75rem + .2vw, .875rem);
+    --type-admin: clamp(.875rem, .8rem + .24vw, 1rem);
   }
-  body { font-size: var(--type-body); font-weight: 400; line-height: 1.65; }
-  .stage-title { font-size: var(--type-display); font-weight: 800; line-height: 1.3; }
+  html, body { width: 100%; min-width: 0; overflow-x: clip; }
+  body { padding: clamp(12px, 2.35vw, 32px) var(--workspace-gutter); font-size: var(--type-body); font-weight: 400; line-height: 1.65; }
+  .app-shell { width: 100%; max-width: 1440px; margin-inline: auto; }
+  .header-version-bar { width: 100%; min-height: 44px; margin-bottom: clamp(12px, 1.7vw, 22px); font-size: var(--type-caption); line-height: 1.4; }
+  .v-badge, #sync-status-badge { padding: 4px 10px; border-radius: 999px; }
+  .role-toggle-btn { min-height: 40px; padding: 8px 14px; border-radius: 999px; }
+  .stage-card { width: 100%; padding: var(--card-padding); border-radius: var(--radius-card); margin-bottom: var(--section-gap); }
+  .stage-title { font-size: var(--type-display); font-weight: 800; line-height: 1.28; margin-bottom: clamp(10px, 1.4vw, 16px); letter-spacing: -.015em; }
   .stage-desc { font-size: var(--type-body); font-weight: 400; line-height: 1.7; }
   .dignity-headline-box { font-size: var(--type-subtitle); font-weight: 700; line-height: 1.55; }
-  .dignity-highlight-text { font-size: var(--type-title); font-weight: 800; line-height: 1.4; }
+  .dignity-highlight-text { font-size: var(--type-title); font-weight: 800; line-height: 1.4; margin-top: 10px; }
+  .stage-tag { padding: 6px 12px; margin-bottom: clamp(14px, 1.8vw, 20px); border-radius: 9px; }
   .side-card-title,
   .warm-tip-title { font-size: var(--type-subtitle); font-weight: 700; line-height: 1.45; }
   .stat-row,
@@ -197,6 +210,12 @@
   .timeline-mini-card,
   .vitality-details-box { font-size: var(--type-option); font-weight: 400; line-height: 1.6; }
   .warm-tip-action { font-size: var(--type-option); font-weight: 700; line-height: 1.5; }
+  .stat-grid-box, .promo-box { padding: clamp(16px, 2vw, 24px); margin-block: var(--section-gap); border-radius: 14px; }
+  .warm-tip-card, .blue-support-box, .yellow-red-alert-box { padding: clamp(16px, 2vw, 24px); margin-block: var(--section-gap); border-radius: 14px; }
+  .asset-input-row, .claim-check-item, .timeline-mini-card { padding: clamp(12px, 1.6vw, 18px); margin-bottom: clamp(10px, 1.2vw, 14px); border-radius: 12px; }
+  .compare-side-card, .plan-card, .promo-card { padding: clamp(16px, 2vw, 24px); border-radius: 14px; }
+  .grid-2col { gap: clamp(14px, 2vw, 24px); }
+  .nav-btn-group { gap: clamp(10px, 1.5vw, 16px); margin-top: clamp(24px, 3vw, 36px); }
   button,
   .btn-primary,
   .btn-secondary,
@@ -205,10 +224,12 @@
   .prem-mode-btn,
   .pay-period-btn,
   .role-toggle-btn { font-size: var(--type-button) !important; font-weight: 700; line-height: 1.35; }
+  .btn-primary, .btn-secondary { min-height: var(--control-height); padding: 12px clamp(18px, 2.4vw, 28px); border-radius: var(--radius-control); }
+  .btn-capsule, .vis-toggle-btn, .prem-mode-btn, .pay-period-btn { min-height: 40px; padding: 8px 12px; }
   select,
   input[type="text"],
   input[type="number"],
-  textarea { font-size: var(--type-input) !important; font-weight: 500; line-height: 1.5; }
+  textarea { min-height: var(--control-height); padding: 12px 14px; font-size: var(--type-input) !important; font-weight: 500; line-height: 1.5; }
   .stage-tag,
   .compact-label,
   .v-badge,
@@ -223,12 +244,33 @@
   .admin-label,
   .admin-action,
   .btn-move,
-  .admin-scroll-body { font-size: var(--type-admin) !important; line-height: 1.5; }
+  .admin-scroll-body { font-size: var(--type-admin) !important; line-height: 1.55; }
+  .admin-scroll-body { width: 100%; max-width: 1440px; padding: var(--workspace-gutter); }
   .admin-tab-btn,
   .admin-label,
   .admin-action { font-weight: 700; }
+  .admin-card-section { padding: var(--card-padding); border-radius: var(--radius-card); margin-bottom: var(--section-gap); }
   .admin-card-section h3 { font-size: var(--type-subtitle) !important; font-weight: 700; line-height: 1.45; }
-  @media (max-width: 640px) { .header-version-bar { align-items:flex-start; gap:10px; } .admin-footer-actions { display:grid; grid-template-columns:1fr 1fr; } .admin-action { width:100%; padding-inline:8px; } .ui-row-between { flex-wrap:wrap; gap:10px; } }
+  .admin-action { min-height: var(--control-height); padding: 12px 18px; }
+  @media (min-width: 700px) and (max-width: 1366px) {
+    .app-shell, .admin-scroll-body { max-width: none; }
+    .dignity-image-wrap img { max-height: 440px; }
+  }
+  @media (max-width: 699px) {
+    :root { --workspace-gutter: clamp(12px, 4vw, 20px); --card-padding: clamp(18px, 5vw, 24px); --section-gap: 16px; }
+    body { padding-top: max(12px, env(safe-area-inset-top)); padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+    .header-version-bar { align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+    .header-version-bar > .ui-row-center-sm { flex-wrap: wrap; }
+    .grid-2col, .promo-input-grid { grid-template-columns: minmax(0, 1fr); }
+    .admin-footer-actions { display: grid; grid-template-columns: 1fr 1fr; }
+    .admin-action { width: 100%; padding-inline: 8px; }
+    .ui-row-between { flex-wrap: wrap; gap: 10px; }
+    .asset-input-row { align-items: stretch; flex-direction: column; }
+    .asset-input-val { width: 100% !important; text-align: left; }
+    .nav-btn-group { flex-wrap: wrap; }
+    .nav-btn-group > button { flex: 1 1 140px; }
+    .projection-table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  }
 </style>
 </head>
 <body>
@@ -236,7 +278,7 @@
   <div class="header-version-bar">
     <div class="ui-row-center-sm">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge" id="appVersion">v9.10.0</span>
+      <span class="v-badge" id="appVersion">v9.11.0</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
@@ -383,7 +425,7 @@
   
   const defaultDatabase = {
     config: {
-      "資料版本": "9.10.0",
+      "資料版本": "9.11.0",
       "管理員密碼": "8888",
       "醫療App網址": "https://ivancww.github.io/medicalclaims",
       "溫馨提示醫療標題": "🏥 溫馨提示：醫療選擇防線",
@@ -2299,7 +2341,7 @@
       applyHybridDatabaseMerge(cloudSnapshot || defaultDatabase);
       const badge = document.getElementById('sync-status-badge');
       if (badge) { 
-        badge.innerHTML = '⚡ 安全離線備援 (v' + (dbData.config["資料版本"] || '9.10.0') + ')';
+        badge.innerHTML = '⚡ 安全離線備援 (v' + (dbData.config["資料版本"] || '9.11.0') + ')';
         badge.className = 'status-cache'; 
       }
       applyRoleMode();
