@@ -28,6 +28,9 @@
   #sync-status-badge { font-size: 11px; font-weight: bold; padding: 2px 8px; border-radius: 10px; background: #fee2e2; color: #b91c1c; }
   .status-ok { background: #d4edda !important; color: #155724 !important; }
   .status-cache { background: #e0e7ff !important; color: #3730a3 !important; }
+
+  .ui-row-between { display: flex; justify-content: space-between; align-items: center; } .ui-row-center-sm { display: flex; align-items: center; gap: 6px; } .ui-toolbar-wrap { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .promo-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; } .compact-label { font-size: 11px; font-weight: bold; } .text-success { color: #059669; }
   
   .stage-card { background: #fff; border-radius: var(--radius); padding: 24px 20px; box-shadow: 0 6px 25px rgba(0,0,0,0.06); display: none; margin-bottom: 20px; }
   .stage-card.active { display: block; animation: fadeIn 0.25s ease-out; }
@@ -154,7 +157,7 @@
 <body>
 <div class="app-shell">
   <div class="header-version-bar">
-    <div style="display:flex; align-items:center; gap:6px;">
+    <div class="ui-row-center-sm">
       <span>CI PROTECTION PLANNER</span>
       <span class="v-badge" id="appVersion">v9.9.5</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
@@ -195,7 +198,7 @@
 <div id="adminFullScreenModal">
   <div class="admin-header-nav">
     <span style="font-weight:800; font-size:15px;" id="adminHeaderTitle">⚙️ CIApp 後台管理控制台</span>
-    <div style="display:flex; gap:6px; align-items:center;">
+    <div class="ui-row-center-sm">
       <button type="button" id="btnAdminUnlock" class="btn-primary" style="padding:6px 10px; font-size:11.5px; background:#d97706;" onclick="promptAdminLogin()">🔑 管理員登入</button>
       <button type="button" class="btn-primary" style="padding:6px 10px; font-size:11.5px; background:#0284c7;" onclick="exportAgentPreset()">📤 匯出</button>
       <label style="background:#475569; color:#fff; padding:6px 10px; border-radius:6px; font-size:11.5px; font-weight:bold; cursor:pointer; white-space:nowrap;">
@@ -216,8 +219,8 @@
   </div>
   <div class="admin-scroll-body">
     <div id="adminTabPagesSection">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-        <div style="display:flex; align-items:center; gap:8px;">
+      <div class="ui-row-between" style="margin-bottom:14px;">
+        <div class="ui-row-center-sm" style="gap:8px;">
           <label style="font-size:12px; font-weight:bold; color:#475569;">切換編輯模式：</label>
           <select id="adminRoleSelect" style="font-weight:bold; width:180px;" onchange="renderAdminVisualLayout()">
             <option value="adult" selected>👨‍👩‍👧 編輯：成人模式</option>
@@ -608,7 +611,7 @@
         ` : '';
 
         topBarExtras = `
-          <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+          <div class="ui-toolbar-wrap">
             ${planCapsulesHtml}
             <div class="capsule-btn-bar" style="margin:0;">
               <button type="button" class="btn-capsule" style="padding:4px 10px; font-size:11.5px;" onclick="openMediaDrawer('102')">🧑 102種疾病</button>
@@ -709,7 +712,7 @@
         `;
       } else if (p.pageId === 'step_ci_4' || p.pageType === '多重時間線' || p.tagName.includes('多重')) {
         topBarExtras = `
-          <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+          <div class="ui-toolbar-wrap">
             ${planCapsulesHtml}
             <button type="button" class="btn-capsule" style="padding:4px 10px; font-size:11.5px;" onclick="openMediaDrawer('case')">📑 真實理賠案例庫</button>
           </div>
@@ -757,7 +760,7 @@
         `;
       } else if (p.pageId === 'step_ci_5' || p.pageType === '保費精算' || p.tagName.includes('保費')) {
         topBarExtras = `
-          <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+          <div class="ui-toolbar-wrap">
             ${planCapsulesHtml}
             <div style="display:flex; gap:4px;">
               <button type="button" class="prem-mode-btn active" id="btn-ci-annual" data-mode="annual">年繳</button>
@@ -788,7 +791,7 @@
             </div>
             <div class="vitality-details-box" id="vitality-details-content">
               • <strong>SCE 純保障</strong>：享保費 <strong>9 折優惠</strong><br>
-              • <strong>OYS2 儲蓄型</strong>：享額外 <strong>10% 賠償額</strong> (按目前保額加贈 <strong id="v-extra-oys2-amt" style="color:#059669;">+HK$ 78,000</strong>)<br>
+              • <strong>OYS2 儲蓄型</strong>：享額外 <strong>10% 賠償額</strong> (按目前保額加贈 <strong id="v-extra-oys2-amt" class="text-success">+HK$ 78,000</strong>)<br>
               <div style="margin-top:6px; color:#b45309; font-weight:bold;">
                 * 條款及獎賞備註：每年會費 HK$ 430，享戲院門票或 Starbucks 券等豐富獎賞。
               </div>
@@ -864,18 +867,18 @@
             <div class="grid-2col">
               <div class="promo-card" id="promo-card-sce">
                 <h5 style="margin:0 0 8px 0; color:#34495e; font-size:13.5px; font-weight:bold;">方案 A ｜ SCE 簡護危疾保</h5>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:8px;">
-                  <div><label style="font-size:11px; font-weight:bold;">HK$ 200 現金券：</label><input type="number" id="promoSce200" value="0" min="0" oninput="calculateCIPromo()"></div>
-                  <div><label style="font-size:11px; font-weight:bold;">HK$ 500 現金券：</label><input type="number" id="promoSce500" value="0" min="0" oninput="calculateCIPromo()"></div>
+                <div class="promo-input-grid">
+                  <div><label class="compact-label">HK$ 200 現金券：</label><input type="number" id="promoSce200" value="0" min="0" oninput="calculateCIPromo()"></div>
+                  <div><label class="compact-label">HK$ 500 現金券：</label><input type="number" id="promoSce500" value="0" min="0" oninput="calculateCIPromo()"></div>
                 </div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:8px;">
-                  <div><label style="font-size:11px; font-weight:bold;">第 2 年回贈 (月數)：</label><input type="number" id="promoSceY2" value="0" min="0" step="0.5" oninput="calculateCIPromo()"></div>
-                  <div><label style="font-size:11px; font-weight:bold;">第 3 年回贈 (月數)：</label><input type="number" id="promoSceY3" value="0" min="0" step="0.5" oninput="calculateCIPromo()"></div>
+                <div class="promo-input-grid">
+                  <div><label class="compact-label">第 2 年回贈 (月數)：</label><input type="number" id="promoSceY2" value="0" min="0" step="0.5" oninput="calculateCIPromo()"></div>
+                  <div><label class="compact-label">第 3 年回贈 (月數)：</label><input type="number" id="promoSceY3" value="0" min="0" step="0.5" oninput="calculateCIPromo()"></div>
                 </div>
                 <div class="stat-grid-box" style="margin:8px 0 0 0; background:#f8fafc; padding:10px; font-size:12.5px;">
                   <div class="stat-row"><span>首年實繳保費：</span><strong id="promoSceNetY1">HK$ 1,425</strong></div>
-                  <div class="stat-row" id="row-sce-y2-rebate" style="display:none;"><span>第 2 年回贈金額：</span><strong style="color:#059669;" id="promoSceRebateY2">HK$ 0</strong></div>
-                  <div class="stat-row" id="row-sce-y3-rebate" style="display:none;"><span>第 3 年回贈金額：</span><strong style="color:#059669;" id="promoSceRebateY3">HK$ 0</strong></div>
+                  <div class="stat-row" id="row-sce-y2-rebate" style="display:none;"><span>第 2 年回贈金額：</span><strong class="text-success" id="promoSceRebateY2">HK$ 0</strong></div>
+                  <div class="stat-row" id="row-sce-y3-rebate" style="display:none;"><span>第 3 年回贈金額：</span><strong class="text-success" id="promoSceRebateY3">HK$ 0</strong></div>
                   <div class="stat-row total" style="color:#b45309; margin-top:6px; padding-top:6px;">
                     <span>總共累計節省：</span><strong style="color:#dc2626;" id="promoSceTotalSaved">HK$ 0</strong>
                   </div>
@@ -884,17 +887,17 @@
               <div class="promo-card" id="promo-card-oys2">
                 <h5 style="margin:0 0 8px 0; color:#27ae60; font-size:13.5px; font-weight:bold;">方案 B ｜ OYS2 愛伴航2</h5>
                 <div style="margin-bottom:8px;">
-                  <label style="font-size:11px; font-weight:bold;">HK$ 500 現金券 (張)：</label>
+                  <label class="compact-label">HK$ 500 現金券 (張)：</label>
                   <input type="number" id="promoOys2500" value="1" min="0" oninput="calculateCIPromo()">
                 </div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:8px;">
-                  <div><label style="font-size:11px; font-weight:bold;">第 2 年回贈 (月數)：</label><input type="number" id="promoOys2Y2" value="2" min="0" step="0.5" oninput="calculateCIPromo()"></div>
-                  <div><label style="font-size:11px; font-weight:bold;">第 3 年回贈 (月數)：</label><input type="number" id="promoOys2Y3" value="0" min="0" step="0.5" oninput="calculateCIPromo()"></div>
+                <div class="promo-input-grid">
+                  <div><label class="compact-label">第 2 年回贈 (月數)：</label><input type="number" id="promoOys2Y2" value="2" min="0" step="0.5" oninput="calculateCIPromo()"></div>
+                  <div><label class="compact-label">第 3 年回贈 (月數)：</label><input type="number" id="promoOys2Y3" value="0" min="0" step="0.5" oninput="calculateCIPromo()"></div>
                 </div>
                 <div class="stat-grid-box" style="margin:8px 0 0 0; background:#f8fafc; padding:10px; font-size:12.5px;">
                   <div class="stat-row"><span>首年實繳保費：</span><strong id="promoOys2NetY1">HK$ 18,704</strong></div>
-                  <div class="stat-row" id="row-oys2-y2-rebate"><span>第 2 年回贈金額：</span><strong style="color:#059669;" id="promoOys2RebateY2">HK$ 3,200</strong></div>
-                  <div class="stat-row" id="row-oys2-y3-rebate" style="display:none;"><span>第 3 年回贈金額：</span><strong style="color:#059669;" id="promoOys2RebateY3">HK$ 0</strong></div>
+                  <div class="stat-row" id="row-oys2-y2-rebate"><span>第 2 年回贈金額：</span><strong class="text-success" id="promoOys2RebateY2">HK$ 3,200</strong></div>
+                  <div class="stat-row" id="row-oys2-y3-rebate" style="display:none;"><span>第 3 年回贈金額：</span><strong class="text-success" id="promoOys2RebateY3">HK$ 0</strong></div>
                   <div class="stat-row total" style="color:#b45309; margin-top:6px; padding-top:6px;">
                     <span>總共累計節省：</span><strong style="color:#dc2626;" id="promoOys2TotalSaved">HK$ 3,700</strong>
                   </div>
@@ -915,7 +918,7 @@
       const titleHtml = (hasImage || p.pageId === 'step_ci_dignity' || p.pageType === '價值核心') ? '' : `<h2 class="stage-title">${p.title}</h2>`;
       const cardHtml = `
         <div class="stage-card ${isFirst ? 'active' : ''}" id="stage-ci-${p.stepOrder}">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="ui-row-between">
             <span class="stage-tag">${p.tagName}</span>
             ${topBarExtras}
           </div>
@@ -1249,9 +1252,9 @@
       if (oys2BonusLine) oys2BonusLine.innerHTML = `• ${Math.round(oys2FirstRemainPct * 100)}% 保額 ＋ 🎁 首 10 年加贈 <strong id="c-oys2-bonus-rate">+${Math.round(bonusRate * 100)}% ($${oys2BonusVal.toLocaleString()})</strong><br>• 豁免餘下保費，多重持續有效`;
       if (oys2EarlyTag) oys2EarlyTag.style.display = 'inline';
       if (oys2EarlyClaim) oys2EarlyClaim.innerText = 'HK$ ' + Math.round((oys2Sum * 0.2) + earlyActualBonusAmt).toLocaleString();
-      if (oys2EarlyDesc) oys2EarlyDesc.innerHTML = `• 預支 20% ($${Math.round(oys2Sum*0.2).toLocaleString()}) ＋ 早期升級加贈 <strong style="color:#059669;">+HK$ ${earlyActualBonusAmt.toLocaleString()} (+${Math.round(bonusRate * 100)}%)</strong>`;
+      if (oys2EarlyDesc) oys2EarlyDesc.innerHTML = `• 預支 20% ($${Math.round(oys2Sum*0.2).toLocaleString()}) ＋ 早期升級加贈 <strong class="text-success">+HK$ ${earlyActualBonusAmt.toLocaleString()} (+${Math.round(bonusRate * 100)}%)</strong>`;
       if (oys2ChildClaim) oys2ChildClaim.innerText = 'HK$ ' + Math.round((oys2Sum * 0.2) + childActualBonusAmt).toLocaleString();
-      if (oys2ChildDesc) oys2ChildDesc.innerHTML = `• 預支 20% ($${Math.round(oys2Sum*0.2).toLocaleString()}) ＋ 兒童專屬加贈 <strong style="color:#059669;">+HK$ ${childActualBonusAmt.toLocaleString()} (+${Math.round(bonusRate * 100)}%)</strong>`;
+      if (oys2ChildDesc) oys2ChildDesc.innerHTML = `• 預支 20% ($${Math.round(oys2Sum*0.2).toLocaleString()}) ＋ 兒童專屬加贈 <strong class="text-success">+HK$ ${childActualBonusAmt.toLocaleString()} (+${Math.round(bonusRate * 100)}%)</strong>`;
     } else {
       if (oys2TitlePct) oys2TitlePct.innerText = (oys2FirstRemainPct === 0.8) ? '80% (已扣減預支)' : '100%';
       if (oys2BonusLine) oys2BonusLine.innerHTML = `• ${Math.round(oys2FirstRemainPct * 100)}% 基本保額賠償 (已過首 10 年升級期)<br>• 豁免餘下保費，多重持續有效`;
@@ -1620,6 +1623,7 @@
   }
 
   let currentDrawerCategory = 'case';
+  function getCaseList(categoryKey) { const caseList = cloudAppDatabase[categoryKey] || []; return caseList.length > 0 ? caseList : [{ caseName: "預設實況案例", files: [{ title: "案例展示", url: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80" }] }]; }
   function openMediaDrawer(categoryKey) {
     currentDrawerCategory = categoryKey;
     const overlay = document.getElementById('mediaDrawerOverlay');
@@ -1633,10 +1637,7 @@
     else if (categoryKey === 'child') titleEl.innerText = '👶 兒童及青少年專屬特定疾病保障';
     else titleEl.innerText = '📑 真實危疾索償賠償案例庫';
     
-    let caseList = cloudAppDatabase[categoryKey] || [];
-    if (caseList.length === 0) {
-      caseList = [{ caseName: "預設實況案例", files: [{ title: "案例展示", url: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80" }] }];
-    }
+    const caseList = getCaseList(categoryKey);
     
     if (caseList.length > 1) {
       selectorBar.style.display = 'flex';
@@ -1652,10 +1653,7 @@
 
   function renderCaseGallery(caseIndex) {
     const gridEl = document.getElementById('drawerMediaGrid');
-    let caseList = cloudAppDatabase[currentDrawerCategory] || [];
-    if (caseList.length === 0) {
-      caseList = [{ caseName: "預設實況案例", files: [{ title: "案例展示", url: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80" }] }];
-    }
+    const caseList = getCaseList(currentDrawerCategory);
     const currentCase = caseList[Number(caseIndex)] || caseList[0];
     if (!currentCase || !currentCase.files || currentCase.files.length === 0) {
       gridEl.innerHTML = '<div style="grid-column: 1 / -1; text-align:center; padding:35px; color:#94a3b8;">暫無上載之文件</div>';
@@ -1773,7 +1771,7 @@
       }
       html += `
         <div class="admin-card-section" data-adm-page-idx="${realIdx}">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="ui-row-between">
             <div style="display:flex; align-items:center; gap:6px;">
               <strong style="color:var(--primary); font-size:15px;">步驟</strong>
               <input type="number" class="adm-order-inp" value="${p.stepOrder}" style="width:60px; text-align:center; padding:4px;" onchange="saveCurrentAdminInputs(); renderAdminVisualLayout();">
@@ -1811,7 +1809,7 @@
     (dbData.plans || defaultDatabase.plans).forEach((plan, idx) => {
       html += `
         <div style="background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px;">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="ui-row-between">
             <div style="display:flex; align-items:center; gap:8px; flex:1;">
               <strong style="color:${plan.themeColor}; font-size:14px;">方案 ${idx+1}：</strong>
               <input type="text" value="${plan.name}" onchange="dbData.plans[${idx}].name=this.value" style="flex:1; margin-top:0;">
@@ -1902,7 +1900,7 @@
         const fCount = (cItem.files || []).length;
         html += `
           <div style="background:#f8fafc; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="ui-row-between">
               <span><strong>📍 ${cItem.caseName}</strong> (${fCount} 個檔案)</span>
               <button type="button" style="background:#fee2e2; color:#dc2626; border:none; border-radius:4px; padding:2px 8px; cursor:pointer;" onclick="deleteAdminCaseItem('${cat}', ${cIdx})">刪除此Case</button>
             </div>
