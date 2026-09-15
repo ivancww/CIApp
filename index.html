@@ -168,6 +168,66 @@
   .admin-action { min-height: 46px; padding: 11px 18px; border-radius: 12px; border: 1px solid var(--border-light); font-size: 14px; font-weight: 800; cursor: pointer; background: #fff; color: var(--text-sub); }
   .admin-action.primary { background: var(--brand-primary); color: #fff; border-color: var(--brand-primary); }
   .admin-only { display: none; }
+
+  /* 5pay responsive typography scale: shared hierarchy across client and admin UI. */
+  :root {
+    --type-display: clamp(1.5rem, 1.18rem + 1vw, 1.875rem);
+    --type-title: clamp(1.25rem, 1.05rem + .65vw, 1.5rem);
+    --type-subtitle: clamp(1.0625rem, .96rem + .35vw, 1.1875rem);
+    --type-body: clamp(.9375rem, .89rem + .16vw, 1rem);
+    --type-option: clamp(.875rem, .83rem + .16vw, .9375rem);
+    --type-button: clamp(.875rem, .83rem + .16vw, .9375rem);
+    --type-input: clamp(1rem, .95rem + .16vw, 1.0625rem);
+    --type-caption: clamp(.75rem, .71rem + .16vw, .8125rem);
+    --type-admin: clamp(.8125rem, .76rem + .18vw, .875rem);
+  }
+  body { font-size: var(--type-body); font-weight: 400; line-height: 1.65; }
+  .stage-title { font-size: var(--type-display); font-weight: 800; line-height: 1.3; }
+  .stage-desc { font-size: var(--type-body); font-weight: 400; line-height: 1.7; }
+  .dignity-headline-box { font-size: var(--type-subtitle); font-weight: 700; line-height: 1.55; }
+  .dignity-highlight-text { font-size: var(--type-title); font-weight: 800; line-height: 1.4; }
+  .side-card-title,
+  .warm-tip-title { font-size: var(--type-subtitle); font-weight: 700; line-height: 1.45; }
+  .stat-row,
+  .asset-left-area,
+  .blue-support-box { font-size: var(--type-body); line-height: 1.6; }
+  .stat-row.total { font-size: var(--type-subtitle); font-weight: 800; line-height: 1.5; }
+  .blue-support-months { font-size: var(--type-title); font-weight: 800; line-height: 1.35; }
+  .warm-tip-desc,
+  .timeline-mini-card,
+  .vitality-details-box { font-size: var(--type-option); font-weight: 400; line-height: 1.6; }
+  .warm-tip-action { font-size: var(--type-option); font-weight: 700; line-height: 1.5; }
+  button,
+  .btn-primary,
+  .btn-secondary,
+  .btn-capsule,
+  .vis-toggle-btn,
+  .prem-mode-btn,
+  .pay-period-btn,
+  .role-toggle-btn { font-size: var(--type-button) !important; font-weight: 700; line-height: 1.35; }
+  select,
+  input[type="text"],
+  input[type="number"],
+  textarea { font-size: var(--type-input) !important; font-weight: 500; line-height: 1.5; }
+  .stage-tag,
+  .compact-label,
+  .v-badge,
+  #sync-status-badge,
+  .media-card-title { font-size: var(--type-caption); font-weight: 700; line-height: 1.4; }
+  .projection-table { font-size: var(--type-admin); line-height: 1.5; }
+  .projection-table th { font-weight: 700; }
+  .projection-table tr.total-row td { font-size: var(--type-option); font-weight: 800; }
+  .admin-header-nav { font-size: var(--type-option); line-height: 1.5; }
+  .admin-header-nav #adminHeaderTitle { font-size: var(--type-subtitle) !important; font-weight: 800 !important; line-height: 1.4; }
+  .admin-tab-btn,
+  .admin-label,
+  .admin-action,
+  .btn-move,
+  .admin-scroll-body { font-size: var(--type-admin) !important; line-height: 1.5; }
+  .admin-tab-btn,
+  .admin-label,
+  .admin-action { font-weight: 700; }
+  .admin-card-section h3 { font-size: var(--type-subtitle) !important; font-weight: 700; line-height: 1.45; }
   @media (max-width: 640px) { .header-version-bar { align-items:flex-start; gap:10px; } .admin-footer-actions { display:grid; grid-template-columns:1fr 1fr; } .admin-action { width:100%; padding-inline:8px; } .ui-row-between { flex-wrap:wrap; gap:10px; } }
 </style>
 </head>
