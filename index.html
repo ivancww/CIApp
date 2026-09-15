@@ -137,10 +137,12 @@
   .media-card-item { border: 1.5px solid var(--border); border-radius: 10px; background: #f8fafc; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 8px; cursor: pointer; transition: 0.15s; text-align: center; }
   .media-card-item:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
   .media-card-item img { width: 100%; height: 75px; object-fit: cover; border-radius: 6px; }
+  .media-pdf-icon { width: 100%; height: 75px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: #fee2e2; color: #b91c1c; font-size: 28px; font-weight: 900; }
   .media-card-title { margin-top: 6px; font-size: 12px; font-weight: 700; color: #1e293b; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   #viewerModalOverlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.92); z-index: 10000000; justify-content: center; align-items: center; flex-direction: column; }
   .viewer-content-wrap { position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; overflow: hidden; }
   .viewer-img { max-width: 92vw; max-height: 85vh; object-fit: contain; border-radius: 8px; }
+  .viewer-pdf { width: min(92vw, 980px); height: 85vh; border: 0; border-radius: 8px; background: #fff; }
   .viewer-nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.25); color: #fff; border: none; font-size: 28px; width: 48px; height: 48px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   .viewer-nav-left { left: 16px; }
   .viewer-nav-right { right: 16px; }
@@ -270,6 +272,8 @@
               <option value="case">📑 真實理賠案例庫 (case)</option>
               <option value="102">🧑 102種疾病保障 (102)</option>
               <option value="child">👶 兒童特定疾病保障 (child)</option>
+              <option value="sce" class="master-product-category">📄 簡護危疾保 (sce)</option>
+              <option value="oys2" class="master-product-category">📄 愛伴航2 (oys2)</option>
             </select>
           </div>
           <div>
@@ -376,7 +380,7 @@
   const STORAGE_KEY_CLOUD_SNAPSHOT = "CI_APP_CLOUD_SNAPSHOT_V9_10";
   let dbData = { ...defaultDatabase };
   let lastCloudFlow = { pages: defaultDatabase.pages, options: defaultDatabase.options };
-  let cloudAppDatabase = { "102": [], "child": [], "case": [], rules: defaultDatabase.rules };
+  let cloudAppDatabase = { "102": [], "child": [], "case": [], "sce": [], "oys2": [], rules: defaultDatabase.rules };
   
   const ciState = {
     isChildMode: false,
@@ -436,12 +440,16 @@
       saveBtn.style.background = "#10b981";
       if (unlockBtn) unlockBtn.style.display = "none";
       document.querySelectorAll('.admin-only').forEach(el => { el.style.display = 'inline-block'; });
+      document.querySelectorAll('.master-product-category').forEach(el => { el.disabled = false; el.hidden = false; });
     } else {
       titleEl.innerText = "⚙️ CIApp【個人自訂】控制台 (存入本機)";
       saveBtn.innerText = "💾 保存至本機";
       saveBtn.style.background = "#0284c7";
       if (unlockBtn) unlockBtn.style.display = "inline-block";
       document.querySelectorAll('.admin-only').forEach(el => { el.style.display = 'none'; });
+      document.querySelectorAll('.master-product-category').forEach(el => { el.disabled = true; el.hidden = true; });
+      const categorySelect = document.getElementById('uploadCategorySelect');
+      if (categorySelect && (categorySelect.value === 'sce' || categorySelect.value === 'oys2')) categorySelect.value = 'case';
     }
   }
 
@@ -458,6 +466,8 @@
       cloudAppDatabase["102"] = [];
       cloudAppDatabase["child"] = [];
       cloudAppDatabase["case"] = [];
+      cloudAppDatabase["sce"] = [];
+      cloudAppDatabase["oys2"] = [];
       remoteJson.cases.forEach(row => {
         const cat = String(row.category || '').trim();
         let parsedFiles = null;
@@ -995,6 +1005,10 @@
   }
 
   function openPlanDocDrawer(planKey) {
+    if (planKey === 'sce' || planKey === 'oys2') {
+      openMediaDrawer(planKey);
+      return;
+    }
     const plan = (dbData.plans || []).find(p => p.planKey === planKey);
     const title = plan ? plan.name : '方案條款';
     currentDrawerCategory = 'plan_' + planKey;
@@ -1656,7 +1670,11 @@
   }
 
   let currentDrawerCategory = 'case';
-  function getCaseList(categoryKey) { const caseList = cloudAppDatabase[categoryKey] || []; return caseList.length > 0 ? caseList : [{ caseName: "預設實況案例", files: [{ title: "案例展示", url: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80" }] }]; }
+  function getCaseList(categoryKey) {
+    const caseList = cloudAppDatabase[categoryKey] || [];
+    if (categoryKey === 'sce' || categoryKey === 'oys2') return caseList;
+    return caseList.length > 0 ? caseList : [{ caseName: "預設實況案例", files: [{ title: "案例展示", url: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80" }] }];
+  }
   function openMediaDrawer(categoryKey) {
     currentDrawerCategory = categoryKey;
     const overlay = document.getElementById('mediaDrawerOverlay');
@@ -1668,6 +1686,8 @@
     
     if (categoryKey === '102') titleEl.innerText = '🧑 102 種嚴重／早期危疾保障一覽';
     else if (categoryKey === 'child') titleEl.innerText = '👶 兒童及青少年專屬特定疾病保障';
+    else if (categoryKey === 'sce') titleEl.innerText = '📄 簡護危疾保 (SCE) 條款及文件';
+    else if (categoryKey === 'oys2') titleEl.innerText = '📄 愛伴航2 (OYS2) 條款及文件';
     else titleEl.innerText = '📑 真實危疾索償賠償案例庫';
     
     const caseList = getCaseList(categoryKey);
@@ -1675,7 +1695,7 @@
     if (caseList.length > 1) {
       selectorBar.style.display = 'flex';
       let optionsHtml = '';
-      caseList.forEach((c, idx) => { optionsHtml += `<option value="${idx}">📍 案例 ${idx + 1}：${c.caseName}</option>`; });
+      caseList.forEach((c, idx) => { optionsHtml += `<option value="${idx}">📍 ${categoryKey === 'sce' || categoryKey === 'oys2' ? '文件' : '案例'} ${idx + 1}：${c.caseName}</option>`; });
       dropSelect.innerHTML = optionsHtml;
       renderCaseGallery(0);
     } else {
@@ -1696,7 +1716,8 @@
     currentViewerList = currentCase.files;
     let html = '';
     currentCase.files.forEach((item, idx) => {
-      html += `<div class="media-card-item" onclick="openDocViewer(${idx})"><img src="${item.url}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/150x80?text=圖片載入中';"><div class="media-card-title">${item.title}</div></div>`;
+      const preview = item.type === 'pdf' ? '<div class="media-pdf-icon" aria-hidden="true">PDF</div>' : `<img src="${item.url}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/150x80?text=圖片載入中';">`;
+      html += `<div class="media-card-item" onclick="openDocViewer(${idx})">${preview}<div class="media-card-title">${item.title}</div></div>`;
     });
     gridEl.innerHTML = html;
   }
@@ -1713,7 +1734,9 @@
     const item = currentViewerList[currentViewerIndex];
     if (!item) return;
     document.getElementById('viewerTitle').innerText = `${item.title} (${currentViewerIndex + 1} / ${currentViewerList.length})`;
-    document.getElementById('viewerBody').innerHTML = `<img src="${item.url}" class="viewer-img" alt="${item.title}">`;
+    document.getElementById('viewerBody').innerHTML = item.type === 'pdf'
+      ? `<iframe src="${item.url}" class="viewer-pdf" title="${item.title}"></iframe>`
+      : `<img src="${item.url}" class="viewer-img" alt="${item.title}">`;
   }
 
   // ======================== 後台管理 ========================
@@ -1929,9 +1952,13 @@
     const container = document.getElementById('adminUploadedItemsList');
     if (!container) return;
     let html = '';
-    ['case', '102', 'child'].forEach(cat => {
+    const categoryTitles = {
+      case: '📑 真實理賠案例庫', '102': '🧑 102種疾病保障', child: '👶 兒童特定疾病',
+      sce: '📄 簡護危疾保 (SCE)', oys2: '📄 愛伴航2 (OYS2)'
+    };
+    ['case', '102', 'child', 'sce', 'oys2'].forEach(cat => {
       const cases = cloudAppDatabase[cat] || [];
-      const catTitle = cat === 'case' ? '📑 真實理賠案例庫' : (cat === '102' ? '🧑 102種疾病保障' : '👶 兒童特定疾病');
+      const catTitle = categoryTitles[cat];
       html += `<h5 style="margin:12px 0 6px 0; color:var(--primary); font-size:13px;">${catTitle} (${cases.length} 個 Case)：</h5><div style="display:flex; flex-direction:column; gap:8px;">`;
       cases.forEach((cItem, cIdx) => {
         const fCount = (cItem.files || []).length;
@@ -1939,7 +1966,7 @@
           <div style="background:#f8fafc; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13px;">
             <div class="ui-row-between">
               <span><strong>📍 ${cItem.caseName}</strong> (${fCount} 個檔案)</span>
-              <button type="button" style="background:#fee2e2; color:#dc2626; border:none; border-radius:4px; padding:2px 8px; cursor:pointer;" onclick="deleteAdminCaseItem('${cat}', ${cIdx})">刪除此Case</button>
+              ${(cat !== 'sce' && cat !== 'oys2') || isAdminMaster ? `<button type="button" style="background:#fee2e2; color:#dc2626; border:none; border-radius:4px; padding:2px 8px; cursor:pointer;" onclick="deleteAdminCaseItem('${cat}', ${cIdx})">刪除此Case</button>` : ''}
             </div>
           </div>`;
       });
@@ -1956,6 +1983,10 @@
     const files = Array.from(fileInput.files);
     const baseTitle = titleInput.value.trim();
     const cat = catSelect.value;
+    if ((cat === 'sce' || cat === 'oys2') && !isAdminMaster) {
+      alert('⛔ SCE／OYS2 文件只可由隊長管理員上載或更改。');
+      return;
+    }
     
     if (!files || files.length === 0) { alert('請先選擇要上傳的圖片或 PDF 檔案！'); return; }
     if (files.length > 10) { alert('⚠️ 單次最多只支援上傳 10 個檔案！已為你自動選取前 10 個。'); files.length = 10; }
@@ -1984,10 +2015,17 @@
       
       const newCase = { category: cat, caseName: baseTitle, files: uploadedFiles, filesJson: JSON.stringify(uploadedFiles) };
       if (!cloudAppDatabase[cat]) cloudAppDatabase[cat] = [];
-      cloudAppDatabase[cat].push(newCase);
+      const existingCloudIndex = cloudAppDatabase[cat].findIndex(item => item.caseName === baseTitle);
+      if (existingCloudIndex === -1) cloudAppDatabase[cat].push(newCase);
+      else cloudAppDatabase[cat][existingCloudIndex] = newCase;
       
       if (!Array.isArray(dbData.cases)) dbData.cases = [];
-      dbData.cases.push({ category: cat, diseaseName: baseTitle, claimCount: "最新上載", amount: "100%", date: new Date().toLocaleDateString('zh-HK'), filesJson: JSON.stringify(uploadedFiles) });
+      const appDatabaseRow = { category: cat, diseaseName: baseTitle, claimCount: "最新上載", amount: "100%", date: new Date().toLocaleDateString('zh-HK'), filesJson: JSON.stringify(uploadedFiles) };
+      const existingRowIndex = dbData.cases.findIndex(row => row.category === cat && row.diseaseName === baseTitle);
+      if (existingRowIndex === -1) dbData.cases.push(appDatabaseRow);
+      else dbData.cases[existingRowIndex] = appDatabaseRow;
+
+      if (isAdminMaster) await syncAdminDatabaseToGoogleSheet();
       
       alert(`✅ 成功建立案例【${baseTitle}】並上傳至 Firebase！`);
       fileInput.value = '';
@@ -2002,6 +2040,10 @@
   }
 
   function deleteAdminCaseItem(cat, idx) {
+    if ((cat === 'sce' || cat === 'oys2') && !isAdminMaster) {
+      alert('⛔ SCE／OYS2 文件只可由隊長管理員刪除。');
+      return;
+    }
     if (!confirm('確定刪除此案例及包含的所有檔案？')) return;
     const removed = cloudAppDatabase[cat].splice(idx, 1);
     if (Array.isArray(dbData.cases)) {
@@ -2009,6 +2051,18 @@
       if (cIdx !== -1) dbData.cases.splice(cIdx, 1);
     }
     renderAdminFirebaseList();
+  }
+
+  async function syncAdminDatabaseToGoogleSheet() {
+    const payload = {
+      action: "saveAllAdmin", pages: dbData.pages, options: dbData.options,
+      config: dbData.config, rules: dbData.rules, cases: dbData.cases, plans: dbData.plans
+    };
+    const response = await fetch(GAS_CENTRAL_URL, {
+      method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload)
+    });
+    if (!response.ok) throw new Error(`Google Sheet 同步失敗 (${response.status})`);
+    saveCloudSnapshot(payload);
   }
 
   function addAdminNewCIPage() {
