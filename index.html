@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.9.5)</title>
+<title>確診危疾生活儲備規劃 (v9.10.0)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -13,15 +13,24 @@
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --primary: #1e3a8a; --primary-light: #eff6ff; --accent: #d97706; --accent-light: #fffbeb;
-    --danger: #dc2626; --danger-light: #fef2f2; --warning-bg: #fef3c7; --border: #cbd5e1;
-    --pink-border: #f8d7da; --radius: 14px; --gold: #f1c40f;
+    --bg-page: #f8fafc; --surface-card: #ffffff; --border-light: #e2e8f0;
+    --text-main: #0f172a; --text-sub: #475569; --text-muted: #94a3b8;
+    --brand-primary: #1e3a8a; --brand-accent: #2563eb; --brand-soft: #eff6ff;
+    --state-success: #059669; --state-purple: #7c3aed; --state-danger: #dc2626;
+    --shadow-md: 0 10px 30px rgba(15, 23, 42, 0.07);
+    --primary: var(--brand-primary); --primary-light: var(--brand-soft); --accent: #d97706; --accent-light: #fffbeb;
+    --danger: var(--state-danger); --danger-light: #fef2f2; --warning-bg: #fef3c7; --border: var(--border-light);
+    --pink-border: #bfdbfe; --radius: 20px; --gold: #f1c40f;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang HK", sans-serif; background-color: #eef2f5; color: #333; margin: 0; padding: 15px; }
-  .app-shell { max-width: 880px; margin: 0 auto; }
+  body { font-family: "Noto Sans TC", sans-serif; background-color: var(--bg-page); color: var(--text-main); margin: 0; padding: clamp(12px, 2.5vw, 28px); font-size: clamp(14px, 1.55vw, 16px); }
+  button, input, select, textarea { font-family: inherit; }
+  .app-shell { max-width: 980px; margin: 0 auto; }
   .header-version-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 13px; font-weight: 700; color: #64748b; }
   .v-badge { font-size: 11px; background: #e2e8f0; color: #334155; padding: 2px 8px; border-radius: 10px; }
   .role-toggle-btn { font-size: 11.5px; font-weight: 800; padding: 4px 10px; border-radius: 12px; background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; cursor: pointer; transition: 0.2s; }
@@ -32,12 +41,12 @@
   .ui-row-between { display: flex; justify-content: space-between; align-items: center; } .ui-row-center-sm { display: flex; align-items: center; gap: 6px; } .ui-toolbar-wrap { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
   .promo-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; } .compact-label { font-size: 11px; font-weight: bold; } .text-success { color: #059669; }
   
-  .stage-card { background: #fff; border-radius: var(--radius); padding: 24px 20px; box-shadow: 0 6px 25px rgba(0,0,0,0.06); display: none; margin-bottom: 20px; }
+  .stage-card { background: var(--surface-card); border: 1px solid var(--border-light); border-radius: var(--radius); padding: clamp(20px, 3.5vw, 34px); box-shadow: var(--shadow-md); display: none; margin-bottom: clamp(16px, 2.5vw, 24px); }
   .stage-card.active { display: block; animation: fadeIn 0.25s ease-out; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
   .stage-tag { display: inline-block; font-size: 12px; font-weight: 800; color: var(--primary); background: var(--primary-light); padding: 4px 10px; border-radius: 8px; margin-bottom: 12px; }
-  .stage-title { font-size: 22px; font-weight: 800; color: var(--primary); line-height: 1.4; margin: 0 0 10px 0; }
-  .stage-desc { font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 18px; }
+  .stage-title { font-family: "Plus Jakarta Sans", "Noto Sans TC", sans-serif; font-size: clamp(22px, 3vw, 30px); font-weight: 800; color: var(--text-main); line-height: 1.35; margin: 0 0 10px 0; }
+  .stage-desc { font-size: clamp(14px, 1.7vw, 16px); color: var(--text-sub); line-height: 1.7; margin-bottom: 18px; }
   
   .dignity-headline-box { font-size: 17px; font-weight: 800; color: #334155; line-height: 1.6; margin-bottom: 16px; }
   .dignity-highlight-text { display: block; font-size: 22px; font-weight: 900; color: #1d4ed8; line-height: 1.4; margin-top: 6px; letter-spacing: 0.3px; }
@@ -141,17 +150,23 @@
   .vitality-toggle-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
   .vitality-details-box { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #bfdbfe; font-size: 12px; color: #334155; line-height: 1.6; }
   
-  #adminFullScreenModal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #f1f5f9; z-index: 9999999; flex-direction: column; overflow: hidden; }
-  .admin-header-nav { background: #1e3a8a; color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.15); flex-shrink: 0; }
+  #adminFullScreenModal { display: none; position: fixed; inset: 0; width: 100vw; height: 100dvh; background: var(--bg-page); z-index: 9999999; flex-direction: column; overflow: hidden; }
+  .admin-header-nav { background: var(--surface-card); color: var(--text-main); padding: clamp(14px, 2vw, 20px) clamp(16px, 3vw, 32px); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); flex-shrink: 0; }
   .admin-tab-bar { display: flex; gap: 8px; background: #e2e8f0; padding: 8px 16px; border-bottom: 1px solid #cbd5e1; flex-shrink: 0; overflow-x: auto; }
   .admin-tab-btn { padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 800; border: none; background: #fff; color: #475569; cursor: pointer; white-space: nowrap; }
   .admin-tab-btn.active { background: #1e3a8a; color: #fff; }
   .admin-scroll-body { flex: 1; overflow-y: auto; padding: 16px; max-width: 900px; width: 100%; margin: 0 auto; -webkit-overflow-scrolling: touch; }
-  .admin-card-section { background: #fff; border-radius: 12px; border: 1.5px solid #cbd5e1; padding: 16px; margin-bottom: 16px; }
+  .admin-card-section { background: var(--surface-card); border-radius: 20px; border: 1px solid var(--border-light); padding: clamp(16px, 2.5vw, 24px); margin-bottom: 16px; box-shadow: var(--shadow-md); }
   .admin-label { font-size: 12px; font-weight: 800; color: #475569; margin-top: 8px; display: block; }
   .btn-move { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 8px; font-size: 11px; cursor: pointer; font-weight: bold; }
   .btn-move:hover { background: #e2e8f0; }
-  select, input[type="text"], input[type="number"], textarea { width: 100%; padding: 8px; font-size: 13.5px; border-radius: 8px; border: 2px dashed var(--pink-border); background: #fff; font-weight: 700; color: #333; outline: none; margin-top: 4px; box-sizing: border-box; }
+  select, input[type="text"], input[type="number"], textarea { width: 100%; min-height: 44px; padding: 10px 12px; font-size: clamp(14px, 1.5vw, 15px); border-radius: 12px; border: 1px solid var(--border-light); background: #fff; font-weight: 600; color: var(--text-main); outline: none; margin-top: 4px; box-sizing: border-box; }
+  select:focus, input:focus, textarea:focus { border-color: var(--brand-accent); box-shadow: 0 0 0 3px var(--brand-soft); }
+  .admin-footer-actions { flex-shrink: 0; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; padding: 14px clamp(16px, 3vw, 32px); padding-bottom: max(14px, env(safe-area-inset-bottom)); background: var(--surface-card); border-top: 1px solid var(--border-light); box-shadow: 0 -8px 24px rgba(15,23,42,.06); }
+  .admin-action { min-height: 46px; padding: 11px 18px; border-radius: 12px; border: 1px solid var(--border-light); font-size: 14px; font-weight: 800; cursor: pointer; background: #fff; color: var(--text-sub); }
+  .admin-action.primary { background: var(--brand-primary); color: #fff; border-color: var(--brand-primary); }
+  .admin-only { display: none; }
+  @media (max-width: 640px) { .header-version-bar { align-items:flex-start; gap:10px; } .admin-footer-actions { display:grid; grid-template-columns:1fr 1fr; } .admin-action { width:100%; padding-inline:8px; } .ui-row-between { flex-wrap:wrap; gap:10px; } }
 </style>
 </head>
 <body>
@@ -159,7 +174,7 @@
   <div class="header-version-bar">
     <div class="ui-row-center-sm">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge" id="appVersion">v9.9.5</span>
+      <span class="v-badge" id="appVersion">v9.10.0</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
@@ -198,23 +213,14 @@
 <div id="adminFullScreenModal">
   <div class="admin-header-nav">
     <span style="font-weight:800; font-size:15px;" id="adminHeaderTitle">⚙️ CIApp 後台管理控制台</span>
-    <div class="ui-row-center-sm">
-      <button type="button" id="btnAdminUnlock" class="btn-primary" style="padding:6px 10px; font-size:11.5px; background:#d97706;" onclick="promptAdminLogin()">🔑 管理員登入</button>
-      <button type="button" class="btn-primary" style="padding:6px 10px; font-size:11.5px; background:#0284c7;" onclick="exportAgentPreset()">📤 匯出</button>
-      <label style="background:#475569; color:#fff; padding:6px 10px; border-radius:6px; font-size:11.5px; font-weight:bold; cursor:pointer; white-space:nowrap;">
-        📥 匯入
-        <input type="file" accept=".json" style="display:none;" onchange="importAgentPreset(this)">
-      </label>
-      <button type="button" id="btnAdminSaveSync" class="btn-primary" style="padding:6px 12px; font-size:12px; background:#10b981;" onclick="saveAllAdminData()">💾 儲存</button>
-      <button type="button" style="background:#64748b; color:#fff; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; font-weight:bold;" onclick="closeAdminModal()">關閉</button>
-    </div>
+    <span style="font-size:12px; color:var(--text-sub);">個人流程與中央資料分離管理</span>
   </div>
   
   <div class="admin-tab-bar" id="adminTabBar">
     <button type="button" class="admin-tab-btn active" onclick="switchAdminTab('pages', this)">📄 頁面流程與題目管理</button>
-    <button type="button" class="admin-tab-btn" onclick="switchAdminTab('plans', this)">📋 方案管理 (A/B/C/D)</button>
-    <button type="button" class="admin-tab-btn" onclick="switchAdminTab('config', this)">⚙️ 系統參數設定</button>
-    <button type="button" class="admin-tab-btn" onclick="switchAdminTab('rules', this)">📑 賠償條款設定</button>
+    <button type="button" class="admin-tab-btn admin-only" onclick="switchAdminTab('plans', this)">📋 方案管理 (A/B/C/D)</button>
+    <button type="button" class="admin-tab-btn admin-only" onclick="switchAdminTab('config', this)">⚙️ 系統參數設定</button>
+    <button type="button" class="admin-tab-btn admin-only" onclick="switchAdminTab('rules', this)">📑 賠償條款設定</button>
     <button type="button" class="admin-tab-btn" onclick="switchAdminTab('firebase', this)">🔥 Firebase 案例/圖片管理</button>
   </div>
   <div class="admin-scroll-body">
@@ -228,7 +234,6 @@
           </select>
         </div>
         <div style="display:flex; gap:6px;">
-          <button type="button" onclick="resetToCaptainDefault()" style="background:#f59e0b; color:#fff; border:none; border-radius:6px; padding:6px 10px; font-size:11.5px; cursor:pointer;">🔄 還原官方預設</button>
           <button type="button" onclick="addAdminNewCIPage()" style="background:var(--primary); color:#fff; border:none; border-radius:6px; padding:6px 12px; font-size:12px; cursor:pointer;">+ 新增頁面</button>
         </div>
       </div>
@@ -284,6 +289,16 @@
       </div>
     </div>
   </div>
+  <div class="admin-footer-actions" aria-label="後台操作">
+    <button type="button" id="btnAdminUnlock" class="admin-action" onclick="promptAdminLogin()">🔑 管理員登入</button>
+    <button type="button" class="admin-action" onclick="exportAgentPreset()">📤 匯出設定</button>
+    <label class="admin-action" style="display:flex;align-items:center;justify-content:center;">
+      📥 匯入設定<input type="file" accept=".json" style="display:none;" onchange="importAgentPreset(this)">
+    </label>
+    <button type="button" id="btnAdminSaveSync" class="admin-action primary" onclick="saveAllAdminData()">💾 儲存至本機</button>
+    <button type="button" class="admin-action" onclick="resetToCloudFlow()">↩️ 還原雲端</button>
+    <button type="button" class="admin-action" onclick="closeAdminModal()">關閉</button>
+  </div>
 </div>
 
 <script>
@@ -304,7 +319,7 @@
   
   const defaultDatabase = {
     config: {
-      "資料版本": "9.9.5",
+      "資料版本": "9.10.0",
       "管理員密碼": "8888",
       "醫療App網址": "https://ivancww.github.io/medicalclaims",
       "溫馨提示醫療標題": "🏥 溫馨提示：醫療選擇防線",
@@ -356,8 +371,11 @@
     rates: fallbackRates
   };
   
+  // Personal flow data and the last trusted central snapshot are intentionally isolated.
   const STORAGE_KEY_DB = "CI_APP_DB_CACHE_V9";
+  const STORAGE_KEY_CLOUD_SNAPSHOT = "CI_APP_CLOUD_SNAPSHOT_V9_10";
   let dbData = { ...defaultDatabase };
+  let lastCloudFlow = { pages: defaultDatabase.pages, options: defaultDatabase.options };
   let cloudAppDatabase = { "102": [], "child": [], "case": [], rules: defaultDatabase.rules };
   
   const ciState = {
@@ -417,11 +435,13 @@
       saveBtn.innerText = "💾 儲存同步至 Google Sheet";
       saveBtn.style.background = "#10b981";
       if (unlockBtn) unlockBtn.style.display = "none";
+      document.querySelectorAll('.admin-only').forEach(el => { el.style.display = 'inline-block'; });
     } else {
       titleEl.innerText = "⚙️ CIApp【個人自訂】控制台 (存入本機)";
       saveBtn.innerText = "💾 保存至本機";
       saveBtn.style.background = "#0284c7";
       if (unlockBtn) unlockBtn.style.display = "inline-block";
+      document.querySelectorAll('.admin-only').forEach(el => { el.style.display = 'none'; });
     }
   }
 
@@ -448,15 +468,14 @@
       });
     }
 
-    if (isTailorMade && !isAdminMaster) {
-      dbData.pages = localCached.pages || defaultDatabase.pages;
-      dbData.options = localCached.options || defaultDatabase.options;
-      dbData.plans = localCached.plans || defaultDatabase.plans;
-    } else {
-      dbData.pages = (remoteJson && remoteJson.pages) ? remoteJson.pages : defaultDatabase.pages;
-      dbData.options = (remoteJson && remoteJson.options) ? remoteJson.options : defaultDatabase.options;
-      dbData.plans = (remoteJson && remoteJson.plans) ? remoteJson.plans : defaultDatabase.plans;
-    }
+    const cloudPages = (remoteJson && remoteJson.pages) ? remoteJson.pages : defaultDatabase.pages;
+    const cloudOptions = (remoteJson && remoteJson.options) ? remoteJson.options : defaultDatabase.options;
+    lastCloudFlow = { pages: cloudPages, options: cloudOptions };
+
+    // Only flow content may be tailored locally. Product plans always come from Central.
+    dbData.pages = (isTailorMade && !isAdminMaster && localCached.pages) ? localCached.pages : cloudPages;
+    dbData.options = (isTailorMade && !isAdminMaster && localCached.options) ? localCached.options : cloudOptions;
+    dbData.plans = (remoteJson && remoteJson.plans) ? remoteJson.plans : defaultDatabase.plans;
 
     dbData.plans.forEach(p => {
       if (ciState.planVis[p.planKey] === undefined) ciState.planVis[p.planKey] = true;
@@ -476,13 +495,27 @@
     try { localStorage.setItem(STORAGE_KEY_DB, JSON.stringify(dataObj)); } catch(e) {}
   }
 
+  function loadCloudSnapshot() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY_CLOUD_SNAPSHOT) || 'null'); } catch(e) { return null; }
+  }
+
+  function saveCloudSnapshot(remoteJson) {
+    try {
+      localStorage.setItem(STORAGE_KEY_CLOUD_SNAPSHOT, JSON.stringify({
+        status: 'success', pages: remoteJson.pages, options: remoteJson.options,
+        plans: remoteJson.plans, config: remoteJson.config, rules: remoteJson.rules,
+        rates: remoteJson.rates, cases: remoteJson.cases
+      }));
+    } catch(e) {}
+  }
+
   function renderAllDynamicCards() {
     const container = document.getElementById('dynamic-ci-container');
     if (!container) return;
     container.innerHTML = '';
     
     const roleKey = ciState.isChildMode ? 'child' : 'adult';
-    let pages = (dbData.pages && dbData.pages.length > 0) ? dbData.pages.filter(p => p.role === roleKey) : defaultDatabase.pages.filter(p => p.role === roleKey);
+    let pages = (dbData.pages && dbData.pages.length > 0) ? dbData.pages.filter(p => p.role === roleKey && p.isVisible !== false) : defaultDatabase.pages.filter(p => p.role === roleKey && p.isVisible !== false);
     pages.sort((a,b) => Number(a.stepOrder) - Number(b.stepOrder));
     
     const cfg = dbData.config || defaultDatabase.config;
@@ -1689,9 +1722,11 @@
     updateAdminUIState();
     
     renderAdminVisualLayout(); 
-    renderAdminPlansLayout();
-    renderAdminConfigLayout(); 
-    renderAdminRulesLayout(); 
+    if (isAdminMaster) {
+      renderAdminPlansLayout();
+      renderAdminConfigLayout();
+      renderAdminRulesLayout();
+    }
     renderAdminFirebaseList();
   }
 
@@ -1734,6 +1769,7 @@
         dbData.pages[idx].highlightText = card.querySelector('.adm-hl-inp').value;
         dbData.pages[idx].subtitle = card.querySelector('.adm-sub-inp').value;
         dbData.pages[idx].imageUrl = card.querySelector('.adm-img-inp').value;
+        dbData.pages[idx].isVisible = card.querySelector('.adm-visible-inp').checked;
       }
     });
   }
@@ -1779,6 +1815,7 @@
               <button type="button" class="btn-move" onclick="movePageOrder('${selectedRole}', ${rIdx}, 1)">⬇️ 下移</button>
             </div>
             <div style="display:flex; gap:6px;">
+              <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--text-sub);white-space:nowrap;"><input type="checkbox" class="adm-visible-inp" ${p.isVisible !== false ? 'checked' : ''} style="width:18px;height:18px;"> 顯示</label>
               <input type="text" class="adm-tag-inp" value="${p.tagName}" style="width:160px; margin-top:0;" placeholder="步驟標籤">
               <button type="button" onclick="deleteAdminCIPage(${realIdx})" style="background:#fee2e2; color:#dc2626; border:1px solid #ef4444; border-radius:6px; padding:2px 8px; font-size:11px; cursor:pointer;">🗑️ 刪除</button>
             </div>
@@ -2029,13 +2066,15 @@
 
   async function saveAllAdminData() {
     saveCurrentAdminInputs();
-    
-    document.querySelectorAll('[data-adm-config-key]').forEach(inp => { dbData.config[inp.dataset.admConfigKey] = inp.value; });
-    document.querySelectorAll('[data-adm-rule-note]').forEach(inp => { const idx = Number(inp.dataset.admRuleNote); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].displayNote = inp.value; });
-    document.querySelectorAll('[data-adm-rule-dname]').forEach(inp => { const idx = Number(inp.dataset.admRuleDname); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].diseaseName = inp.value; });
-    document.querySelectorAll('[data-adm-rule-count]').forEach(inp => { const idx = Number(inp.dataset.admRuleCount); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].claimCount = inp.value; });
-    document.querySelectorAll('[data-adm-rule-amt]').forEach(inp => { const idx = Number(inp.dataset.admRuleAmt); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].amount = inp.value; });
-    document.querySelectorAll('[data-adm-rule-waity]').forEach(inp => { const idx = Number(inp.dataset.admRuleWaity); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].waitYears = Number(inp.value)||1; });
+
+    if (isAdminMaster) {
+      document.querySelectorAll('[data-adm-config-key]').forEach(inp => { dbData.config[inp.dataset.admConfigKey] = inp.value; });
+      document.querySelectorAll('[data-adm-rule-note]').forEach(inp => { const idx = Number(inp.dataset.admRuleNote); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].displayNote = inp.value; });
+      document.querySelectorAll('[data-adm-rule-dname]').forEach(inp => { const idx = Number(inp.dataset.admRuleDname); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].diseaseName = inp.value; });
+      document.querySelectorAll('[data-adm-rule-count]').forEach(inp => { const idx = Number(inp.dataset.admRuleCount); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].claimCount = inp.value; });
+      document.querySelectorAll('[data-adm-rule-amt]').forEach(inp => { const idx = Number(inp.dataset.admRuleAmt); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].amount = inp.value; });
+      document.querySelectorAll('[data-adm-rule-waity]').forEach(inp => { const idx = Number(inp.dataset.admRuleWaity); if (dbData.rules && dbData.rules[idx]) dbData.rules[idx].waitYears = Number(inp.value)||1; });
+    }
 
     if (isAdminMaster) {
       const saveBtn = document.getElementById('btnAdminSaveSync');
@@ -2054,7 +2093,7 @@
           plans: dbData.plans
         };
         await fetch(GAS_CENTRAL_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
-        saveToLocalCache({ status: "success", isCustomized: false, ...payload });
+        saveCloudSnapshot(payload);
         alert("✅【隊長管理員】設定已成功雙向同步至 Google Sheet 及本地！");
       } catch(e) {
         alert("⚠️ 雲端同步失敗，請檢查網路。");
@@ -2068,7 +2107,7 @@
         isCustomized: true,
         pages: dbData.pages,
         options: dbData.options,
-        plans: dbData.plans
+        // Deliberately no plans/config/rules/rates: these remain Central-authoritative.
       });
       alert("✅ 設定已成功保存至此手機（個人自訂 Tailor-made 模式）！");
     }
@@ -2084,8 +2123,7 @@
       presetName: presetName,
       exportDate: new Date().toLocaleDateString('zh-HK'),
       pages: dbData.pages,
-      options: dbData.options,
-      plans: dbData.plans
+      options: dbData.options
     };
     const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
     const a = document.createElement("a");
@@ -2104,11 +2142,9 @@
         if (imported.pages) {
           dbData.pages = imported.pages;
           if (imported.options) dbData.options = imported.options;
-          if (imported.plans) dbData.plans = imported.plans;
-          saveToLocalCache({ status: "success", isCustomized: true, ...imported });
+          saveToLocalCache({ status: "success", isCustomized: true, pages: dbData.pages, options: dbData.options });
           renderAllDynamicCards();
           renderAdminVisualLayout();
-          renderAdminPlansLayout();
           alert(`✅ 成功套用設定檔：【${imported.presetName || '自訂版'}】！`);
         }
       } catch(err) { alert("❌ 讀取失敗：" + err.message); }
@@ -2116,17 +2152,21 @@
     reader.readAsText(file);
   }
 
-  function resetToCaptainDefault() {
-    if (confirm("確定要重設為隊長官方預設版本？（你的本機自訂題目將被覆蓋）")) {
+  function resetToCloudFlow() {
+    if (confirm("此操作會移除目前裝置上的個人化流程及題目設定，並重新使用雲端版本。此操作不會修改雲端資料。")) {
       localStorage.removeItem(STORAGE_KEY_DB);
+      dbData.pages = lastCloudFlow.pages;
+      dbData.options = lastCloudFlow.options;
+      renderAllDynamicCards();
       syncAllFromGASCentral();
-      alert("✅ 已成功還原至隊長官方預設！");
+      alert("✅ 已移除本機個人化流程，現正使用雲端版本。Firebase 案例及圖片不受影響。");
       closeAdminModal();
     }
   }
 
   window.onGASDataLoaded = function(json) {
     if (json && json.status === "success") {
+      saveCloudSnapshot(json);
       applyHybridDatabaseMerge(json);
       const badge = document.getElementById('sync-status-badge');
       if (badge) { 
@@ -2139,12 +2179,13 @@
   };
 
   function syncAllFromGASCentral() {
+    const cloudSnapshot = loadCloudSnapshot();
     const localCached = loadFromLocalCacheRaw();
-    if (localCached) {
-      applyHybridDatabaseMerge(localCached);
+    if (cloudSnapshot || localCached) {
+      applyHybridDatabaseMerge(cloudSnapshot || defaultDatabase);
       const badge = document.getElementById('sync-status-badge');
       if (badge) { 
-        badge.innerHTML = '⚡ 本機秒開 (v' + (dbData.config["資料版本"] || '9.9.5') + ')'; 
+        badge.innerHTML = '⚡ 安全離線備援 (v' + (dbData.config["資料版本"] || '9.10.0') + ')';
         badge.className = 'status-cache'; 
       }
       applyRoleMode();
