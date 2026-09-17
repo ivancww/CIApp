@@ -7,6 +7,7 @@ const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const management = fs.readFileSync(path.join(root, 'ciapp-management.js'), 'utf8');
 const storage = fs.readFileSync(path.join(root, 'ava-storage.js'), 'utf8');
 const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
+const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json'), 'utf8'));
 
 test('preserves existing workflow, plans and compensation logic', () => {
   for (const page of ['step_ci_dignity','step_ci_1','step_ci_2','step_ci_3','step_ci_4']) assert.match(html,new RegExp(page));
@@ -44,7 +45,23 @@ test('effective content uses user override then cloud fallback', () => {
 
 test('new runtime assets are available offline', () => {
   for (const asset of ['ava-storage.js','ciapp-management.js','ava-management.css']) assert.ok(sw.includes(asset));
-  assert.match(sw,/v9\.12\.0/);
+  assert.match(sw,/v9\.13\.0/);
+});
+
+test('AVA shell provides explicit ecosystem navigation', () => {
+  assert.match(html, /class="app-header"/);
+  assert.match(html, /href="https:\/\/ivancww\.github\.io\/avaplatform\/"/);
+  assert.match(html, /← 返回 AVA/);
+});
+
+test('manifest remains GitHub Pages scoped and standalone capable', () => {
+  assert.equal(manifest.id, './');
+  assert.equal(manifest.start_url, './');
+  assert.equal(manifest.scope, './');
+  assert.equal(manifest.display, 'standalone');
+  assert.equal(manifest.theme_color, '#1e3a8a');
+  assert.match(html, /apple-mobile-web-app-capable" content="yes"/);
+  assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js', \{ scope: '\.\/' \}\)/);
 });
 
 test('responsive management components use fluid grids and touch targets', () => {
