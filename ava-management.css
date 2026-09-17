@@ -1,0 +1,17 @@
+.ava-library-section h3 { margin:0 0 8px; font-size:var(--type-subtitle,1.15rem); color:var(--text-main); }
+.ava-library-help { margin:0 0 14px; color:var(--text-sub); font-size:var(--type-caption,.875rem); line-height:1.55; }
+.ava-library-heading { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; }
+.ava-library-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr)); gap:14px; margin-top:14px; }
+.ava-library-item { min-width:0; padding:16px; border:1px solid var(--border-light); border-radius:14px; background:var(--surface-card); box-shadow:0 1px 3px rgba(0,0,0,.04); }
+.ava-library-title { font-size:1rem; font-weight:800; color:var(--text-main); overflow-wrap:anywhere; }
+.ava-library-meta { margin:6px 0 0; color:var(--text-sub); font-size:.84rem; line-height:1.5; }
+.ava-library-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+.ava-library-btn,.ava-upload-area { min-height:44px; display:inline-flex; align-items:center; justify-content:center; padding:10px 14px; border:1px solid var(--border-light); border-radius:10px; background:#fff; color:var(--text-main); font-family:inherit; font-size:.9rem; font-weight:700; cursor:pointer; text-decoration:none; }
+.ava-library-btn.primary,.ava-upload-area { background:var(--brand-primary); border-color:var(--brand-primary); color:#fff; }
+.ava-library-toggle { min-height:36px; display:flex; align-items:center; gap:8px; font-weight:700; }
+.ava-library-toggle input { width:20px; height:20px; }
+@media (max-width:699px) {
+  .ava-library-grid { grid-template-columns:1fr; gap:12px; }
+  .ava-library-item { padding:14px; }
+  .ava-library-btn,.ava-upload-area { width:100%; }
+}

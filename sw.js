@@ -1,8 +1,11 @@
-// Service Worker for Insurance PWA v9.11.0
-const CACHE_VERSION = 'insurance-pwa-cache-v9.11.0';
+// Service Worker for Insurance PWA v9.12.0
+const CACHE_VERSION = 'insurance-pwa-cache-v9.12.0';
 const FILES_TO_CACHE = [
   './',
   './index.html',
+  './ava-storage.js',
+  './ciapp-management.js',
+  './ava-management.css',
   './manifest.json',
   './icon-192.png',
   './icon-512.png'
