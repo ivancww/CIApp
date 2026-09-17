@@ -3,13 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.12.0)</title>
+<title>確診危疾生活儲備規劃 (v9.13.0)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CIPlan">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="CI Protection Planner">
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
@@ -273,16 +275,90 @@
     .nav-btn-group > button { flex: 1 1 140px; }
     .projection-table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   }
+
+  /* AVA independent-app shell: shared compact header and centred workspace. */
+  body { padding: 0; }
+  .app-header {
+    min-height: 68px;
+    background: rgba(255, 255, 255, .96);
+    border-bottom: 1px solid var(--border-light);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, .04);
+    padding-top: env(safe-area-inset-top);
+  }
+  .app-header-inner {
+    width: min(100%, 1440px);
+    min-height: 68px;
+    margin-inline: auto;
+    padding: 10px var(--workspace-gutter);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .app-brand { display: flex; align-items: center; gap: 11px; min-width: 0; }
+  .app-brand-logo { width: 42px; height: 42px; border-radius: 11px; object-fit: cover; flex: 0 0 auto; }
+  .app-brand-copy { min-width: 0; line-height: 1.2; }
+  .app-brand-name { display: block; color: var(--text-main); font-size: clamp(1rem, .93rem + .25vw, 1.125rem); font-weight: 800; white-space: nowrap; }
+  .app-brand-meta { display: flex; align-items: center; gap: 7px; margin-top: 4px; color: var(--text-sub); font-size: var(--type-caption); font-weight: 600; }
+  .app-header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+  .ava-back-link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 14px;
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    background: var(--surface-card);
+    color: var(--brand-primary);
+    font-size: var(--type-option);
+    font-weight: 700;
+    line-height: 1.3;
+    text-decoration: none;
+  }
+  .ava-back-link:hover, .ava-back-link:focus-visible { background: var(--brand-soft); border-color: #bfdbfe; outline: none; }
+  .header-admin-btn { width: 44px; min-height: 44px; border: 1px solid var(--border-light); border-radius: 12px; background: #fff; cursor: pointer; }
+  .app-shell { padding: clamp(18px, 2.5vw, 34px) var(--workspace-gutter) max(20px, env(safe-area-inset-bottom)); }
+  .header-version-bar { min-height: 0; margin-bottom: clamp(14px, 1.7vw, 22px); justify-content: flex-end; }
+  @media (max-width: 699px) {
+    body { padding: 0; }
+    .app-header-inner { min-height: 64px; align-items: flex-start; padding-block: 10px; gap: 10px; }
+    .app-brand-logo { width: 40px; height: 40px; }
+    .app-brand-name { white-space: normal; }
+    .app-header-actions { gap: 6px; }
+    .ava-back-link { min-height: 42px; padding-inline: 11px; }
+    .app-shell { padding-top: 16px; }
+    .header-version-bar { justify-content: flex-start; }
+  }
+  @media (max-width: 430px) {
+    .app-header-inner { flex-wrap: wrap; }
+    .app-brand { flex: 1 1 210px; }
+    .app-header-actions { width: 100%; justify-content: stretch; }
+    .ava-back-link { flex: 1; }
+    .header-admin-btn { flex: 0 0 44px; }
+  }
 </style>
 </head>
 <body>
+<header class="app-header">
+  <div class="app-header-inner">
+    <div class="app-brand">
+      <img class="app-brand-logo" src="./icon-192.png" alt="CI Protection Planner">
+      <div class="app-brand-copy">
+        <span class="app-brand-name">CI Protection Planner</span>
+        <span class="app-brand-meta">危疾生活儲備規劃 <span class="v-badge" id="appVersion">v9.13.0</span></span>
+      </div>
+    </div>
+    <nav class="app-header-actions" aria-label="應用程式導覽">
+      <a class="ava-back-link" href="https://ivancww.github.io/avaplatform/" aria-label="返回 AVA Platform">← 返回 AVA</a>
+      <button type="button" class="header-admin-btn" onclick="openAdminModal()" title="開啟所見即所得雲端後台" aria-label="開啟管理設定">⚙️</button>
+    </nav>
+  </div>
+</header>
 <div class="app-shell">
   <div class="header-version-bar">
     <div class="ui-row-center-sm">
-      <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge" id="appVersion">v9.12.0</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
-      <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
     <div id="sync-status-badge">🔄 載入中...</div>
   </div>
@@ -453,7 +529,7 @@
   
   const defaultDatabase = {
     config: {
-      "資料版本": "9.12.0",
+      "資料版本": "9.13.0",
       "管理員密碼": "8888",
       "醫療App網址": "https://ivancww.github.io/medicalclaims",
       "溫馨提示醫療標題": "🏥 溫馨提示：醫療選擇防線",
@@ -2384,6 +2460,11 @@
     const p = new URLSearchParams(window.location.search);
     if (p.get('role') === 'child') ciState.isChildMode = true;
     syncAllFromGASCentral();
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js', { scope: './' }).catch((error) => {
+        console.warn('[CIApp] Service Worker registration failed:', error);
+      });
+    }
   });
 </script>
 <script src="./ciapp-management.js"></script>
