@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-<title>確診危疾生活儲備規劃 (v9.11.0)</title>
+<title>確診危疾生活儲備規劃 (v9.12.0)</title>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#1e3a8a">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -13,6 +13,8 @@
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+<script src="./ava-storage.js"></script>
+<link rel="stylesheet" href="./ava-management.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -278,7 +280,7 @@
   <div class="header-version-bar">
     <div class="ui-row-center-sm">
       <span>CI PROTECTION PLANNER</span>
-      <span class="v-badge" id="appVersion">v9.11.0</span>
+      <span class="v-badge" id="appVersion">v9.12.0</span>
       <button type="button" class="role-toggle-btn" id="btnRoleSwitch" onclick="toggleRoleMode()">👨‍👩‍👧 成人模式</button>
       <span style="cursor:pointer; font-size:16px;" onclick="openAdminModal()" title="開啟所見即所得雲端後台">⚙️</span>
     </div>
@@ -322,10 +324,12 @@
   
   <div class="admin-tab-bar" id="adminTabBar">
     <button type="button" class="admin-tab-btn active" onclick="switchAdminTab('pages', this)">📄 頁面流程與題目管理</button>
+    <button type="button" class="admin-tab-btn" data-user-tab onclick="switchAdminTab('userCases', this)">📋 實況案例</button>
+    <button type="button" class="admin-tab-btn" data-user-tab onclick="switchAdminTab('documents', this)">📁 文件管理</button>
     <button type="button" class="admin-tab-btn admin-only" onclick="switchAdminTab('plans', this)">📋 方案管理 (A/B/C/D)</button>
     <button type="button" class="admin-tab-btn admin-only" onclick="switchAdminTab('config', this)">⚙️ 系統參數設定</button>
     <button type="button" class="admin-tab-btn admin-only" onclick="switchAdminTab('rules', this)">📑 賠償條款設定</button>
-    <button type="button" class="admin-tab-btn" onclick="switchAdminTab('firebase', this)">🔥 Firebase 案例/圖片管理</button>
+    <button type="button" class="admin-tab-btn admin-only" onclick="switchAdminTab('firebase', this)">☁️ 官方案例／圖片</button>
   </div>
   <div class="admin-scroll-body">
     <div id="adminTabPagesSection">
@@ -363,6 +367,30 @@
         <h3 style="color:var(--primary); margin:0 0 12px 0; font-size:16px;">📑 賠償條款設定 (Google Sheet 集中管理)</h3>
         <div id="adminRulesContainer" style="display:flex; flex-direction:column; gap:12px;"></div>
       </div>
+    </div>
+    <div id="adminTabUserCasesSection" style="display:none;">
+      <section class="admin-card-section ava-library-section">
+        <h3>☁️ 雲端實況案例</h3>
+        <p class="ava-library-help">你可以為自己隱藏或改名；只影響此裝置，不會修改 Admin 雲端資料。</p>
+        <div id="ciCloudCasesManager" class="ava-library-grid"></div>
+      </section>
+      <section class="admin-card-section ava-library-section">
+        <div class="ava-library-heading"><div><h3>我的實況案例</h3><p class="ava-library-help">個人案例只儲存在此瀏覽器。</p></div><button type="button" class="ava-library-btn primary" onclick="CIManagement.addPersonalCase()">＋ 新增案例</button></div>
+        <div id="ciPersonalCasesManager" class="ava-library-grid"></div>
+      </section>
+    </div>
+    <div id="adminTabDocumentsSection" style="display:none;">
+      <section class="admin-card-section ava-library-section">
+        <h3>☁️ 雲端文件</h3>
+        <p class="ava-library-help">可按個人需要隱藏官方文件，原始 Firebase 資料不會被刪除。</p>
+        <div id="ciCloudDocumentsManager" class="ava-library-grid"></div>
+      </section>
+      <section class="admin-card-section ava-library-section">
+        <h3>我的私人文件／圖片</h3>
+        <p class="ava-library-help">檔案 binary 以 IndexedDB 儲存在你選擇嘅 Provider；不會上載至 AVA Owner／Admin Firebase。</p>
+        <label class="ava-upload-area">＋ 上載 PDF 或圖片<input id="ciPersonalDocumentUpload" type="file" accept="application/pdf,image/jpeg,image/png,image/webp" multiple hidden onchange="CIManagement.uploadPersonalDocuments(this)"></label>
+        <div id="ciPersonalDocumentsManager" class="ava-library-grid"></div>
+      </section>
     </div>
     <div id="adminTabFirebaseSection" style="display:none;">
       <div class="admin-card-section">
@@ -425,7 +453,7 @@
   
   const defaultDatabase = {
     config: {
-      "資料版本": "9.11.0",
+      "資料版本": "9.12.0",
       "管理員密碼": "8888",
       "醫療App網址": "https://ivancww.github.io/medicalclaims",
       "溫馨提示醫療標題": "🏥 溫馨提示：醫療選擇防線",
@@ -2358,5 +2386,6 @@
     syncAllFromGASCentral();
   });
 </script>
+<script src="./ciapp-management.js"></script>
 </body>
 </html>
