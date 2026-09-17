@@ -45,13 +45,31 @@ test('effective content uses user override then cloud fallback', () => {
 
 test('new runtime assets are available offline', () => {
   for (const asset of ['ava-storage.js','ciapp-management.js','ava-management.css']) assert.ok(sw.includes(asset));
-  assert.match(sw,/v9\.13\.0/);
+  assert.match(sw,/v9\.14\.0/);
 });
 
 test('AVA shell provides explicit ecosystem navigation', () => {
   assert.match(html, /class="app-header"/);
   assert.match(html, /href="https:\/\/ivancww\.github\.io\/avaplatform\/"/);
   assert.match(html, /← 返回 AVA/);
+});
+
+test('Mother Standard header contains only frontend controls', () => {
+  const header = html.slice(html.indexOf('<header class="app-header">'), html.indexOf('</header>') + 9);
+  assert.doesNotMatch(header, /app-brand-logo|危疾生活儲備規劃|header-admin-btn|sync-status-badge/);
+  assert.match(header, /CI Protection Planner/);
+  assert.match(header, /v9\.14\.0/);
+  assert.match(header, /id="btnRoleSwitch"/);
+  assert.match(header, /← 返回 AVA/);
+  assert.doesNotMatch(html, /安全離線備援|id="sync-status-badge"/);
+});
+
+test('Mother Standard shell tokens drive header and content dimensions', () => {
+  for (const token of ['--ava-shell-max: 1200px','--ava-header-height: 64px','--ava-shell-gutter: clamp(16px, 2.5vw, 32px)','--ava-card-radius: 16px']) {
+    assert.ok(html.includes(token));
+  }
+  assert.match(html, /width: min\(100%, var\(--ava-shell-max\)\)/);
+  assert.match(html, /max-width: var\(--ava-shell-max\)/);
 });
 
 test('manifest remains GitHub Pages scoped and standalone capable', () => {
